@@ -6,16 +6,15 @@ title = "Nemocdz's Blog"
 theme = "hugo-theme-cactus-plus"
 # Enter your tracking code to enable Google Analytics
 #googleAnalytics = "your_google_analytics_code"
-#hasCJKLanguage = true
+hasCJKLanguage = true
 publishDir = "docs"
+copyright = "???"
 
 [params]
-	name = "Hugo"
+	name = "Nemocdz"
 	description = "Blog Description"
-	bio = "Blog biology"
-	# Enter optionally your twitter account
-	twitter = "your_twotter"
-	enableRSS = false
+	bio = "iOS Dev & Photographer"
+	enableRSS = true
 
 	# Disqus comment
 	disqusShortname = "your_disqus_short_name"
@@ -48,28 +47,28 @@ publishDir = "docs"
 	home = ""
 	about = ""
 	archive = ""
-	subscribe = ""
+	subscribe = "RSS"
 	# Pagination links
 	olderPosts = ""
 	newerPosts = ""
 	readMore = ""
 	copyright = ""
 	# Sharing options and author information in posts
-	aboutAuthor = "I am so interesting."
+	aboutAuthor = "我是谁？皮卡丘"
 	tweet = ""
 	share = ""
 	# 404 page
-	title404 = ""
-	subtitle404 = ""
+	title404 = "我的博客挂了"
+	subtitle404 = "请告诉我QAQ，QQ757765420"
 
 	# Choose a font for the social icons in the footer. Either "mono-social" or "font-awesome"
-	iconFont = "font-awesome"
-  # The social icons can be styled differently if you use mono as font - circle, rounded, or empty
-  socialIconStyle = ""
+	iconFont = "mono-social"
+  	# The social icons can be styled differently if you use mono as font - circle, rounded, or empty
+  	socialIconStyle = "circle"
 
 
 # Add additional social link entries underneath
 [social]
-	facebook-square = "your_facebook_link"
-  	thwitter-square = "your_twitter_link"
-  	github-square = "your_github_link"
+	facebook = "https://www.facebook.com/nemocdz"
+  	twitter = "https://twitter.com/Nemocdz"
+  	github = "https://github.com/Nemocdz"

@@ -8,6 +8,11 @@
   </url>
   
   <url>
+    <loc>https://nemocdz.github.io/My-blog/about/</loc>
+    <lastmod>2015-06-20T14:02:37+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://nemocdz.github.io/My-blog/categories/</loc>
     <priority>0</priority>
   </url>
@@ -26,7 +31,6 @@
   
   <url>
     <loc>https://nemocdz.github.io/My-blog/tags/</loc>
-    <priority>0</priority>
   </url>
   
 </urlset>
