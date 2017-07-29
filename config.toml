@@ -1,5 +1,5 @@
 # Site settings
-baseurl = "http:"
+baseurl = "https://nemocdz.github.io/blog/"
 # HTML Language Code Reference, such as en, zh-cn
 languageCode = "en"
 title = "Nemocdz's Blog"
