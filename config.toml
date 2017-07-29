@@ -1,13 +1,13 @@
 # Site settings
-baseurl = "https://nemocdz.github.io/blog/"
+baseurl = "https://nemocdz.github.io/My-blog/"
 # HTML Language Code Reference, such as en, zh-cn
-languageCode = "en"
+languageCode = "zh-cn"
 title = "Nemocdz's Blog"
 theme = "hugo-theme-cactus-plus"
 # Enter your tracking code to enable Google Analytics
 #googleAnalytics = "your_google_analytics_code"
-hasCJKLanguage = true
-publishDir = "docs"
+#hasCJKLanguage = true
+#publishDir = "docs"
 
 [params]
 	name = "Hugo"
@@ -71,5 +71,5 @@ publishDir = "docs"
 # Add additional social link entries underneath
 [social]
 	facebook-square = "your_facebook_link"
-  twitter-square = "your_twitter_link"
-  github-square = "your_github_link"
+  	thwitter-square = "your_twitter_link"
+  	github-square = "your_github_link"
