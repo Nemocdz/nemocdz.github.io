@@ -1,0 +1,264 @@
+    <!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="author" content="Nemocdz">
+		<meta name="description" content="Blog Description">
+		<meta name="generator" content="Hugo 0.25.1" />
+		<title>《iOS Core Animation》读书笔记 &middot; Nemocdz&#39;s Blog</title>
+		<link rel="shortcut icon" href="https://nemocdz.github.io/My-blog/images/favicon.ico">
+		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/style.css">
+		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/highlight.css">
+		
+
+		
+		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/monosocialiconsfont.css">
+		
+
+		
+		<link href="https://nemocdz.github.io/My-blog/index.xml" rel="alternate" type="application/rss+xml" title="Nemocdz&#39;s Blog" />
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://nemocdz.github.io/My-blog/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://nemocdz.github.io/My-blog/post'>Archive</a>
+	<a href='https://nemocdz.github.io/My-blog/tags'>Tags</a>
+	<a href='https://nemocdz.github.io/My-blog/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://nemocdz.github.io/My-blog/index.xml">RSS</a>
+	
+</nav>
+
+
+        <section id="wrapper">
+            <article class="post">
+                <header>
+                    <h1>
+                        《iOS Core Animation》读书笔记
+                    </h1>
+                    <h2 class="headline">
+                    Jul 13, 2017 03:02
+                    · 1106 words
+                    · 3 minutes read
+                      <span class="tags">
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                <section id="post-body">
+                    
+
+<h4 id="calayer">CALayer</h4>
+
+<p>UIView = 绘制 + 响应触摸事件</p>
+
+<ul>
+<li>负责屏幕和显示，不负责触摸事件响应链</li>
+<li>UIView是其高级封装</li>
+<li>和UIView层级一一对应</li>
+</ul>
+
+<p>UIView未暴露CALayer的接口</p>
+
+<ul>
+<li>阴影，圆角，带颜色的边框</li>
+<li>3D变换</li>
+<li>非矩形范围</li>
+<li>透明遮罩</li>
+<li>多级非线性动画</li>
+</ul>
+
+<h4 id="图形和几何">图形和几何</h4>
+
+<p>frame：外部坐标，父图层坐标，大小为边与xy轴平行能完全容纳图层的最小矩形</p>
+
+<p>bounds：内部坐标，自身坐标，大小为图层大小的矩形</p>
+
+<p>anchorPoint：锚点，旋转基点，左上角{0，0}，右下角{1，1}</p>
+
+<p>center（CALayer的position）:anchorPoint在父图层的坐标</p>
+
+<h4 id="视觉效果">视觉效果</h4>
+
+<h5 id="拉伸过滤">拉伸过滤</h5>
+
+<p>以正确比例和1：1像素显示图片在屏幕上的好处</p>
+
+<ul>
+<li>画质好，像素无压缩拉伸</li>
+<li>更好使用内存</li>
+<li>性能好，无需额外计算</li>
+</ul>
+
+<h4 id="cashapelayer">CAShapeLayer</h4>
+
+<p>矢量图像而不是bitmap绘制图层子类</p>
+
+<p>优点：</p>
+
+<ul>
+<li>渲染快速，硬件加速</li>
+<li>高效使用内存，占用小</li>
+<li>不受边界裁剪，可在边界外绘制</li>
+<li>不会出现像素化</li>
+</ul>
+
+<h4 id="catextlayer">CATextLayer</h4>
+
+<p>CALayer的子类，几乎拥有UILabel所有绘制特性</p>
+
+<p>渲染快于UILabel，运用Core text</p>
+
+<h4 id="性能调优">性能调优</h4>
+
+<p>动画和图层被单独的渲染服务进程处理</p>
+
+<h5 id="动画发生过程">动画发生过程</h5>
+
+<ol>
+<li>布局</li>
+<li>显示</li>
+<li>准备-发送动画数据到渲染服务</li>
+<li>提交-打包图层和动画属性发送到渲染服务</li>
+<li>对所有图层属性计算中间值，设置OpenGL几何形状（纹理化三角形）进行渲染</li>
+<li>在屏幕上渲染可见三角形（GPU执行，前面都在CPU）</li>
+</ol>
+
+<h5 id="可能影响gpu绘制的情况">可能影响GPU绘制的情况</h5>
+
+<ul>
+<li>过多几何结构</li>
+<li>重绘-重叠半透明图层</li>
+<li>离屏渲染-为屏幕外渲染的图片分配额外内存，切换屏幕内外的绘制上下文</li>
+<li>过大的图片</li>
+</ul>
+
+<h5 id="可能影响cpu计算的情况">可能影响CPU计算的情况</h5>
+
+<ul>
+<li>布局计算-自动布局</li>
+<li>视图懒加载-涉及IO的图片显示</li>
+<li>Core Graphics绘制-drawRect（为支持图层任意绘制需要在内存中创建一个等大小的寄宿图）</li>
+<li>解压图片</li>
+</ul>
+
+<h5 id="图像io">图像IO</h5>
+
+<ul>
+<li>线程加载-合适的后台线程</li>
+<li>分辨率交换-移动时低分辨率，静态时加载高分辨率</li>
+<li>缓存-考虑因素：合适缓存键、缓存时机、失效、回收</li>
+<li>图像格式</li>
+</ul>
+
+<h5 id="文本">文本</h5>
+
+<p>尽可能避免改变文本的frame，因为需要重绘</p>
+
+<h5 id="光栅化">光栅化</h5>
+
+<p>将图层及其所有效果绘制成一个屏幕外的图像并缓存，避免运用在内容不断变动的图层上</p>
+
+<h5 id="离屏渲染">离屏渲染</h5>
+
+<p>在混合复杂效果无法直接渲染时，会通过分步渲染，会把分布渲染的结果临时储存在屏幕外的内存中等待组合渲染</p>
+
+<p>影响性能在于</p>
+
+<ul>
+<li>为临时储存部分渲染结果分配内存</li>
+<li>进行将渲染结果从屏幕内-外的上下文切换</li>
+</ul>
+
+<p>图层的属性触发离屏渲染</p>
+
+<ul>
+<li>圆角+maskToBounds</li>
+<li>图层蒙版</li>
+<li>阴影</li>
+</ul>
+
+<h5 id="图层混合">图层混合</h5>
+
+<ul>
+<li>设定固定不透明的背景颜色</li>
+<li>设置layer的opaue属性默认为YES（非view的）</li>
+</ul>
+
+<h5 id="颜色格式">颜色格式</h5>
+
+<p>苹果的GPU只解析<strong>32bit</strong>的颜色格式，其余的格式CPU会先进行颜色格式转换，再让GPU渲染。</p>
+
+<h5 id="图像大小缩放">图像大小缩放</h5>
+
+<p>image和imageView的大小尽量保持一致，避免在改变view大小时重复计算缩放</p>
+
+                </section>
+            </article>
+
+            
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    
+    <a class="symbol" href="https://www.facebook.com/nemocdz">
+        circlefacebook
+    </a>
+    
+    <a class="symbol" href="https://github.com/Nemocdz">
+        circlegithub
+    </a>
+    
+    <a class="symbol" href="https://twitter.com/Nemocdz">
+        circletwitterbird
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2017 <i class="fa fa-heart" aria-hidden="true"></i> Nemocdz
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://nemocdz.github.io/My-blog/js/jquery-2.2.4.min.js"></script>
+<script src="https://nemocdz.github.io/My-blog/js/main.js"></script>
+<script src="https://nemocdz.github.io/My-blog/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+    </body>
+</html>

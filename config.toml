@@ -8,13 +8,13 @@ theme = "hugo-theme-cactus-plus"
 #googleAnalytics = "your_google_analytics_code"
 hasCJKLanguage = true
 publishDir = "docs"
-copyright = "???"
 
 [params]
 	name = "Nemocdz"
 	description = "Blog Description"
 	bio = "iOS Dev & Photographer"
 	enableRSS = true
+	paginate = 6
 
 	# Disqus comment
 	disqusShortname = "your_disqus_short_name"

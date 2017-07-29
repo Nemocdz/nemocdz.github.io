@@ -6,18 +6,171 @@
     <description>Recent content in Posts on Nemocdz&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 29 Jul 2017 21:47:13 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 28 Jul 2017 18:18:13 +0800</lastBuildDate>
     
 	<atom:link href="https://nemocdz.github.io/My-blog/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>My First Post</title>
-      <link>https://nemocdz.github.io/My-blog/post/my-first-post/</link>
-      <pubDate>Sat, 29 Jul 2017 21:47:13 +0800</pubDate>
+      <title>iOS10通知框架UserNotifications学习及兼容笔记</title>
+      <link>https://nemocdz.github.io/My-blog/post/ios10%E9%80%9A%E7%9F%A5%E6%A1%86%E6%9E%B6usernotifications%E5%AD%A6%E4%B9%A0%E5%8F%8A%E5%85%BC%E5%AE%B9%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Fri, 28 Jul 2017 18:18:13 +0800</pubDate>
       
-      <guid>https://nemocdz.github.io/My-blog/post/my-first-post/</guid>
-      <description></description>
+      <guid>https://nemocdz.github.io/My-blog/post/ios10%E9%80%9A%E7%9F%A5%E6%A1%86%E6%9E%B6usernotifications%E5%AD%A6%E4%B9%A0%E5%8F%8A%E5%85%BC%E5%AE%B9%E7%AC%94%E8%AE%B0/</guid>
+      <description>在iOS10上，苹果将原来散落在UIKit中各处的用户通知相关的代码进行重构，剥离，打造了一个全新的通知框架-UserNotificatio</description>
+    </item>
+    
+    <item>
+      <title>Objective-C弱引用容器实现方案总结</title>
+      <link>https://nemocdz.github.io/My-blog/post/objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Sun, 23 Jul 2017 04:55:00 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/</guid>
+      <description>在OC中Foundation框架中的常用容器类（NSSet，NSDictionary，NSArray）及其可变子类在加入元素时，均会对元素进</description>
+    </item>
+    
+    <item>
+      <title>《程序员的自我修养》读书笔记</title>
+      <link>https://nemocdz.github.io/My-blog/post/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Thu, 20 Jul 2017 03:31:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
+      <description>线程 线程是程序执行流的最小单元。 各个线程之间共享程序的内存空间和进程级资源。、 组成 线程ID，当前指令指针，寄存器集合，堆栈 拥有自己的空间 栈，</description>
+    </item>
+    
+    <item>
+      <title>《iOS Core Animation》读书笔记</title>
+      <link>https://nemocdz.github.io/My-blog/post/ios-core-animation%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Thu, 13 Jul 2017 03:02:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/ios-core-animation%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
+      <description>CALayer UIView = 绘制 + 响应触摸事件 负责屏幕和显示，不负责触摸事件响应链 UIView是其高级封装 和UIView层级一一对应 UIView未暴露CALaye</description>
+    </item>
+    
+    <item>
+      <title>《C陷阱与缺陷》读书笔记</title>
+      <link>https://nemocdz.github.io/My-blog/post/c%E9%99%B7%E9%98%B1%E4%B8%8E%E7%BC%BA%E9%99%B7%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Thu, 13 Jul 2017 01:28:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/c%E9%99%B7%E9%98%B1%E4%B8%8E%E7%BC%BA%E9%99%B7%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
+      <description>多字符记号 输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号 组合赋值运算符是两个记号，如+= 单引号与双引号 单引号是</description>
+    </item>
+    
+    <item>
+      <title>Cocoa多线程总结</title>
+      <link>https://nemocdz.github.io/My-blog/post/cocoa%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Wed, 28 Jun 2017 11:31:02 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/cocoa%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%80%BB%E7%BB%93/</guid>
+      <description>个人学习总结笔记 前置知识 线程 程序执行流的最小单元 线程拥有自己的空间：栈，线程局部储存（Thread Local Storage），寄存器 线程之间共享：全</description>
+    </item>
+    
+    <item>
+      <title>iOS中实现一个支持小数的星星评分组件</title>
+      <link>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E6%94%AF%E6%8C%81%E5%B0%8F%E6%95%B0%E7%9A%84%E6%98%9F%E6%98%9F%E8%AF%84%E5%88%86%E7%BB%84%E4%BB%B6/</link>
+      <pubDate>Sun, 21 May 2017 19:15:23 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E6%94%AF%E6%8C%81%E5%B0%8F%E6%95%B0%E7%9A%84%E6%98%9F%E6%98%9F%E8%AF%84%E5%88%86%E7%BB%84%E4%BB%B6/</guid>
+      <description>在很多电商，外卖，餐饮型应用里，都会在商品结束后评价中有一个星星组件。核心思路就是用UIControl并自定义实现其中的trackTouch</description>
+    </item>
+    
+    <item>
+      <title>iOS中实现静态Cell通用的TableViewManager</title>
+      <link>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81cell%E9%80%9A%E7%94%A8%E7%9A%84tableviewmanager/</link>
+      <pubDate>Sun, 14 May 2017 21:36:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81cell%E9%80%9A%E7%94%A8%E7%9A%84tableviewmanager/</guid>
+      <description>在App中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态Cell构成的TableView，这些界面的特点是，Cell种类</description>
+    </item>
+    
+    <item>
+      <title>iOS原生二维码界面开发的一些注意点</title>
+      <link>https://nemocdz.github.io/My-blog/post/ios%E5%8E%9F%E7%94%9F%E4%BA%8C%E7%BB%B4%E7%A0%81%E7%95%8C%E9%9D%A2%E7%9A%84%E4%B8%80%E4%BA%9B%E6%B3%A8%E6%84%8F%E7%82%B9/</link>
+      <pubDate>Sun, 14 May 2017 01:33:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/ios%E5%8E%9F%E7%94%9F%E4%BA%8C%E7%BB%B4%E7%A0%81%E7%95%8C%E9%9D%A2%E7%9A%84%E4%B8%80%E4%BA%9B%E6%B3%A8%E6%84%8F%E7%82%B9/</guid>
+      <description>之前的文章是在ViewController里实现了原生二维码扫描的功能，后来觉得VC太重了，便把功能抽成了一个View，在抽象的过程中也仔细</description>
+    </item>
+    
+    <item>
+      <title>iOS中实现原生的二维码扫描界面</title>
+      <link>https://nemocdz.github.io/My-blog/post/ios%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/</link>
+      <pubDate>Fri, 21 Apr 2017 18:49:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/ios%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/</guid>
+      <description>二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是Google出品的ZXing，其的OC的移植版本是ZXingObjc。但是从iO</description>
+    </item>
+    
+    <item>
+      <title>用Cocoapods管理单元测试填坑之旅</title>
+      <link>https://nemocdz.github.io/My-blog/post/%E7%94%A8cocoapods%E7%AE%A1%E7%90%86%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%A1%AB%E5%9D%91%E4%B9%8B%E6%97%85/</link>
+      <pubDate>Thu, 13 Apr 2017 03:02:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/%E7%94%A8cocoapods%E7%AE%A1%E7%90%86%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%A1%AB%E5%9D%91%E4%B9%8B%E6%97%85/</guid>
+      <description>上周接到了个需求，老大要我把项目代码里某个库覆盖上单元测试。而那个库没有Demo，平时都是集成在工程里开发的。为啥没有Demo，因为那个库依</description>
+    </item>
+    
+    <item>
+      <title>iOS中实现多列联动的PickerView</title>
+      <link>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E5%B0%8F%E5%B7%A7%E7%9A%84%E5%A4%9A%E5%88%97%E8%81%94%E5%8A%A8%E7%9A%84pickerview/</link>
+      <pubDate>Wed, 29 Mar 2017 01:33:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E5%B0%8F%E5%B7%A7%E7%9A%84%E5%A4%9A%E5%88%97%E8%81%94%E5%8A%A8%E7%9A%84pickerview/</guid>
+      <description>去年年底写了一个自定义的PickerView，文章在这里。当时对Block和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的Pick</description>
+    </item>
+    
+    <item>
+      <title>TableView和CollectionView通用的DataSource和Cell</title>
+      <link>https://nemocdz.github.io/My-blog/post/tableview%E5%92%8Ccollectionview%E9%80%9A%E7%94%A8datasource%E5%92%8Ccell/</link>
+      <pubDate>Sat, 25 Mar 2017 17:11:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/tableview%E5%92%8Ccollectionview%E9%80%9A%E7%94%A8datasource%E5%92%8Ccell/</guid>
+      <description>刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起UI来很费劲。新的界面是个列表视图，就寻</description>
+    </item>
+    
+    <item>
+      <title>TableView内嵌套CollectionView动态高度的实现（表单或图片分享）</title>
+      <link>https://nemocdz.github.io/My-blog/post/tableview%E5%86%85%E5%B5%8C%E5%A5%97collectionview%E5%8A%A8%E6%80%81%E9%AB%98%E5%BA%A6%E7%9A%84%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BC%E8%A1%A8%E5%8D%95%E6%88%96%E5%9B%BE%E7%89%87%E5%88%86%E4%BA%AB%E7%95%8C%E9%9D%A2/</link>
+      <pubDate>Tue, 24 Jan 2017 01:24:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/tableview%E5%86%85%E5%B5%8C%E5%A5%97collectionview%E5%8A%A8%E6%80%81%E9%AB%98%E5%BA%A6%E7%9A%84%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BC%E8%A1%A8%E5%8D%95%E6%88%96%E5%9B%BE%E7%89%87%E5%88%86%E4%BA%AB%E7%95%8C%E9%9D%A2/</guid>
+      <description>在有社交分享平台属性的app中，我们经常看见类似有tableview中多图展示。不管是发布的表单界面中，还是社交动态的时间线的界面中，都需要</description>
+    </item>
+    
+    <item>
+      <title>Tableview支持不同种类的cell</title>
+      <link>https://nemocdz.github.io/My-blog/post/tableview%E6%94%AF%E6%8C%81%E4%B8%8D%E5%90%8C%E7%A7%8D%E7%B1%BB%E7%9A%84cell/</link>
+      <pubDate>Sun, 08 Jan 2017 03:52:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/tableview%E6%94%AF%E6%8C%81%E4%B8%8D%E5%90%8C%E7%A7%8D%E7%B1%BB%E7%9A%84cell/</guid>
+      <description>在项目中，偶尔需要让tableview里支持不同种类的cell，比如微博的原创微博和别人转发的微博，就是两种cell。又或是类似支付宝的的t</description>
+    </item>
+    
+    <item>
+      <title>iOS中权限小Tips和监测相册变化</title>
+      <link>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E6%9D%83%E9%99%90%E5%B0%81%E8%A3%85%E5%B0%8Ftips%E5%92%8C%E7%9B%91%E6%B5%8B%E7%9B%B8%E5%86%8C%E5%8F%98%E5%8C%96/</link>
+      <pubDate>Wed, 14 Dec 2016 23:05:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E6%9D%83%E9%99%90%E5%B0%81%E8%A3%85%E5%B0%8Ftips%E5%92%8C%E7%9B%91%E6%B5%8B%E7%9B%B8%E5%86%8C%E5%8F%98%E5%8C%96/</guid>
+      <description>之前写了一个仿Snapseed的ImagePicker，见Demo和之前的简书文章， 之后发现有人说第一次未授权时collectionview</description>
+    </item>
+    
+    <item>
+      <title>iOS中实现仿Snapseed的照片选择器</title>
+      <link>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BFsnapseed%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/</link>
+      <pubDate>Sun, 04 Dec 2016 01:55:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BFsnapseed%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/</guid>
+      <description>ImagePickerController（图片选择器）是iOS开发中一个很常用的UI控件。作为摄影爱好者，而Google出品的摄影后期Ap</description>
+    </item>
+    
+    <item>
+      <title>iOS中简单封装一个UIPickerView</title>
+      <link>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%B0%81%E8%A3%85%E4%B8%80%E4%B8%AA%E8%87%AA%E5%AE%9A%E4%B9%89uipickerviewbutton%E7%AF%87/</link>
+      <pubDate>Sat, 19 Nov 2016 02:28:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%B0%81%E8%A3%85%E4%B8%80%E4%B8%AA%E8%87%AA%E5%AE%9A%E4%B9%89uipickerviewbutton%E7%AF%87/</guid>
+      <description>UIPickerView是iOS开发中，相当常用的一个UI控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以</description>
     </item>
     
   </channel>

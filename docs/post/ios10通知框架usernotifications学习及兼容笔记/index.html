@@ -1,0 +1,766 @@
+    <!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="author" content="Nemocdz">
+		<meta name="description" content="Blog Description">
+		<meta name="generator" content="Hugo 0.25.1" />
+		<title>iOS10通知框架UserNotifications学习及兼容笔记 &middot; Nemocdz&#39;s Blog</title>
+		<link rel="shortcut icon" href="https://nemocdz.github.io/My-blog/images/favicon.ico">
+		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/style.css">
+		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/highlight.css">
+		
+
+		
+		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/monosocialiconsfont.css">
+		
+
+		
+		<link href="https://nemocdz.github.io/My-blog/index.xml" rel="alternate" type="application/rss+xml" title="Nemocdz&#39;s Blog" />
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://nemocdz.github.io/My-blog/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://nemocdz.github.io/My-blog/post'>Archive</a>
+	<a href='https://nemocdz.github.io/My-blog/tags'>Tags</a>
+	<a href='https://nemocdz.github.io/My-blog/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://nemocdz.github.io/My-blog/index.xml">RSS</a>
+	
+</nav>
+
+
+        <section id="wrapper">
+            <article class="post">
+                <header>
+                    <h1>
+                        iOS10通知框架UserNotifications学习及兼容笔记
+                    </h1>
+                    <h2 class="headline">
+                    Jul 28, 2017 18:18
+                    · 8603 words
+                    · 18 minutes read
+                      <span class="tags">
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                <section id="post-body">
+                    
+
+<p>在iOS10上，苹果将原来散落在UIKit中各处的用户通知相关的代码进行重构，剥离，打造了一个全新的通知框架-UserNotifications。笔者最近在开发公司通知相关的需求，跟着WWDC2016的视频和官方文档，学习了一下新框架。同时，在学习过程中，和老框架对应Api进行对比，有了个人的感受和看法。</p>
+
+<p>首先，对于通知框架，其框架功能包括以下四类</p>
+
+<ul>
+<li>申请权限/注册配置</li>
+<li>发送本地通知</li>
+<li>展示和响应本地/远程通知</li>
+<li>App Extension</li>
+</ul>
+
+<p>在UserNotifications框架中，最核心的类是<strong>UNUserNotificationCenter</strong>,这个类的是这三项功能的管理类，通过注入到currentNotificationCenter进行对消息的管理。而在之前，大部分操作的管理者UIApplication的单例。</p>
+
+<h3 id="1-申请权限-注册配置">1.申请权限/注册配置</h3>
+
+<p>在新框架中，将申请权限和注册配置拆分为两个Api，使得职责更加分明。先看旧框架的实现。</p>
+
+<pre><code class="language-objective-c">UIUserNotificationType types = ...//通知可显示的样式
+
+UIUserNotificationSettings *settting = [UIUserNotificationSettings settingsForTypes:types categories:nil]; //将样式和Category一起生成配置
+
+[[UIApplication sharedApplication] registerUserNotificationSettings:settting];//用这个配置注册
+</code></pre>
+
+<p>Category的概念，是一个通知的种类。对同种类的通知，可以规定对应的一组按钮操作，同时，iOS10以上的Rich Notification（可以展示图片，自定义视图）的区分读也是通过category来区分。</p>
+
+<p>而在老的通知框架中，上面第二行代码中可以看到，category和展示样式一同绑定起来用于申请权限。实际上，Category的概念用于区分接收消息的种类，也就是其实这个概念属于接收消息后进行自定义处理的使用者，也就是App内部开发。而对于申请权限，其实最终是向App外部的交互，也就是App用户关心的。而新框架进行拆分后，就更加自由和职责区分了。</p>
+
+<p>UserNotifications中请求权限的用法</p>
+
+<pre><code class="language-objective-c">[[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:... completionHandler:^(BOOL granted, NSError * _Nullable error) {
+        if (granted) {
+			//...如果被授权了
+        }
+}];
+</code></pre>
+
+<p>同时，增加一个callback将授权后的状态返回，就像分散型网络请求一般。</p>
+
+<p>对于远程通知，还需要一个获取用户token的操作，并使用这个token进行APNs推送。但是奇怪的是，对于申请token这个操作，新框架中却没有对应的Api，沿用旧的Api。</p>
+
+<pre><code class="language-objective-c">[[UIApplication sharedApplication] registerForRemoteNotifications];
+
+//AppDelegate
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken{
+  ....
+}
+</code></pre>
+
+<p>获取操作被放在AppDelegate的回调中，如果按照新框架的设计，应该会被设计成一个带callBack的Api。所以笔者猜测沿用旧设计的原因是，在以后，获取token的操作不一定由发起请求后产生，也许可能会有多种情况下产生获取操作，也可能token会过期可以进行更新，重置操作。所以delegate的集中式管理更加拥有拓展性，当然也有可能这个Api忘记迁移哈哈。</p>
+
+<h4 id="配置category并注册">配置Category并注册</h4>
+
+<p>对于Category的作用，上文已经有介绍，而Category中目前主要的功能，是对应一组按钮操作。</p>
+
+<p>Category的使用分四步</p>
+
+<ol>
+<li>创建Category，设置identifer，配置一组按钮（可无）</li>
+<li>将Category注册到UIApplication(旧)/UNNotificationCenter(新)中</li>
+<li>发送本地或远程消息时需要按钮或自定义视图时带上对应的categoryIdentifer</li>
+<li>收到消息进行响应时通过消息中携带的categoryIdentifer进行分类，可以指定不同的操作</li>
+</ol>
+
+<p>旧框架中按钮动作对象UIUserNotificationAction和新的UNNotificationAction差异性不大，主要关心的是</p>
+
+<ul>
+<li>按钮上显示的文字</li>
+<li>按钮的identifer，用于区分按钮</li>
+<li>是否需要跳转到前台，唤起主App</li>
+</ul>
+
+<p>而差异性在于</p>
+
+<ul>
+<li>旧框架分为可变对象和不可变对象，新框架只有不可变对象加上实例化方法</li>
+<li>新框架中，对于可输入操作的按钮，拆分成一个子类，可以使输入操作自定义性和拓展性更强</li>
+</ul>
+
+<p>新建一个按钮也很简单</p>
+
+<pre><code class="language-objective-c">UNNotificationAction *callDriverAction = [UNNotificationAction actionWithIdentifier:@&quot;xxx&quot; title:@&quot;呼叫司机&quot; options:UNNotificationActionOptionForeground];
+</code></pre>
+
+<p>options中可以选择是否需要解锁后才能操作、按钮颜色是否为红色（代表操作有破坏性）、是否打开App。</p>
+
+<p>然后将整组按钮加入UNNotificationCategory（新）或UIUserNotificationCategory（旧）中。</p>
+
+<p>这两个对象差异性在于</p>
+
+<ul>
+<li>旧框架分为可变对象和不可变对象，新框架只有不可变对象加上实例化方法</li>
+<li>旧框架按钮有两种使用环境，所以需要设置UIUserNotificationActionContext</li>
+<li>新框架支持配置按钮的响应是否发送到UNNotificationCenter的Delegate或CarPlay中</li>
+<li>新框架支持Intent框架（SiriKit使用到）</li>
+</ul>
+
+<h5 id="uiusernotificationactioncontext">UIUserNotificationActionContext</h5>
+
+<ul>
+<li>UIUserNotificationActionContextDefault-对应iOS10以下的的“提醒”样式，是一个弹框</li>
+<li>UIUserNotificationActionContextMinimal-对应iOS10以下的“横幅”样式，最多支持两个按钮横向并排，多于两个按钮会取前两个</li>
+</ul>
+
+<p>为什么这个在新的框架中被去掉了呢？</p>
+
+<ul>
+<li>iOS10上，提醒样式不再是一个弹框，而是和“横幅”统一，只是不会主动往上收起</li>
+<li>iOS10上，横幅的按钮不再是横向并排，而是竖着排放，也不会限制个数</li>
+</ul>
+
+<p>之后调用setNotificationCategories方法注册即可</p>
+
+<pre><code class="language-objective-c">[[UNUserNotificationCenter currentNotificationCenter]setNotificationCategories:[NSSet setWithObject:self.category]];
+</code></pre>
+
+<p><strong>在运行app时，原来的set里的categories并不会清空，所以需要将整个Set传进去作为参数，这样会把原来的set完整替换成新的set。</strong>每次调用时，整个set替换原来的set。</p>
+
+<p>同时，对于通知设置和Category设置，拆分了两个Api去获取当前的设置。</p>
+
+<pre><code class="language-objective-c">- (void)getNotificationCategoriesWithCompletionHandler:(void(^)(NSSet&lt;UNNotificationCategory *&gt; *categories))completionHandler;
+
+- (void)getNotificationSettingsWithCompletionHandler:(void(^)(UNNotificationSettings *settings))completionHandler;
+</code></pre>
+
+<p>而对于按钮的操作响应，将在第三部分响应通知中介绍。</p>
+
+<h3 id="2-发送本地通知">2.发送本地通知</h3>
+
+<p>在iOS10以前，本地通知的类用的是UILocalNotification。而在UserNotifications框架中，将本地通知和远程通知统一起来，然后将通知拆分成request=content（内容）+trigger（触发器）的模式，十分像网络请求的思路。这样设计的好处是对于远程通知和本地通知对于响应的处理得到统一，同时也不会像以前一样，将本地特有的功能随意堆砌在本地通知类中，而是通过差异化配置类去进行注入。</p>
+
+<h4 id="unnotificationcontent">UNNotificationContent</h4>
+
+<p>新的通知内容类，有可变子类。同时有以下新功能</p>
+
+<ul>
+<li>支持一个UNNotificationAttachment（附件）数组，附件用一个identifer+文件路径构成，可携带视频/图片等，而这些内容也为iOS10的RichNotification自定义视图提供了素材</li>
+<li>支持Title+Subtitle，Apns对应字段也同步支持</li>
+<li>通知声音有了特定类UNNotificationSound进行管理，以后拓展性，自由度更好了</li>
+<li>threadIdentifer(主要用于Extesion Content中，在最后一节App Extension中会介绍)</li>
+</ul>
+
+<h4 id="unnotificationtrigger">UNNotificationTrigger</h4>
+
+<p>而之前散落成一个个不同类型的触发相关属性，也被汇总成了UNNotification的子类。有以下几个类</p>
+
+<ul>
+<li>UNPushNotificationTrigger-这个类代表这条消息是由APNs推送过来的，也就是这个trigger是否是这个类是<strong>区分本地通知和远程通知</strong>的标志，对于做多系统b版本兼容时，很有帮助</li>
+<li>UNTimeIntervalNotificationTrigger-根据相隔时间触发，就和计时器一样，<strong>注意timeInterval要大于0，且希望repeats的话，需要timeInterval大于60</strong></li>
+<li>UNCalendarNotificationTrigger-根据日历时间触发</li>
+<li>UNLocationNotificationTrigger-根据定位在某个位置触发</li>
+</ul>
+
+<h4 id="unnotificationrequest">UNNotificationRequest</h4>
+
+<p>request除了包含content和trigger外，还有一个非常主要的属性，那就是<strong>identifer</strong>。</p>
+
+<p>有了Identifer，可以实现通知的更新和移除。</p>
+
+<p>把通知分成待展示（已投递，但未触发或未展示）和已经展示过进入用户通知中心的两种。远程通知在后台收到会立即展示。也就是一共有四种情况</p>
+
+<ul>
+<li>更新未展示的通知（本地&amp;远程前台）</li>
+<li>更新已展示的通知（本地&amp;远程）</li>
+<li>取消未展示的通知（本地）</li>
+<li>取消已展示的通知（本地）</li>
+</ul>
+
+<p>而标识同一通知的标志，就是通知的identifer。</p>
+
+<p>而发送/更新通知用的是同一个Api，就是将request添加到UNNotificationCenter里，同时也有一个callback回调状态</p>
+
+<pre><code class="language-objective-c">[[UNUserNotificationCenter currentNotificationCenter] addNotificationRequest:[UNNotificationRequest requestWithIdentifier:sameIdentifer content:content trigger:trigger] withCompletionHandler:^(NSError * _Nullable error) {
+		...
+}];
+</code></pre>
+
+<p>而取消或移除未展示和已展示的通知，分开了两组Api方便根据情况选择，同时也有get方法获取当前已展示/未展示的队列里的所有通知，而且和添加/更新不同，移除只需要一个identifer，且可以同时传入一组identifer，一次性移除多个</p>
+
+<pre><code class="language-objective-c">- (void)getPendingNotificationRequestsWithCompletionHandler:(void(^)(NSArray&lt;UNNotificationRequest *&gt; *requests))completionHandler;//获取未展示通知
+- (void)removePendingNotificationRequestsWithIdentifiers:(NSArray&lt;NSString *&gt; *)identifiers;//取消未展示通知
+- (void)removeAllPendingNotificationRequests;//取消所有未展示通知队列里的通知
+
+- (void)getDeliveredNotificationsWithCompletionHandler:(void(^)(NSArray&lt;UNNotification *&gt; *notifications))completionHandler;//获取已展示通知
+- (void)removeDeliveredNotificationsWithIdentifiers:(NSArray&lt;NSString *&gt; *)identifiers;//从通知中心中移除已展示通知
+- (void)removeAllDeliveredNotifications;//移除所有通知中心里的通知
+</code></pre>
+
+<h3 id="3-展示和响应">3.展示和响应</h3>
+
+<p>在旧框架里面，这部分Api是最为混乱的部分。一共有1..2&hellip;..7个delegate&hellip;&hellip;而且之中有的还有取代关系，也就是有其中一个另一个不执行&hellip;&hellip;</p>
+
+<pre><code class="language-objective-c">- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo;//前台收到远程通知
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification;//前台收到本地通知
+
+- (void)application:(UIApplication *)application handleActionWithIdentifier:(nullable NSString *)identifier forLocalNotification:(UILocalNotification *)notification completionHandler:(void(^)())completionHandler;//iOS9之前本地通知点击按钮后
+
+- (void)application:(UIApplication *)application handleActionWithIdentifier:(nullable NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo withResponseInfo:(NSDictionary *)responseInfo completionHandler:(void(^)())completionHandler;//iOS9远程通知点击按钮后
+
+- (void)application:(UIApplication *)application handleActionWithIdentifier:(nullable NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void(^)())completionHandler;//iOS9之前远程通知点击按钮后
+
+- (void)application:(UIApplication *)application handleActionWithIdentifier:(nullable NSString *)identifier forLocalNotification:(UILocalNotification *)notification withResponseInfo:(NSDictionary *)responseInfo completionHandler:(void(^)())completionHandler;//iOS9本地通知点击按钮
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;//iOS7以上收到远程通知调用(未被废弃)
+</code></pre>
+
+<p>这么乱，让我重新分类。</p>
+
+<ul>
+<li>收到通知</li>
+<li>点击通知本身</li>
+<li>点击通知的自定义按钮</li>
+</ul>
+
+<h4 id="收到通知">收到通知</h4>
+
+<p>在触发本地通知时，App并不会被唤醒，所以本地只有前台时才有回调。</p>
+
+<ul>
+<li>本地+前台-<code>didReceiveLocalNotification</code></li>
+<li>远程+前台-<code>didReceiveRemoteNotification</code>和<code>didReceiveRemoteNotification:fetchCompletionHandler</code>若有后面则只执行后面那个</li>
+<li>远程+后台-唤醒并执行<code>didReceiveRemoteNotification:fetchCompletionHandler</code></li>
+</ul>
+
+<h4 id="点击通知本身">点击通知本身</h4>
+
+<ul>
+<li><p>本地+App存活-<code>didReceiveLocalNotification</code></p></li>
+
+<li><p>本地+App未存活-<code>-(BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions</code>，其中lanchOptions中UIApplicationLaunchOptionsLocalNotificationKey为UILocalNotification对象</p></li>
+
+<li><p>远程+App存活-<code>didReceiveRemoteNotification</code>和<code>didReceiveRemoteNotification:fetchCompletionHandler</code>若有后面则只执行后面那个</p></li>
+
+<li><p>远程+App未存活-<code>didReceiveRemoteNotification:fetchCompletionHandler</code>有则执行，无则<code>-(BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions</code>，其中lanchOptions中UIApplicationLaunchOptionsRemoteNotificationKey</p></li>
+</ul>
+
+<p>为通知的userInfo</p>
+
+<h4 id="点击自定义按钮">点击自定义按钮</h4>
+
+<ul>
+<li>iOS9<code>handleActionWithIdentifier</code>，有responseInfo后缀的优先调，无则调用无后缀的</li>
+<li>iOS8调用无后缀的</li>
+</ul>
+
+<p>整理完感觉就是，乱，还涉及到lauchOptions等无关api，api之间还会覆盖，还有一些不是收到和响应都会调。</p>
+
+<p>而新框架单纯拆分为收到消息+点击事件响应，且不再在Api层面区分远程与本地通知，使对待通知的路径变得统一。</p>
+
+<h4 id="通知的收到">通知的收到</h4>
+
+<p>在前台的时候，收到不管是本地还是远程通知都会被新的delegate接管。以前的通知框架，在前台收到通知时，默认是不展示（没有横幅等）的。而新delegate可以在前台收到通知后，展示前，做一些处理，包括以什么形式展示，已经做一些自定义操作。而这个Delegate只有App在前台才会执行。因为在后台App收到通知时，通知不会唤醒App（不是唤起），而App可能是被杀死的，所以这个Delegate没有被赋值，所以统一只在App在前台时才执行。而将新的Api对应旧的Api转换起来的话，就是下面的代码。</p>
+
+<pre><code class="language-objective-c">- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler{
+    BOOL isRemote = NO;
+    if ([notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
+        isRemote = YES;
+    }
+    UILocalNotification *localNotification;//从新的转换为旧的本地通知
+    
+     if (!isRemote &amp;&amp; [[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:didReceiveLocalNotification:)]) {
+        [[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] didReceiveLocalNotification:localNotification];
+    }
+    else if (isRemote) {
+        if ([[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
+            [[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] didReceiveRemoteNotification:notification.request.content.userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {}];
+        }
+        else if ([[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]){
+            [[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] didReceiveRemoteNotification:notification.request.content.userInfo];
+        }
+    }
+
+    
+    completionHandler(UNNotificationPresentationOptionBadge|UNNotificationPresentationOptionAlert);//决定前台展示形式
+}
+</code></pre>
+
+<p>而CompletionHandler里传入希望通知支持的类型（横幅、红点、声音），在自定义操作完成后执行这个block就可。当然可以在这里为不同消息定制不同的支持类型。</p>
+
+<h4 id="点击通知或按钮的操作响应">点击通知或按钮的操作响应</h4>
+
+<p>新框架中，点击操作和收到通知的Api的响应终于被区分开了。而且点击操作也包含点击通知本身，以及有了点清除关闭通知的事件响应。拆分点击和收到的Api是很好的，因为点击通知和按钮时，实际上会将app唤起到前台，一般这时候需要进行页面跳转，界面状态恢复等等，这些在收到通知时是没有必要的。</p>
+
+<p>新的Api和就的转换的话就是下面这样</p>
+
+<pre><code class="language-objective-c">- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler{
+    BOOL isRemote = NO;
+    if ([response.notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
+        isRemote = YES;
+    }
+    
+    UILocalNotification *localNotification;//从新的转换为旧的本地通知
+
+    
+    if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier] || [response.actionIdentifier isEqualToString:UNNotificationDismissActionIdentifier]) {
+        if (!isRemote &amp;&amp; [[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:didReceiveLocalNotification:)]) {
+            [[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] didReceiveLocalNotification:localNotification];
+        }
+        else if (isRemote) {
+            if ([[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
+                [[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] didReceiveRemoteNotification:response.notification.request.content.userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {}];
+            }
+            else if ([[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]){
+                [[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] didReceiveRemoteNotification:response.notification.request.content.userInfo];
+            }
+        }
+    }
+    else{
+        if (!isRemote) {
+            if ([[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:handleActionWithIdentifier:forLocalNotification:withResponseInfo:completionHandler:)]) {
+                [[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] handleActionWithIdentifier:response.actionIdentifier forLocalNotification:localNotification withResponseInfo:@{} completionHandler:^{}];
+            }
+            else if ([[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:handleActionWithIdentifier:forLocalNotification:completionHandler:)]){
+                [[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] handleActionWithIdentifier:response.actionIdentifier forLocalNotification:localNotification completionHandler:^{}];
+            }
+        }
+        else{
+            if ([[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:)]) {
+                [[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] handleActionWithIdentifier:response.actionIdentifier forRemoteNotification:response.notification.request.content.userInfo withResponseInfo:@{} completionHandler:^{}];
+            }
+            else if ([[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)]){
+                [[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] handleActionWithIdentifier:response.actionIdentifier forRemoteNotification:response.notification.request.content.userInfo completionHandler:^{}];
+            }
+            
+        }
+    }
+
+    }
+    completionHandler();
+}
+</code></pre>
+
+<p>当实现了新框架这两个Delegate后，旧框架的6个Delegate将不会被执行，所以除非App只支持iOS10，尽量按上面的代码进行兼容。</p>
+
+<p><strong>注意-(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;</strong>这个方法并未随着旧框架被废弃，还是正常使用。</p>
+
+<h3 id="4-app-extension">4.App Extension</h3>
+
+<p>关于新通知框架的Extension，有以下两个</p>
+
+<p><img src="https://ws4.sinaimg.cn/large/006tKfTcly1fhxb6j1b04j308403c0sr.jpg" alt="屏幕快照 2017-07-26 下午3.16.09" /></p>
+
+<h4 id="notificationservice-extension">NotificationService Extension</h4>
+
+<p>这个Extension允许我们在远程通知收到前做一些修改。因为之前App内UNNotificaionCenter的Delegte并不能在App不存活情况下执行，所以有了这个Extension来提供这样的功能。新建NotificationService的target后，发现系统会自动生成了UNNotificationServiceExtension的子类。其中重写方法的模板，系统也生成好了。</p>
+
+<pre><code class="language-objective-c">@interface NotificationService ()
+@property (nonatomic, strong) void (^contentHandler)(UNNotificationContent *contentToDeliver);
+@property (nonatomic, strong) UNMutableNotificationContent *bestAttemptContent;
+@end
+
+@implementation NotificationService
+
+- (void)didReceiveNotificationRequest:(UNNotificationRequest *)request withContentHandler:(void (^)(UNNotificationContent * _Nonnull))contentHandler {
+    self.contentHandler = contentHandler;
+    self.bestAttemptContent = [request.content mutableCopy];
+    
+    self.contentHandler(self.bestAttemptContent);
+}
+
+- (void)serviceExtensionTimeWillExpire {
+
+    self.contentHandler(self.bestAttemptContent);
+}
+
+@end
+</code></pre>
+
+<p>第一个方法在收到远程通知时，可以拦截通知并修改通知内容。先用一个block保存当时的上下文，再修改完后再调用block再修改完新的通知内容回调回去。</p>
+
+<p>第二个方法是在修改通知时机将要结束时调用，这时候会强制执行block了。</p>
+
+<p>在推送 payload 中增加一个 <code>mutable-content</code> 值为 1 来启用这个Extension，暂时还不支持本地通知。</p>
+
+<h4 id="notificationcontent-extension">NotificationContent Extension</h4>
+
+<p>这个就是实现Rich Notification的拓展。新建这个Target后，可以发现自动生成了一个ViewController并遵循了UserNotificationsUI框架的UNNotificationContentExtension协议。又是一个新框架，看来之后在通知视图上的功能将会变得更强大。</p>
+
+<pre><code class="language-objective-c">- (void)didReceiveNotification:(UNNotification *)notification {
+	//收到通知后的操作
+}
+
+- (void)didReceiveNotificationResponse:(UNNotificationResponse *)response completionHandler:(void (^)(UNNotificationContentExtensionResponseOption option))completion{
+   //收到通知响应，如按钮，可以这个方法里拦截，并自定义操作，再决定是否将按钮放行至主app
+}
+</code></pre>
+
+<p>这个协议里面只有上面两个方法。第一个方法用于在展开Rich视图时触发，进行根据数据去改变视图。就如平时收到网络请求后根据网络请求返回的响应改变视图元素。当打开RIch视图后，这个方法还有两个时机会触发。</p>
+
+<ol>
+<li>Request的Identifer一致，相当于更新整个通知，同时视图也重新加载</li>
+<li>还记得之前说的Content的threadIdentifer么，这个相同时，这个方法也会重新调用，也就是这个是用来标识同一个流程的的通知，当然，通知还是两条，只是视图从通知A状态到通知B状态了</li>
+</ol>
+
+<p>而第二个方法，实在通知响应时，比如按钮响应时，先在这个Extension里拦截，可以进行响应修改，视图改变等操作，然后通过CompletionHandler的UNNotificationContentExtensionResponseOption来选择放行这些响应。其中UNNotificationContentExtensionResponseOptionDismissAndForwardAction才可以将响应放行到主app里UNNotificationCenter的delegate方法中。</p>
+
+<p>同时这个Extension也有自己的Storyboard和Info.plist。</p>
+
+<p><img src="https://ws4.sinaimg.cn/large/006tKfTcly1fi19jl5hduj30gz05pdgk.jpg" alt="" /></p>
+
+<p>DefaultContenHidden代表是否在Rich状态下还显示原来的body文字</p>
+
+<p>Category代表此类categoryIdentifer会触发这个ViewController，可以是一个Array，多个同时支持这个ViewController。</p>
+
+<p>SizeRatio代表高/宽比，其中宽固定为屏幕宽度，也就是用这个来调整视图的高度。</p>
+
+<h3 id="ios11new">iOS11New</h3>
+
+<p>都是一些小改动，增加一些细分化Api等，可以在苹果官方文档找到。</p>
+
+<p><a href="https://developer.apple.com/documentation/usernotifications?changes=latest_major&amp;language=objc">https://developer.apple.com/documentation/usernotifications?changes=latest_major&amp;language=objc</a></p>
+
+<h3 id="总结">总结</h3>
+
+<h4 id="ios10新通知框架和旧框架差异性">iOS10新通知框架和旧框架差异性</h4>
+
+<table>
+<thead>
+<tr>
+<th>UILocalNotification</th>
+<th>UNNotificationRequest</th>
+<th>Apns消息体</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>无</td>
+<td>identifer</td>
+<td>HTTP/2的header中的 apns-collapse-id</td>
+</tr>
+
+<tr>
+<td>无</td>
+<td>content.attachments(UNNotificationAttachmen)</td>
+<td>可在UNNotificationService中修改</td>
+</tr>
+
+<tr>
+<td>applicationIconBadgeNumber（Integer）</td>
+<td>content.badge</td>
+<td>badge</td>
+</tr>
+
+<tr>
+<td>alertBody</td>
+<td>content.body</td>
+<td>alert的body</td>
+</tr>
+
+<tr>
+<td>category</td>
+<td>content.categoryIdentifer</td>
+<td>category</td>
+</tr>
+
+<tr>
+<td>alertLaunchImage</td>
+<td>lanuchImageName（打开时启动图）</td>
+<td>alert的lanch-image</td>
+</tr>
+
+<tr>
+<td>soundName（新无法转换为旧）</td>
+<td>UNNotificationSound-soundNamed:</td>
+<td>sound</td>
+</tr>
+
+<tr>
+<td>无</td>
+<td>subtitle</td>
+<td>alert的subtitle</td>
+</tr>
+
+<tr>
+<td>无</td>
+<td>threadIdentifer（特殊标识符，自定义用）</td>
+<td>thread-id</td>
+</tr>
+
+<tr>
+<td>alertTitle（iOS8.2以上）</td>
+<td>title</td>
+<td>alert的title</td>
+</tr>
+
+<tr>
+<td>userInfo</td>
+<td>userInfo</td>
+<td>所有</td>
+</tr>
+
+<tr>
+<td>fireDate</td>
+<td>UNNotificatonTimeInterval-trigger.timeInterval</td>
+<td>无</td>
+</tr>
+
+<tr>
+<td>repeatInterval&gt;0 或 repeatCalendar不为空或regionTriggersOnce为YES</td>
+<td>trigger.repeat</td>
+<td>无</td>
+</tr>
+
+<tr>
+<td>alertAction（alert模式下action名字）</td>
+<td>无</td>
+<td>无</td>
+</tr>
+
+<tr>
+<td>region（触发位置）</td>
+<td>UNLocationNotificationTrigger-trigger.region</td>
+<td>无</td>
+</tr>
+
+<tr>
+<td>timeZone</td>
+<td>无</td>
+<td>无</td>
+</tr>
+
+<tr>
+<td>repeatInterval（重复时间点）</td>
+<td>UNNotificationTimeInterval/Calendar-nextTriggerDate转换</td>
+<td>无</td>
+</tr>
+
+<tr>
+<td>reatCalendar（重复的日历）</td>
+<td>trigger的Class为UNNotificationPushTrigger</td>
+<td>无</td>
+</tr>
+
+<tr>
+<td>regionTriggersOnce</td>
+<td>UNLocationNotificationTrigger-trigger.repeats</td>
+<td>无</td>
+</tr>
+
+<tr>
+<td>hasAction（alert下是否有动作）</td>
+<td>无</td>
+<td>无</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>UNNotificationAction</th>
+<th>UIUserNotificationAction</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>identifer</td>
+<td>Identifer</td>
+</tr>
+
+<tr>
+<td>title</td>
+<td>title</td>
+</tr>
+
+<tr>
+<td>UNNotificationActionOptions-options</td>
+<td>activationMode+authenticationRequired+destructive共同决定</td>
+</tr>
+
+<tr>
+<td>UNTextInputNotificationAction/UNNotification（按钮种类）</td>
+<td>UIUserNotificationActionBehavior-behavior（iOS9以上）</td>
+</tr>
+
+<tr>
+<td>无</td>
+<td>parameters</td>
+</tr>
+
+<tr>
+<td>UNTextInputNotificationAction-textInputButtonTitle</td>
+<td>无</td>
+</tr>
+
+<tr>
+<td>UNTextInputNotificationAction-textInputPlaceholder</td>
+<td>无</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>UNNotificationCategory</th>
+<th>UIUserNotificationCategory</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>identifer</td>
+<td>Identifer</td>
+</tr>
+
+<tr>
+<td>actions(UNNotificationAction)</td>
+<td>actionsForContext(UIUserNotificationAction)</td>
+</tr>
+
+<tr>
+<td>intentIdentifers(支持Siri或苹果叫车框架的标识符)</td>
+<td>无</td>
+</tr>
+
+<tr>
+<td>options（点击后是否消失等等）</td>
+<td>无</td>
+</tr>
+</tbody>
+</table>
+
+<p>iOS10的通知框架，和之前比简直焕然一新，整洁，优雅。还有一点需要注意的是，因为原来属于UIKit中，那么最好在主线程中操作。但由于老框架暂时还不会被废弃，所以在接入时，要注意新老框架的兼容和覆盖，避免出现不必要的Bug。</p>
+
+<p>PS：此文又名《iOS10通知框架最全总结》</p>
+
+<p>PPS：此文又名《iOS10通知框架，你看我就够了》</p>
+
+<p>PPPS：此文又名《iOS10通知框架，你真的懂么？》</p>
+
+<p>所有源码和<a href="https://github.com/Nemocdz/iOS10NotificationTest">Demo</a>
+如果您觉得有帮助,不妨给个star鼓励一下,欢迎关注&amp;交流</p>
+
+<h5 id="参考链接">参考链接</h5>
+
+<ul>
+<li><p><a href="https://onevcat.com/2016/08/notification/">活久见的重构 - iOS 10 UserNotifications 框架解析</a></p></li>
+
+<li><p><a href="https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/PayloadKeyReference.html">AppleDocument-PaylodReference</a></p></li>
+</ul>
+
+<p>​</p>
+
+                </section>
+            </article>
+
+            
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    
+    <a class="symbol" href="https://www.facebook.com/nemocdz">
+        circlefacebook
+    </a>
+    
+    <a class="symbol" href="https://github.com/Nemocdz">
+        circlegithub
+    </a>
+    
+    <a class="symbol" href="https://twitter.com/Nemocdz">
+        circletwitterbird
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2017 <i class="fa fa-heart" aria-hidden="true"></i> Nemocdz
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://nemocdz.github.io/My-blog/js/jquery-2.2.4.min.js"></script>
+<script src="https://nemocdz.github.io/My-blog/js/main.js"></script>
+<script src="https://nemocdz.github.io/My-blog/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+    </body>
+</html>
