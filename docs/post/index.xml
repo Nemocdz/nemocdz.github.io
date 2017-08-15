@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Nemocdz&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Fri, 28 Jul 2017 18:18:13 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 16 Aug 2017 03:31:13 +0800</lastBuildDate>
     
 	<atom:link href="https://nemocdz.github.io/My-blog/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>AFNetworking的漂亮细节</title>
+      <link>https://nemocdz.github.io/My-blog/post/afnetworking%E7%9A%84%E6%BC%82%E4%BA%AE%E7%BB%86%E8%8A%82/</link>
+      <pubDate>Wed, 16 Aug 2017 03:31:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/afnetworking%E7%9A%84%E6%BC%82%E4%BA%AE%E7%BB%86%E8%8A%82/</guid>
+      <description>写在开头 最近重读了AFNetworking源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被AFNetworking作者</description>
+    </item>
     
     <item>
       <title>iOS10通知框架UserNotifications学习及兼容笔记</title>
