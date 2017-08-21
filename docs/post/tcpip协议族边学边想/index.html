@@ -1,0 +1,470 @@
+    <!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="author" content="Nemocdz">
+		<meta name="description" content="Blog Description">
+		<meta name="generator" content="Hugo 0.25.1" />
+		<title>TCP/IP协议族边学边想 &middot; Nemocdz&#39;s Blog</title>
+		<link rel="shortcut icon" href="https://nemocdz.github.io/My-blog/images/favicon.ico">
+		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/style.css">
+		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/highlight.css">
+		
+
+		
+		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/monosocialiconsfont.css">
+		
+
+		
+		<link href="https://nemocdz.github.io/My-blog/index.xml" rel="alternate" type="application/rss+xml" title="Nemocdz&#39;s Blog" />
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://nemocdz.github.io/My-blog/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://nemocdz.github.io/My-blog/post'>Archive</a>
+	<a href='https://nemocdz.github.io/My-blog/tags'>Tags</a>
+	<a href='https://nemocdz.github.io/My-blog/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://nemocdz.github.io/My-blog/index.xml">RSS</a>
+	
+</nav>
+
+
+        <section id="wrapper">
+            <article class="post">
+                <header>
+                    <h1>
+                        TCP/IP协议族边学边想
+                    </h1>
+                    <h2 class="headline">
+                    Aug 22, 2017 03:28
+                    · 4136 words
+                    · 9 minutes read
+                      <span class="tags">
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                <section id="post-body">
+                    
+
+<h3 id="写在前面">写在前面</h3>
+
+<p>最近读了《图解TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和“TCP/IP”这两门课中一些未理解的知识，和疑惑的问题。</p>
+
+<h3 id="网络基础">网络基础</h3>
+
+<p>OSI七层模型</p>
+
+<ul>
+<li>物理层-0和1代表高低电压，物理网络设备规格</li>
+<li>数据链路层-数据帧和比特流转换</li>
+<li>网络层-地址管理和路由选择</li>
+<li>传输层-连接节点之间的数据传输</li>
+<li>会话层-通信管理</li>
+<li>表示层-数据格式转换</li>
+<li>应用层-针对应用定制</li>
+</ul>
+
+<p>TCP/IP：定义了数据链路层以上的协议，包括网络层、传输层、应用层（会话层以上都包括）</p>
+
+<h3 id="网络层">网络层</h3>
+
+<p>网络层只关心起终点的整体传输，数据链路层关心每一个设备间的传输。</p>
+
+<h4 id="ip-internet-protocol">IP（Internet Protocol）</h4>
+
+<p>Q：IP为何面向无连接？</p>
+
+<p>A：1.简化 2.提速 3.为上层提供自定义</p>
+
+<h5 id="ip寻址">IP寻址</h5>
+
+<p>IP地址=网络标识+主机标识</p>
+
+<p>Q：如何确定网络标识位数？</p>
+
+<p>A：IP分类（传统ABCD）或子网掩码来划分</p>
+
+<h5 id="路由控制">路由控制</h5>
+
+<p>指明IP包的下一跳路由，用路由控制表保存信息。</p>
+
+<p>形成方式</p>
+
+<ul>
+<li>静态路由控制（管理员手动设置）</li>
+<li>动态路由控制（和其他路由器交换信息自动刷新，受到“路由协议”控制）</li>
+</ul>
+
+<p>路由聚合：多个子网掩码对外呈现同一网络地址，减少路由表条目</p>
+
+<p>Q：0.0.0.0/0，IP地址/32，127.0.0.1分别是什么意思？</p>
+
+<p>A：</p>
+
+<ol>
+<li>代表默认路由，路由表中任意的地址都能和它匹配，并不是一个IP地址（IP地址应标识为0.0.0.0/32）。匹配不到的都走默认路由。在家用路由器中用来描述Internet上所有的路由从而不用存储所有路由。</li>
+<li>代表主机路由，所有位都参与路由，代表某一个主机的唯一路由。可用于匹配家用路由器的默认路由的寻找。</li>
+<li>代表环回地址，同一计算机内的网络通信的本地默认地址，数据不会被流向网络。</li>
+</ol>
+
+<h5 id="ip包的分割和重组">IP包的分割和重组</h5>
+
+<p>在发送端和路由根据每段链路的MTU进行分片，接收端进行重组。</p>
+
+<p>Q：为何传输过程需要分割数据包？</p>
+
+<p>A：因为每种数据链路中的MTU（Max Transfer Unit，最大传输单元）各不相同</p>
+
+<p>Q：为何只在接收端而不在途中重组？</p>
+
+<p>A：1.无法保证分片在同一路径传输 2.分片可能丢失 3.可能之后还需要重新分片</p>
+
+<p>分片机制的不足之处</p>
+
+<ul>
+<li>路由器负荷加重</li>
+<li>丢失某一分片整个IP包报废</li>
+</ul>
+
+<h6 id="路径mtu发现">路径MTU发现</h6>
+
+<p>先获取整个路径中数据链路的最小MTU，发送端按照这个MTU分片</p>
+
+<p>工作原理：</p>
+
+<ol>
+<li>先设置IP包禁止分片</li>
+<li>发送并在丢弃时（说明包MTU过大）将当时可最大的MTU用ICMP不可达消息返回</li>
+<li>设置包MTU为ICMP返回的MTU并重新循环上述步奏，直到无ICMP返回</li>
+</ol>
+
+<h5 id="4-ipv6">4.IPv6</h5>
+
+<p>特点：</p>
+
+<ul>
+<li>地址扩大，路由控制表的聚合</li>
+<li>性能提升：不校验首部，简化首部建构</li>
+<li>即插即用：无DHCP也可以实现自动分配IP</li>
+<li>认证和加密：IPsec</li>
+<li>多播和Mobile IP</li>
+</ul>
+
+<h4 id="dns-domain-name-system">DNS（Domain Name System）</h4>
+
+<p>将域名解析成IP。</p>
+
+<p>各个域的分层有对应的域名服务器，像树一样连接分层，分别可以解析对应域名的IP。</p>
+
+<p>工作原理：</p>
+
+<ol>
+<li>查询时先向该域内的域名服务器A查询，</li>
+<li>域名服务器A从下至上找到根域名服务器，</li>
+<li>根域名服务器再从上往下找到对应的域名服务器B地址并返回给域名服务器A</li>
+<li>A向B查询域名的IP地址并返回。</li>
+</ol>
+
+<h4 id="arp-address-resolution-protocol">ARP（Address Resolution Protocol）</h4>
+
+<p>通过目标IP地址定位下一个接收的网络设备MAC地址。分为请求和响应两部分。一般获取到Mac地址后会缓存一段时间。</p>
+
+<h4 id="icmp-internet-control-message-protocol">ICMP（Internet Control Message Protocol）</h4>
+
+<p>主要功能</p>
+
+<ul>
+<li>确认IP包是否成功送达</li>
+<li>通知被废弃的具体原因</li>
+</ul>
+
+<p>主要类型包括：目标不可达、重定向、超时、回送（Ping命令）</p>
+
+<h4 id="dhcp-dynamic-host-configuratin-protocol">DHCP（Dynamic Host Configuratin Protocol）</h4>
+
+<p>为主机自动设置IP地址和统一管理IP地址分配。</p>
+
+<p>工作原理：</p>
+
+<ol>
+<li>发送DHCP发现包（目标地址广播，源地址未知），请求网络设置（IP地址和子网掩码等）</li>
+<li>DHCP服务器返回可使用的网络设置</li>
+<li>发送DHCP请求包（目标地址广播，源地址未知），通知想要应用该网络设置</li>
+<li>DHCP服务器通知允许应用该设置</li>
+</ol>
+
+<p>Q：为什么需要第二次通知和确认设置？</p>
+
+<p>A：DHCP服务器的可分配目标地址可被管理员设置，二次确认可保证即使被重复的设置后也可以正常工作</p>
+
+<p>Q：为什么DHCP服务器分配IP地址前发送ICMP、客户端应用获得的IP地址发前送ARP请求？</p>
+
+<p>A：确认无返回应答从而检查IP地址是否可用，DHCP服务器发送ICMP是因为服务器少于客户端，ICMP速度更快，也不需要关心Mac地址</p>
+
+<h4 id="nat-network-address-translator">NAT（Network Address Translator）</h4>
+
+<p>用于将局域网中私有地址转换为全局IP地址的技术。</p>
+
+<p>通过NAT路由器中维护一张自动生成的用来转换地址的表。</p>
+
+<p>不同的内网主机可通过NAPT（Network Address Ports Translator）技术包含端口号一起转换。</p>
+
+<p>IPv4和IPv6转换也可通过相关技术NAT-PT和NAPT-PT来实现</p>
+
+<p>不足之处：</p>
+
+<ul>
+<li>无法从NAT外部向内部建立连接</li>
+<li>转换表生成和转换有开销</li>
+<li>一旦异常需要重新启动时所有TCP连接会被重置</li>
+</ul>
+
+<p>解决方式：IPv6或NAT穿透</p>
+
+<h4 id="ip隧道">IP隧道</h4>
+
+<p>在网络层首部后面继续追加网络层首部的通信方式</p>
+
+<h3 id="传输层">传输层</h3>
+
+<p>传输层通过端口号标识请求发送给哪一个应用程序的守护进程（对消息进行监听）。</p>
+
+<p>标识唯一的通信的要素：源IP、目标IP、源端口号、目标端口号、协议号</p>
+
+<h4 id="udp-user-datagram-protocol">UDP（User Datagram Protocol）</h4>
+
+<p>面向无连接的通信，不保证通信可靠，不负责丢包重发等。</p>
+
+<p>主要用于高速传输和实时性要求较高的通信或广播：</p>
+
+<ul>
+<li>包总量小（DNS等）</li>
+<li>视频音频等多媒体通信（即时通信）</li>
+<li>限定于LAN等特定网络</li>
+<li>广播、多播通信</li>
+</ul>
+
+<h4 id="tcp-transmission-control-protocol">TCP（Transmission Control Protocol）</h4>
+
+<p>面向连接的通信，对传输、发送、通信进行控制，尽量保证通信可靠。</p>
+
+<p>特点：通过序列号和确认应答（ACK）</p>
+
+<p>Q：序列号作用是？</p>
+
+<p>A：确认应答在途中被丢弃或者延迟到达，导致进行多次重传相同数据。序列号定义后可在确认应答中将下个应该发送的序列号带上，保证下次发送的是正确的。</p>
+
+<p>Q：超时重发如何确定？</p>
+
+<p>A：每次计算往返时间（RTT，Round Trip Time）和偏差（抖动值）相加并稍大一点</p>
+
+<h5 id="tcp连接建立和断开">TCP连接建立和断开</h5>
+
+<p>设计思想我个人总结是：一次请求对应一次应答，<strong>客户端和服务端都需要进行请求</strong>。</p>
+
+<p>Q：为啥建立连接是三次握手？</p>
+
+<p>A：首先这三个包分别是</p>
+
+<ol>
+<li><p>客户端的请求（建立连接）</p>
+
+<ol>
+<li>客户端请求的应答+服务端请求 （建立连接）</li>
+<li>服务端请求的应答</li>
+</ol></li>
+</ol>
+
+<p>也就是中间那个包实际上包含两个功能。</p>
+
+<p>客户端和服务端都需要请求是因为建立连接前，两端配置（比如序列号）需要<strong>协商同步</strong>。</p>
+
+<ol>
+<li>同步信号需要一个<strong>返回确保成功</strong>，所以就有了请求的应答。</li>
+<li>单纯一边的请求和应答并不能保证另一边也达到同步，所以就需要两边都请求。</li>
+</ol>
+
+<p>而三个包则是满足以上两个条件的<strong>最小数字</strong>。</p>
+
+<p>Q：为啥断开连接是四次挥手？</p>
+
+<p>A：把步骤2拆开了，因为服务端在收到请求时不一定已经做好了断开的准备。并且最后一个ACK发送后还会等待一段时间确保最后一个ACK送达。</p>
+
+<h4 id="tcp窗口">TCP窗口</h4>
+
+<p>每个请求包对应一个应答会随着数量增大和往返时间增长性能降低。</p>
+
+<p>所以不需要每个包对应一个应答，而是以一个更大的单位。</p>
+
+<p>窗口表示某些连续的包的集合，大小为无需确认应答而可以继续发送的最大值。</p>
+
+<p>窗口需要缓存整个窗口的数据避免有一部分需要重传，直到收到应答后才可清除缓存。</p>
+
+<p>Q：为何需要滑动窗口？</p>
+
+<p>A：滑动窗口是指收到应答后将窗口滑动到确认应答里的序列号的位置。</p>
+
+<ul>
+<li>可以迅速使后面进入窗口范围的数据也可同时发送，提高性能。</li>
+<li>在收到包而应答丢失的情况，收到后面的应答可以表示之前的包收到了，滑动避免重传</li>
+</ul>
+
+<p>Q：为何需要快速重传？</p>
+
+<p>A：快速重传是指连续收到三次序号一致的之前序号应答后直接重传。因为丢失某个包后，后面的包也在窗口内所以也发送出去，此时会收到多次之前丢失包序号的应答，而不需要超时等待。之所以是三次参见<a href="https://www.zhihu.com/question/21789252">链接</a>。</p>
+
+<h5 id="窗口大小控制">窗口大小控制</h5>
+
+<p>过大容易造成接收方缓存区数据溢出，丢弃后造成无意义重传。</p>
+
+<p>通过TCP首部的值进行动态大小控制。</p>
+
+<p>Q：为何需要发送窗口探测包？</p>
+
+<p>A：接收方缓存区即将满后会暂停接收并通知发送方暂停发送（窗口大小为0）。接收方可以重新开始接受时发送一个窗口更新包通知。避免此包丢失导致通信无法重新开始，发送端时不时发送窗口探测包来获取最新的窗口大小信息。</p>
+
+<h5 id="拥塞控制">拥塞控制</h5>
+
+<p>连接建立初期，突然发送大量数据容易造成网络瘫痪。</p>
+
+<p>调节拥塞时发送大小的量，定义了“拥塞窗口”，让发送方窗口大小等于拥塞窗口。</p>
+
+<p>设计思想：无拥塞则调大拥塞窗口，拥塞时马上减小窗口</p>
+
+<p>慢启动算法：</p>
+
+<ol>
+<li>将拥塞窗口设置为1个MSS（Maximum Segment Size，最大数据段）</li>
+<li>开始窗口指数增长到慢启动阀值（第一次无限制）</li>
+<li>到达慢启动阀值后改为线性增长（除第一次）</li>
+<li>一旦发生超时则将慢启动阀值设置成当时的拥塞窗口大小的一半，并重新步骤1</li>
+<li>一旦发生重复确认应答则将慢启动阀值设置成当时拥塞窗口的一半，之后将拥塞窗口设置为慢启动阀值大小+3MSS，并重新步骤3</li>
+</ol>
+
+<h3 id="应用层">应用层</h3>
+
+<h4 id="www基本概念">WWW基本概念</h4>
+
+<p>WWW=信息手段和位置-URI（Uniform Resource Identifer）+信息表现形式-HTML（HyperText Markup Language）+ 信息转发-HTTP（HyperText Transfer Protocol）</p>
+
+<h4 id="http">HTTP</h4>
+
+<p>主要有八种方法，常用的是GET和POST</p>
+
+<p>Q：HTTP 1.0、1.1、2.0的不同之处？</p>
+
+<p>A：1.0每次请求和应答都会使用新的TCP连接，1.1允许使用一个TCP连接，大幅减少断开和建立，提升性能。</p>
+
+<p>2.0使用了多路复用、二进制分帧、首部压缩等技术进一步提升性能。详见<a href="https://www.zhihu.com/question/34074946">链接</a>。</p>
+
+<p>Q：GET和POST的不同之处？</p>
+
+<p>A：设计的定义不同之处</p>
+
+<ul>
+<li>GET是幂等的（不改变数据）也不改变服务器状态的，POST非幂等且可改变服务器状态</li>
+<li>GET参数拼接在URL中，POST在HTTP请求头的Body中</li>
+<li>GET参数长度受到url长度的限制（取决于浏览器和服务器限制而非本身）</li>
+</ul>
+
+<h5 id="cookie-session">Cookie &amp; Session</h5>
+
+<p>HTTP 是一种无状态的连接，客户端每次读取时，服务器都会认为这是一次新的会话。有时候需要持久保持某些信息，这些信息就由 Cookie 和 Session 保存。</p>
+
+<p>Cookie 保存在客户端上，而 Session 则保存在服务器中。</p>
+
+<p>当服务端接收到 Cookie 后，根据 SessionID 来查找。如果没有，则会生成一个新的 SessionID 发送给客户端。</p>
+
+<h4 id="https">HTTPS</h4>
+
+<p>HTTP协议在安全上存在三个风险：</p>
+
+<ul>
+<li>明文传输-数据被窃听</li>
+<li>不验证数据完整性-数据被篡改</li>
+<li>不验证身份-冒充发送者身份通信</li>
+</ul>
+
+<p>针对这三个风险，HTTPS分别做了处理：</p>
+
+<ul>
+<li>窃听-加密报文</li>
+<li>篡改-消息校验（Hash）</li>
+<li>伪装-证书校验（证书验证链）</li>
+</ul>
+
+<h3 id="最后">最后</h3>
+
+<p>TCP/IP每层都设计得巧妙，实用。了解了TCP/IP之后，对网络问题的思考会更加透彻。</p>
+
+                </section>
+            </article>
+
+            
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    
+    <a class="symbol" href="https://www.facebook.com/nemocdz">
+        circlefacebook
+    </a>
+    
+    <a class="symbol" href="https://github.com/Nemocdz">
+        circlegithub
+    </a>
+    
+    <a class="symbol" href="https://twitter.com/Nemocdz">
+        circletwitterbird
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2017 <i class="fa fa-heart" aria-hidden="true"></i> Nemocdz
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://nemocdz.github.io/My-blog/js/jquery-2.2.4.min.js"></script>
+<script src="https://nemocdz.github.io/My-blog/js/main.js"></script>
+<script src="https://nemocdz.github.io/My-blog/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+    </body>
+</html>
