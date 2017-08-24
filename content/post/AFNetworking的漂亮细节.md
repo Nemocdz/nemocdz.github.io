@@ -10,7 +10,7 @@ draft: false
 
 #### 1.Dispatch_once方法声明C语言变量方法
 
-感觉很像OC的protery的getter方法，一种C语言懒加载的感觉，static修饰符意味只在该编译单元可见（对应OC就是.m文件），配合单例，只会被执行一次。类似于``if(!object)``的感觉。
+感觉很像OC的property的getter方法，一种C语言懒加载的感觉，static修饰符意味只在该编译单元可见（对应OC就是.m文件），配合单例，只会被执行一次。类似于``if(!object)``的感觉。
 
 如下面例子创建了一个queue的方法，调用后返回是同一个变量。
 

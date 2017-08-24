@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://nemocdz.github.io/My-blog/post/%E4%BB%8E%E4%B8%80%E9%81%93%E7%BD%91%E6%98%93%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B5%85%E8%B0%88oc%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/</loc>
+    <lastmod>2017-08-25T02:46:12+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://nemocdz.github.io/My-blog/post/tcpip%E5%8D%8F%E8%AE%AE%E6%97%8F%E8%BE%B9%E5%AD%A6%E8%BE%B9%E6%83%B3/</loc>
     <lastmod>2017-08-22T03:28:20+08:00</lastmod>
   </url>
@@ -124,13 +129,13 @@
   
   <url>
     <loc>https://nemocdz.github.io/My-blog/</loc>
-    <lastmod>2017-08-22T03:28:20+08:00</lastmod>
+    <lastmod>2017-08-25T02:46:12+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://nemocdz.github.io/My-blog/post/</loc>
-    <lastmod>2017-08-22T03:28:20+08:00</lastmod>
+    <lastmod>2017-08-25T02:46:12+08:00</lastmod>
     <priority>0</priority>
   </url>
   
