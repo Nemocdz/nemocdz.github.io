@@ -1,5 +1,5 @@
 ---
-title: "从一道网易面试题浅谈OC线程安全"
+title: "从一道网易面试题浅谈Objective-C线程安全"
 date: 2017-08-25T02:46:12+08:00
 draft: false
 ---
