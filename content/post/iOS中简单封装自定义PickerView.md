@@ -1,5 +1,5 @@
 ---
-title: "iOS中简单封装一个UIPickerView"
+title: "iOS中简单封装自定义PickerView"
 date: 2016-11-19T02:28:13+08:00
 draft: false
 ---
@@ -92,7 +92,7 @@ UIPickerView是iOS开发中，相当常用的一个UI控件，用于滚动选择
 `- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component`
 这个方法优先级高，也就是说会覆盖后面那个方法里的设置，后面的方法只能确定每行返回的方法的值，没办法对字体大小，颜色，分割线等进行自定义，需要自定义就使用第一个方法。
 
-###2. 视图
+### 2. 视图
 
 视图上，由一个压黑背景的view上面加上一个包含确定和取消两个按钮和pickerview的containview组成。
 先在最开始进行一些颜色，屏幕大小的宏定义和全局静态变量定义，方便使用
@@ -150,7 +150,7 @@ static const int toolBarHeight = 44;
     [self removeFromSuperview];
 }
 ```
-##封装成工厂方法
+### 4.封装成工厂方法
 
 ```
 + (void)showPickerInView:(UIView *)view
@@ -166,7 +166,7 @@ static const int toolBarHeight = 44;
     [view addSubview:pickerView];
 }
 ```
-###最后
+### 最后
 
 所有源码和[Demo](https://github.com/Nemocdz/CDZPickerViewDemo)
 这是我第一次写技术类文章，虽然不是什么很深入的问题，但希望能分享给有需要的人。

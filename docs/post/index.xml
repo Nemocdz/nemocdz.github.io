@@ -157,10 +157,10 @@
     
     <item>
       <title>iOS中实现多列联动的PickerView</title>
-      <link>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E5%B0%8F%E5%B7%A7%E7%9A%84%E5%A4%9A%E5%88%97%E8%81%94%E5%8A%A8%E7%9A%84pickerview/</link>
+      <link>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A4%9A%E5%88%97%E8%81%94%E5%8A%A8%E7%9A%84pickerview/</link>
       <pubDate>Wed, 29 Mar 2017 01:33:13 +0800</pubDate>
       
-      <guid>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E5%B0%8F%E5%B7%A7%E7%9A%84%E5%A4%9A%E5%88%97%E8%81%94%E5%8A%A8%E7%9A%84pickerview/</guid>
+      <guid>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A4%9A%E5%88%97%E8%81%94%E5%8A%A8%E7%9A%84pickerview/</guid>
       <description>去年年底写了一个自定义的PickerView，文章在这里。当时对Block和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的Pick</description>
     </item>
     
@@ -210,11 +210,11 @@
     </item>
     
     <item>
-      <title>iOS中简单封装一个UIPickerView</title>
-      <link>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%B0%81%E8%A3%85%E4%B8%80%E4%B8%AA%E8%87%AA%E5%AE%9A%E4%B9%89uipickerview/</link>
+      <title>iOS中简单封装自定义PickerView</title>
+      <link>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89pickerview/</link>
       <pubDate>Sat, 19 Nov 2016 02:28:13 +0800</pubDate>
       
-      <guid>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%B0%81%E8%A3%85%E4%B8%80%E4%B8%AA%E8%87%AA%E5%AE%9A%E4%B9%89uipickerview/</guid>
+      <guid>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89pickerview/</guid>
       <description>UIPickerView是iOS开发中，相当常用的一个UI控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以</description>
     </item>
     

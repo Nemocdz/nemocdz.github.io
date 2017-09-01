@@ -1,0 +1,288 @@
+    <!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="author" content="Nemocdz">
+		<meta name="description" content="Blog Description">
+		<meta name="generator" content="Hugo 0.25.1" />
+		<title>iOS中简单封装自定义PickerView &middot; Nemocdz&#39;s Blog</title>
+		<link rel="shortcut icon" href="https://nemocdz.github.io/My-blog/images/favicon.ico">
+		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/style.css">
+		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/highlight.css">
+		
+
+		
+		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/monosocialiconsfont.css">
+		
+
+		
+		<link href="https://nemocdz.github.io/My-blog/index.xml" rel="alternate" type="application/rss+xml" title="Nemocdz&#39;s Blog" />
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://nemocdz.github.io/My-blog/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://nemocdz.github.io/My-blog/post'>Archive</a>
+	<a href='https://nemocdz.github.io/My-blog/tags'>Tags</a>
+	<a href='https://nemocdz.github.io/My-blog/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://nemocdz.github.io/My-blog/index.xml">RSS</a>
+	
+</nav>
+
+
+        <section id="wrapper">
+            <article class="post">
+                <header>
+                    <h1>
+                        iOS中简单封装自定义PickerView
+                    </h1>
+                    <h2 class="headline">
+                    Nov 19, 2016 02:28
+                    · 1575 words
+                    · 4 minutes read
+                      <span class="tags">
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                <section id="post-body">
+                    
+
+<p>UIPickerView是iOS开发中，相当常用的一个UI控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在PickerView上加上Toolbar和确定取消按钮。
+点击button弹出picker，并改变指定label的值，效果如下图所示。
+<img src="http://ww1.sinaimg.cn/large/006tNc79gw1f9wp3v4z00g30ku112agf.gif" alt="" />
+最终目的是在viewcontroller中button的event reponse中调用封装好的库的方法进行传值及操作。</p>
+
+<pre><code class="language-objectivec">- (IBAction)showPicker:(UIButton *)sender {
+    NSArray *array = @[@&quot;电子科技大学&quot;,@&quot;清华大学&quot;,@&quot;四川大学&quot;,@&quot;华中科技大学&quot;,@&quot;西安电子科技大学&quot;];
+    [CDZPicker showPickerInView:self.view withObjectsArray:array withlastString:self.label.text withStringBlock:^(NSString *string) {
+        self.label.text = string;
+    }];
+    }
+</code></pre>
+
+<p>实现思路从数据，视图，按钮处理三个方面说
+###1. 数据</p>
+
+<ul>
+<li>传入数据（上层view对象，数组array，最后的值）</li>
+<li>改变的值（利用block传值回调）</li>
+<li>UIPickerView的Delegate和DataSource方法的实现</li>
+</ul>
+
+<p>上层view对象和数组array没啥可说的，关于取消按钮的实现，个人想法是把弹出picker改变前最后的值传进view的内部并存储起来，等待按钮的动作响应判断是否取出。（但个人感觉把这个值传进去实现不太优雅，但水平不够没想到其它实现方法，希望交流）
+改变值用利用block方法传值，不用delegate和通知的原因是感觉都太复杂了，通知还需要注册，但block的使用要注意避免循环引用导致内存没办法得到释放的问题。
+在.h文件中定义block的别名便于使用</p>
+
+<p><code>typedef void (^CDZStringResultBlock)(NSString *string);</code></p>
+
+<p>.m中增加以下属性</p>
+
+<pre><code class="language-objectivec">@property (nonatomic,strong) NSArray *dataArray;
+@property (nonatomic,strong) NSString *lastString;
+@property (nonatomic,  copy) CDZStringResultBlock block;
+</code></pre>
+
+<p>实现Pickerview的Delegate和DataSource协议
+<code>&lt;UIPickerViewDelegate,UIPickerViewDataSource&gt;</code>
+实现Pickerview的Delegate和DataSource相关方法</p>
+
+<pre><code>#pragma mark - PickerDataSource
+//返回picker列数
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView{
+    return 1;
+}
+
+//picker行数
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
+    return self.dataArray.count;
+}
+</code></pre>
+
+<pre><code>#pragma mark - PickerDelegate
+//返回每行高度
+- (CGFloat)pickerView:(UIPickerView *)pickerView rowHeightForComponent:(NSInteger)component{
+    return 44;
+}
+
+//滑动到当行进行的操作，这里把当行的数据回调
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
+    self.block(self.dataArray[row]);
+}
+
+//要修改picker滚动里每行文字的值及相关属性，分割线等在此方法里设置
+- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view{
+    //设置分割线的颜色,这里设为隐藏
+    for(UIView *singleLine in pickerView.subviews){
+        if (singleLine.frame.size.height &lt; 1) {
+            singleLine.backgroundColor = [UIColor clearColor];
+        }
+    }
+    
+    //设置文字的属性
+    UILabel *genderLabel = [UILabel new];
+    genderLabel.textAlignment = NSTextAlignmentCenter;
+    genderLabel.text = self.dataArray[row];
+    genderLabel.font = [UIFont systemFontOfSize:23.0];
+    genderLabel.textColor = [UIColor blackColor];
+
+    return genderLabel;
+}
+</code></pre>
+
+<p>另外有一点要注意
+<code>-(UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view</code>
+这个方法的优先级比
+<code>- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component</code>
+这个方法优先级高，也就是说会覆盖后面那个方法里的设置，后面的方法只能确定每行返回的方法的值，没办法对字体大小，颜色，分割线等进行自定义，需要自定义就使用第一个方法。</p>
+
+<h3 id="2-视图">2. 视图</h3>
+
+<p>视图上，由一个压黑背景的view上面加上一个包含确定和取消两个按钮和pickerview的containview组成。
+先在最开始进行一些颜色，屏幕大小的宏定义和全局静态变量定义，方便使用</p>
+
+<pre><code>#define SCREEN_WIDTH ([UIScreen mainScreen].bounds.size.width)
+#define SCREEN_HEIGHT ([UIScreen mainScreen].bounds.size.height)
+#define BACKGROUND_BLACK_COLOR [UIColor colorWithRed:0.412 green:0.412 blue:0.412 alpha:0.7]
+static const int pickerViewHeight = 228;
+static const int toolBarHeight = 44;
+</code></pre>
+
+<p>进行view的布局，增加button点击动作等，pickerview要指定datasource和delegate为self</p>
+
+<pre><code>- (void)initView{
+    UIView *containerView = [[UIView alloc]initWithFrame:CGRectMake(0, SCREEN_HEIGHT - pickerViewHeight, SCREEN_WIDTH, pickerViewHeight)];
+    containerView.backgroundColor = [UIColor whiteColor];
+    
+    UIButton *btnOK = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH -70, 5, 40, 30)];
+    btnOK.titleLabel.font = [UIFont systemFontOfSize:18.0];
+    [btnOK setTitle:@&quot;确定&quot; forState:UIControlStateNormal];
+    [btnOK setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    [btnOK addTarget:self action:@selector(pickerViewBtnOk:) forControlEvents:UIControlEventTouchUpInside];
+    [containerView addSubview:btnOK];
+    
+    UIButton *btnCancel = [[UIButton alloc] initWithFrame:CGRectMake(30, 5, 40, 30)];
+    btnCancel.titleLabel.font = [UIFont systemFontOfSize:18.0];
+    [btnCancel setTitle:@&quot;取消&quot; forState:UIControlStateNormal];
+    [btnCancel setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    [btnCancel addTarget:self action:@selector(pickerViewBtnCancel:) forControlEvents:UIControlEventTouchUpInside];
+    [containerView addSubview:btnCancel];
+    
+    UIPickerView *pickerView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 32, SCREEN_WIDTH, pickerViewHeight - toolBarHeight)];
+    pickerView.backgroundColor = [UIColor whiteColor];
+    pickerView.delegate = self;
+    pickerView.dataSource = self;
+    [containerView addSubview:pickerView];
+    
+    self.backgroundColor = BACKGROUND_BLACK_COLOR;
+    [self addSubview:containerView];
+}
+</code></pre>
+
+<h3 id="3-响应按钮点击事件">3.响应按钮点击事件</h3>
+
+<p>很简单，见代码即可。取消的话把传进来的lastString传回去即可。</p>
+
+<pre><code>#pragma mark - event response
+- (void)pickerViewBtnOk:(UIButton *)btn{
+    [self removeFromSuperview];
+}
+
+- (void)pickerViewBtnCancel:(UIButton *)btn{
+    self.block (self.lastString);
+    [self removeFromSuperview];
+}
+</code></pre>
+
+<h3 id="4-封装成工厂方法">4.封装成工厂方法</h3>
+
+<pre><code>+ (void)showPickerInView:(UIView *)view
+        withObjectsArray:(NSArray *)array
+          withlastString:(NSString *)string
+         withStringBlock:(CDZStringResultBlock)stringBlock{
+    CDZPicker *pickerView = [[CDZPicker alloc]initWithFrame:view.bounds];
+    pickerView.dataArray = array;
+    pickerView.lastString = string;
+    pickerView.block = stringBlock;
+    pickerView.block(array[0]);//未滑动的话默认为第一个数据
+    [pickerView initView];
+    [view addSubview:pickerView];
+}
+</code></pre>
+
+<h3 id="最后">最后</h3>
+
+<p>所有源码和<a href="https://github.com/Nemocdz/CDZPickerViewDemo">Demo</a>
+这是我第一次写技术类文章，虽然不是什么很深入的问题，但希望能分享给有需要的人。</p>
+
+<p>如果您觉得有帮助,不妨给个star鼓励一下,欢迎关注&amp;交流</p>
+
+                </section>
+            </article>
+
+            
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    
+    <a class="symbol" href="https://www.facebook.com/nemocdz">
+        circlefacebook
+    </a>
+    
+    <a class="symbol" href="https://github.com/Nemocdz">
+        circlegithub
+    </a>
+    
+    <a class="symbol" href="https://twitter.com/Nemocdz">
+        circletwitterbird
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2017 <i class="fa fa-heart" aria-hidden="true"></i> Nemocdz
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://nemocdz.github.io/My-blog/js/jquery-2.2.4.min.js"></script>
+<script src="https://nemocdz.github.io/My-blog/js/main.js"></script>
+<script src="https://nemocdz.github.io/My-blog/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+    </body>
+</html>

@@ -105,8 +105,10 @@ draft: false
 2. 使用CreatMutable生成可变容器
    这时传入之前的自定义callBacks，也可以传入capacity之类的（默认为0就好），转换为Foundation对象
 
+3. 在对象销毁时移除出容器或置nil
 
-之后我们只要有这个实例化方法生成的容器类，其它就和正常使用一样了。
+   如果不这么做，在对象销毁后容器里的元素会变成野指针引发Crash。详见[再谈Objective-C弱引用容器的实现-关联对象实现weak](https://nemocdz.github.io/My-blog/post/%E5%86%8D%E8%B0%88objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/)补充说明。
+
 
 ### 加入容器时不引用
 
@@ -120,7 +122,7 @@ release方法有两种
 例子中使用第二种，在分类中新增一个方法
 
 ```objective-c
-- (void)cdz_weakAddObject:(NSObject *)object{
+- (void)mrc_weakAddObject:(NSObject *)object{
     [self addObject:object];
     CFRelease((__bridge CFTypeRef)(object));
 }
@@ -134,9 +136,11 @@ release方法有两种
 
 这也是MRC时代遇见比较多的过度释放（over release）问题。
 
-可以在Xcode开启NSZombie调试选项（释放时转变为NSZombie并记录收到的消息）进行追踪过渡释放。
+可以在Xcode开启NSZombie（释放时转变为NSZombie并记录收到的消息）或Address Sanitizer（XCode 7以上）调试选项进行追踪过渡释放。
 
-**笔者不推荐这种方式实现，因为在使用时必须十分小心，而团队维护也容易不小心和系统Api混合使用**
+同时，同CoreFoundation方法一样，需要在对象摧毁时移除出容器或置nil。详见[再谈Objective-C弱引用容器的实现-关联对象实现weak](https://nemocdz.github.io/My-blog/post/%E5%86%8D%E8%B0%88objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/)补充说明。
+
+**笔者不推荐这种方式实现，因为在使用时必须十分小心，而团队维护也容易不小心和系统Api混合使用。**
 
 ### 使对象变得可被弱引用
 
