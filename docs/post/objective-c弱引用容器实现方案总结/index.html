@@ -48,7 +48,7 @@
                     </h1>
                     <h2 class="headline">
                     Jul 23, 2017 04:55
-                    · 3332 words
+                    · 3337 words
                     · 7 minutes read
                       <span class="tags">
                       
@@ -140,20 +140,20 @@
 
 <p>建立容器类的步骤</p>
 
-<ol>
-<li>生成CallBacks结构体，结构体中的对象其实就是一些描述容器的选项</li>
-</ol>
+<h5 id="1-生成callbacks结构体">1.生成CallBacks结构体</h5>
+
+<p>结构体中的对象其实就是一些描述容器的选项</p>
 
 <p>同样以CFSetCallBacks为例，其结构体定义如下</p>
 
-<pre><code class="language-objective-c">   typedef struct {
-       CFIndex				version;
-       CFSetRetainCallBack			retain;
-       CFSetReleaseCallBack		release;
-       CFSetCopyDescriptionCallBack	copyDescription;
-       CFSetEqualCallBack			equal;
-       CFSetHashCallBack			hash;
-   } CFSetCallBacks;
+<pre><code class="language-objective-c">typedef struct {
+    CFIndex				version;
+    CFSetRetainCallBack			retain;
+    CFSetReleaseCallBack		release;
+    CFSetCopyDescriptionCallBack	copyDescription;
+    CFSetEqualCallBack			equal;
+    CFSetHashCallBack			hash;
+} CFSetCallBacks;
 </code></pre>
 
 <p>version暂时不管它，看下剩下变量类型名字，是否感觉比较熟悉</p>
@@ -162,12 +162,11 @@
 
 <p>所以我们就需要改变retain和release就好。类型是xxxCallBack那么说明应该这个类型是一个block，而去当这些操作执行执行对应的block。文档对retain和release这两个block的描述也是这样说的。那么如果要实现引用计数增减，就应该在这两个block里实现，所以我猜测Foundation框架里的容器类retain，应该就在这个两个block里实现。那么我们只需要block值为NULL，在retain和release操作里，就不会引用计数的变化，从而不持有对象。</p>
 
-<ol>
-<li><p>使用CreatMutable生成可变容器
-这时传入之前的自定义callBacks，也可以传入capacity之类的（默认为0就好），转换为Foundation对象</p></li>
+<h5 id="2-使用creatmutable生成可变容器">2.使用CreatMutable生成可变容器</h5>
 
-<li><p>在对象销毁时移除出容器或置nil</p></li>
-</ol>
+<p>这时传入之前的自定义callBacks，也可以传入capacity之类的（默认为0就好），转换为Foundation对象</p>
+
+<h5 id="3-在对象销毁时移除出容器或置nil">3.在对象销毁时移除出容器或置nil</h5>
 
 <p>如果不这么做，在对象销毁后容器里的元素会变成野指针引发Crash。详见<a href="https://nemocdz.github.io/My-blog/post/%E5%86%8D%E8%B0%88objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/">再谈Objective-C弱引用容器的实现-关联对象实现weak</a>补充说明。</p>
 

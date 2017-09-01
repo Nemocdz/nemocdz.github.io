@@ -81,34 +81,36 @@ draft: false
 
 建立容器类的步骤
 
-1. 生成CallBacks结构体，结构体中的对象其实就是一些描述容器的选项
+##### 1.生成CallBacks结构体
 
-   同样以CFSetCallBacks为例，其结构体定义如下
+结构体中的对象其实就是一些描述容器的选项
 
-   ```objective-c
-   typedef struct {
-       CFIndex				version;
-       CFSetRetainCallBack			retain;
-       CFSetReleaseCallBack		release;
-       CFSetCopyDescriptionCallBack	copyDescription;
-       CFSetEqualCallBack			equal;
-       CFSetHashCallBack			hash;
-   } CFSetCallBacks;
-   ```
+同样以CFSetCallBacks为例，其结构体定义如下
 
-   version暂时不管它，看下剩下变量类型名字，是否感觉比较熟悉
+```objective-c
+typedef struct {
+    CFIndex				version;
+    CFSetRetainCallBack			retain;
+    CFSetReleaseCallBack		release;
+    CFSetCopyDescriptionCallBack	copyDescription;
+    CFSetEqualCallBack			equal;
+    CFSetHashCallBack			hash;
+} CFSetCallBacks;
+```
 
-   其实和之前NSPointerFunctionsOptions类似，还是分三种，retain和release是内存管理，equal和hash和是对象处理，copyDescription是复制处理。
+version暂时不管它，看下剩下变量类型名字，是否感觉比较熟悉
 
-   所以我们就需要改变retain和release就好。类型是xxxCallBack那么说明应该这个类型是一个block，而去当这些操作执行执行对应的block。文档对retain和release这两个block的描述也是这样说的。那么如果要实现引用计数增减，就应该在这两个block里实现，所以我猜测Foundation框架里的容器类retain，应该就在这个两个block里实现。那么我们只需要block值为NULL，在retain和release操作里，就不会引用计数的变化，从而不持有对象。
+其实和之前NSPointerFunctionsOptions类似，还是分三种，retain和release是内存管理，equal和hash和是对象处理，copyDescription是复制处理。
 
-2. 使用CreatMutable生成可变容器
-   这时传入之前的自定义callBacks，也可以传入capacity之类的（默认为0就好），转换为Foundation对象
+所以我们就需要改变retain和release就好。类型是xxxCallBack那么说明应该这个类型是一个block，而去当这些操作执行执行对应的block。文档对retain和release这两个block的描述也是这样说的。那么如果要实现引用计数增减，就应该在这两个block里实现，所以我猜测Foundation框架里的容器类retain，应该就在这个两个block里实现。那么我们只需要block值为NULL，在retain和release操作里，就不会引用计数的变化，从而不持有对象。
 
-3. 在对象销毁时移除出容器或置nil
+##### 2.使用CreatMutable生成可变容器
 
-   如果不这么做，在对象销毁后容器里的元素会变成野指针引发Crash。详见[再谈Objective-C弱引用容器的实现-关联对象实现weak](https://nemocdz.github.io/My-blog/post/%E5%86%8D%E8%B0%88objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/)补充说明。
+这时传入之前的自定义callBacks，也可以传入capacity之类的（默认为0就好），转换为Foundation对象
 
+##### 3.在对象销毁时移除出容器或置nil
+
+如果不这么做，在对象销毁后容器里的元素会变成野指针引发Crash。详见[再谈Objective-C弱引用容器的实现-关联对象实现weak](https://nemocdz.github.io/My-blog/post/%E5%86%8D%E8%B0%88objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/)补充说明。
 
 ### 加入容器时不引用
 
