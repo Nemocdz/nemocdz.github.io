@@ -184,7 +184,7 @@ const void *CDZDellocBlockKey = &CDZDellocBlockKey;
 
 ### 最后
 
-更改后的方案Demo已经更新，之前对于内存管理的理解不够深入而导致错误的文章希望不要误导了太多人。
+更改后的方案[Demo](https://github.com/Nemocdz/OCWeakContainer)已经更新，之前对于内存管理的理解不够深入而导致错误的文章希望不要误导了太多人。
 
 如果您觉得有帮助,不妨给个star鼓励一下,欢迎关注&交流
 
