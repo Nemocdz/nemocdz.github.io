@@ -441,7 +441,7 @@ imagePickerController.actionArray = [NSMutableArray arrayWithObjects:
 所有源码和[Demo](https://github.com/Nemocdz/CDZImagePickerDemo)
 虽然不是什么很难的轮子，但希望能分享给有需要的人。
 
-关于后续的处理照片变更和获取相册权限另写了一篇简书[文章](http://www.jianshu.com/p/d1e8366c0e10)，欢迎阅读。
+关于后续的处理照片变更和获取相册权限另写了一篇[文章](https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E6%9D%83%E9%99%90%E5%B0%81%E8%A3%85%E5%B0%8Ftips%E5%92%8C%E7%9B%91%E6%B5%8B%E7%9B%B8%E5%86%8C%E5%8F%98%E5%8C%96/)，欢迎阅读。
 
 如果您觉得有帮助,不妨给个star鼓励一下,欢迎关注&交流
 

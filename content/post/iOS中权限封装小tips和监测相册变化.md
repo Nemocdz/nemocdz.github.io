@@ -4,7 +4,7 @@ date: 2016-12-14T23:05:13+08:00
 draft: false
 ---
 
-之前写了一个仿Snapseed的ImagePicker，见[Demo](https://github.com/Nemocdz/CDZImagePickerDemo)和之前的简书[文章](http://www.jianshu.com/p/e8e23e9cc67d)，
+之前写了一个仿Snapseed的ImagePicker，见[Demo](https://github.com/Nemocdz/CDZImagePickerDemo)和之前的[文章](https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BFsnapseed%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/)。
 
 之后发现有人说第一次未授权时collectionview会加载不出照片，发现没有在合适时候调用权限管理。iOS10的这个权限管理是info.plist的一个键值，没有回调方法。查询photoskit方法里，发现有一个权限回调方法，就想封装一个方法来友好的询问用户权限。
 

@@ -19,7 +19,8 @@ UIPickerView是iOS开发中，相当常用的一个UI控件，用于滚动选择
 ```
 
 实现思路从数据，视图，按钮处理三个方面说
-## 1. 数据
+###1. 数据
+
 * 传入数据（上层view对象，数组array，最后的值）
 * 改变的值（利用block传值回调）
 * UIPickerView的Delegate和DataSource方法的实现
@@ -91,7 +92,8 @@ UIPickerView是iOS开发中，相当常用的一个UI控件，用于滚动选择
 `- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component`
 这个方法优先级高，也就是说会覆盖后面那个方法里的设置，后面的方法只能确定每行返回的方法的值，没办法对字体大小，颜色，分割线等进行自定义，需要自定义就使用第一个方法。
 
-##2. 视图
+###2. 视图
+
 视图上，由一个压黑背景的view上面加上一个包含确定和取消两个按钮和pickerview的containview组成。
 先在最开始进行一些颜色，屏幕大小的宏定义和全局静态变量定义，方便使用
 
@@ -133,7 +135,8 @@ static const int toolBarHeight = 44;
     [self addSubview:containerView];
 }
 ```
-##3.响应按钮点击事件
+### 3.响应按钮点击事件
+
 很简单，见代码即可。取消的话把传进来的lastString传回去即可。
 
 ```
@@ -163,7 +166,8 @@ static const int toolBarHeight = 44;
     [view addSubview:pickerView];
 }
 ```
-##最后
+###最后
+
 所有源码和[Demo](https://github.com/Nemocdz/CDZPickerViewDemo)
 这是我第一次写技术类文章，虽然不是什么很深入的问题，但希望能分享给有需要的人。
 

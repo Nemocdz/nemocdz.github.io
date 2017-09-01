@@ -4,7 +4,7 @@ date: 2017-05-14T21:36:13+08:00
 draft: false
 ---
 
-在App中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态Cell构成的TableView，这些界面的特点是，Cell种类繁多，Model种类繁多，点击事件处理分散但单调（页面跳转，编辑textFiled），重复写tableViewDelegate和datasource的相关方法，但不会用到一些奇怪的datasource和delegate方法，而且显示内容一般是固定的，每个页面Cell的数量不会很多。像笔者所在的项目里的侧边栏模块，里面有很多tableView，由于没有使用StoryBoard且很久之前写的，充斥着各种if...else if用model的某个key值进行判断的逻辑去让cell去显示和隐藏某些视图，已经进行点击跳转逻辑，更有甚者，有``if (indexPath == 0)``之类的通过行数判断去处理的逻辑。增加新的cell时，便要在各种地方再加上else if的新判断，而做新界面时，也没有很好的方法进行复用。笔者结合之前[文章](http://www.jianshu.com/p/1f7304634600)进行进一步思考，抽象出一个适合这种特点tableView的管理类，记录一下思路供参考。
+在App中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态Cell构成的TableView，这些界面的特点是，Cell种类繁多，Model种类繁多，点击事件处理分散但单调（页面跳转，编辑textFiled），重复写tableViewDelegate和datasource的相关方法，但不会用到一些奇怪的datasource和delegate方法，而且显示内容一般是固定的，每个页面Cell的数量不会很多。像笔者所在的项目里的侧边栏模块，里面有很多tableView，由于没有使用StoryBoard且很久之前写的，充斥着各种if...else if用model的某个key值进行判断的逻辑去让cell去显示和隐藏某些视图，已经进行点击跳转逻辑，更有甚者，有``if (indexPath == 0)``之类的通过行数判断去处理的逻辑。增加新的cell时，便要在各种地方再加上else if的新判断，而做新界面时，也没有很好的方法进行复用。笔者结合之前[文章](https://nemocdz.github.io/My-blog/post/tableview%E5%92%8Ccollectionview%E9%80%9A%E7%94%A8datasource%E5%92%8Ccell/)进行进一步思考，抽象出一个适合这种特点tableView的管理类，记录一下思路供参考。
 
 ![](https://ws4.sinaimg.cn/large/006tKfTcly1fi1a1xvl8qj30p00r7ach.jpg)
 

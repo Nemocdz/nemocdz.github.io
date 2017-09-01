@@ -1,0 +1,308 @@
+    <!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="author" content="Nemocdz">
+		<meta name="description" content="Blog Description">
+		<meta name="generator" content="Hugo 0.25.1" />
+		<title>再谈Objective-C弱引用容器的实现-关联对象实现weak &middot; Nemocdz&#39;s Blog</title>
+		<link rel="shortcut icon" href="https://nemocdz.github.io/My-blog/images/favicon.ico">
+		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/style.css">
+		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/highlight.css">
+		
+
+		
+		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/monosocialiconsfont.css">
+		
+
+		
+		<link href="https://nemocdz.github.io/My-blog/index.xml" rel="alternate" type="application/rss+xml" title="Nemocdz&#39;s Blog" />
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://nemocdz.github.io/My-blog/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://nemocdz.github.io/My-blog/post'>Archive</a>
+	<a href='https://nemocdz.github.io/My-blog/tags'>Tags</a>
+	<a href='https://nemocdz.github.io/My-blog/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://nemocdz.github.io/My-blog/index.xml">RSS</a>
+	
+</nav>
+
+
+        <section id="wrapper">
+            <article class="post">
+                <header>
+                    <h1>
+                        再谈Objective-C弱引用容器的实现-关联对象实现weak
+                    </h1>
+                    <h2 class="headline">
+                    Sep 2, 2017 03:36
+                    · 2047 words
+                    · 5 minutes read
+                      <span class="tags">
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                <section id="post-body">
+                    
+
+<p>之前写了一篇<a href="https://nemocdz.github.io/My-blog/post/objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">文章</a>总结了OC中弱引用容器实现，在小米面试中提到其中CFFoundation的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现Weak特质，也就是没有在销毁后置nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。</p>
+
+<p>所以看了Runtime源码和文章后，订正弱引用容器的一些实现方法。</p>
+
+<h3 id="runtime源码的weak关键字实现">Runtime源码的weak关键字实现</h3>
+
+<p>源码基于<a href="https://opensource.apple.com/tarballs/objc4/">Runtime-709</a>分析，当我们使用<code>__weak</code>关键字时，实际上调用的是NSObject.mm中的<code>objc_initWeak()</code>方法，然后进入核心方法<code>storeWeak</code>，传入核心参数是location（弱引用指针的地址）和newobj（弱引用指针应该指向的）核心方法源码如下：</p>
+
+<pre><code class="language-c++">template &lt;HaveOld haveOld, HaveNew haveNew,
+          CrashIfDeallocating crashIfDeallocating&gt;
+//template关键字类似于泛型，传入三个参数其实都是bool类型，为各种情况提供组合优化
+static id //返回id类型
+storeWeak(id *location, objc_object *newObj)
+{   
+    
+    assert(haveOld  ||  haveNew);
+    //新值没有的情况应该被上层的方法拦截，所以这里有个断言
+    if (!haveNew) assert(newObj == nil);
+    
+    
+    Class previouslyInitializedClass = nil;
+    id oldObj;
+    //SideTable结构是引用计数表，记录着对象的weak表，目的就是为了获取weak表
+    SideTable *oldTable;
+    SideTable *newTable;
+
+ retry:
+    if (haveOld) {
+        oldObj = *location;//因为是个指向地址的指针，用*解引用返回地址的对象
+        oldTable = &amp;SideTables()[oldObj];//获得旧值对象所在的表的指针
+    } else {
+        oldTable = nil;
+    }
+    if (haveNew) {
+        newTable = &amp;SideTables()[newObj];//获得新值对象生意所在的表的指针
+    } else {
+        newTable = nil;
+    }
+    
+    //加锁
+    SideTable::lockTwo&lt;haveOld, haveNew&gt;(oldTable, newTable);
+    //再次确认保证线程安全
+    if (haveOld  &amp;&amp;  *location != oldObj) {
+        SideTable::unlockTwo&lt;haveOld, haveNew&gt;(oldTable, newTable);
+        goto retry;
+    }
+
+    // 防止弱引用机制的死锁并用init构造保证弱引用的isa指针非空
+    if (haveNew  &amp;&amp;  newObj) {
+        Class cls = newObj-&gt;getIsa();
+        if (cls != previouslyInitializedClass  &amp;&amp;  
+            !((objc_class *)cls)-&gt;isInitialized()) 
+        {
+            SideTable::unlockTwo&lt;haveOld, haveNew&gt;(oldTable, newTable);
+            _class_initialize(_class_getNonMetaClass(cls, (id)newObj));
+            previouslyInitializedClass = cls;
+            goto retry;
+        }
+    }
+
+    //清除旧址
+    if (haveOld) {
+        //在weakTable中反注册
+        weak_unregister_no_lock(&amp;oldTable-&gt;weak_table, oldObj, location);
+    }
+
+    //分配新值
+    if (haveNew) {
+        //在weakTable中注册新值并返回对象
+        newObj = (objc_object *)
+            weak_register_no_lock(&amp;newTable-&gt;weak_table, (id)newObj, location, 
+                                  crashIfDeallocating);
+
+
+        // 对TaggedPointer的优化
+        if (newObj  &amp;&amp;  !newObj-&gt;isTaggedPointer()) {
+            newObj-&gt;setWeaklyReferenced_nolock();
+        }
+
+        *location = (id)newObj;
+    }
+    else {
+    }
+    SideTable::unlockTwo&lt;haveOld, haveNew&gt;(oldTable, newTable);
+
+    return (id)newObj;
+}
+
+</code></pre>
+
+<p>而WeakTable是一个Hash表设计，以对象的地址为key，value是所有指向这个对象的weak指针的地址集合。通过这种设计，在废弃对象时，可以通过weak表快速找到value即所有weak指针并统一设置为nil并删除该记录。</p>
+
+<p><strong>所以苹果对于weak的实现其实类似于通知的实现，指明谁（weak指针）要监听谁（赋值对象）什么事件（dealloc操作）执行什么操作（置nil）。</strong></p>
+
+<h3 id="动手实现弱引用置nil">动手实现弱引用置nil</h3>
+
+<p>对于弱引用不增加引用计数，之前<a href="https://nemocdz.github.io/My-blog/post/objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">文章</a>已经探讨过，现在目的是如何仿照苹果这种设计，去实现置nil的操作。苹果是为了多个弱引用指针指向同一个对象才使用了表，而需要其中一个指针置nil的关键在于，监听dealloc操作。而其实在ARC里，重写dealloc方法就可以，但是怎么样不入侵整个类的dealloc方法呢？这时突破点在于，dealloc中做了什么，有没有办法在dealloc调用的其它方法入手。</p>
+
+<p>而MRC中的dealloc方法实际上做了这些事情：</p>
+
+<ol>
+<li>对自己所有强引用的属性发送release消息</li>
+<li>对自己所有强引用的关联对象发送release消息</li>
+<li>….</li>
+<li>调用<code>[super dealloc]</code></li>
+</ol>
+
+<p>这时我们发现，只要此时关联对象引用计数为1，那么发送release消息后则会调用它的dealloc方法并销毁。</p>
+
+<p>在它dealloc时置我们需要的指针为nil是合适的选择，因为之后的时机指向的对象也会被销毁，销毁之前置nil刚刚好。</p>
+
+<p>为了保证关联对象的引用指针为1，在weak赋值时z只要创建一次就好了。由于我们需要置nil这个操作，关联对象的dealloc跑一个block是灵活性最大的选择了，也就是由关联对象持有一个block，并在weak赋值时顺便告诉这个block里面执行什么。</p>
+
+<pre><code class="language-objective-c">@interface CDZDeallocObserver : NSObject
+@property (nonatomic, copy) void (^block)(void);
+@end
+
+@implementation CDZDeallocObserver
+- (void)dealloc{
+    if (self.block) {
+        self.block();
+    }
+}
+@end
+</code></pre>
+
+<p>用分类实现一个setBlock的方法，拓展给NSObject类。</p>
+
+<pre><code class="language-objective-c">const void *CDZDellocBlockKey = &amp;CDZDellocBlockKey;
+@implementation NSObject (DeallocBlock)
+
+- (void)cdz_deallocBlock:(void(^)(void))block{
+    CDZDeallocObserver *observer = objc_getAssociatedObject(self, CDZDellocBlockKey);
+    if (!observer) {
+        observer = [CDZDeallocObserver new];
+        objc_setAssociatedObject(self, CDZDellocBlockKey, observer, OBJC_ASSOCIATION_RETAIN);
+    }
+    observer.block = block;
+}
+@end
+</code></pre>
+
+<h3 id="弱引用容器的拓展">弱引用容器的拓展</h3>
+
+<p>之前我们知道CoreFoundation和MRC法都可以使引用计数不变，那么其实我们只要在Add的时候顺便关联上释放时移除对象即可，因为保留一堆nil指针在容器内并不是一个好的选择。置nil其实更希望是表示这个元素不存在了。</p>
+
+<pre><code class="language-objective-c">//与CoreFoundation配套的add方法，用unsafe_unretain是不希望被置nil，系统置nil的时机可能比实际dealloc的时机早
+- (void)cf_addObject:(id)object{
+    [self addObject:object];
+    __unsafe_unretained typeof (object) unRetainObject = object;
+    __weak typeof(self) weakSelf = self;
+    [object cdz_deallocBlock:^{
+        if (unRetainObject) {
+            [weakSelf removeObject:unRetainObject];
+        }
+    }];
+}
+</code></pre>
+
+<pre><code class="language-objective-c">//跟mrc配套的
+- (void)mrc_addObject:(id)object{
+    [self addObject:object];
+    __unsafe_unretained typeof (object) unRetainObject = object;
+    __weak typeof(self) weakSelf = self;
+    [object cdz_deallocBlock:^{
+        if (unRetainObject) {
+            [weakSelf removeObject:unRetainObject];
+        }
+    }];
+    CFRelease((__bridge CFTypeRef)(object));
+}
+</code></pre>
+
+<p>这样才能保证后续在对象销毁时，用容器获取的对象是正确的（置nil或被移除）。</p>
+
+<h3 id="最后">最后</h3>
+
+<p>更改后的方案Demo已经更新，之前对于内存管理的理解不够深入而导致错误的文章希望不要误导了太多人。</p>
+
+<p>如果您觉得有帮助,不妨给个star鼓励一下,欢迎关注&amp;交流</p>
+
+<h5 id="参考链接">参考链接</h5>
+
+<ul>
+<li><a href="http://www.desgard.com/weak/">weak 弱引用的实现方式</a></li>
+<li><a href="http://www.jianshu.com/p/ef6d9bf8fe59">iOS管理对象内存的数据结构以及操作算法&ndash;SideTables、RefcountMap、weak_table_t-一</a></li>
+<li><a href="http://www.jianshu.com/p/ed65d71554d8">如何使用 Runtime 给现有的类添加 weak 属性</a></li>
+</ul>
+
+                </section>
+            </article>
+
+            
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    
+    <a class="symbol" href="https://www.facebook.com/nemocdz">
+        circlefacebook
+    </a>
+    
+    <a class="symbol" href="https://github.com/Nemocdz">
+        circlegithub
+    </a>
+    
+    <a class="symbol" href="https://twitter.com/Nemocdz">
+        circletwitterbird
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2017 <i class="fa fa-heart" aria-hidden="true"></i> Nemocdz
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://nemocdz.github.io/My-blog/js/jquery-2.2.4.min.js"></script>
+<script src="https://nemocdz.github.io/My-blog/js/main.js"></script>
+<script src="https://nemocdz.github.io/My-blog/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+    </body>
+</html>
