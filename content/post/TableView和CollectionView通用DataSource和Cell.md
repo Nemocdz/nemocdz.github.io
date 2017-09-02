@@ -6,6 +6,8 @@ draft: false
 
 刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起UI来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起UI不那么费劲的tableview，顺便把项目里老的collectionView也进行了类比，偷偷进行了重构。毕竟UI总是改来改去的，而常用的tableview和collecitonview更是应该让其扩展性更好，复用性更强。
 
+<!--more-->
+
 先从tableview讲起，tableview都很熟悉，一般就是由datasource，delegate，cell，cellitem这几部分组成。
 
 ### 打造一个通用性更强的DataSource

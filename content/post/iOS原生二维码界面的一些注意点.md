@@ -6,6 +6,8 @@ draft: false
 
 之前的[文章](https://nemocdz.github.io/My-blog/post/ios%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/)是在ViewController里实现了原生二维码扫描的功能，后来觉得VC太重了，便把功能抽成了一个View，在抽象的过程中也仔细捉摸了一些没有仔细思考过的问题，特此记录下来。
 
+<!--more-->
+
 ![IMG_1130](http://ww4.sinaimg.cn/large/006tNbRwly1ffk93o9dj4j30ku112afv.jpg)
 
 #### 1.扫描区域的扫描线动画

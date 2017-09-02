@@ -1,71 +1,220 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-cn">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="author" content="Nemocdz">
-		<meta name="description" content="Blog Description">
-		<meta name="generator" content="Hugo 0.25.1" />
-		<title>Cocoa多线程总结 &middot; Nemocdz&#39;s Blog</title>
-		<link rel="shortcut icon" href="https://nemocdz.github.io/My-blog/images/favicon.ico">
-		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/style.css">
-		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/highlight.css">
-		
+<head>
 
-		
-		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/monosocialiconsfont.css">
-		
+  <meta charset="utf-8" />
 
-		
-		<link href="https://nemocdz.github.io/My-blog/index.xml" rel="alternate" type="application/rss+xml" title="Nemocdz&#39;s Blog" />
-		
-	</head>
+  
+  <title>Cocoa多线程总结</title>
 
-    <body>
-       <nav class="main-nav">
-	
-	
-		<a href='https://nemocdz.github.io/My-blog/'> <span class="arrow">←</span>Home</a>
-	
-	<a href='https://nemocdz.github.io/My-blog/post'>Archive</a>
-	<a href='https://nemocdz.github.io/My-blog/tags'>Tags</a>
-	<a href='https://nemocdz.github.io/My-blog/about'>About</a>
-
-	
-
-	
-	<a class="cta" href="https://nemocdz.github.io/My-blog/index.xml">RSS</a>
-	
-</nav>
+  
+  
 
 
-        <section id="wrapper">
-            <article class="post">
-                <header>
-                    <h1>
-                        Cocoa多线程总结
-                    </h1>
-                    <h2 class="headline">
-                    Jun 28, 2017 11:31
-                    · 2502 words
-                    · 5 minutes read
-                      <span class="tags">
-                      
-                      </span>
-                    </h2>
-                </header>
-                
-                <section id="post-body">
-                    
 
-<p>个人学习总结笔记</p>
+
+  
+  <meta name="author" content="Nemocdz" />
+  <meta name="description" content="个人学习总结笔记
+前置知识 线程 程序执行流的最小单元
+
+" />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@Nemocdz" />
+    <meta name="twitter:title" content="Cocoa多线程总结" />
+    <meta name="twitter:description" content="个人学习总结笔记
+前置知识 线程 程序执行流的最小单元
+
+" />
+    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.25.1" />
+
+
+<link rel="canonical" href="https://nemocdz.github.io/My-blog/post/cocoa%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%80%BB%E7%BB%93/" />
+<link rel="alternative" href="https://nemocdz.github.io/My-blog/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="_moDmnnBNVLBN1rzNxyGUGdPHE20YgbmrtzLIbxaWFc" />
+<meta name="msvalidate.01" content="22596E34341DD1D17D6022C44647E587" />
+
+
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="shortcut icon" type="imge/x-icon" href="https://nemocdz.github.io/My-blog/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/My-blog/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/My-blog/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/My-blog/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/My-blog/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://nemocdz.github.io/My-blog/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+
+<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://nemocdz.github.io/My-blog/img/avatar.png" alt="Avatar">
+  
+  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  
+  <p class="subtitle">iOS Dev &amp; Photographer</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/My-blog/">首页</a></li>
+      
+        <li class="menu-item "><a href="https://nemocdz.github.io/My-blog/about/">关于</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+      <li class="social-item">
+        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
+      </li>
+
+      
+      <li class="social-item">
+        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/My-blog/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
+      </li>
+
+      
+
+      <li class="social-item">
+        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/My-blog/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">Cocoa多线程总结</h1>
+      <p class="post-meta">@Nemocdz · Jun 28, 2017 · 1 min read</p>
+    </header>
+    <article class="post-content"><p>个人学习总结笔记</p>
 
 <h4 id="前置知识">前置知识</h4>
 
 <h5 id="线程">线程</h5>
 
 <p>程序执行流的最小单元</p>
+
+<p></p>
 
 <ul>
 <li>线程拥有自己的空间：栈，线程局部储存（Thread Local Storage），寄存器</li>
@@ -256,25 +405,23 @@
 <p>在操作前后进行信号计数判断，小于x则等待，大于等于则减a并开始执行事件，事件执行完毕后加b（这里的a，b相当于任务对信号量的影响）</p>
 
 <h4 id="gcd中的死锁">GCD中的死锁</h4>
-
-<pre><code class="language-objective-c">//主队列中执行以下代码
-dispatch_sync(dispatch_get_main_queue(), ^{//操作B
-    …//事件A
-});
-</code></pre>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="c1">//主队列中执行以下代码</span>
+<span class="n">dispatch_sync</span><span class="p">(</span><span class="n">dispatch_get_main_queue</span><span class="p">(),</span> <span class="o">^</span><span class="p">{</span><span class="c1">//操作B</span>
+    <span class="err">…</span><span class="c1">//事件A</span>
+<span class="p">});</span>
+</code></pre></div>
 
 <p>这是在一个串行队列（主队列）中执行（往该串行队列派发同步事件A）的操作B，会造成死锁（*反之不必然不死锁*）。</p>
 
 <p>队列先进先出，而串行队列同时执行的任务只有一个。操作B需要等待其派发的block执行完才算完成，派发的同步事件A被追加在队列最后（后进），同步执行需要等待前面执行完才可以执行，而前面的因为操作B没执行完，造成相互等待。</p>
 
 <p>举个例子：面试时要排队（队列），一次只能一个人进面试房间（串行队列），前面的面试完出来后面的人才可以进去面试（同步任务）。A进去房间，面试官说，你的面试内容是叫B来面试，并等他面试完成（派发同步任务Block在串行队列中）。A把B叫来了，B来了就排在了队伍最后面，排队等待轮到他，而A则在房间里等待B面试完。结果就是A等待B面试完等不到，而B则等待前面的人面试完（包括A面试完出来）然后轮到他。两人相互等待，过程就进行不下去了。</p>
-
-<pre><code class="language-objective-c">dispatch_sync(queueA,^{//操作C
-    dispatch_sync(queueB, ^{//操作B
-            dispatch_sync(queueA,^{...});//事件A
-    })
-});
-</code></pre>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="n">dispatch_sync</span><span class="p">(</span><span class="n">queueA</span><span class="p">,</span><span class="o">^</span><span class="p">{</span><span class="c1">//操作C</span>
+    <span class="n">dispatch_sync</span><span class="p">(</span><span class="n">queueB</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span><span class="c1">//操作B</span>
+            <span class="n">dispatch_sync</span><span class="p">(</span><span class="n">queueA</span><span class="p">,</span><span class="o">^</span><span class="p">{...});</span><span class="c1">//事件A</span>
+    <span class="p">})</span>
+<span class="p">});</span>
+</code></pre></div>
 
 <p>在一个串行队列中执行需要等待((往该串行队列派发同步事件A)的操作B)的操作C，会造成死锁。</p>
 
@@ -344,63 +491,52 @@ dispatch_sync(dispatch_get_main_queue(), ^{//操作B
 <li><a href="http://www.jianshu.com/p/ff444d664e51">GCD容易让人迷惑的几个小问题</a></li>
 <li><a href="https://book.douban.com/subject/24720270/">Objective-C高级编程-iOS与OS X多线程和内存管理</a></li>
 <li><a href="https://book.douban.com/subject/3652388/">程序员的自我修养-链接、装载与库</a></li>
-</ul>
-
-                </section>
-            </article>
-
-            
-
-            
-
-            
-
-            <footer id="footer">
+</ul></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        
+      </p>
+    </footer>
     
-        <div id="social">
-
-	
-	
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
     
-    <a class="symbol" href="https://www.facebook.com/nemocdz">
-        circlefacebook
-    </a>
     
-    <a class="symbol" href="https://github.com/Nemocdz">
-        circlegithub
-    </a>
     
-    <a class="symbol" href="https://twitter.com/Nemocdz">
-        circletwitterbird
-    </a>
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "disqus_shortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
     
-
-
-</div>
-
-    
-    <p class="small">
-    
-       © Copyright 2017 <i class="fa fa-heart" aria-hidden="true"></i> Nemocdz
-    
-    </p>
-    <p class="small">
-        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
-    </p>
+  </section>
+  <footer class="site-footer">
+  <p>© 2017 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
 </footer>
 
-        </section>
-
-        <script src="https://nemocdz.github.io/My-blog/js/jquery-2.2.4.min.js"></script>
-<script src="https://nemocdz.github.io/My-blog/js/main.js"></script>
-<script src="https://nemocdz.github.io/My-blog/js/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 
 
+<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
+<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script src="https://nemocdz.github.io/My-blog/js/bundle.js"></script>
 
 
 
 
-
-    </body>
+  </body>
 </html>

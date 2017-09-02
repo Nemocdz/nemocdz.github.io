@@ -4,7 +4,9 @@ date: 2017-01-08T03:52:13+08:00
 draft: false
 ---
 
-在项目中，偶尔需要让tableview里支持不同种类的cell，比如微博的原创微博和别人转发的微博，就是两种cell。又或是类似支付宝的的timeline也有各种类型的cell。在同一个tableview里实现不同种类的cell，一般有两种方法，一种是把所有种类的cell先注册了，再根据不同的identifer去加载cell，一种是在init时创建不同的identifer的cell。效果图如下。
+在项目中，偶尔需要让tableview里支持不同种类的cell，比如微博的原创微博和别人转发的微博，就是两种cell。又或是类似支付宝的的timeline也有各种类型的cell。在同一个tableview里实现不同种类的cell，一般有两种方法，一种是把所有种类的cell先注册了，再根据不同的identifer去加载cell，一种是在init时创建不同的identifer的cell。
+
+<!--more-->效果图如下。
 
 ![](https://ws2.sinaimg.cn/large/006tKfTcly1fi1aan9mt6j30l812i0ud.jpg)
 

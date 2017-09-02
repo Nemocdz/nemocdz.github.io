@@ -8,6 +8,8 @@ draft: false
 
 最近重读了AFNetworking源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被AFNetworking作者的对细节，舒服，整洁的追求所折服。把一些个人觉得写的漂亮的用法总结下来，本文不在于探讨AFNetworking源码的具体业余实现，尽量从代码本身和设计角度进行总结（源码解析推荐[AFNetworking到底做了什么？](http://www.jianshu.com/p/856f0e26279d)这篇文章）。
 
+<!--more-->
+
 #### 1.Dispatch_once方法声明C语言变量方法
 
 感觉很像OC的property的getter方法，一种C语言懒加载的感觉，static修饰符意味只在该编译单元可见（对应OC就是.m文件），配合单例，只会被执行一次。类似于``if(!object)``的感觉。

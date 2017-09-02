@@ -8,6 +8,8 @@ draft: false
 
 之后发现有人说第一次未授权时collectionview会加载不出照片，发现没有在合适时候调用权限管理。iOS10的这个权限管理是info.plist的一个键值，没有回调方法。查询photoskit方法里，发现有一个权限回调方法，就想封装一个方法来友好的询问用户权限。
 
+<!--more-->
+
 查询文档，相册权限PHAuthorizationStatus枚举类型有这么几种。
 
 ```objective-c

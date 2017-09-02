@@ -6,10 +6,21 @@
     <description>Recent content on Nemocdz&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 02 Sep 2017 03:36:00 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 02 Sep 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://nemocdz.github.io/My-blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>关于</title>
+      <link>https://nemocdz.github.io/My-blog/about/</link>
+      <pubDate>Sat, 02 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/about/</guid>
+      <description> iOS初学者，电子科技大学大四，业余摄影师
+联系方式  QQ：757765420 Email：nemocdz@gmail.com  欢迎关注我的摄影博客嘻嘻
+ Lofter 图虫 简书  </description>
+    </item>
     
     <item>
       <title>再谈Objective-C弱引用容器的实现-关联对象实现weak</title>
@@ -17,7 +28,10 @@
       <pubDate>Sat, 02 Sep 2017 03:36:00 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/%E5%86%8D%E8%B0%88objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/</guid>
-      <description>之前写了一篇文章总结了OC中弱引用容器实现，在小米面试中提到其中CFFoundation的做法，面试官问了我一个问题，这样实现后在这些元素在</description>
+      <description>&lt;p&gt;之前写了一篇&lt;a href=&#34;https://nemocdz.github.io/My-blog/post/objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/&#34;&gt;文章&lt;/a&gt;总结了OC中弱引用容器实现，在小米面试中提到其中CFFoundation的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现Weak特质，也就是没有在销毁后置nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。&lt;/p&gt;
+
+&lt;p&gt;所以看了Runtime源码和文章后，订正弱引用容器的一些实现方法。
+&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -26,7 +40,9 @@
       <pubDate>Fri, 25 Aug 2017 02:46:12 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/%E4%BB%8E%E4%B8%80%E9%81%93%E7%BD%91%E6%98%93%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B5%85%E8%B0%88objective-c%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/</guid>
-      <description>今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？ @property (nonatomic, strong) NSString *target; //.... dispatch_queue_t queue = dispatch_queue_create(&amp;quot;parallel&amp;quot;, DISPATCH_QUEUE_CONCURRENT); for (int i = 0; i &amp;lt; 1000000 ; i++) { dispatch_async(queue, ^{ self.target = [NSString stringWithFormat:@&amp;quot;ksddkjalkjd%d&amp;quot;,i]; }); } 当时我把自定义的队</description>
+      <description>&lt;p&gt;今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -35,7 +51,11 @@
       <pubDate>Tue, 22 Aug 2017 03:28:20 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/tcpip%E5%8D%8F%E8%AE%AE%E6%97%8F%E8%BE%B9%E5%AD%A6%E8%BE%B9%E6%83%B3/</guid>
-      <description>写在前面 最近读了《图解TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和“TCP/IP”这两门课中一些未理解的知</description>
+      <description>&lt;h3 id=&#34;写在前面&#34;&gt;写在前面&lt;/h3&gt;
+
+&lt;p&gt;最近读了《图解TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和“TCP/IP”这两门课中一些未理解的知识，和疑惑的问题。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -44,7 +64,25 @@
       <pubDate>Mon, 21 Aug 2017 01:35:21 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/%E5%BE%81%E6%9C%8Dc%E6%8C%87%E9%92%88%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-      <description>用英语来解读C的声明 首先着眼于识别符（变量名或者函数名）。 从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。 优先顺序</description>
+      <description>&lt;h3 id=&#34;用英语来解读c的声明&#34;&gt;用英语来解读C的声明&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;首先着眼于识别符（变量名或者函数名）。&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。优先顺序说明如下：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;用于整理声明内容的括弧&lt;/li&gt;
+&lt;li&gt;用于表示数组的[]，用于表示函数的()&lt;/li&gt;
+&lt;li&gt;用于表示指针的*&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;解释完成派生型，使用“of”或“to”或“returning”将它们连接起来。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;C里面不存在多维数组。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -53,7 +91,11 @@
       <pubDate>Wed, 16 Aug 2017 03:31:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/afnetworking%E7%9A%84%E6%BC%82%E4%BA%AE%E7%BB%86%E8%8A%82/</guid>
-      <description>写在开头 最近重读了AFNetworking源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被AFNetworking作者</description>
+      <description>&lt;h3 id=&#34;写在开头&#34;&gt;写在开头&lt;/h3&gt;
+
+&lt;p&gt;最近重读了AFNetworking源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被AFNetworking作者的对细节，舒服，整洁的追求所折服。把一些个人觉得写的漂亮的用法总结下来，本文不在于探讨AFNetworking源码的具体业余实现，尽量从代码本身和设计角度进行总结（源码解析推荐&lt;a href=&#34;http://www.jianshu.com/p/856f0e26279d&#34;&gt;AFNetworking到底做了什么？&lt;/a&gt;这篇文章）。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -62,7 +104,9 @@
       <pubDate>Fri, 28 Jul 2017 18:18:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/ios10%E9%80%9A%E7%9F%A5%E6%A1%86%E6%9E%B6usernotifications%E5%AD%A6%E4%B9%A0%E5%8F%8A%E5%85%BC%E5%AE%B9%E7%AC%94%E8%AE%B0/</guid>
-      <description>在iOS10上，苹果将原来散落在UIKit中各处的用户通知相关的代码进行重构，剥离，打造了一个全新的通知框架-UserNotificatio</description>
+      <description>&lt;p&gt;在iOS10上，苹果将原来散落在UIKit中各处的用户通知相关的代码进行重构，剥离，打造了一个全新的通知框架-UserNotifications。笔者最近在开发公司通知相关的需求，跟着WWDC2016的视频和官方文档，学习了一下新框架。同时，在学习过程中，和老框架对应Api进行对比，有了个人的感受和看法。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -71,7 +115,9 @@
       <pubDate>Sun, 23 Jul 2017 04:55:00 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/</guid>
-      <description>在OC中Foundation框架中的常用容器类（NSSet，NSDictionary，NSArray）及其可变子类在加入元素时，均会对元素进</description>
+      <description>&lt;p&gt;在OC中Foundation框架中的常用容器类（NSSet，NSDictionary，NSArray）及其可变子类在加入元素时，均会对元素进行强引用。有的时候（比如持有多个Delegate对象时），希望有对应的弱引用容器使用。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -80,7 +126,13 @@
       <pubDate>Thu, 20 Jul 2017 03:31:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-      <description>线程 线程是程序执行流的最小单元。 各个线程之间共享程序的内存空间和进程级资源。、 组成 线程ID，当前指令指针，寄存器集合，堆栈 拥有自己的空间 栈，</description>
+      <description>&lt;h3 id=&#34;线程&#34;&gt;线程&lt;/h3&gt;
+
+&lt;p&gt;线程是程序执行流的最小单元。&lt;/p&gt;
+
+&lt;p&gt;各个线程之间共享程序的内存空间和进程级资源。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -89,7 +141,17 @@
       <pubDate>Thu, 13 Jul 2017 03:02:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/ios-core-animation%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-      <description>CALayer UIView = 绘制 + 响应触摸事件 负责屏幕和显示，不负责触摸事件响应链 UIView是其高级封装 和UIView层级一一对应 UIView未暴露CALaye</description>
+      <description>&lt;h4 id=&#34;calayer&#34;&gt;CALayer&lt;/h4&gt;
+
+&lt;p&gt;UIView = 绘制 + 响应触摸事件&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;负责屏幕和显示，不负责触摸事件响应链&lt;/li&gt;
+&lt;li&gt;UIView是其高级封装&lt;/li&gt;
+&lt;li&gt;和UIView层级一一对应&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -98,7 +160,14 @@
       <pubDate>Thu, 13 Jul 2017 01:28:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/c%E9%99%B7%E9%98%B1%E4%B8%8E%E7%BC%BA%E9%99%B7%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-      <description>多字符记号 输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号 组合赋值运算符是两个记号，如+= 单引号与双引号 单引号是</description>
+      <description>&lt;h5 id=&#34;多字符记号&#34;&gt;多字符记号&lt;/h5&gt;
+
+&lt;ul&gt;
+&lt;li&gt;输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号&lt;/li&gt;
+&lt;li&gt;组合赋值运算符是两个记号，如+=&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -107,16 +176,26 @@
       <pubDate>Wed, 28 Jun 2017 11:31:02 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/cocoa%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%80%BB%E7%BB%93/</guid>
-      <description>个人学习总结笔记 前置知识 线程 程序执行流的最小单元 线程拥有自己的空间：栈，线程局部储存（Thread Local Storage），寄存器 线程之间共享：全</description>
+      <description>&lt;p&gt;个人学习总结笔记&lt;/p&gt;
+
+&lt;h4 id=&#34;前置知识&#34;&gt;前置知识&lt;/h4&gt;
+
+&lt;h5 id=&#34;线程&#34;&gt;线程&lt;/h5&gt;
+
+&lt;p&gt;程序执行流的最小单元&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
-      <title>iOS中实现一个支持小数的星星评分组件</title>
-      <link>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E6%94%AF%E6%8C%81%E5%B0%8F%E6%95%B0%E7%9A%84%E6%98%9F%E6%98%9F%E8%AF%84%E5%88%86%E7%BB%84%E4%BB%B6/</link>
+      <title>iOS中实现支持小数的星星评分组件</title>
+      <link>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81%E5%B0%8F%E6%95%B0%E7%9A%84%E6%98%9F%E6%98%9F%E8%AF%84%E5%88%86%E7%BB%84%E4%BB%B6/</link>
       <pubDate>Sun, 21 May 2017 19:15:23 +0800</pubDate>
       
-      <guid>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E6%94%AF%E6%8C%81%E5%B0%8F%E6%95%B0%E7%9A%84%E6%98%9F%E6%98%9F%E8%AF%84%E5%88%86%E7%BB%84%E4%BB%B6/</guid>
-      <description>在很多电商，外卖，餐饮型应用里，都会在商品结束后评价中有一个星星组件。核心思路就是用UIControl并自定义实现其中的trackTouch</description>
+      <guid>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81%E5%B0%8F%E6%95%B0%E7%9A%84%E6%98%9F%E6%98%9F%E8%AF%84%E5%88%86%E7%BB%84%E4%BB%B6/</guid>
+      <description>&lt;p&gt;在很多电商，外卖，餐饮型应用里，都会在商品结束后评价中有一个星星组件。核心思路就是用UIControl并自定义实现其中的trackTouch的几个方法。而显示不到一个的星星，比如半个星星的思路是根据分数切割星星的图像并显示其中一部分。实现后效果如下。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -125,7 +204,9 @@
       <pubDate>Sun, 14 May 2017 21:36:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81cell%E9%80%9A%E7%94%A8%E7%9A%84tableviewmanager/</guid>
-      <description>在App中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态Cell构成的TableView，这些界面的特点是，Cell种类</description>
+      <description>&lt;p&gt;在App中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态Cell构成的TableView，这些界面的特点是，Cell种类繁多，Model种类繁多，点击事件处理分散但单调（页面跳转，编辑textFiled），重复写tableViewDelegate和datasource的相关方法，但不会用到一些奇怪的datasource和delegate方法，而且显示内容一般是固定的，每个页面Cell的数量不会很多。像笔者所在的项目里的侧边栏模块，里面有很多tableView，由于没有使用StoryBoard且很久之前写的，充斥着各种if&amp;hellip;else if用model的某个key值进行判断的逻辑去让cell去显示和隐藏某些视图，已经进行点击跳转逻辑，更有甚者，有&lt;code&gt;if (indexPath == 0)&lt;/code&gt;之类的通过行数判断去处理的逻辑。增加新的cell时，便要在各种地方再加上else if的新判断，而做新界面时，也没有很好的方法进行复用。笔者结合之前&lt;a href=&#34;https://nemocdz.github.io/My-blog/post/tableview%E5%92%8Ccollectionview%E9%80%9A%E7%94%A8datasource%E5%92%8Ccell/&#34;&gt;文章&lt;/a&gt;进行进一步思考，抽象出一个适合这种特点tableView的管理类，记录一下思路供参考。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -134,7 +215,9 @@
       <pubDate>Sun, 14 May 2017 01:33:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/ios%E5%8E%9F%E7%94%9F%E4%BA%8C%E7%BB%B4%E7%A0%81%E7%95%8C%E9%9D%A2%E7%9A%84%E4%B8%80%E4%BA%9B%E6%B3%A8%E6%84%8F%E7%82%B9/</guid>
-      <description>之前的文章是在ViewController里实现了原生二维码扫描的功能，后来觉得VC太重了，便把功能抽成了一个View，在抽象的过程中也仔细</description>
+      <description>&lt;p&gt;之前的&lt;a href=&#34;https://nemocdz.github.io/My-blog/post/ios%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/&#34;&gt;文章&lt;/a&gt;是在ViewController里实现了原生二维码扫描的功能，后来觉得VC太重了，便把功能抽成了一个View，在抽象的过程中也仔细捉摸了一些没有仔细思考过的问题，特此记录下来。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -143,7 +226,9 @@
       <pubDate>Fri, 21 Apr 2017 18:49:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/ios%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/</guid>
-      <description>二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是Google出品的ZXing，其的OC的移植版本是ZXingObjc。但是从iO</description>
+      <description>&lt;p&gt;二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是Google出品的&lt;a href=&#34;https://github.com/zxing/zxing&#34;&gt;ZXing&lt;/a&gt;，其的OC的移植版本是&lt;a href=&#34;https://github.com/TheLevelUp/ZXingObjC&#34;&gt;ZXingObjc&lt;/a&gt;。但是从iOS7开始，苹果就加入了原生Api的相机二维码扫描功能，而在iOS8中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -152,7 +237,9 @@
       <pubDate>Thu, 13 Apr 2017 03:02:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/%E7%94%A8cocoapods%E7%AE%A1%E7%90%86%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%A1%AB%E5%9D%91%E4%B9%8B%E6%97%85/</guid>
-      <description>上周接到了个需求，老大要我把项目代码里某个库覆盖上单元测试。而那个库没有Demo，平时都是集成在工程里开发的。为啥没有Demo，因为那个库依</description>
+      <description>&lt;p&gt;上周接到了个需求，老大要我把项目代码里某个库覆盖上单元测试。而那个库没有Demo，平时都是集成在工程里开发的。为啥没有Demo，因为那个库依赖很重，说是个库，实际只是把代码用cocoapods拆分罢了……平时开发的时候，大家都是把库集成在主工程里运行。我想，单测写在主工程的target里，这样会显得很杂，给人感觉是给整个工程做单元测试。那能不能弄一个Pod，专门把单测代码写在里面呢，既能git管理，又可以分类管理。殊不知，这个过程，坑如此多。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -161,7 +248,7 @@
       <pubDate>Wed, 29 Mar 2017 01:33:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A4%9A%E5%88%97%E8%81%94%E5%8A%A8%E7%9A%84pickerview/</guid>
-      <description>去年年底写了一个自定义的PickerView，文章在这里。当时对Block和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的Pick</description>
+      <description>&lt;p&gt;去年年底写了一个自定义的PickerView，&lt;a href=&#34;https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89pickerview/&#34;&gt;文章&lt;/a&gt;在这里。当时对Block和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的Picker，前几天还看到评论有人给我提了些建议，便花了一天时间做了些升级，做了多列联动的实现。多列联动的Picker很常见，比如用在地址选择，如省-市-区中。网上搜索的例子要不是只写死指定的列数，要不然就是指定数据格式严格而复杂。我的强迫症又犯了，要写，就写一个，简单而且，能无限列联动的。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -170,7 +257,9 @@
       <pubDate>Sat, 25 Mar 2017 17:11:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/tableview%E5%92%8Ccollectionview%E9%80%9A%E7%94%A8datasource%E5%92%8Ccell/</guid>
-      <description>刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起UI来很费劲。新的界面是个列表视图，就寻</description>
+      <description>&lt;p&gt;刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起UI来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起UI不那么费劲的tableview，顺便把项目里老的collectionView也进行了类比，偷偷进行了重构。毕竟UI总是改来改去的，而常用的tableview和collecitonview更是应该让其扩展性更好，复用性更强。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -179,7 +268,7 @@
       <pubDate>Tue, 24 Jan 2017 01:24:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/tableview%E5%86%85%E5%B5%8C%E5%A5%97collectionview%E5%8A%A8%E6%80%81%E9%AB%98%E5%BA%A6%E7%9A%84%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BC%E8%A1%A8%E5%8D%95%E6%88%96%E5%9B%BE%E7%89%87%E5%88%86%E4%BA%AB%E7%95%8C%E9%9D%A2/</guid>
-      <description>在有社交分享平台属性的app中，我们经常看见类似有tableview中多图展示。不管是发布的表单界面中，还是社交动态的时间线的界面中，都需要</description>
+      <description>&lt;p&gt;在有社交分享平台属性的app中，我们经常看见类似有tableview中多图展示。不管是发布的表单界面中，还是社交动态的时间线的界面中，都需要根据图片数量动态变化界面。最近刚好写了一个这样的界面，花了点时间写了个Demo总结一下，希望可以帮助有需要的人。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -188,7 +277,7 @@
       <pubDate>Sun, 08 Jan 2017 03:52:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/tableview%E6%94%AF%E6%8C%81%E4%B8%8D%E5%90%8C%E7%A7%8D%E7%B1%BB%E7%9A%84cell/</guid>
-      <description>在项目中，偶尔需要让tableview里支持不同种类的cell，比如微博的原创微博和别人转发的微博，就是两种cell。又或是类似支付宝的的t</description>
+      <description>&lt;p&gt;在项目中，偶尔需要让tableview里支持不同种类的cell，比如微博的原创微博和别人转发的微博，就是两种cell。又或是类似支付宝的的timeline也有各种类型的cell。在同一个tableview里实现不同种类的cell，一般有两种方法，一种是把所有种类的cell先注册了，再根据不同的identifer去加载cell，一种是在init时创建不同的identifer的cell。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -197,7 +286,11 @@
       <pubDate>Wed, 14 Dec 2016 23:05:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E6%9D%83%E9%99%90%E5%B0%81%E8%A3%85%E5%B0%8Ftips%E5%92%8C%E7%9B%91%E6%B5%8B%E7%9B%B8%E5%86%8C%E5%8F%98%E5%8C%96/</guid>
-      <description>之前写了一个仿Snapseed的ImagePicker，见Demo和之前的文章。 之后发现有人说第一次未授权时collectionview会加</description>
+      <description>&lt;p&gt;之前写了一个仿Snapseed的ImagePicker，见&lt;a href=&#34;https://github.com/Nemocdz/CDZImagePickerDemo&#34;&gt;Demo&lt;/a&gt;和之前的&lt;a href=&#34;https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BFsnapseed%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/&#34;&gt;文章&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;之后发现有人说第一次未授权时collectionview会加载不出照片，发现没有在合适时候调用权限管理。iOS10的这个权限管理是info.plist的一个键值，没有回调方法。查询photoskit方法里，发现有一个权限回调方法，就想封装一个方法来友好的询问用户权限。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -206,7 +299,7 @@
       <pubDate>Sun, 04 Dec 2016 01:55:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BFsnapseed%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/</guid>
-      <description>ImagePickerController（图片选择器）是iOS开发中一个很常用的UI控件。作为摄影爱好者，而Google出品的摄影后期Ap</description>
+      <description>&lt;p&gt;ImagePickerController（图片选择器）是iOS开发中一个很常用的UI控件。作为摄影爱好者，而Google出品的摄影后期App，Snapseed中那个图片选择器，好看又实用，便尝试着仿写了一个。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -215,7 +308,9 @@
       <pubDate>Sat, 19 Nov 2016 02:28:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89pickerview/</guid>
-      <description>UIPickerView是iOS开发中，相当常用的一个UI控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以</description>
+      <description>&lt;p&gt;UIPickerView是iOS开发中，相当常用的一个UI控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在PickerView上加上Toolbar和确定取消按钮。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>

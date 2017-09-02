@@ -6,6 +6,8 @@ draft: false
 
 二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是Google出品的[ZXing](https://github.com/zxing/zxing)，其的OC的移植版本是[ZXingObjc](https://github.com/TheLevelUp/ZXingObjC)。但是从iOS7开始，苹果就加入了原生Api的相机二维码扫描功能，而在iOS8中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。
 
+<!--more-->
+
 ![IMG_0811](http://ww1.sinaimg.cn/large/006tNc79ly1feuhsfjbrsj30ku112q66.jpg)
 
 ### 相机扫描二维码部分

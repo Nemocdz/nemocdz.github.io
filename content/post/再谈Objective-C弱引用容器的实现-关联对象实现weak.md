@@ -7,6 +7,7 @@ draft: false
 之前写了一篇[文章](https://nemocdz.github.io/My-blog/post/objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/)总结了OC中弱引用容器实现，在小米面试中提到其中CFFoundation的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现Weak特质，也就是没有在销毁后置nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。
 
 所以看了Runtime源码和文章后，订正弱引用容器的一些实现方法。
+<!--more-->
 
 ### Runtime源码的weak关键字实现
 
@@ -92,7 +93,6 @@ storeWeak(id *location, objc_object *newObj)
 
     return (id)newObj;
 }
-
 ```
 
 而WeakTable是一个Hash表设计，以对象的地址为key，value是所有指向这个对象的weak指针的地址集合。通过这种设计，在废弃对象时，可以通过weak表快速找到value即所有weak指针并统一设置为nil并删除该记录。

@@ -1,70 +1,215 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-cn">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="author" content="Nemocdz">
-		<meta name="description" content="Blog Description">
-		<meta name="generator" content="Hugo 0.25.1" />
-		<title>《C陷阱与缺陷》读书笔记 &middot; Nemocdz&#39;s Blog</title>
-		<link rel="shortcut icon" href="https://nemocdz.github.io/My-blog/images/favicon.ico">
-		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/style.css">
-		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/highlight.css">
-		
+<head>
 
-		
-		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/monosocialiconsfont.css">
-		
+  <meta charset="utf-8" />
 
-		
-		<link href="https://nemocdz.github.io/My-blog/index.xml" rel="alternate" type="application/rss+xml" title="Nemocdz&#39;s Blog" />
-		
-	</head>
+  
+  <title>《C陷阱与缺陷》读书笔记</title>
 
-    <body>
-       <nav class="main-nav">
-	
-	
-		<a href='https://nemocdz.github.io/My-blog/'> <span class="arrow">←</span>Home</a>
-	
-	<a href='https://nemocdz.github.io/My-blog/post'>Archive</a>
-	<a href='https://nemocdz.github.io/My-blog/tags'>Tags</a>
-	<a href='https://nemocdz.github.io/My-blog/about'>About</a>
-
-	
-
-	
-	<a class="cta" href="https://nemocdz.github.io/My-blog/index.xml">RSS</a>
-	
-</nav>
+  
+  
 
 
-        <section id="wrapper">
-            <article class="post">
-                <header>
-                    <h1>
-                        《C陷阱与缺陷》读书笔记
-                    </h1>
-                    <h2 class="headline">
-                    Jul 13, 2017 01:28
-                    · 488 words
-                    · 1 minute read
-                      <span class="tags">
-                      
-                      </span>
-                    </h2>
-                </header>
-                
-                <section id="post-body">
-                    
 
-<h5 id="多字符记号">多字符记号</h5>
+
+  
+  <meta name="author" content="Nemocdz" />
+  <meta name="description" content="多字符记号  输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号 组合赋值运算符是两个记号，如&#43;=  
+" />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@Nemocdz" />
+    <meta name="twitter:title" content="《C陷阱与缺陷》读书笔记" />
+    <meta name="twitter:description" content="多字符记号  输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号 组合赋值运算符是两个记号，如&#43;=  
+" />
+    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.25.1" />
+
+
+<link rel="canonical" href="https://nemocdz.github.io/My-blog/post/c%E9%99%B7%E9%98%B1%E4%B8%8E%E7%BC%BA%E9%99%B7%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" />
+<link rel="alternative" href="https://nemocdz.github.io/My-blog/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="_moDmnnBNVLBN1rzNxyGUGdPHE20YgbmrtzLIbxaWFc" />
+<meta name="msvalidate.01" content="22596E34341DD1D17D6022C44647E587" />
+
+
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="shortcut icon" type="imge/x-icon" href="https://nemocdz.github.io/My-blog/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/My-blog/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/My-blog/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/My-blog/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/My-blog/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://nemocdz.github.io/My-blog/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+
+<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://nemocdz.github.io/My-blog/img/avatar.png" alt="Avatar">
+  
+  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  
+  <p class="subtitle">iOS Dev &amp; Photographer</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/My-blog/">首页</a></li>
+      
+        <li class="menu-item "><a href="https://nemocdz.github.io/My-blog/about/">关于</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+      <li class="social-item">
+        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
+      </li>
+
+      
+      <li class="social-item">
+        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/My-blog/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
+      </li>
+
+      
+
+      <li class="social-item">
+        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/My-blog/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">《C陷阱与缺陷》读书笔记</h1>
+      <p class="post-meta">@Nemocdz · Jul 13, 2017 · 1 min read</p>
+    </header>
+    <article class="post-content"><h5 id="多字符记号">多字符记号</h5>
 
 <ul>
 <li>输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号</li>
 <li>组合赋值运算符是两个记号，如+=</li>
 </ul>
+
+<p></p>
 
 <h5 id="单引号与双引号">单引号与双引号</h5>
 
@@ -72,43 +217,40 @@
 <li>单引号是当中字符对照整数序列的值</li>
 <li>双引号是初始化一个无名数组指针包括挡住字符和一个附近二进制为0的字符</li>
 </ul>
-
-<pre><code class="language-c">printf(&quot;Hello world\n&quot;);
-//等价于
-char hello[] = { 'H', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd', '\n', 0 };
-printf(hello);
-</code></pre>
+<div class="highlight"><pre><code class="language-c" data-lang="c"><span></span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Hello world</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="c1">//等价于</span>
+<span class="kt">char</span> <span class="n">hello</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="sc">&#39;H&#39;</span><span class="p">,</span> <span class="sc">&#39;e&#39;</span><span class="p">,</span> <span class="sc">&#39;l&#39;</span><span class="p">,</span> <span class="sc">&#39;l&#39;</span><span class="p">,</span> <span class="sc">&#39;o&#39;</span><span class="p">,</span> <span class="sc">&#39; &#39;</span><span class="p">,</span> <span class="sc">&#39;w&#39;</span><span class="p">,</span> <span class="sc">&#39;o&#39;</span><span class="p">,</span> <span class="sc">&#39;r&#39;</span><span class="p">,</span> <span class="sc">&#39;l&#39;</span><span class="p">,</span> <span class="sc">&#39;d&#39;</span><span class="p">,</span> <span class="sc">&#39;\n&#39;</span><span class="p">,</span> <span class="mi">0</span> <span class="p">};</span>
+<span class="n">printf</span><span class="p">(</span><span class="n">hello</span><span class="p">);</span>
+</code></pre></div>
 
 <h5 id="声明">声明</h5>
 
 <p>变量声明=类型+对该类型求值的表达式</p>
 
 <p>类型的模型=变量声明去除变量名和分号后用括号括起来</p>
+<div class="highlight"><pre><code class="language-c" data-lang="c"><span></span><span class="kt">float</span> <span class="o">*</span><span class="nf">a</span><span class="p">();</span>
+<span class="c1">//a是一个返回float指针的函数，模型为</span>
+<span class="p">(</span><span class="kt">float</span> <span class="o">*</span><span class="p">())</span>
 
-<pre><code class="language-c">float *a();
-//a是一个返回float指针的函数，模型为
-(float *())
-
-//调用地址0的函数
-//调用变量
-(*a)();
-//a为返回void的函数的指针
-void (*b)();
-//模型为
-(void (*)())
-//将0转为此类型
-(void(*)())0;
-//调用转换后的变量
-(*(void(*)())0)();
-</code></pre>
+<span class="c1">//调用地址0的函数</span>
+<span class="c1">//调用变量</span>
+<span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">)();</span>
+<span class="c1">//a为返回void的函数的指针</span>
+<span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">b</span><span class="p">)();</span>
+<span class="c1">//模型为</span>
+<span class="p">(</span><span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="p">)())</span>
+<span class="c1">//将0转为此类型</span>
+<span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">*</span><span class="p">)())</span><span class="mi">0</span><span class="p">;</span>
+<span class="c1">//调用转换后的变量</span>
+<span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">*</span><span class="p">)())</span><span class="mi">0</span><span class="p">)();</span>
+</code></pre></div>
 
 <h5 id="函数调用">函数调用</h5>
 
 <p>需要参数列表，可无参数</p>
-
-<pre><code class="language-c">f();//函数调用
-f;//函数地址求值，不调用
-</code></pre>
+<div class="highlight"><pre><code class="language-c" data-lang="c"><span></span><span class="n">f</span><span class="p">();</span><span class="c1">//函数调用</span>
+<span class="n">f</span><span class="p">;</span><span class="c1">//函数地址求值，不调用</span>
+</code></pre></div>
 
 <h5 id="表达式求值顺序">表达式求值顺序</h5>
 
@@ -132,10 +274,9 @@ f;//函数地址求值，不调用
 <p>char指针变量是指向其数组第0个元素的指针</p>
 
 <h5 id="除法">除法</h5>
-
-<pre><code class="language-c">q = a / b;
-r = a % b;
-</code></pre>
+<div class="highlight"><pre><code class="language-c" data-lang="c"><span></span><span class="n">q</span> <span class="o">=</span> <span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">;</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">a</span> <span class="o">%</span> <span class="n">b</span><span class="p">;</span>
+</code></pre></div>
 
 <p>保证</p>
 
@@ -150,63 +291,52 @@ r = a % b;
 <ul>
 <li>a为负数，q也为负</li>
 <li>r &gt;= 0</li>
-</ul>
-
-                </section>
-            </article>
-
-            
-
-            
-
-            
-
-            <footer id="footer">
+</ul></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        
+      </p>
+    </footer>
     
-        <div id="social">
-
-	
-	
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
     
-    <a class="symbol" href="https://www.facebook.com/nemocdz">
-        circlefacebook
-    </a>
     
-    <a class="symbol" href="https://github.com/Nemocdz">
-        circlegithub
-    </a>
     
-    <a class="symbol" href="https://twitter.com/Nemocdz">
-        circletwitterbird
-    </a>
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "disqus_shortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
     
-
-
-</div>
-
-    
-    <p class="small">
-    
-       © Copyright 2017 <i class="fa fa-heart" aria-hidden="true"></i> Nemocdz
-    
-    </p>
-    <p class="small">
-        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
-    </p>
+  </section>
+  <footer class="site-footer">
+  <p>© 2017 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
 </footer>
 
-        </section>
-
-        <script src="https://nemocdz.github.io/My-blog/js/jquery-2.2.4.min.js"></script>
-<script src="https://nemocdz.github.io/My-blog/js/main.js"></script>
-<script src="https://nemocdz.github.io/My-blog/js/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 
 
+<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
+<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script src="https://nemocdz.github.io/My-blog/js/bundle.js"></script>
 
 
 
 
-
-    </body>
+  </body>
 </html>

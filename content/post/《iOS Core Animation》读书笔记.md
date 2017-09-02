@@ -12,6 +12,8 @@ UIView = 绘制 + 响应触摸事件
 * UIView是其高级封装
 * 和UIView层级一一对应
 
+<!--more-->
+
 UIView未暴露CALayer的接口
 
 * 阴影，圆角，带颜色的边框

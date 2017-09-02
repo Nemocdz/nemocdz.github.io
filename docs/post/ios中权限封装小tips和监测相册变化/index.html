@@ -1,109 +1,256 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-cn">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="author" content="Nemocdz">
-		<meta name="description" content="Blog Description">
-		<meta name="generator" content="Hugo 0.25.1" />
-		<title>iOS中权限小Tips和监测相册变化 &middot; Nemocdz&#39;s Blog</title>
-		<link rel="shortcut icon" href="https://nemocdz.github.io/My-blog/images/favicon.ico">
-		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/style.css">
-		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/highlight.css">
-		
+<head>
 
-		
-		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/monosocialiconsfont.css">
-		
+  <meta charset="utf-8" />
 
-		
-		<link href="https://nemocdz.github.io/My-blog/index.xml" rel="alternate" type="application/rss+xml" title="Nemocdz&#39;s Blog" />
-		
-	</head>
+  
+  <title>iOS中权限小Tips和监测相册变化</title>
 
-    <body>
-       <nav class="main-nav">
-	
-	
-		<a href='https://nemocdz.github.io/My-blog/'> <span class="arrow">←</span>Home</a>
-	
-	<a href='https://nemocdz.github.io/My-blog/post'>Archive</a>
-	<a href='https://nemocdz.github.io/My-blog/tags'>Tags</a>
-	<a href='https://nemocdz.github.io/My-blog/about'>About</a>
-
-	
-
-	
-	<a class="cta" href="https://nemocdz.github.io/My-blog/index.xml">RSS</a>
-	
-</nav>
+  
+  
 
 
-        <section id="wrapper">
-            <article class="post">
-                <header>
-                    <h1>
-                        iOS中权限小Tips和监测相册变化
-                    </h1>
-                    <h2 class="headline">
-                    Dec 14, 2016 23:05
-                    · 1261 words
-                    · 3 minutes read
-                      <span class="tags">
-                      
-                      </span>
-                    </h2>
-                </header>
-                
-                <section id="post-body">
-                    
 
-<p>之前写了一个仿Snapseed的ImagePicker，见<a href="https://github.com/Nemocdz/CDZImagePickerDemo">Demo</a>和之前的<a href="https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BFsnapseed%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/">文章</a>。</p>
+
+  
+  <meta name="author" content="Nemocdz" />
+  <meta name="description" content="之前写了一个仿Snapseed的ImagePicker，见Demo和之前的文章。
+之后发现有人说第一次未授权时collectionview会加载不出照片，发现没有在合适时候调用权限管理。iOS10的这个权限管理是info.plist的一个键值，没有回调方法。查询photoskit方法里，发现有一个权限回调方法，就想封装一个方法来友好的询问用户权限。
+
+" />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@Nemocdz" />
+    <meta name="twitter:title" content="iOS中权限小Tips和监测相册变化" />
+    <meta name="twitter:description" content="之前写了一个仿Snapseed的ImagePicker，见Demo和之前的文章。
+之后发现有人说第一次未授权时collectionview会加载不出照片，发现没有在合适时候调用权限管理。iOS10的这个权限管理是info.plist的一个键值，没有回调方法。查询photoskit方法里，发现有一个权限回调方法，就想封装一个方法来友好的询问用户权限。
+
+" />
+    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.25.1" />
+
+
+<link rel="canonical" href="https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E6%9D%83%E9%99%90%E5%B0%81%E8%A3%85%E5%B0%8Ftips%E5%92%8C%E7%9B%91%E6%B5%8B%E7%9B%B8%E5%86%8C%E5%8F%98%E5%8C%96/" />
+<link rel="alternative" href="https://nemocdz.github.io/My-blog/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="_moDmnnBNVLBN1rzNxyGUGdPHE20YgbmrtzLIbxaWFc" />
+<meta name="msvalidate.01" content="22596E34341DD1D17D6022C44647E587" />
+
+
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="shortcut icon" type="imge/x-icon" href="https://nemocdz.github.io/My-blog/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/My-blog/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/My-blog/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/My-blog/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/My-blog/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://nemocdz.github.io/My-blog/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+
+<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://nemocdz.github.io/My-blog/img/avatar.png" alt="Avatar">
+  
+  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  
+  <p class="subtitle">iOS Dev &amp; Photographer</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/My-blog/">首页</a></li>
+      
+        <li class="menu-item "><a href="https://nemocdz.github.io/My-blog/about/">关于</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+      <li class="social-item">
+        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
+      </li>
+
+      
+      <li class="social-item">
+        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/My-blog/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
+      </li>
+
+      
+
+      <li class="social-item">
+        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/My-blog/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">iOS中权限小Tips和监测相册变化</h1>
+      <p class="post-meta">@Nemocdz · Dec 14, 2016 · 1 min read</p>
+    </header>
+    <article class="post-content"><p>之前写了一个仿Snapseed的ImagePicker，见<a href="https://github.com/Nemocdz/CDZImagePickerDemo">Demo</a>和之前的<a href="https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BFsnapseed%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/">文章</a>。</p>
 
 <p>之后发现有人说第一次未授权时collectionview会加载不出照片，发现没有在合适时候调用权限管理。iOS10的这个权限管理是info.plist的一个键值，没有回调方法。查询photoskit方法里，发现有一个权限回调方法，就想封装一个方法来友好的询问用户权限。</p>
 
-<p>查询文档，相册权限PHAuthorizationStatus枚举类型有这么几种。</p>
+<p></p>
 
-<pre><code class="language-objective-c">typedef NS_ENUM(NSInteger, PHAuthorizationStatus) {
-    PHAuthorizationStatusNotDetermined = 0, // User has not yet made a choice with regards to this application 用户未决定
-    PHAuthorizationStatusRestricted,        // This application is not authorized to access photo data.  一般是家长权限之类的拒绝
-                                            // The user cannot change this application’s status, possibly due to active restrictions
-                                            //   such as parental controls being in place.
-    PHAuthorizationStatusDenied,            // User has explicitly denied this application access to photos data. 用户拒绝 
-    PHAuthorizationStatusAuthorized         // User has authorized this application to access photos data. 用户允许
-} PHOTOS_AVAILABLE_IOS_TVOS(8_0, 10_0);
-</code></pre>
+<p>查询文档，相册权限PHAuthorizationStatus枚举类型有这么几种。</p>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="k">typedef</span> <span class="nf">NS_ENUM</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">,</span> <span class="n">PHAuthorizationStatus</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">PHAuthorizationStatusNotDetermined</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="c1">// User has not yet made a choice with regards to this application 用户未决定</span>
+    <span class="n">PHAuthorizationStatusRestricted</span><span class="p">,</span>        <span class="c1">// This application is not authorized to access photo data.  一般是家长权限之类的拒绝</span>
+                                            <span class="c1">// The user cannot change this application’s status, possibly due to active restrictions</span>
+                                            <span class="c1">//   such as parental controls being in place.</span>
+    <span class="n">PHAuthorizationStatusDenied</span><span class="p">,</span>            <span class="c1">// User has explicitly denied this application access to photos data. 用户拒绝 </span>
+    <span class="n">PHAuthorizationStatusAuthorized</span>         <span class="c1">// User has authorized this application to access photos data. 用户允许</span>
+<span class="p">}</span> <span class="n">PHOTOS_AVAILABLE_IOS_TVOS</span><span class="p">(</span><span class="mi">8</span><span class="n">_0</span><span class="p">,</span> <span class="mi">10</span><span class="n">_0</span><span class="p">);</span>
+</code></pre></div>
 
 <p>其中，我们不希望用户去拒绝，达到<code>PHAuthorizationStatusDenied</code>这个状态，这样的话用户再要获取权限就要到设置里的隐私里找到我们的应用再手动打开，而没办法在app内去请求权限更改。那么我们希望暂时拒绝后的状态应该是<code>PHAuthorizationStatusNotDetermined</code>的，思路就是提示一个alertviewcontroller去询问，用户取消则不去调用真正的询问权限（相当于忽略），以便下次提醒在询问。用户同意则调用系统询问权限，这时一般用户也会再允许了。流程示意图如下。<img src="http://ww1.sinaimg.cn/large/006tNc79gw1faqpzkg83ej31kw0uv769.jpg" alt="屏幕快照 2016-12-14 22.15.02" /></p>
 
 <p>代码很简单，直接贴上来</p>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">showPermissionAlertInController</span><span class="p">{</span>
+    <span class="bp">UIAlertController</span> <span class="o">*</span><span class="n">alert</span> <span class="o">=</span> <span class="p">[</span><span class="bp">UIAlertController</span> <span class="nl">alertControllerWithTitle</span><span class="p">:</span><span class="nb">nil</span> <span class="nl">message</span><span class="p">:</span><span class="s">@&quot;需要你的图库的权限&quot;</span> <span class="nl">preferredStyle</span><span class="p">:</span><span class="n">UIAlertControllerStyleAlert</span><span class="p">];</span>
+    <span class="bp">UIAlertAction</span> <span class="o">*</span><span class="n">cancelAction</span> <span class="o">=</span> <span class="p">[</span><span class="bp">UIAlertAction</span> <span class="nl">actionWithTitle</span><span class="p">:</span><span class="s">@&quot;取消&quot;</span> <span class="nl">style</span><span class="p">:</span><span class="n">UIAlertActionStyleCancel</span> <span class="nl">handler</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="bp">UIAlertAction</span> <span class="o">*</span><span class="n">action</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//do something</span>
+    <span class="p">}];</span>
+    <span class="bp">UIAlertAction</span> <span class="o">*</span><span class="n">requestAction</span> <span class="o">=</span> <span class="p">[</span><span class="bp">UIAlertAction</span> <span class="nl">actionWithTitle</span><span class="p">:</span><span class="s">@&quot;同意&quot;</span> <span class="nl">style</span><span class="p">:</span><span class="n">UIAlertActionStyleDefault</span> <span class="nl">handler</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="bp">UIAlertAction</span> <span class="o">*</span><span class="n">action</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">dispatch_async</span><span class="p">(</span><span class="n">dispatch_get_global_queue</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="o">^</span><span class="p">{</span>
+            <span class="p">[</span><span class="bp">PHPhotoLibrary</span> <span class="nl">requestAuthorization</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">PHAuthorizationStatus</span> <span class="n">status</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">status</span> <span class="o">==</span> <span class="n">PHAuthorizationStatusAuthorized</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;用户同意授权相册&quot;</span><span class="p">);</span>
+                <span class="p">}</span><span class="k">else</span> <span class="p">{</span>
+                    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;用户拒绝授权相册&quot;</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="n">dispatch_async</span><span class="p">(</span><span class="n">dispatch_get_main_queue</span><span class="p">(),</span> <span class="o">^</span><span class="p">{</span>
+                    <span class="c1">//do something</span>
+                <span class="p">});</span>
+            <span class="p">}];</span>
 
-<pre><code class="language-objective-c">- (void)showPermissionAlertInController{
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@&quot;需要你的图库的权限&quot; preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@&quot;取消&quot; style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-        //do something
-    }];
-    UIAlertAction *requestAction = [UIAlertAction actionWithTitle:@&quot;同意&quot; style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        dispatch_async(dispatch_get_global_queue(0, 0), ^{
-            [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
-                if (status == PHAuthorizationStatusAuthorized) {
-                    NSLog(@&quot;用户同意授权相册&quot;);
-                }else {
-                    NSLog(@&quot;用户拒绝授权相册&quot;);
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    //do something
-                });
-            }];
-
-        });
-    }];
-    [alert addAction:cancelAction];
-    [alert addAction:requestAction];
-    [self presentViewController:alert animated:YES completion:nil];
-}
-</code></pre>
+        <span class="p">});</span>
+    <span class="p">}];</span>
+    <span class="p">[</span><span class="n">alert</span> <span class="nl">addAction</span><span class="p">:</span><span class="n">cancelAction</span><span class="p">];</span>
+    <span class="p">[</span><span class="n">alert</span> <span class="nl">addAction</span><span class="p">:</span><span class="n">requestAction</span><span class="p">];</span>
+    <span class="p">[</span><span class="nb">self</span> <span class="nl">presentViewController</span><span class="p">:</span><span class="n">alert</span> <span class="nl">animated</span><span class="p">:</span><span class="nb">YES</span> <span class="nl">completion</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre></div>
 
 <p>再在需要用到权限的地方加上判断就好</p>
 
@@ -114,31 +261,28 @@
 <p>后来发现如果调用选择器时在外部改变了照片（增加，删除）后collectionview不会改变，就研究了一下photoskit，发现有个<code>- (void)photoLibraryDidChange:(PHChange *)changeInfo </code>检测相册变动，但之前需要注册为观察者并实现协议</p>
 
 <p><code>PHPhotoLibraryChangeObserver</code></p>
-
-<pre><code class="language-objective-c">- (void)viewDidLoad{
-    [super viewDidLoad];
-    [[PHPhotoLibrary sharedPhotoLibrary]registerChangeObserver:self];
-   //other code
-}
-</code></pre>
-
-<pre><code class="language-objective-c">- (void)dealloc{
-    [[PHPhotoLibrary sharedPhotoLibrary]unregisterChangeObserver:self];
-}
-</code></pre>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">viewDidLoad</span><span class="p">{</span>
+    <span class="p">[</span><span class="nb">super</span> <span class="n">viewDidLoad</span><span class="p">];</span>
+    <span class="p">[[</span><span class="bp">PHPhotoLibrary</span> <span class="n">sharedPhotoLibrary</span><span class="p">]</span><span class="nl">registerChangeObserver</span><span class="p">:</span><span class="nb">self</span><span class="p">];</span>
+   <span class="c1">//other code</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">dealloc</span><span class="p">{</span>
+    <span class="p">[[</span><span class="bp">PHPhotoLibrary</span> <span class="n">sharedPhotoLibrary</span><span class="p">]</span><span class="nl">unregisterChangeObserver</span><span class="p">:</span><span class="nb">self</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre></div>
 
 <p>然后实现方法，更新ui的话要在主线程里</p>
-
-<pre><code class="language-objective-c">- (void)photoLibraryDidChange:(PHChange *)changeInfo {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        PHFetchResultChangeDetails *changes = [changeInfo changeDetailsForFetchResult:self.imageAssetsResult];
-        if (changes) {
-            self.photosDataSource.itemArray = [self getImageAssets];
-            [self.photosView reloadData];
-        }
-    });
-}
-</code></pre>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">photoLibraryDidChange:</span><span class="p">(</span><span class="bp">PHChange</span> <span class="o">*</span><span class="p">)</span><span class="nv">changeInfo</span> <span class="p">{</span>
+    <span class="n">dispatch_async</span><span class="p">(</span><span class="n">dispatch_get_main_queue</span><span class="p">(),</span> <span class="o">^</span><span class="p">{</span>
+        <span class="bp">PHFetchResultChangeDetails</span> <span class="o">*</span><span class="n">changes</span> <span class="o">=</span> <span class="p">[</span><span class="n">changeInfo</span> <span class="nl">changeDetailsForFetchResult</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">imageAssetsResult</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">changes</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nb">self</span><span class="p">.</span><span class="n">photosDataSource</span><span class="p">.</span><span class="n">itemArray</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="n">getImageAssets</span><span class="p">];</span>
+            <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">photosView</span> <span class="n">reloadData</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
 
 <p>这个方法默认所有相册的变更都会通知，但是有些变动是我们不需要的，比如用户新建了一个新空相册，删除了一个旧相册等，这时我们可以用PHChange里的changeDetails去区分，比如<code>changeDetailsForFetchResult:(PHFetchResult *)object;</code>就是传入一组FetchResult，如果这组Result有变化，比如这组Result是Asset的集合，Asset增加减少，那么就会返回一个ChangeDetails，可以用此区分，但是如果是Asset内部的变化，就不会返回一个ChangeDetails。同样的如果这组Result是Collection的集合，那么Collection内部的变化，比如Collection里的Asset对象增加减少，就不会有返回。</p>
 
@@ -148,63 +292,52 @@
 
 <h2 id="最后">最后</h2>
 
-<p>这篇文章篇幅不多，作为一些补充，希望能帮到有需要的人。</p>
-
-                </section>
-            </article>
-
-            
-
-            
-
-            
-
-            <footer id="footer">
+<p>这篇文章篇幅不多，作为一些补充，希望能帮到有需要的人。</p></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        This post was published <strong>262</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+      </p>
+    </footer>
     
-        <div id="social">
-
-	
-	
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
     
-    <a class="symbol" href="https://www.facebook.com/nemocdz">
-        circlefacebook
-    </a>
     
-    <a class="symbol" href="https://github.com/Nemocdz">
-        circlegithub
-    </a>
     
-    <a class="symbol" href="https://twitter.com/Nemocdz">
-        circletwitterbird
-    </a>
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "disqus_shortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
     
-
-
-</div>
-
-    
-    <p class="small">
-    
-       © Copyright 2017 <i class="fa fa-heart" aria-hidden="true"></i> Nemocdz
-    
-    </p>
-    <p class="small">
-        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
-    </p>
+  </section>
+  <footer class="site-footer">
+  <p>© 2017 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
 </footer>
 
-        </section>
-
-        <script src="https://nemocdz.github.io/My-blog/js/jquery-2.2.4.min.js"></script>
-<script src="https://nemocdz.github.io/My-blog/js/main.js"></script>
-<script src="https://nemocdz.github.io/My-blog/js/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 
 
+<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
+<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script src="https://nemocdz.github.io/My-blog/js/bundle.js"></script>
 
 
 
 
-
-    </body>
+  </body>
 </html>

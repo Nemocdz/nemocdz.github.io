@@ -5,6 +5,8 @@ draft: false
 ---
 今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？
 
+<!--more-->
+
 ```objective-c
 @property (nonatomic, strong) NSString *target;
 //....

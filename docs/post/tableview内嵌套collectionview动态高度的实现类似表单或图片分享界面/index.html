@@ -1,65 +1,210 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-cn">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="author" content="Nemocdz">
-		<meta name="description" content="Blog Description">
-		<meta name="generator" content="Hugo 0.25.1" />
-		<title>TableView内嵌套CollectionView动态高度的实现（表单或图片分享） &middot; Nemocdz&#39;s Blog</title>
-		<link rel="shortcut icon" href="https://nemocdz.github.io/My-blog/images/favicon.ico">
-		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/style.css">
-		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/highlight.css">
-		
+<head>
 
-		
-		<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/monosocialiconsfont.css">
-		
+  <meta charset="utf-8" />
 
-		
-		<link href="https://nemocdz.github.io/My-blog/index.xml" rel="alternate" type="application/rss+xml" title="Nemocdz&#39;s Blog" />
-		
-	</head>
+  
+  <title>TableView内嵌套CollectionView动态高度的实现（表单或图片分享）</title>
 
-    <body>
-       <nav class="main-nav">
-	
-	
-		<a href='https://nemocdz.github.io/My-blog/'> <span class="arrow">←</span>Home</a>
-	
-	<a href='https://nemocdz.github.io/My-blog/post'>Archive</a>
-	<a href='https://nemocdz.github.io/My-blog/tags'>Tags</a>
-	<a href='https://nemocdz.github.io/My-blog/about'>About</a>
-
-	
-
-	
-	<a class="cta" href="https://nemocdz.github.io/My-blog/index.xml">RSS</a>
-	
-</nav>
+  
+  
 
 
-        <section id="wrapper">
-            <article class="post">
-                <header>
-                    <h1>
-                        TableView内嵌套CollectionView动态高度的实现（表单或图片分享）
-                    </h1>
-                    <h2 class="headline">
-                    Jan 24, 2017 01:24
-                    · 3366 words
-                    · 7 minutes read
-                      <span class="tags">
-                      
-                      </span>
-                    </h2>
-                </header>
-                
-                <section id="post-body">
-                    
 
-<p>在有社交分享平台属性的app中，我们经常看见类似有tableview中多图展示。不管是发布的表单界面中，还是社交动态的时间线的界面中，都需要根据图片数量动态变化界面。最近刚好写了一个这样的界面，花了点时间写了个Demo总结一下，希望可以帮助有需要的人。实现Demo效果如下图。</p>
+
+  
+  <meta name="author" content="Nemocdz" />
+  <meta name="description" content="在有社交分享平台属性的app中，我们经常看见类似有tableview中多图展示。不管是发布的表单界面中，还是社交动态的时间线的界面中，都需要根据图片数量动态变化界面。最近刚好写了一个这样的界面，花了点时间写了个Demo总结一下，希望可以帮助有需要的人。
+" />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@Nemocdz" />
+    <meta name="twitter:title" content="TableView内嵌套CollectionView动态高度的实现（表单或图片分享）" />
+    <meta name="twitter:description" content="在有社交分享平台属性的app中，我们经常看见类似有tableview中多图展示。不管是发布的表单界面中，还是社交动态的时间线的界面中，都需要根据图片数量动态变化界面。最近刚好写了一个这样的界面，花了点时间写了个Demo总结一下，希望可以帮助有需要的人。
+" />
+    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.25.1" />
+
+
+<link rel="canonical" href="https://nemocdz.github.io/My-blog/post/tableview%E5%86%85%E5%B5%8C%E5%A5%97collectionview%E5%8A%A8%E6%80%81%E9%AB%98%E5%BA%A6%E7%9A%84%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BC%E8%A1%A8%E5%8D%95%E6%88%96%E5%9B%BE%E7%89%87%E5%88%86%E4%BA%AB%E7%95%8C%E9%9D%A2/" />
+<link rel="alternative" href="https://nemocdz.github.io/My-blog/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="_moDmnnBNVLBN1rzNxyGUGdPHE20YgbmrtzLIbxaWFc" />
+<meta name="msvalidate.01" content="22596E34341DD1D17D6022C44647E587" />
+
+
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="shortcut icon" type="imge/x-icon" href="https://nemocdz.github.io/My-blog/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/My-blog/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/My-blog/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/My-blog/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/My-blog/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://nemocdz.github.io/My-blog/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+
+<link rel="stylesheet" href="https://nemocdz.github.io/My-blog/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://nemocdz.github.io/My-blog/img/avatar.png" alt="Avatar">
+  
+  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  
+  <p class="subtitle">iOS Dev &amp; Photographer</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/My-blog/">首页</a></li>
+      
+        <li class="menu-item "><a href="https://nemocdz.github.io/My-blog/about/">关于</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+      <li class="social-item">
+        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
+      </li>
+
+      
+      <li class="social-item">
+        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/My-blog/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
+      </li>
+
+      
+
+      <li class="social-item">
+        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/My-blog/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">TableView内嵌套CollectionView动态高度的实现（表单或图片分享）</h1>
+      <p class="post-meta">@Nemocdz · Jan 24, 2017 · 2 min read</p>
+    </header>
+    <article class="post-content"><p>在有社交分享平台属性的app中，我们经常看见类似有tableview中多图展示。不管是发布的表单界面中，还是社交动态的时间线的界面中，都需要根据图片数量动态变化界面。最近刚好写了一个这样的界面，花了点时间写了个Demo总结一下，希望可以帮助有需要的人。</p>
+
+<p>实现Demo效果如下图。</p>
 
 <p><img src="https://ws1.sinaimg.cn/large/006tKfTcly1fi1a8609dcg30ks1127t7.gif" alt="" /></p>
 
@@ -76,46 +221,42 @@
 <h3 id="1-实现tableview和自定义tableviewcell">1.实现tableview和自定义tableviewcell</h3>
 
 <p>tableview就很简单，storyboard或者代码写一下都可以。实现数据源协议啥的，很普通。要实现tableviewcell的高度自适应，一般来说有两种方式，一种是用iOS7后支持的cell的estimatedRowHeight和iOS8后支持的self-sizing cells（两者差不多，iOS8更完善一些），另一种是用孙源大神的第三方开源库，可以看这篇<a href="http://blog.sunnyxx.com/2015/05/17/cell-height-calculation/">文章</a>，两者共同之处都是需要设置cell里contenview的元素对cell的contenview的四个边的布局约束，换言之要让cell里的元素把cell四边“撑”起来。Demo里使用了原生的self-sizing cells来高度自适应，需要下面两句代码。</p>
-
-<pre><code class="language-objective-c">self.tableview.estimatedRowHeight = 100.f;//数字为大致估算高度，比如有些50有些100可以估算75左右
-self.tableview.rowHeight = UITableViewAutomaticDimension;
-</code></pre>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="nb">self</span><span class="p">.</span><span class="n">tableview</span><span class="p">.</span><span class="n">estimatedRowHeight</span> <span class="o">=</span> <span class="mf">100.f</span><span class="p">;</span><span class="c1">//数字为大致估算高度，比如有些50有些100可以估算75左右</span>
+<span class="nb">self</span><span class="p">.</span><span class="n">tableview</span><span class="p">.</span><span class="n">rowHeight</span> <span class="o">=</span> <span class="n">UITableViewAutomaticDimension</span><span class="p">;</span>
+</code></pre></div>
 
 <p>如果tableview是用代码创建的，那么rowheight属性的默认参数就是<code>UITableViewAutomaticDimension</code>，不需要第二行代码。而在storyboard或xib里拖的默认rowheight是拖的storyboard属性菜单里的，需要更改为<code>UITableViewAutomaticDimension</code>。</p>
 
 <p>接着自定义一个<code>CDZTableViewCell</code>，<del>并用xib拖上一个collectionview并设置对contenview的autolayout约束。用Masonry之类的第三方布局库或原生进行代码约束也可以。然后在tableview里用<code>registerNib</code>方法注册一下自定义的cell。</del></p>
 
 <p><strong>因为TableView执行reloadData方法时，会把所有cell从VisableCells池中移除，并从同一复用标识的复用池中取出Cell加入视图中，这个时候cell的高度已经确定好，但indexPath的row顺序有可能不是原来的，所以不能复用。也就是虽然每一个Cell功能一致，但是由于高度和里面图片数量不一样，并不能互相复用。在Storyboard中可以用静态cell分别放入collectionView实现。这里为了不重复放collectionView用了代码书写TableView。</strong></p>
-
-<pre><code class="language-objective-c">- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    NSString *identifer = [NSString stringWithFormat:@&quot;CDZTableViewCell%ld&quot;,indexPath.row];//唯一复用标识，相当于不复用
-    CDZTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifer];
-    if (!cell) {
-        cell  = [CDZTableViewCell.alloc initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifer];
-    }
-    cell.delegate = self;
-    return cell;
-}
-</code></pre>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="bp">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+    <span class="bp">NSString</span> <span class="o">*</span><span class="n">identifer</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSString</span> <span class="nl">stringWithFormat</span><span class="p">:</span><span class="s">@&quot;CDZTableViewCell%ld&quot;</span><span class="p">,</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">];</span><span class="c1">//唯一复用标识，相当于不复用</span>
+    <span class="n">CDZTableViewCell</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">tableView</span> <span class="nl">dequeueReusableCellWithIdentifier</span><span class="p">:</span><span class="n">identifer</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">cell</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cell</span>  <span class="o">=</span> <span class="p">[</span><span class="n">CDZTableViewCell</span><span class="p">.</span><span class="n">alloc</span> <span class="nl">initWithStyle</span><span class="p">:</span><span class="n">UITableViewCellStyleDefault</span> <span class="nl">reuseIdentifier</span><span class="p">:</span><span class="n">identifer</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="n">cell</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
 
 <p>当然要实现动态高度变化，我们还需要让cell在合适的时候通知tableview应该更新数据和布局了，即调用tableview自身的<code>reloadData</code>方法。这里我用delegate实现，通知的话也可以，但是通知的要明确接受者和发送者的对应关系，不然有些情况会接受对象不明确（比如实现了两个类似的tableview在视图里）。在cell的头文件里创建delegate。</p>
-
-<pre><code class="language-objective-c">@protocol CDZTableViewCellDelegate&lt;NSObject&gt;
-- (void)didChangeCell:(UITableViewCell *)cell;
-@end
-@interface CDZTableViewCell : UITableViewCell
-@property (nonatomic,assign) id&lt;CDZTableViewCellDelegate&gt; delegate;
-@end
-</code></pre>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="k">@protocol</span> <span class="nc">CDZTableViewCellDelegate</span><span class="o">&lt;</span><span class="bp">NSObject</span><span class="o">&gt;</span>
+<span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">didChangeCell</span><span class="p">:(</span><span class="bp">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="n">cell</span><span class="p">;</span>
+<span class="k">@end</span>
+<span class="k">@interface</span> <span class="nc">CDZTableViewCell</span> : <span class="bp">UITableViewCell</span>
+<span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span><span class="k">assign</span><span class="p">)</span> <span class="kt">id</span><span class="o">&lt;</span><span class="n">CDZTableViewCellDelegate</span><span class="o">&gt;</span> <span class="n">delegate</span><span class="p">;</span>
+<span class="k">@end</span>
+</code></pre></div>
 
 <p>然后让tableview遵守<code>CDZTableViewCellDelegate</code>并在tableview的datasource或delegate方法里设置cell的delegate，比如</p>
-
-<pre><code class="language-objective-c">- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    //......
-    cell.delegate = self;
-    //......
-}
-</code></pre>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="bp">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+    <span class="c1">//......</span>
+    <span class="n">cell</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
+    <span class="c1">//......</span>
+<span class="p">}</span>
+</code></pre></div>
 
 <p>也可以在delegate里的<code>-(void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath</code>里设置（感觉这个方法更好些，datasource应该处理数据相关的，而且有时候会复用抽离出来）。</p>
 
@@ -124,91 +265,83 @@ self.tableview.rowHeight = UITableViewAutomaticDimension;
 <p>collectionview在约束上，除了实现collecitionview对tableviewcell的上下左右约束外，还要实现其高度约束，因为本质collectionview是scrollview的子类，实现scollview的autolayout其实就是需要实现对其撑起来contentview的约束，而动态实现contentview的高度，则需要我们更新contenview的高度布局约束的值。collectionview也是类似的，我们先设定一个collectionview的高度约束，再在数据更新时更新高度约束。</p>
 
 <p>这里再提一句，collectionview本身和tableview类似，系统本身也有self-sizing cells的api，如下：</p>
-
-<pre><code class="language-objective-c">self.collectionViewFlowLayout.estimatedItemSize = CGSizeMake(125, 100);
-self.collectionViewFlowLayout.itemSize = UICollectionViewFlowLayoutAutomaticSize;
-</code></pre>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="nb">self</span><span class="p">.</span><span class="n">collectionViewFlowLayout</span><span class="p">.</span><span class="n">estimatedItemSize</span> <span class="o">=</span> <span class="n">CGSizeMake</span><span class="p">(</span><span class="mi">125</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+<span class="nb">self</span><span class="p">.</span><span class="n">collectionViewFlowLayout</span><span class="p">.</span><span class="n">itemSize</span> <span class="o">=</span> <span class="n">UICollectionViewFlowLayoutAutomaticSize</span><span class="p">;</span>
+</code></pre></div>
 
 <p>同样也要实现collectionviewcell里元素对cell四边的约束，“撑”起来自动计算高度，但是不知道为何用了之后在一个cell的时候会莫名其妙居中，且cell的indexPath有些错乱，根据cell的indexPath找出来的cell是错误的，不知道是啥问题，若有人知道可以告诉一声囧。</p>
 
 <p>这里就不用collectionview的大小自适应了，常规的用设置itemsize的大小就好了。在tableviewcell<code>awakeFromNib</code>方法中，我们让collectionview<code>reloadData</code>更新一下高度布局约束为collectionview的真实高度并调用刚才自定义的delegate去让tableview<code>reloadData</code>从而让tableview的cell高度自适应。</p>
-
-<pre><code class="language-objective-c">- (void)reloadCell{
-    [self.collectionView reloadData];
-    [self.collectionView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.height.equalTo(@(self.collectionView.collectionViewLayout.collectionViewContentSize.height));
-    }];
-    [self.delegate didChangeCell:self];
-}
-</code></pre>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">reloadCell</span><span class="p">{</span>
+    <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">collectionView</span> <span class="n">reloadData</span><span class="p">];</span>
+    <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">collectionView</span> <span class="nl">mas_updateConstraints</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">MASConstraintMaker</span> <span class="o">*</span><span class="n">make</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">make</span><span class="p">.</span><span class="n">height</span><span class="p">.</span><span class="n">equalTo</span><span class="p">(</span><span class="l">@(</span><span class="nb">self</span><span class="p">.</span><span class="n">collectionView</span><span class="p">.</span><span class="n">collectionViewLayout</span><span class="p">.</span><span class="n">collectionViewContentSize</span><span class="p">.</span><span class="n">height</span><span class="l">)</span><span class="p">);</span>
+    <span class="p">}];</span>
+    <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">delegate</span> <span class="nl">didChangeCell</span><span class="p">:</span><span class="nb">self</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre></div>
 
 <p>collectionview的真实大小其实是他的layout对象的collectionviewcontentsize的值。所以我们需要在每次数据发生改变时，更新一下高度约束的值。</p>
 
 <p>还有就是实现collectionview的delegate，点击后执行操作，在赋值在cell对应的model里等操作（比如调用相册等）。注意当点击最后一个collectioncell时，要在它的后面插入一个数据，也就是说，最后一个总是会保持在最后。</p>
-
-<pre><code class="language-objective-c">- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
-    //载入数据，如图片等
-    CDZCollectionViewItem *item = [CDZCollectionViewItem new];
-    item.image = [UIImage imageNamed:@&quot;example&quot;];
-    if ((indexPath.row == self.itemsArray.count - 1)) {
-        [self.itemsArray insertObject:item atIndex:self.itemsArray.count - 1];
-    }
-    else{
-        self.itemsArray[indexPath.row] = item;
-    }
-    [self reloadCell];
-}
-</code></pre>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">collectionView:</span><span class="p">(</span><span class="bp">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionView</span> <span class="nf">didSelectItemAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+    <span class="c1">//载入数据，如图片等</span>
+    <span class="n">CDZCollectionViewItem</span> <span class="o">*</span><span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="n">CDZCollectionViewItem</span> <span class="n">new</span><span class="p">];</span>
+    <span class="n">item</span><span class="p">.</span><span class="n">image</span> <span class="o">=</span> <span class="p">[</span><span class="bp">UIImage</span> <span class="nl">imageNamed</span><span class="p">:</span><span class="s">@&quot;example&quot;</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span> <span class="o">==</span> <span class="nb">self</span><span class="p">.</span><span class="n">itemsArray</span><span class="p">.</span><span class="n">count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
+        <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">itemsArray</span> <span class="nl">insertObject</span><span class="p">:</span><span class="n">item</span> <span class="nl">atIndex</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">itemsArray</span><span class="p">.</span><span class="n">count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">else</span><span class="p">{</span>
+        <span class="nb">self</span><span class="p">.</span><span class="n">itemsArray</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="p">[</span><span class="nb">self</span> <span class="n">reloadCell</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre></div>
 
 <h3 id="3-自定义collectionviewcell并实现删除按钮">3.自定义collectionviewcell并实现删除按钮</h3>
 
 <p>先自定义一个<code>CDZCollectionViewCell</code>，并用xib拖上一个imageview用于展示图片，一个button用于点击关闭cell。并定义好解析item的方法。item中设定一个delBtnHidden属性用于设定cell里的button是否隐藏。</p>
-
-<pre><code class="language-objective-c">- (void)setItem:(CDZCollectionViewItem *)item{
-    //  解析需要的数据
-    self.imageView.image = item.image;
-    self.delButton.hidden = item.delBtnHidden;
-}
-</code></pre>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setItem:</span><span class="p">(</span><span class="n">CDZCollectionViewItem</span> <span class="o">*</span><span class="p">)</span><span class="nv">item</span><span class="p">{</span>
+    <span class="c1">//  解析需要的数据</span>
+    <span class="nb">self</span><span class="p">.</span><span class="n">imageView</span><span class="p">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">item</span><span class="p">.</span><span class="n">image</span><span class="p">;</span>
+    <span class="nb">self</span><span class="p">.</span><span class="n">delButton</span><span class="p">.</span><span class="n">hidden</span> <span class="o">=</span> <span class="n">item</span><span class="p">.</span><span class="n">delBtnHidden</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
 
 <p>并定义一个delegate用于将按钮点击事件回传给collectionview并删除数据。</p>
-
-<pre><code class="language-objective-c">@protocol CDZCollectionCellDelegate&lt;NSObject&gt;
-- (void)didDelete:(UICollectionViewCell *)cell;
-@end
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="k">@protocol</span> <span class="nc">CDZCollectionCellDelegate</span><span class="o">&lt;</span><span class="bp">NSObject</span><span class="o">&gt;</span>
+<span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">didDelete</span><span class="p">:(</span><span class="bp">UICollectionViewCell</span> <span class="o">*</span><span class="p">)</span><span class="n">cell</span><span class="p">;</span>
+<span class="k">@end</span>
   
-@interface CDZCollectionViewCell : UICollectionViewCell
-@property (strong, nonatomic) CDZCollectionViewItem *item;
-@property (assign, nonatomic) id&lt;CDZCollectionCellDelegate&gt; delegate;
-@end
-</code></pre>
+<span class="k">@interface</span> <span class="nc">CDZCollectionViewCell</span> : <span class="bp">UICollectionViewCell</span>
+<span class="k">@property</span> <span class="p">(</span><span class="k">strong</span><span class="p">,</span> <span class="k">nonatomic</span><span class="p">)</span> <span class="n">CDZCollectionViewItem</span> <span class="o">*</span><span class="n">item</span><span class="p">;</span>
+<span class="k">@property</span> <span class="p">(</span><span class="k">assign</span><span class="p">,</span> <span class="k">nonatomic</span><span class="p">)</span> <span class="kt">id</span><span class="o">&lt;</span><span class="n">CDZCollectionCellDelegate</span><span class="o">&gt;</span> <span class="n">delegate</span><span class="p">;</span>
+<span class="k">@end</span>
+</code></pre></div>
 
 <p>并在点击按钮的事件中调用delegate，把cell本身传回tableview，从而找到cell对应的item。</p>
-
-<pre><code class="language-objective-c">- (IBAction)delCell:(UIButton *)sender{
-    if ([self.delegate respondsToSelector:@selector(didDelete:)]){
-        [self.delegate didDelete:self];
-    }
-}
-</code></pre>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">IBAction</span><span class="p">)</span><span class="nf">delCell:</span><span class="p">(</span><span class="bp">UIButton</span> <span class="o">*</span><span class="p">)</span><span class="nv">sender</span><span class="p">{</span>
+    <span class="k">if</span> <span class="p">([</span><span class="nb">self</span><span class="p">.</span><span class="n">delegate</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">didDelete</span><span class="p">:)]){</span>
+        <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">delegate</span> <span class="nl">didDelete</span><span class="p">:</span><span class="nb">self</span><span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
 
 <p>然后使collectionview所在的tableviewcell遵守<code>CDZCollectionCellDelegate</code>。并和之前一样，在collectionview的datasource或delegate中设置delegate。</p>
-
-<pre><code class="language-objective-c">- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
-    //......
-    cell.delegate = self;
-    //......
-}
-</code></pre>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="bp">UICollectionViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">collectionView:</span><span class="p">(</span><span class="bp">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionView</span> <span class="nf">cellForItemAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+    <span class="c1">//......</span>
+    <span class="n">cell</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
+    <span class="c1">//......</span>
+<span class="p">}</span>
+</code></pre></div>
 
 <p>并调用cell的delegate的方法，通过cell去找到对应的indexPath</p>
-
-<pre><code class="language-objective-c">- (void)didDelete:(UICollectionViewCell *)cell{
-    NSIndexPath *indexPath = [self.collectionView indexPathForCell:cell];
-    [self.itemsArray removeObjectAtIndex:indexPath.row];
-    [self reloadCell];
-}
-</code></pre>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">didDelete:</span><span class="p">(</span><span class="bp">UICollectionViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nv">cell</span><span class="p">{</span>
+    <span class="bp">NSIndexPath</span> <span class="o">*</span><span class="n">indexPath</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">collectionView</span> <span class="nl">indexPathForCell</span><span class="p">:</span><span class="n">cell</span><span class="p">];</span>
+    <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">itemsArray</span> <span class="nl">removeObjectAtIndex</span><span class="p">:</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">];</span>
+    <span class="p">[</span><span class="nb">self</span> <span class="n">reloadCell</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre></div>
 
 <p>第一个cell是没有关闭按钮的，那么只要把第一个item的delBthHidden属性设为YES就可以了。</p>
 
@@ -216,63 +349,52 @@ self.collectionViewFlowLayout.itemSize = UICollectionViewFlowLayoutAutomaticSize
 
 <p>所有源码和<a href="https://github.com/Nemocdz/CDZCollectionInTableDemo">Demo</a></p>
 
-<p>如果您觉得有帮助,不妨给个star鼓励一下,欢迎关注&amp;交流</p>
-
-                </section>
-            </article>
-
-            
-
-            
-
-            
-
-            <footer id="footer">
+<p>如果您觉得有帮助,不妨给个star鼓励一下,欢迎关注&amp;交流</p></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        This post was published <strong>222</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+      </p>
+    </footer>
     
-        <div id="social">
-
-	
-	
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
     
-    <a class="symbol" href="https://www.facebook.com/nemocdz">
-        circlefacebook
-    </a>
     
-    <a class="symbol" href="https://github.com/Nemocdz">
-        circlegithub
-    </a>
     
-    <a class="symbol" href="https://twitter.com/Nemocdz">
-        circletwitterbird
-    </a>
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "disqus_shortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
     
-
-
-</div>
-
-    
-    <p class="small">
-    
-       © Copyright 2017 <i class="fa fa-heart" aria-hidden="true"></i> Nemocdz
-    
-    </p>
-    <p class="small">
-        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
-    </p>
+  </section>
+  <footer class="site-footer">
+  <p>© 2017 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
 </footer>
 
-        </section>
-
-        <script src="https://nemocdz.github.io/My-blog/js/jquery-2.2.4.min.js"></script>
-<script src="https://nemocdz.github.io/My-blog/js/main.js"></script>
-<script src="https://nemocdz.github.io/My-blog/js/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 
 
+<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
+<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script src="https://nemocdz.github.io/My-blog/js/bundle.js"></script>
 
 
 
 
-
-    </body>
+  </body>
 </html>

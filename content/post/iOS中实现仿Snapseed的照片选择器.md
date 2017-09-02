@@ -4,7 +4,9 @@ date: 2016-12-04T01:55:13+08:00
 draft: false
 ---
 
-ImagePickerController（图片选择器）是iOS开发中一个很常用的UI控件。作为摄影爱好者，而Google出品的摄影后期App，Snapseed中那个图片选择器，好看又实用，便尝试着仿写了一个。集成后一行代码即可实现下图效果。
+ImagePickerController（图片选择器）是iOS开发中一个很常用的UI控件。作为摄影爱好者，而Google出品的摄影后期App，Snapseed中那个图片选择器，好看又实用，便尝试着仿写了一个。<!--more-->
+
+集成后一行代码即可实现下图效果。
 ![](http://ww2.sinaimg.cn/large/006y8mN6gw1fae4wlsm89g30ku1121gx.gif)
 实现原理从界面说起。
 界面可以分解为一个背景图层用于点击关闭（空白处点击消失），一个横向可滚动的collectionview用于显示图库里的图片，一个tableview用于存放功能按钮。

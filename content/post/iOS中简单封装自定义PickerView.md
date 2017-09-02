@@ -5,6 +5,9 @@ draft: false
 ---
 
 UIPickerView是iOS开发中，相当常用的一个UI控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在PickerView上加上Toolbar和确定取消按钮。
+
+<!--more-->
+
 点击button弹出picker，并改变指定label的值，效果如下图所示。
 ![](http://ww1.sinaimg.cn/large/006tNc79gw1f9wp3v4z00g30ku112agf.gif)
 最终目的是在viewcontroller中button的event reponse中调用封装好的库的方法进行传值及操作。
