@@ -12,7 +12,7 @@ publishDir = "docs"
 defaultContentLanguage ="zh-cn"
 
 # Disqus Username
-disqusShortname = "disqus_shortname"
+disqusShortname = "nemocdz"
 
 # Google Analytics UA number
 #googleAnalytics = "UA-XXXXXXXX-X"
