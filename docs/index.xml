@@ -23,6 +23,17 @@
     </item>
     
     <item>
+      <title>Why is MetaClass in Objective-C？</title>
+      <link>https://nemocdz.github.io/My-blog/post/why-is-metaclass-in-objective-c/</link>
+      <pubDate>Fri, 15 Sep 2017 01:40:00 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/My-blog/post/why-is-metaclass-in-objective-c/</guid>
+      <description>&lt;p&gt;这篇文章源于美团面试官问的我一个问题，为什么Objective-C中有Class和MetaClass这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有MetaClass而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么Objective-C中有MetaClass这个设计？&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>再谈Objective-C弱引用容器的实现-关联对象实现weak</title>
       <link>https://nemocdz.github.io/My-blog/post/%E5%86%8D%E8%B0%88objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/</link>
       <pubDate>Sat, 02 Sep 2017 03:36:00 +0800</pubDate>
