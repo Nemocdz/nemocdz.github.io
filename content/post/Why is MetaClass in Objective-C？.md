@@ -136,7 +136,7 @@ PyTypeObject PyType_Type = {
 
 而Objective-C不太一样的是，并不是每一个类都有一个MetaClass，而是所有的类默认都是同一个MetaClass。当然，Python里可以自定义新的MetaClass。
 
-Python中为何要使用元类的原因可能是，Python希望让使用者对类有着最高的控制权，可以通过对元类的自定义而改变制造类的过程（例如Django里的ORM）。也就是，Python开放了面向对象中**类的制造者的权限**。而同时，根据StackOverFlow这个问答，Python的类的设计是借鉴于Smalltalk这门语言。
+Python中为何要使用元类的原因可能是，Python希望让使用者对类有着最高的控制权，可以通过对元类的自定义而改变制造类的过程（例如Django里的ORM）。也就是，Python开放了面向对象中**类的制造者的权限**。而同时，根据StackOverFlow这个[问答](https://stackoverflow.com/questions/100003/what-is-a-metaclass-in-python)，Python的类的设计是借鉴于Smalltalk这门语言。
 
 Smalltalk！！Objective-C的特性基本上是照搬的Smalltalk，看来Smalltalk里可以找到一些线索。
 
