@@ -35,21 +35,85 @@ for (int i = 0; i < 1000000 ; i++) {
 
 噢，看来是对已释放的对象再次发送了release信息。
 
-我又留意到，这个对象是Strong修饰的。
+我又留意到，这个对象是Strong修饰的，或许可以从Strong和Setter方法的源码入手看看。
+
+下面源码基于[Runtime-709](https://opensource.apple.com/tarballs/objc4/)分析，首先找到属性设置方法。
+
+```c++
+//objc_class.mm
+void object_setIvar(id obj, Ivar ivar, id value)
+{
+    return _object_setIvar(obj, ivar, value, false /*not strong default*/);
+}
+
+
+static ALWAYS_INLINE 
+void _object_setIvar(id obj, Ivar ivar, id value, bool assumeStrong)
+{
+    //判断是否是TaggedPointer
+    if (!obj  ||  !ivar  ||  obj->isTaggedPointer()) return;
+
+    ptrdiff_t offset;
+    objc_ivar_memory_management_t memoryManagement;
+    //找对应的内存管理语义和属性偏移值
+    _class_lookUpIvar(obj->ISA(), ivar, offset, memoryManagement);
+
+    //如果找不到默认是否为Strong，不然为unsafe_unretained
+    if (memoryManagement == objc_ivar_memoryUnknown) {
+        if (assumeStrong) memoryManagement = objc_ivar_memoryStrong;
+        else memoryManagement = objc_ivar_memoryUnretained;
+    }
+
+    //根据偏移值找到属性对应位置
+    id *location = (id *)((char *)obj + offset);
+    
+    //判断不同的内存管理语义，调用方法
+    switch (memoryManagement) {
+    case objc_ivar_memoryWeak:       objc_storeWeak(location, value); break;
+    case objc_ivar_memoryStrong:     objc_storeStrong(location, value); break;
+    case objc_ivar_memoryUnretained: *location = value; break;
+    case objc_ivar_memoryUnknown:    _objc_fatal("impossible");
+    }
+}
+```
+
+```c++
+//NSObject.mm
+void
+objc_storeStrong(id *location, id obj)
+{   
+    //如果新值指针和旧值一样，则不更新，直接return
+    id prev = *location;
+    if (obj == prev) {
+        return;
+    }
+    //先对新值retain
+    objc_retain(obj);
+    //再赋值
+    *location = obj;
+    //最后对旧值release
+    objc_release(prev);
+}
+```
 
 那么他的Setter方法在MRC上就相当于
 
 ```objective-c
 - (void)setTarget:(NSString *)target {
-	[target retain];//先保留新值
-    [_target release];//再释放旧值
-    _target = target;//再进行赋值
+    if (target == _target) return;
+    id pre = _target;
+    //1.先保留新值
+    [target retain];
+    //2.再进行赋值
+    _target = target;
+    //3.释放旧值
+    [pre release];
 }
 ```
 
 什么时候会导致过多调用release呢？注意这是个并发队列+异步。
 
-那么假如并发队列里调度的线程A执行到步奏2，还没到步骤3时，线程B也执行到步骤2，那么这个对象就会被过度释放，导致向已释放内存对象发送消息而崩溃。
+那么假如并发队列里调度的线程A执行到步骤1，还没到步骤2时，线程B执行到步骤3，那么当线程A再执行步骤3时，旧值就会被过度释放，导致向已释放内存对象发送消息而崩溃。
 
 后来我想怎么可以修改这段代码变为不崩溃的呢？
 

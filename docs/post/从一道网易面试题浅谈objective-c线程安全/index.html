@@ -33,7 +33,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.25.1" />
+<meta name="generator" content="Hugo 0.27.1" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/My-blog/post/%E4%BB%8E%E4%B8%80%E9%81%93%E7%BD%91%E6%98%93%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B5%85%E8%B0%88objective-c%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/" />
@@ -202,7 +202,7 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">从一道网易面试题浅谈Objective-C线程安全</h1>
-      <p class="post-meta">@Nemocdz · Aug 25, 2017 · 1 min read</p>
+      <p class="post-meta">@Nemocdz · Aug 25, 2017 · 2 min read</p>
     </header>
     <article class="post-content"><p>今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？</p>
 
@@ -234,19 +234,79 @@
 
 <p>噢，看来是对已释放的对象再次发送了release信息。</p>
 
-<p>我又留意到，这个对象是Strong修饰的。</p>
+<p>我又留意到，这个对象是Strong修饰的，或许可以从Strong和Setter方法的源码入手看看。</p>
+
+<p>下面源码基于<a href="https://opensource.apple.com/tarballs/objc4/">Runtime-709</a>分析，首先找到属性设置方法。</p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span></span><span class="c1">//objc_class.mm</span>
+<span class="kt">void</span> <span class="nf">object_setIvar</span><span class="p">(</span><span class="n">id</span> <span class="n">obj</span><span class="p">,</span> <span class="n">Ivar</span> <span class="n">ivar</span><span class="p">,</span> <span class="n">id</span> <span class="n">value</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">_object_setIvar</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ivar</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="nb">false</span> <span class="cm">/*not strong default*/</span><span class="p">);</span>
+<span class="p">}</span>
+
+
+<span class="k">static</span> <span class="n">ALWAYS_INLINE</span> 
+<span class="kt">void</span> <span class="nf">_object_setIvar</span><span class="p">(</span><span class="n">id</span> <span class="n">obj</span><span class="p">,</span> <span class="n">Ivar</span> <span class="n">ivar</span><span class="p">,</span> <span class="n">id</span> <span class="n">value</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">assumeStrong</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//判断是否是TaggedPointer</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">obj</span>  <span class="o">||</span>  <span class="o">!</span><span class="n">ivar</span>  <span class="o">||</span>  <span class="n">obj</span><span class="o">-&gt;</span><span class="n">isTaggedPointer</span><span class="p">())</span> <span class="k">return</span><span class="p">;</span>
+
+    <span class="kt">ptrdiff_t</span> <span class="n">offset</span><span class="p">;</span>
+    <span class="n">objc_ivar_memory_management_t</span> <span class="n">memoryManagement</span><span class="p">;</span>
+    <span class="c1">//找对应的内存管理语义和属性偏移值</span>
+    <span class="n">_class_lookUpIvar</span><span class="p">(</span><span class="n">obj</span><span class="o">-&gt;</span><span class="n">ISA</span><span class="p">(),</span> <span class="n">ivar</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">memoryManagement</span><span class="p">);</span>
+
+    <span class="c1">//如果找不到默认是否为Strong，不然为unsafe_unretained</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">memoryManagement</span> <span class="o">==</span> <span class="n">objc_ivar_memoryUnknown</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">assumeStrong</span><span class="p">)</span> <span class="n">memoryManagement</span> <span class="o">=</span> <span class="n">objc_ivar_memoryStrong</span><span class="p">;</span>
+        <span class="k">else</span> <span class="n">memoryManagement</span> <span class="o">=</span> <span class="n">objc_ivar_memoryUnretained</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">//根据偏移值找到属性对应位置</span>
+    <span class="n">id</span> <span class="o">*</span><span class="n">location</span> <span class="o">=</span> <span class="p">(</span><span class="n">id</span> <span class="o">*</span><span class="p">)((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="n">obj</span> <span class="o">+</span> <span class="n">offset</span><span class="p">);</span>
+    
+    <span class="c1">//判断不同的内存管理语义，调用方法</span>
+    <span class="k">switch</span> <span class="p">(</span><span class="n">memoryManagement</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="nl">objc_ivar_memoryWeak</span><span class="p">:</span>       <span class="n">objc_storeWeak</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="nl">objc_ivar_memoryStrong</span><span class="p">:</span>     <span class="n">objc_storeStrong</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="nl">objc_ivar_memoryUnretained</span><span class="p">:</span> <span class="o">*</span><span class="n">location</span> <span class="o">=</span> <span class="n">value</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="nl">objc_ivar_memoryUnknown</span><span class="p">:</span>    <span class="n">_objc_fatal</span><span class="p">(</span><span class="s">&quot;impossible&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span></span><span class="c1">//NSObject.mm</span>
+<span class="kt">void</span>
+<span class="nf">objc_storeStrong</span><span class="p">(</span><span class="n">id</span> <span class="o">*</span><span class="n">location</span><span class="p">,</span> <span class="n">id</span> <span class="n">obj</span><span class="p">)</span>
+<span class="p">{</span>   
+    <span class="c1">//如果新值指针和旧值一样，则不更新，直接return</span>
+    <span class="n">id</span> <span class="n">prev</span> <span class="o">=</span> <span class="o">*</span><span class="n">location</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">obj</span> <span class="o">==</span> <span class="n">prev</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//先对新值retain</span>
+    <span class="n">objc_retain</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span>
+    <span class="c1">//再赋值</span>
+    <span class="o">*</span><span class="n">location</span> <span class="o">=</span> <span class="n">obj</span><span class="p">;</span>
+    <span class="c1">//最后对旧值release</span>
+    <span class="n">objc_release</span><span class="p">(</span><span class="n">prev</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
 
 <p>那么他的Setter方法在MRC上就相当于</p>
 <div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setTarget:</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">target</span> <span class="p">{</span>
-	<span class="p">[</span><span class="n">target</span> <span class="k">retain</span><span class="p">];</span><span class="c1">//先保留新值</span>
-    <span class="p">[</span><span class="n">_target</span> <span class="k">release</span><span class="p">];</span><span class="c1">//再释放旧值</span>
-    <span class="n">_target</span> <span class="o">=</span> <span class="n">target</span><span class="p">;</span><span class="c1">//再进行赋值</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">target</span> <span class="o">==</span> <span class="n">_target</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+    <span class="kt">id</span> <span class="n">pre</span> <span class="o">=</span> <span class="n">_target</span><span class="p">;</span>
+    <span class="c1">//1.先保留新值</span>
+    <span class="p">[</span><span class="n">target</span> <span class="k">retain</span><span class="p">];</span>
+    <span class="c1">//2.再进行赋值</span>
+    <span class="n">_target</span> <span class="o">=</span> <span class="n">target</span><span class="p">;</span>
+    <span class="c1">//3.释放旧值</span>
+    <span class="p">[</span><span class="n">pre</span> <span class="k">release</span><span class="p">];</span>
 <span class="p">}</span>
 </code></pre></div>
 
 <p>什么时候会导致过多调用release呢？注意这是个并发队列+异步。</p>
 
-<p>那么假如并发队列里调度的线程A执行到步奏2，还没到步骤3时，线程B也执行到步骤2，那么这个对象就会被过度释放，导致向已释放内存对象发送消息而崩溃。</p>
+<p>那么假如并发队列里调度的线程A执行到步骤1，还没到步骤2时，线程B执行到步骤3，那么当线程A再执行步骤3时，旧值就会被过度释放，导致向已释放内存对象发送消息而崩溃。</p>
 
 <p>后来我想怎么可以修改这段代码变为不崩溃的呢？</p>
 
@@ -311,8 +371,8 @@
         (d.head || d.body).appendChild(s);
     })();
 </script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
       
     
   </section>
