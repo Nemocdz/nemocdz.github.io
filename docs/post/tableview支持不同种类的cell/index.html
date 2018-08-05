@@ -31,7 +31,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.27.1" />
+<meta name="generator" content="Hugo 0.34" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/My-blog/post/tableview%E6%94%AF%E6%8C%81%E4%B8%8D%E5%90%8C%E7%A7%8D%E7%B1%BB%E7%9A%84cell/" />
@@ -110,7 +110,7 @@
   
   <h2 class="title">Nemocdz&#39;s Blog</h2>
   
-  <p class="subtitle">iOS Dev &amp; Photographer</p>
+  <p class="subtitle">iOS&amp;Android Dev</p>
   <button class="menu-toggle" type="button">
     <span class="icon icon-menu"></span>
   </button>
@@ -215,7 +215,7 @@
 <p>创建不同的子类cell，以两个子类<code>CDZTypeACell</code> <code>CDZTypeBCell</code> 为例，继承自<code>CDZBaseCell</code>，重写一些方法，如高度，显示视图等等。</p>
 
 <p>Datasource中准备好判断index所在的cell种类的方法（如根据model的type属性等）</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nf">cellClassAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nf">cellClassAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
     <span class="n">CDZTableviewItem</span> <span class="o">*</span><span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">itemAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
     <span class="k">switch</span> <span class="p">(</span><span class="n">item</span><span class="p">.</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">case</span> <span class="nl">typeA</span><span class="p">:{</span>
@@ -229,34 +229,28 @@
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="p">-</span> <span class="p">(</span><span class="n">CDZTableviewItem</span> <span class="o">*</span><span class="p">)</span><span class="nf">itemAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+<span class="p">-</span> <span class="p">(</span><span class="n">CDZTableviewItem</span> <span class="o">*</span><span class="p">)</span><span class="nf">itemAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
     <span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">itemsArray</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">];</span>
 <span class="p">}</span>
 
-<span class="p">-</span> <span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nf">cellIdentiferAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+<span class="p">-</span> <span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nf">cellIdentiferAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
     <span class="k">return</span> <span class="n">NSStringFromClass</span><span class="p">([</span><span class="nb">self</span> <span class="nl">cellClassAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">]);</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <h3 id="方法一-先注册-根据identifer去加载不同的cell">方法一：先注册，根据identifer去加载不同的cell</h3>
 
 <p>先在tableview创建时注册需要的不同种类，再判断index对应的种类，再根据identifer加载子类cell。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">tableview</span> <span class="nl">registerClass</span><span class="p">:[</span><span class="n">CDZTypeACell</span> <span class="k">class</span><span class="p">]</span> <span class="nl">forCellReuseIdentifier</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">([</span><span class="n">CDZTypeBCell</span> <span class="k">class</span><span class="p">])];</span>
-<span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">tableView</span> <span class="nl">registerClass</span><span class="p">:[</span><span class="n">CDZTypeBCell</span> <span class="k">class</span><span class="p">]</span> <span class="nl">forCellReuseIdentifier</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">([</span><span class="n">CDZTypeBCell</span> <span class="k">class</span><span class="p">])];</span>
-</code></pre></div>
-
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">tableview</span> <span class="nl">registerClass</span><span class="p">:[</span><span class="n">CDZTypeACell</span> <span class="k">class</span><span class="p">]</span> <span class="nl">forCellReuseIdentifier</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">([</span><span class="n">CDZTypeBCell</span> <span class="k">class</span><span class="p">])];</span>
+<span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">tableView</span> <span class="nl">registerClass</span><span class="p">:[</span><span class="n">CDZTypeBCell</span> <span class="k">class</span><span class="p">]</span> <span class="nl">forCellReuseIdentifier</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">([</span><span class="n">CDZTypeBCell</span> <span class="k">class</span><span class="p">])];</span></code></pre></div>
 <p>并在<code>- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</code>中根据重用标识加载cell。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="bp">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
     <span class="n">CDZBaseCell</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">tableView</span> <span class="nl">dequeueReusableCellWithIdentifier</span><span class="p">:[</span><span class="nb">self</span> <span class="nl">cellIdentiferAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">]</span> <span class="nl">forIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
     <span class="n">cell</span><span class="p">.</span><span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">itemAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
     <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <h3 id="方法二-在init时创建不同identifer的cell">方法二:在init时创建不同identifer的cell</h3>
 
 <p>在<code>- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</code>中判断cell是否为nil，并根据index所在cell的种类初始化cell和其identifer。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-(</span><span class="bp">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span><span class="p">(</span><span class="n">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
     <span class="n">CDZBaseCell</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">tableView</span> <span class="nl">dequeueReusableCellWithIdentifier</span><span class="p">:[</span><span class="nb">self</span> <span class="nl">cellIdentiferAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">]];</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">cell</span><span class="p">)</span> <span class="p">{</span>
         <span class="kt">Class</span> <span class="n">cls</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">cellClassAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
@@ -264,9 +258,7 @@
     <span class="p">}</span>
     <span class="n">cell</span><span class="p">.</span><span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">itemAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
     <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <h3 id="总结">总结</h3>
 
 <p>个人更喜欢第二种，苹果官方文档也推荐第二种方法去重用cell。我觉得优点是一个是在tableview划分MVC架构时，tableview创建时不需要知道cell的类型，而只需要知道datasouce，而datasource才是需要去分配cell类型的。第二个是tableviewcell的初始化方法并非只能用initWithStyle（collectionview必须先注册的原因则在于初始化方法只有initWithFrame）。而使用了注册，则是在复用池空时默认调用initWithStyle的方法，如果需要用别的方法初始化就不可以了。第一种方法可以用在有一些库需要先注册后才能调用的，比如自动计算cell高度的库<code>FDTemplateLayoutCell</code>。</p>
@@ -279,7 +271,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        This post was published <strong>257</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        This post was published <strong>574</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -307,7 +299,7 @@
     
   </section>
   <footer class="site-footer">
-  <p>© 2017 Nemocdz&#39;s Blog</p>
+  <p>© 2017-2018 Nemocdz&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
   
 </footer>

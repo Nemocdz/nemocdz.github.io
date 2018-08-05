@@ -33,7 +33,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.27.1" />
+<meta name="generator" content="Hugo 0.34" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/My-blog/post/afnetworking%E7%9A%84%E6%BC%82%E4%BA%AE%E7%BB%86%E8%8A%82/" />
@@ -112,7 +112,7 @@
   
   <h2 class="title">Nemocdz&#39;s Blog</h2>
   
-  <p class="subtitle">iOS Dev &amp; Photographer</p>
+  <p class="subtitle">iOS&amp;Android Dev</p>
   <button class="menu-toggle" type="button">
     <span class="icon icon-menu"></span>
   </button>
@@ -215,70 +215,62 @@
 <p>感觉很像OC的property的getter方法，一种C语言懒加载的感觉，static修饰符意味只在该编译单元可见（对应OC就是.m文件），配合单例，只会被执行一次。类似于<code>if(!object)</code>的感觉。</p>
 
 <p>如下面例子创建了一个queue的方法，调用后返回是同一个变量。</p>
-<div class="highlight"><pre><code class="language-c" data-lang="c"><span></span><span class="k">static</span> <span class="n">dispatch_queue_t</span> <span class="nf">url_session_manager_creation_queue</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="n">dispatch_queue_t</span> <span class="nf">url_session_manager_creation_queue</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">static</span> <span class="n">dispatch_queue_t</span> <span class="n">af_url_session_manager_creation_queue</span><span class="p">;</span>
     <span class="k">static</span> <span class="n">dispatch_once_t</span> <span class="n">onceToken</span><span class="p">;</span>
     <span class="n">dispatch_once</span><span class="p">(</span><span class="o">&amp;</span><span class="n">onceToken</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
-        <span class="n">af_url_session_manager_creation_queue</span> <span class="o">=</span> <span class="n">dispatch_queue_create</span><span class="p">(</span><span class="s">&quot;com.alamofire.networking.session.manager.creation&quot;</span><span class="p">,</span> <span class="n">DISPATCH_QUEUE_SERIAL</span><span class="p">);</span>
+        <span class="n">af_url_session_manager_creation_queue</span> <span class="o">=</span> <span class="n">dispatch_queue_create</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;com.alamofire.networking.session.manager.creation&#34;</span><span class="p">,</span> <span class="n">DISPATCH_QUEUE_SERIAL</span><span class="p">);</span>
     <span class="p">});</span>
 
     <span class="k">return</span> <span class="n">af_url_session_manager_creation_queue</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <h4 id="2-使用反射机制来确定keypath">2.使用反射机制来确定KeyPath</h4>
 
 <p>在KVO中，我们一般会观察通过一个属性，而@property其实是一个语法糖，属性=ivar（实例对象）+setter方法+getter方法。而getter方法名就是属性d的名字。利用OC中的反射机制<code>NSStringFromSelector</code>方法获取属性的getter方法的字符串，其实就是属性的KeyPath。这样的KeyPath不容易写错，也容易跳转去看属性的定义。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span> <span class="p">[</span><span class="n">progress</span> <span class="nl">addObserver</span><span class="p">:</span><span class="nb">self</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"> <span class="p">[</span><span class="n">progress</span> <span class="nl">addObserver</span><span class="p">:</span><span class="nb">self</span>
             <span class="nl">forKeyPath</span><span class="p">:</span><span class="n">NSStringFromSelector</span><span class="p">(</span><span class="k">@selector</span><span class="p">(</span><span class="n">fractionCompleted</span><span class="p">))</span>
                       <span class="nl">options</span><span class="p">:</span><span class="n">NSKeyValueObservingOptionNew</span>
-                      <span class="nl">context</span><span class="p">:</span><span class="nb">NULL</span><span class="p">];</span>
-</code></pre></div>
-
+                      <span class="nl">context</span><span class="p">:</span><span class="nb">NULL</span><span class="p">];</span></code></pre></div>
 <h4 id="3-用-unused修饰符修饰不用的delegate中的变量">3.用__unused修饰符修饰不用的Delegate中的变量</h4>
 
 <p>一般协议delegate声明时，会把delegate弱持有者作为第一个参数传入delegate方法中，可是有时候delegate的实现者并不关心或不区分delegate对象是谁持有的。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">URLSession:</span><span class="p">(</span><span class="n">__unused</span> <span class="bp">NSURLSession</span> <span class="o">*</span><span class="p">)</span><span class="nv">session</span>
-              <span class="nf">task:</span><span class="p">(</span><span class="bp">NSURLSessionTask</span> <span class="o">*</span><span class="p">)</span><span class="nv">task</span>
-<span class="nf">didCompleteWithError:</span><span class="p">(</span><span class="bp">NSError</span> <span class="o">*</span><span class="p">)</span><span class="nv">error</span><span class="p">{</span>
-    <span class="c1">//......</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">URLSession:</span><span class="p">(</span><span class="n">__unused</span> <span class="n">NSURLSession</span> <span class="o">*</span><span class="p">)</span><span class="nv">session</span>
+              <span class="nf">task:</span><span class="p">(</span><span class="n">NSURLSessionTask</span> <span class="o">*</span><span class="p">)</span><span class="nv">task</span>
+<span class="nf">didCompleteWithError:</span><span class="p">(</span><span class="n">NSError</span> <span class="o">*</span><span class="p">)</span><span class="nv">error</span><span class="p">{</span>
+    <span class="c1">//......
+</span><span class="c1"></span><span class="p">}</span></code></pre></div>
 <h4 id="4-避开cocoa类族的坑">4.避开Cocoa类族的坑</h4>
 
 <p>在Foudation框架中，某些类其实是类族，比如NSArray，生成的某一个NSArray对象实际上可能是NSArray的子类。所以用Method Swizzling的去Hook一些系统类方法的时候，要注意某些类实际上是子类，甚至不同系统版本继承链和方法实现都不一样（不一定调用了父类的同名方法）。在AFURLSessionManager中为了Hook系统的NSURLSessionTask的resume和suspend的方法实现中加上通知。由于NSURLSessionTask是一个类族，且iOS7和iOS8上Task类的继承链不同，于是有了以下严谨的代码。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="k">if</span> <span class="p">(</span><span class="n">NSClassFromString</span><span class="p">(</span><span class="s">@&quot;NSURLSessionTask&quot;</span><span class="p">))</span> <span class="p">{</span>
-        <span class="bp">NSURLSessionConfiguration</span> <span class="o">*</span><span class="n">configuration</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSURLSessionConfiguration</span> <span class="n">ephemeralSessionConfiguration</span><span class="p">];</span>
-        <span class="bp">NSURLSession</span> <span class="o">*</span> <span class="n">session</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSURLSession</span> <span class="nl">sessionWithConfiguration</span><span class="p">:</span><span class="n">configuration</span><span class="p">];</span><span class="c1">//先构建NSURLSession</span>
-<span class="cp">#pragma GCC diagnostic push</span>
-<span class="cp">#pragma GCC diagnostic ignored &quot;-Wnonnull&quot;</span>
-        <span class="bp">NSURLSessionDataTask</span> <span class="o">*</span><span class="n">localDataTask</span> <span class="o">=</span> <span class="p">[</span><span class="n">session</span> <span class="nl">dataTaskWithURL</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span><span class="c1">//再通过session对象构建一个task对象</span>
-<span class="cp">#pragma clang diagnostic pop</span>
-        <span class="kt">IMP</span> <span class="n">originalAFResumeIMP</span> <span class="o">=</span> <span class="n">method_getImplementation</span><span class="p">(</span><span class="n">class_getInstanceMethod</span><span class="p">([</span><span class="nb">self</span> <span class="k">class</span><span class="p">],</span> <span class="k">@selector</span><span class="p">(</span><span class="n">af_resume</span><span class="p">)));</span><span class="c1">//获取要交换的方法的实现指针</span>
-        <span class="kt">Class</span> <span class="n">currentClass</span> <span class="o">=</span> <span class="p">[</span><span class="n">localDataTask</span> <span class="k">class</span><span class="p">];</span><span class="c1">//获取真正的子类</span>
-        
-        <span class="k">while</span> <span class="p">(</span><span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="n">currentClass</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="n">resume</span><span class="p">)))</span> <span class="c1">//检查是否实现需要交换的方法</span>
-        <span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">if</span> <span class="p">(</span><span class="n">NSClassFromString</span><span class="p">(</span><span class="s">@&#34;NSURLSessionTask&#34;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">NSURLSessionConfiguration</span> <span class="o">*</span><span class="n">configuration</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSURLSessionConfiguration</span> <span class="n">ephemeralSessionConfiguration</span><span class="p">];</span>
+        <span class="n">NSURLSession</span> <span class="o">*</span> <span class="n">session</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSURLSession</span> <span class="nl">sessionWithConfiguration</span><span class="p">:</span><span class="n">configuration</span><span class="p">];</span><span class="c1">//先构建NSURLSession
+</span><span class="c1"></span><span class="cp">#pragma GCC diagnostic push
+</span><span class="cp">#pragma GCC diagnostic ignored &#34;-Wnonnull&#34;
+</span><span class="cp"></span>        <span class="n">NSURLSessionDataTask</span> <span class="o">*</span><span class="n">localDataTask</span> <span class="o">=</span> <span class="p">[</span><span class="n">session</span> <span class="nl">dataTaskWithURL</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span><span class="c1">//再通过session对象构建一个task对象
+</span><span class="c1"></span><span class="cp">#pragma clang diagnostic pop
+</span><span class="cp"></span>        <span class="kt">IMP</span> <span class="n">originalAFResumeIMP</span> <span class="o">=</span> <span class="n">method_getImplementation</span><span class="p">(</span><span class="n">class_getInstanceMethod</span><span class="p">([</span><span class="nb">self</span> <span class="k">class</span><span class="p">],</span> <span class="k">@selector</span><span class="p">(</span><span class="n">af_resume</span><span class="p">)));</span><span class="c1">//获取要交换的方法的实现指针
+</span><span class="c1"></span>        <span class="kt">Class</span> <span class="n">currentClass</span> <span class="o">=</span> <span class="p">[</span><span class="n">localDataTask</span> <span class="k">class</span><span class="p">];</span><span class="c1">//获取真正的子类
+</span><span class="c1"></span>        
+        <span class="k">while</span> <span class="p">(</span><span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="n">currentClass</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="n">resume</span><span class="p">)))</span> <span class="c1">//检查是否实现需要交换的方法
+</span><span class="c1"></span>        <span class="p">{</span>
             <span class="kt">Class</span> <span class="n">superClass</span> <span class="o">=</span> <span class="p">[</span><span class="n">currentClass</span> <span class="n">superclass</span><span class="p">];</span>
-            <span class="kt">IMP</span> <span class="n">classResumeIMP</span> <span class="o">=</span> <span class="n">method_getImplementation</span><span class="p">(</span><span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="n">currentClass</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="n">resume</span><span class="p">)));</span><span class="c1">//获取实现指针</span>
-            <span class="kt">IMP</span> <span class="n">superclassResumeIMP</span> <span class="o">=</span> <span class="n">method_getImplementation</span><span class="p">(</span><span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="n">superClass</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="n">resume</span><span class="p">)));</span><span class="c1">//获取父类的实现指针</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">classResumeIMP</span> <span class="o">!=</span> <span class="n">superclassResumeIMP</span> <span class="o">&amp;&amp;</span>
-                <span class="n">originalAFResumeIMP</span> <span class="o">!=</span> <span class="n">classResumeIMP</span><span class="p">)</span> <span class="p">{</span><span class="c1">//如果实现和父类不一样且实现不一样</span>
-                <span class="p">[</span><span class="nb">self</span> <span class="nl">swizzleResumeAndSuspendMethodForClass</span><span class="p">:</span><span class="n">currentClass</span><span class="p">];</span>
+            <span class="kt">IMP</span> <span class="n">classResumeIMP</span> <span class="o">=</span> <span class="n">method_getImplementation</span><span class="p">(</span><span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="n">currentClass</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="n">resume</span><span class="p">)));</span><span class="c1">//获取实现指针
+</span><span class="c1"></span>            <span class="kt">IMP</span> <span class="n">superclassResumeIMP</span> <span class="o">=</span> <span class="n">method_getImplementation</span><span class="p">(</span><span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="n">superClass</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="n">resume</span><span class="p">)));</span><span class="c1">//获取父类的实现指针
+</span><span class="c1"></span>            <span class="k">if</span> <span class="p">(</span><span class="n">classResumeIMP</span> <span class="o">!=</span> <span class="n">superclassResumeIMP</span> <span class="o">&amp;&amp;</span>
+                <span class="n">originalAFResumeIMP</span> <span class="o">!=</span> <span class="n">classResumeIMP</span><span class="p">)</span> <span class="p">{</span><span class="c1">//如果实现和父类不一样且实现不一样
+</span><span class="c1"></span>                <span class="p">[</span><span class="nb">self</span> <span class="nl">swizzleResumeAndSuspendMethodForClass</span><span class="p">:</span><span class="n">currentClass</span><span class="p">];</span>
             <span class="p">}</span>
-            <span class="n">currentClass</span> <span class="o">=</span> <span class="p">[</span><span class="n">currentClass</span> <span class="n">superclass</span><span class="p">];</span><span class="c1">//获取父类继续调用</span>
-        <span class="p">}</span>
+            <span class="n">currentClass</span> <span class="o">=</span> <span class="p">[</span><span class="n">currentClass</span> <span class="n">superclass</span><span class="p">];</span><span class="c1">//获取父类继续调用
+</span><span class="c1"></span>        <span class="p">}</span>
         
         <span class="p">[</span><span class="n">localDataTask</span> <span class="n">cancel</span><span class="p">];</span>
         <span class="p">[</span><span class="n">session</span> <span class="n">finishTasksAndInvalidate</span><span class="p">];</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <h4 id="5-增加方法到类中再进行method-swizzling">5.增加方法到类中再进行Method Swizzling</h4>
 
 <p>同时为了避免直接换带来多次交换把原来方法弄乱的问题，是先将需要换的方法add到需要替换类中（相当于生成一个副本），然后让那个类里面的副本方法去交换，也就是不影响原来拥有这个方法的类里的方法。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">+</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">swizzleResumeAndSuspendMethodForClass:</span><span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nv">theClass</span> <span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">+</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">swizzleResumeAndSuspendMethodForClass:</span><span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nv">theClass</span> <span class="p">{</span>
     <span class="n">Method</span> <span class="n">afResumeMethod</span> <span class="o">=</span> <span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="n">af_resume</span><span class="p">));</span>
     <span class="n">Method</span> <span class="n">afSuspendMethod</span> <span class="o">=</span> <span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="n">af_suspend</span><span class="p">));</span>
 
@@ -289,40 +281,34 @@
     <span class="k">if</span> <span class="p">(</span><span class="n">af_addMethod</span><span class="p">(</span><span class="n">theClass</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="n">af_suspend</span><span class="p">),</span> <span class="n">afSuspendMethod</span><span class="p">))</span> <span class="p">{</span>
         <span class="n">af_swizzleSelector</span><span class="p">(</span><span class="n">theClass</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="n">suspend</span><span class="p">),</span> <span class="k">@selector</span><span class="p">(</span><span class="n">af_suspend</span><span class="p">));</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <h4 id="6-用gcd的同步方法来封装代码块">6.用GCD的同步方法来封装代码块</h4>
 
 <p>iOS8以下<code>dataTaskWithRequest</code>是生成的task时是并发执行的，造成taskIdentifer偶发不唯一，解决办法是使这个方法串行执行，同时用Dispatch_sync等待结果返回。调用时封装了一个C方法。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span> <span class="n">url_session_manager_create_task_safely</span><span class="p">(</span><span class="o">^</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"> <span class="n">url_session_manager_create_task_safely</span><span class="p">(</span><span class="o">^</span><span class="p">{</span>
         <span class="n">downloadTask</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">session</span> <span class="nl">downloadTaskWithRequest</span><span class="p">:</span><span class="n">request</span><span class="p">];</span>
-  <span class="p">});</span>
-</code></pre></div>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="k">static</span> <span class="n">dispatch_queue_t</span> <span class="nf">url_session_manager_creation_queue</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">});</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">static</span> <span class="n">dispatch_queue_t</span> <span class="nf">url_session_manager_creation_queue</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">static</span> <span class="n">dispatch_queue_t</span> <span class="n">af_url_session_manager_creation_queue</span><span class="p">;</span>
     <span class="k">static</span> <span class="n">dispatch_once_t</span> <span class="n">onceToken</span><span class="p">;</span>
- 	<span class="c1">//创建一个串行队列，只创建一次</span>
-    <span class="n">dispatch_once</span><span class="p">(</span><span class="o">&amp;</span><span class="n">onceToken</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
-        <span class="n">af_url_session_manager_creation_queue</span> <span class="o">=</span> <span class="n">dispatch_queue_create</span><span class="p">(</span><span class="s">&quot;com.alamofire.networking.session.manager.creation&quot;</span><span class="p">,</span> <span class="n">DISPATCH_QUEUE_SERIAL</span><span class="p">);</span>
+ 	<span class="c1">//创建一个串行队列，只创建一次
+</span><span class="c1"></span>    <span class="n">dispatch_once</span><span class="p">(</span><span class="o">&amp;</span><span class="n">onceToken</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
+        <span class="n">af_url_session_manager_creation_queue</span> <span class="o">=</span> <span class="n">dispatch_queue_create</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;com.alamofire.networking.session.manager.creation&#34;</span><span class="p">,</span> <span class="n">DISPATCH_QUEUE_SERIAL</span><span class="p">);</span>
     <span class="p">});</span>
     <span class="k">return</span> <span class="n">af_url_session_manager_creation_queue</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="k">static</span> <span class="kt">void</span> <span class="nf">url_session_manager_create_task_safely</span><span class="p">(</span><span class="n">dispatch_block_t</span> <span class="n">block</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">NSFoundationVersionNumber</span> <span class="o">&lt;</span> <span class="n">NSFoundationVersionNumber_With_Fixed_5871104061079552_bug</span><span class="p">)</span> <span class="p">{</span>
-      	<span class="c1">//iOS8以下则调用，同步等待结果</span>
-        <span class="n">dispatch_sync</span><span class="p">(</span><span class="n">url_session_manager_creation_queue</span><span class="p">(),</span> <span class="n">block</span><span class="p">);</span>
+      	<span class="c1">//iOS8以下则调用，同步等待结果
+</span><span class="c1"></span>        <span class="n">dispatch_sync</span><span class="p">(</span><span class="n">url_session_manager_creation_queue</span><span class="p">(),</span> <span class="n">block</span><span class="p">);</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
         <span class="n">block</span><span class="p">();</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <h4 id="7-重写respondstoselector更改delegate实现的判断依据">7.重写respondsToSelector更改Delegate实现的判断依据</h4>
 
 <p>AFNetworking内部的AFURLSessionManager将所有NSURLSessionDelegate的方法都接管了并转换成外界Set进来的Block实现，其中有一些转换并没有做任何处理，单纯转换成Block。所以是否响应这个Delegate方法其实是block是否存在，于是内部就重写了respondsToSelector。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nf">respondsToSelector:</span><span class="p">(</span><span class="kt">SEL</span><span class="p">)</span><span class="nv">selector</span> <span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nf">respondsToSelector:</span><span class="p">(</span><span class="kt">SEL</span><span class="p">)</span><span class="nv">selector</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">selector</span> <span class="o">==</span> <span class="k">@selector</span><span class="p">(</span><span class="nl">URLSession</span><span class="p">:</span><span class="nl">task</span><span class="p">:</span><span class="nl">willPerformHTTPRedirection</span><span class="p">:</span><span class="nl">newRequest</span><span class="p">:</span><span class="nl">completionHandler</span><span class="p">:))</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">taskWillPerformHTTPRedirection</span> <span class="o">!=</span> <span class="nb">nil</span><span class="p">;</span>
     <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">selector</span> <span class="o">==</span> <span class="k">@selector</span><span class="p">(</span><span class="nl">URLSession</span><span class="p">:</span><span class="nl">dataTask</span><span class="p">:</span><span class="nl">didReceiveResponse</span><span class="p">:</span><span class="nl">completionHandler</span><span class="p">:))</span> <span class="p">{</span>
@@ -334,137 +320,121 @@
     <span class="p">}</span>
 
     <span class="k">return</span> <span class="p">[[</span><span class="nb">self</span> <span class="k">class</span><span class="p">]</span> <span class="nl">instancesRespondToSelector</span><span class="p">:</span><span class="n">selector</span><span class="p">];</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <h4 id="8-dynamic关键字实现默认调用父类setter-getter">8.@dynamic关键字实现默认调用父类setter&amp;getter</h4>
 
 <p>当子类重新声明一个父类的属性时，其实默认合成了setter&amp;getter并覆盖了父类的默认实现。对于想子类声明属性却希望默认调用父类属性的setter&amp;getter，可以用@dynamic关键字。</p>
 
 <p>AFHTTPSessionManger是AFURLSessionManger的子类，也声明了securityPolicy属性并重写其setter方法，但希望getter方法调用父类的。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="k">@dynamic</span> <span class="n">securityPolicy</span><span class="p">;</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@dynamic</span> <span class="n">securityPolicy</span><span class="p">;</span>
 
 <span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setSecurityPolicy:</span><span class="p">(</span><span class="n">AFSecurityPolicy</span> <span class="o">*</span><span class="p">)</span><span class="nv">securityPolicy</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">securityPolicy</span><span class="p">.</span><span class="n">SSLPinningMode</span> <span class="o">!=</span> <span class="n">AFSSLPinningModeNone</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">baseURL</span><span class="p">.</span><span class="n">scheme</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;https&quot;</span><span class="p">])</span> <span class="p">{</span>
-        <span class="bp">NSString</span> <span class="o">*</span><span class="n">pinningMode</span> <span class="o">=</span> <span class="s">@&quot;Unknown Pinning Mode&quot;</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">securityPolicy</span><span class="p">.</span><span class="n">SSLPinningMode</span> <span class="o">!=</span> <span class="n">AFSSLPinningModeNone</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">baseURL</span><span class="p">.</span><span class="n">scheme</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&#34;https&#34;</span><span class="p">])</span> <span class="p">{</span>
+        <span class="n">NSString</span> <span class="o">*</span><span class="n">pinningMode</span> <span class="o">=</span> <span class="s">@&#34;Unknown Pinning Mode&#34;</span><span class="p">;</span>
         <span class="k">switch</span> <span class="p">(</span><span class="n">securityPolicy</span><span class="p">.</span><span class="n">SSLPinningMode</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">case</span> <span class="nl">AFSSLPinningModeNone</span><span class="p">:</span>        <span class="n">pinningMode</span> <span class="o">=</span> <span class="s">@&quot;AFSSLPinningModeNone&quot;</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
-            <span class="k">case</span> <span class="nl">AFSSLPinningModeCertificate</span><span class="p">:</span> <span class="n">pinningMode</span> <span class="o">=</span> <span class="s">@&quot;AFSSLPinningModeCertificate&quot;</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
-            <span class="k">case</span> <span class="nl">AFSSLPinningModePublicKey</span><span class="p">:</span>   <span class="n">pinningMode</span> <span class="o">=</span> <span class="s">@&quot;AFSSLPinningModePublicKey&quot;</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="nl">AFSSLPinningModeNone</span><span class="p">:</span>        <span class="n">pinningMode</span> <span class="o">=</span> <span class="s">@&#34;AFSSLPinningModeNone&#34;</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="nl">AFSSLPinningModeCertificate</span><span class="p">:</span> <span class="n">pinningMode</span> <span class="o">=</span> <span class="s">@&#34;AFSSLPinningModeCertificate&#34;</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="nl">AFSSLPinningModePublicKey</span><span class="p">:</span>   <span class="n">pinningMode</span> <span class="o">=</span> <span class="s">@&#34;AFSSLPinningModePublicKey&#34;</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="bp">NSString</span> <span class="o">*</span><span class="n">reason</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSString</span> <span class="nl">stringWithFormat</span><span class="p">:</span><span class="s">@&quot;A security policy configured with `%@` can only be applied on a manager with a secure base URL (i.e. https)&quot;</span><span class="p">,</span> <span class="n">pinningMode</span><span class="p">];</span>
-        <span class="k">@throw</span> <span class="p">[</span><span class="bp">NSException</span> <span class="nl">exceptionWithName</span><span class="p">:</span><span class="s">@&quot;Invalid Security Policy&quot;</span> <span class="nl">reason</span><span class="p">:</span><span class="n">reason</span> <span class="nl">userInfo</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
+        <span class="n">NSString</span> <span class="o">*</span><span class="n">reason</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSString</span> <span class="nl">stringWithFormat</span><span class="p">:</span><span class="s">@&#34;A security policy configured with `%@` can only be applied on a manager with a secure base URL (i.e. https)&#34;</span><span class="p">,</span> <span class="n">pinningMode</span><span class="p">];</span>
+        <span class="k">@throw</span> <span class="p">[</span><span class="n">NSException</span> <span class="nl">exceptionWithName</span><span class="p">:</span><span class="s">@&#34;Invalid Security Policy&#34;</span> <span class="nl">reason</span><span class="p">:</span><span class="n">reason</span> <span class="nl">userInfo</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
     <span class="p">}</span>
     <span class="p">[</span><span class="nb">super</span> <span class="nl">setSecurityPolicy</span><span class="p">:</span><span class="n">securityPolicy</span><span class="p">];</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <h4 id="9-kvo用context区分父类与子类">9.KVO用Context区分父类与子类</h4>
 
 <p>KVO中的Api<code>- (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(nullable void *)context</code>总是在dealloc方法中配合<code>- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath context:(nullable void *)context</code>成对使用来移除观察者。但如果父类和子类都同时观察一个keyPath，那么容易导致addObserver和removeObserver的个数不匹配（子类未调用父类的addObserver方法但调用了父类的dealloc），导致重复调用remove同一个keyPath而Crash。所以加上context作为类别唯一标识才是比较安全的做法。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">dealloc</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="n">keyPath</span> <span class="k">in</span> <span class="n">AFHTTPRequestSerializerObservedKeyPaths</span><span class="p">())</span> <span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">dealloc</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="n">keyPath</span> <span class="k">in</span> <span class="n">AFHTTPRequestSerializerObservedKeyPaths</span><span class="p">())</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">([</span><span class="nb">self</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="n">NSSelectorFromString</span><span class="p">(</span><span class="n">keyPath</span><span class="p">)])</span> <span class="p">{</span>
             <span class="p">[</span><span class="nb">self</span> <span class="nl">removeObserver</span><span class="p">:</span><span class="nb">self</span> <span class="nl">forKeyPath</span><span class="p">:</span><span class="n">keyPath</span> <span class="nl">context</span><span class="p">:</span><span class="n">AFHTTPRequestSerializerObserverContext</span><span class="p">];</span>
         <span class="p">}</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <h4 id="10-用gcd实现同步属性">10.用GCD实现同步属性</h4>
 
 <p>实现某个属性值setter方法和getter方法的同步除了用NSLock或者@synchronized关键字加锁外，可以使用在并发队列里setter配合dispatch_barrier_async加上getter配合dispatch_sync实现。这样读取是同步并发的，写入是在没有读取都完成后，同步执行的，并且性能比加锁更好。AFHTTPRequestSerializer里的HTTPHeaderField就是这样的。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setValue:</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">value</span>
-<span class="nf">forHTTPHeaderField:</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">field</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setValue:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">value</span>
+<span class="nf">forHTTPHeaderField:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">field</span>
 <span class="p">{</span>
     <span class="n">dispatch_barrier_async</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">requestHeaderModificationQueue</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
         <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">mutableHTTPRequestHeaders</span> <span class="nl">setValue</span><span class="p">:</span><span class="n">value</span> <span class="nl">forKey</span><span class="p">:</span><span class="n">field</span><span class="p">];</span>
     <span class="p">});</span>
 <span class="p">}</span>
 
-<span class="p">-</span> <span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nf">valueForHTTPHeaderField:</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">field</span> <span class="p">{</span>
-    <span class="bp">NSString</span> <span class="k">__block</span> <span class="o">*</span><span class="n">value</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nf">valueForHTTPHeaderField:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">field</span> <span class="p">{</span>
+    <span class="n">NSString</span> <span class="k">__block</span> <span class="o">*</span><span class="n">value</span><span class="p">;</span>
     <span class="n">dispatch_sync</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">requestHeaderModificationQueue</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
         <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">mutableHTTPRequestHeaders</span> <span class="nl">valueForKey</span><span class="p">:</span><span class="n">field</span><span class="p">];</span>
     <span class="p">});</span>
     <span class="k">return</span> <span class="n">value</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <h4 id="11-对nsstream类的操作">11.对NSStream类的操作</h4>
 
 <p>AFHTTPRequestSerizlizer进行Multipart协议支持时，使用了NSStream对象。</p>
 
 <p>一般使用方法是</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="c1">//创建流对象</span>
-<span class="bp">NSInputStream</span> <span class="o">*</span><span class="n">stream</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">NSInputStream</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithData</span><span class="p">:[</span><span class="bp">NSData</span> <span class="n">data</span><span class="p">]];</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="c1">//创建流对象
+</span><span class="c1"></span><span class="n">NSInputStream</span> <span class="o">*</span><span class="n">stream</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSInputStream</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithData</span><span class="p">:[</span><span class="n">NSData</span> <span class="n">data</span><span class="p">]];</span>
 
-<span class="c1">//放入Runloop中</span>
-<span class="p">[</span><span class="n">stream</span> <span class="nl">scheduleInRunLoop</span><span class="p">:</span><span class="bp">NSRunLoop</span><span class="p">.</span><span class="n">currentRunLoop</span> <span class="nl">forMode</span><span class="p">:</span><span class="n">NSDefaultRunLoopMode</span><span class="p">];</span>
+<span class="c1">//放入Runloop中
+</span><span class="c1"></span><span class="p">[</span><span class="n">stream</span> <span class="nl">scheduleInRunLoop</span><span class="p">:</span><span class="n">NSRunLoop</span><span class="p">.</span><span class="n">currentRunLoop</span> <span class="nl">forMode</span><span class="p">:</span><span class="n">NSDefaultRunLoopMode</span><span class="p">];</span>
 
-<span class="c1">//打开流</span>
-<span class="p">[</span><span class="n">stream</span> <span class="n">open</span><span class="p">];</span>
+<span class="c1">//打开流
+</span><span class="c1"></span><span class="p">[</span><span class="n">stream</span> <span class="n">open</span><span class="p">];</span>
 
-<span class="c1">//.......</span>
+<span class="c1">//.......
+</span><span class="c1"></span>
+<span class="c1">//从Runloop中移除
+</span><span class="c1"></span><span class="p">[</span><span class="n">stream</span> <span class="nl">removeFromRunLoop</span><span class="p">:</span><span class="n">NSRunLoop</span><span class="p">.</span><span class="n">currentRunLoop</span> <span class="nl">forMode</span><span class="p">:</span><span class="n">NSDefaultRunLoopMode</span><span class="p">];</span>
 
-<span class="c1">//从Runloop中移除</span>
-<span class="p">[</span><span class="n">stream</span> <span class="nl">removeFromRunLoop</span><span class="p">:</span><span class="bp">NSRunLoop</span><span class="p">.</span><span class="n">currentRunLoop</span> <span class="nl">forMode</span><span class="p">:</span><span class="n">NSDefaultRunLoopMode</span><span class="p">];</span>
-
-<span class="c1">//关闭流</span>
-<span class="p">[</span><span class="n">stream</span> <span class="n">close</span><span class="p">];</span>
-</code></pre></div>
-
+<span class="c1">//关闭流
+</span><span class="c1"></span><span class="p">[</span><span class="n">stream</span> <span class="n">close</span><span class="p">];</span></code></pre></div>
 <p>结果发现AFNetworking在析构NSStream时，没有调用removeFromRunLoop，仅仅调用了close，我一开始还以为漏了，结果后来书写Demo验证发现其引用计数的变化时如下的。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="c1">//放入Runloop中-----引用计数+2</span>
-<span class="p">[</span><span class="n">stream</span> <span class="nl">scheduleInRunLoop</span><span class="p">:</span><span class="bp">NSRunLoop</span><span class="p">.</span><span class="n">currentRunLoop</span> <span class="nl">forMode</span><span class="p">:</span><span class="n">NSDefaultRunLoopMode</span><span class="p">];</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="c1">//放入Runloop中-----引用计数+2
+</span><span class="c1"></span><span class="p">[</span><span class="n">stream</span> <span class="nl">scheduleInRunLoop</span><span class="p">:</span><span class="n">NSRunLoop</span><span class="p">.</span><span class="n">currentRunLoop</span> <span class="nl">forMode</span><span class="p">:</span><span class="n">NSDefaultRunLoopMode</span><span class="p">];</span>
 
-<span class="c1">//打开流-----引用计数不变</span>
-<span class="p">[</span><span class="n">stream</span> <span class="n">open</span><span class="p">];</span>
+<span class="c1">//打开流-----引用计数不变
+</span><span class="c1"></span><span class="p">[</span><span class="n">stream</span> <span class="n">open</span><span class="p">];</span>
 
-<span class="c1">//.......</span>
+<span class="c1">//.......
+</span><span class="c1"></span>
+<span class="c1">//从Runloop中移除-----引用计数-2
+</span><span class="c1"></span><span class="p">[</span><span class="n">stream</span> <span class="nl">removeFromRunLoop</span><span class="p">:</span><span class="n">NSRunLoop</span><span class="p">.</span><span class="n">currentRunLoop</span> <span class="nl">forMode</span><span class="p">:</span><span class="n">NSDefaultRunLoopMode</span><span class="p">];</span>
 
-<span class="c1">//从Runloop中移除-----引用计数-2</span>
-<span class="p">[</span><span class="n">stream</span> <span class="nl">removeFromRunLoop</span><span class="p">:</span><span class="bp">NSRunLoop</span><span class="p">.</span><span class="n">currentRunLoop</span> <span class="nl">forMode</span><span class="p">:</span><span class="n">NSDefaultRunLoopMode</span><span class="p">];</span>
-
-<span class="c1">//关闭流-----引用计数-2</span>
-<span class="p">[</span><span class="n">stream</span> <span class="n">close</span><span class="p">];</span>
-</code></pre></div>
-
+<span class="c1">//关闭流-----引用计数-2
+</span><span class="c1"></span><span class="p">[</span><span class="n">stream</span> <span class="n">close</span><span class="p">];</span></code></pre></div>
 <p>也就是说open和close对引用计数的影响不是一对的，从一定程度上解释只调用close也可以达到removeFromRunLoop的原因，个人猜测close和removeFromRunLoop调用任意一个都可以。顺便提一句AFMultipartBodyStream还对NSStreamStauts一些只读属性改成读写的，并自定义了所有流的方法。</p>
 
 <h4 id="12-category中实现属性懒加载">12.Category中实现属性懒加载</h4>
 
 <p>使用了OC的关联对象，先获取判断是否为空，不然就生成并关联上。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="n">AFRefreshControlNotificationObserver</span> <span class="o">*</span><span class="p">)</span><span class="nf">af_notificationObserver</span> <span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">AFRefreshControlNotificationObserver</span> <span class="o">*</span><span class="p">)</span><span class="nf">af_notificationObserver</span> <span class="p">{</span>
     <span class="n">AFRefreshControlNotificationObserver</span> <span class="o">*</span><span class="n">notificationObserver</span> <span class="o">=</span> <span class="n">objc_getAssociatedObject</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="n">af_notificationObserver</span><span class="p">));</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">notificationObserver</span> <span class="o">==</span> <span class="nb">nil</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">notificationObserver</span> <span class="o">=</span> <span class="p">[[</span><span class="n">AFRefreshControlNotificationObserver</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithActivityRefreshControl</span><span class="p">:</span><span class="nb">self</span><span class="p">];</span>
         <span class="n">objc_setAssociatedObject</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="n">af_notificationObserver</span><span class="p">),</span> <span class="n">notificationObserver</span><span class="p">,</span> <span class="n">OBJC_ASSOCIATION_RETAIN_NONATOMIC</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">notificationObserver</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <h4 id="13-头文件明确声明nonull和nullable">13.头文件明确声明Nonull和Nullable</h4>
 
 <p>自从支持Swift后，和Swift中的?和!对应，OC引入了Nonull和Nullable关键字，当然对每个方法参数和属性声明关键字是很大工作量的，这时我们可以用一对系统宏包含在最前和最后，中间的默认关键字就是Nonull了，这时候针对Nullable的参数或属性进行补充就可以了。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="c1">//.h</span>
-<span class="n">NS_ASSUME_NONNULL_BEGIN</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="c1">//.h
+</span><span class="c1"></span><span class="n">NS_ASSUME_NONNULL_BEGIN</span>
 
-<span class="c1">//...</span>
-<span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">strong</span><span class="p">,</span> <span class="n">nullable</span><span class="p">)</span> <span class="kt">id</span> <span class="o">&lt;</span><span class="n">AFImageRequestCache</span><span class="o">&gt;</span> <span class="n">imageCache</span><span class="p">;</span>
-<span class="c1">//...</span>
-
-<span class="n">NS_ASSUME_NONNULL_END</span>
-</code></pre></div>
-
+<span class="c1">//...
+</span><span class="c1"></span><span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">strong</span><span class="p">,</span> <span class="n">nullable</span><span class="p">)</span> <span class="kt">id</span> <span class="o">&lt;</span><span class="n">AFImageRequestCache</span><span class="o">&gt;</span> <span class="n">imageCache</span><span class="p">;</span>
+<span class="c1">//...
+</span><span class="c1"></span>
+<span class="n">NS_ASSUME_NONNULL_END</span></code></pre></div>
 <h3 id="最后">最后</h3>
 
 <p>AFNetworking是一份写得十分严谨漂亮的源码，其中对KVO&amp;KVC，GCD，Block，关联对象的运用十分巧妙且准确，同时接口的封装，代码的划分也很恰当。阅读之后对于代码规范又有了新的理解。</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        
+        This post was published <strong>354</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -492,7 +462,7 @@
     
   </section>
   <footer class="site-footer">
-  <p>© 2017 Nemocdz&#39;s Blog</p>
+  <p>© 2017-2018 Nemocdz&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
   
 </footer>

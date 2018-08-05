@@ -37,7 +37,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.27.1" />
+<meta name="generator" content="Hugo 0.34" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/My-blog/post/%E5%BE%81%E6%9C%8Dc%E6%8C%87%E9%92%88%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" />
@@ -116,7 +116,7 @@
   
   <h2 class="title">Nemocdz&#39;s Blog</h2>
   
-  <p class="subtitle">iOS Dev &amp; Photographer</p>
+  <p class="subtitle">iOS&amp;Android Dev</p>
   <button class="menu-toggle" type="button">
     <span class="icon icon-menu"></span>
   </button>
@@ -278,14 +278,10 @@
 <li>const修饰解读声明时const外一层修饰符。</li>
 <li>若类型指定符左边存在const，则修饰该类型指定符。</li>
 </ul>
-<div class="highlight"><pre><code class="language-c" data-lang="c"><span></span><span class="kt">char</span> <span class="k">const</span> <span class="o">*</span><span class="n">src</span><span class="p">;</span><span class="c1">//src is a pointer to read-only char</span>
-<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">src</span><span class="p">;</span><span class="c1">//src is a pointer to read-only char</span>
-</code></pre></div>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">char</span> <span class="k">const</span> <span class="o">*</span><span class="n">src</span><span class="p">;</span><span class="c1">//src is a pointer to read-only char
+</span><span class="c1"></span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">src</span><span class="p">;</span><span class="o">//</span><span class="n">src</span> <span class="n">is</span> <span class="n">a</span> <span class="n">pointer</span> <span class="n">to</span> <span class="n">read</span><span class="o">-</span><span class="n">only</span> <span class="kt">char</span></code></pre></div>
 <h3 id="解读数组">解读数组</h3>
-<div class="highlight"><pre><code class="language-c" data-lang="c"><span></span><span class="kt">int</span> <span class="n">hoge</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span><span class="c1">//hoge == &amp;hoge[0]</span>
-</code></pre></div>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="n">hoge</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span><span class="o">//</span><span class="n">hoge</span> <span class="o">==</span> <span class="o">&amp;</span><span class="n">hoge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></code></pre></div>
 <p><strong>由*声明的指针是指针变量，它可以随意修改指向的方向</strong>，包括用new建立一片空间然后让指针指向它；然而用[]声明的指针是指针常量（然而<strong>它指向的量却可以是一个变量</strong>），你不能修改指针常量，但是<strong>你可以借助这个指针常量去修改它所指向的指针变量</strong>。</p>
 
 <h4 id="数组为-sizeof-运算符的操作数">数组为<code>sizeof</code>运算符的操作数</h4>
@@ -307,10 +303,8 @@
 
 <li><p><code>[]</code>在表达式中，是<strong>下标</strong>运算符，是一种语法糖，所以和<code>*</code>的指针层级一样-1。</p></li>
 </ul>
-<div class="highlight"><pre><code class="language-c" data-lang="c"><span></span>  <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="c1">//等同于</span>
-  <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">i</span><span class="p">);</span>
-</code></pre></div>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c">  <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="c1">//等同于
+</span><span class="c1"></span>  <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">i</span><span class="p">);</span></code></pre></div>
 <ul>
 <li><p><code>-&gt;</code>在表达式中，是通过指针访问结构体成员的语法糖。</p>
 
@@ -319,10 +313,8 @@
 <li><code>.</code>左侧是结构体实体</li>
 </ul></li>
 </ul>
-<div class="highlight"><pre><code class="language-c" data-lang="c"><span></span>  <span class="n">p</span><span class="o">-&gt;</span><span class="n">hoge</span><span class="p">;</span><span class="c1">//等同于</span>
-  <span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">).</span><span class="n">hoge</span><span class="p">;</span>
-</code></pre></div>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c">  <span class="n">p</span><span class="o">-&gt;</span><span class="n">hoge</span><span class="p">;</span><span class="c1">//等同于
+</span><span class="c1"></span>  <span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">).</span><span class="n">hoge</span><span class="p">;</span></code></pre></div>
 <ul>
 <li><code>&amp;</code>在表达式中，是<strong>地址</strong>运算符，返回该值的指针。表达式指针层级+1。</li>
 </ul>
@@ -335,7 +327,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        
+        This post was published <strong>349</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -363,7 +355,7 @@
     
   </section>
   <footer class="site-footer">
-  <p>© 2017 Nemocdz&#39;s Blog</p>
+  <p>© 2017-2018 Nemocdz&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
   
 </footer>

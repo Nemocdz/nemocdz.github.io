@@ -31,7 +31,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.27.1" />
+<meta name="generator" content="Hugo 0.34" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/My-blog/post/%E5%86%8D%E8%B0%88objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/" />
@@ -110,7 +110,7 @@
   
   <h2 class="title">Nemocdz&#39;s Blog</h2>
   
-  <p class="subtitle">iOS Dev &amp; Photographer</p>
+  <p class="subtitle">iOS&amp;Android Dev</p>
   <button class="menu-toggle" type="button">
     <span class="icon icon-menu"></span>
   </button>
@@ -210,47 +210,47 @@
 <h3 id="runtime源码的weak关键字实现">Runtime源码的weak关键字实现</h3>
 
 <p>源码基于<a href="https://opensource.apple.com/tarballs/objc4/">Runtime-709</a>分析，当我们使用<code>__weak</code>关键字时，实际上调用的是NSObject.mm中的<code>objc_initWeak()</code>方法，然后进入核心方法<code>storeWeak</code>，传入核心参数是location（弱引用指针的地址）和newobj（弱引用指针应该指向的）核心方法源码如下：</p>
-<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">HaveOld</span> <span class="n">haveOld</span><span class="p">,</span> <span class="n">HaveNew</span> <span class="n">haveNew</span><span class="p">,</span>
+<div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="k">template</span> <span class="o">&lt;</span><span class="n">HaveOld</span> <span class="n">haveOld</span><span class="p">,</span> <span class="n">HaveNew</span> <span class="n">haveNew</span><span class="p">,</span>
           <span class="n">CrashIfDeallocating</span> <span class="n">crashIfDeallocating</span><span class="o">&gt;</span>
-<span class="c1">//template关键字类似于泛型，传入三个参数其实都是bool类型，为各种情况提供组合优化</span>
-<span class="k">static</span> <span class="n">id</span> <span class="c1">//返回id类型</span>
-<span class="n">storeWeak</span><span class="p">(</span><span class="n">id</span> <span class="o">*</span><span class="n">location</span><span class="p">,</span> <span class="n">objc_object</span> <span class="o">*</span><span class="n">newObj</span><span class="p">)</span>
+<span class="c1">//template关键字类似于泛型，传入三个参数其实都是bool类型，为各种情况提供组合优化
+</span><span class="c1"></span><span class="k">static</span> <span class="n">id</span> <span class="c1">//返回id类型
+</span><span class="c1"></span><span class="n">storeWeak</span><span class="p">(</span><span class="n">id</span> <span class="o">*</span><span class="n">location</span><span class="p">,</span> <span class="n">objc_object</span> <span class="o">*</span><span class="n">newObj</span><span class="p">)</span>
 <span class="p">{</span>   
     
     <span class="n">assert</span><span class="p">(</span><span class="n">haveOld</span>  <span class="o">||</span>  <span class="n">haveNew</span><span class="p">);</span>
-    <span class="c1">//新值没有的情况应该被上层的方法拦截，所以这里有个断言</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">haveNew</span><span class="p">)</span> <span class="n">assert</span><span class="p">(</span><span class="n">newObj</span> <span class="o">==</span> <span class="n">nil</span><span class="p">);</span>
+    <span class="c1">//新值没有的情况应该被上层的方法拦截，所以这里有个断言
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">haveNew</span><span class="p">)</span> <span class="n">assert</span><span class="p">(</span><span class="n">newObj</span> <span class="o">==</span> <span class="n">nil</span><span class="p">);</span>
     
     
     <span class="n">Class</span> <span class="n">previouslyInitializedClass</span> <span class="o">=</span> <span class="n">nil</span><span class="p">;</span>
     <span class="n">id</span> <span class="n">oldObj</span><span class="p">;</span>
-    <span class="c1">//SideTable结构是引用计数表，记录着对象的weak表，目的就是为了获取weak表</span>
-    <span class="n">SideTable</span> <span class="o">*</span><span class="n">oldTable</span><span class="p">;</span>
+    <span class="c1">//SideTable结构是引用计数表，记录着对象的weak表，目的就是为了获取weak表
+</span><span class="c1"></span>    <span class="n">SideTable</span> <span class="o">*</span><span class="n">oldTable</span><span class="p">;</span>
     <span class="n">SideTable</span> <span class="o">*</span><span class="n">newTable</span><span class="p">;</span>
 
  <span class="nl">retry</span><span class="p">:</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">haveOld</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">oldObj</span> <span class="o">=</span> <span class="o">*</span><span class="n">location</span><span class="p">;</span><span class="c1">//因为是个指向地址的指针，用*解引用返回地址的对象</span>
-        <span class="n">oldTable</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">SideTables</span><span class="p">()[</span><span class="n">oldObj</span><span class="p">];</span><span class="c1">//获得旧值对象所在的表的指针</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">oldObj</span> <span class="o">=</span> <span class="o">*</span><span class="n">location</span><span class="p">;</span><span class="c1">//因为是个指向地址的指针，用*解引用返回地址的对象
+</span><span class="c1"></span>        <span class="n">oldTable</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">SideTables</span><span class="p">()[</span><span class="n">oldObj</span><span class="p">];</span><span class="c1">//获得旧值对象所在的表的指针
+</span><span class="c1"></span>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
         <span class="n">oldTable</span> <span class="o">=</span> <span class="n">nil</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">haveNew</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">newTable</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">SideTables</span><span class="p">()[</span><span class="n">newObj</span><span class="p">];</span><span class="c1">//获得新值对象生意所在的表的指针</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">newTable</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">SideTables</span><span class="p">()[</span><span class="n">newObj</span><span class="p">];</span><span class="c1">//获得新值对象生意所在的表的指针
+</span><span class="c1"></span>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
         <span class="n">newTable</span> <span class="o">=</span> <span class="n">nil</span><span class="p">;</span>
     <span class="p">}</span>
     
-    <span class="c1">//加锁</span>
-    <span class="n">SideTable</span><span class="o">::</span><span class="n">lockTwo</span><span class="o">&lt;</span><span class="n">haveOld</span><span class="p">,</span> <span class="n">haveNew</span><span class="o">&gt;</span><span class="p">(</span><span class="n">oldTable</span><span class="p">,</span> <span class="n">newTable</span><span class="p">);</span>
-    <span class="c1">//再次确认保证线程安全</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">haveOld</span>  <span class="o">&amp;&amp;</span>  <span class="o">*</span><span class="n">location</span> <span class="o">!=</span> <span class="n">oldObj</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//加锁
+</span><span class="c1"></span>    <span class="n">SideTable</span><span class="o">::</span><span class="n">lockTwo</span><span class="o">&lt;</span><span class="n">haveOld</span><span class="p">,</span> <span class="n">haveNew</span><span class="o">&gt;</span><span class="p">(</span><span class="n">oldTable</span><span class="p">,</span> <span class="n">newTable</span><span class="p">);</span>
+    <span class="c1">//再次确认保证线程安全
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">haveOld</span>  <span class="o">&amp;&amp;</span>  <span class="o">*</span><span class="n">location</span> <span class="o">!=</span> <span class="n">oldObj</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">SideTable</span><span class="o">::</span><span class="n">unlockTwo</span><span class="o">&lt;</span><span class="n">haveOld</span><span class="p">,</span> <span class="n">haveNew</span><span class="o">&gt;</span><span class="p">(</span><span class="n">oldTable</span><span class="p">,</span> <span class="n">newTable</span><span class="p">);</span>
         <span class="k">goto</span> <span class="n">retry</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="c1">// 防止弱引用机制的死锁并用init构造保证弱引用的isa指针非空</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">haveNew</span>  <span class="o">&amp;&amp;</span>  <span class="n">newObj</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 防止弱引用机制的死锁并用init构造保证弱引用的isa指针非空
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">haveNew</span>  <span class="o">&amp;&amp;</span>  <span class="n">newObj</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">Class</span> <span class="n">cls</span> <span class="o">=</span> <span class="n">newObj</span><span class="o">-&gt;</span><span class="n">getIsa</span><span class="p">();</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">cls</span> <span class="o">!=</span> <span class="n">previouslyInitializedClass</span>  <span class="o">&amp;&amp;</span>  
             <span class="o">!</span><span class="p">((</span><span class="n">objc_class</span> <span class="o">*</span><span class="p">)</span><span class="n">cls</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">isInitialized</span><span class="p">())</span> 
@@ -262,22 +262,22 @@
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="c1">//清除旧址</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">haveOld</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">//在weakTable中反注册</span>
-        <span class="n">weak_unregister_no_lock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">oldTable</span><span class="o">-&gt;</span><span class="n">weak_table</span><span class="p">,</span> <span class="n">oldObj</span><span class="p">,</span> <span class="n">location</span><span class="p">);</span>
+    <span class="c1">//清除旧址
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">haveOld</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//在weakTable中反注册
+</span><span class="c1"></span>        <span class="n">weak_unregister_no_lock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">oldTable</span><span class="o">-&gt;</span><span class="n">weak_table</span><span class="p">,</span> <span class="n">oldObj</span><span class="p">,</span> <span class="n">location</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="c1">//分配新值</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">haveNew</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">//在weakTable中注册新值并返回对象</span>
-        <span class="n">newObj</span> <span class="o">=</span> <span class="p">(</span><span class="n">objc_object</span> <span class="o">*</span><span class="p">)</span>
+    <span class="c1">//分配新值
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">haveNew</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//在weakTable中注册新值并返回对象
+</span><span class="c1"></span>        <span class="n">newObj</span> <span class="o">=</span> <span class="p">(</span><span class="n">objc_object</span> <span class="o">*</span><span class="p">)</span>
             <span class="n">weak_register_no_lock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">newTable</span><span class="o">-&gt;</span><span class="n">weak_table</span><span class="p">,</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="n">newObj</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> 
                                   <span class="n">crashIfDeallocating</span><span class="p">);</span>
 
 
-        <span class="c1">// 对TaggedPointer的优化</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">newObj</span>  <span class="o">&amp;&amp;</span>  <span class="o">!</span><span class="n">newObj</span><span class="o">-&gt;</span><span class="n">isTaggedPointer</span><span class="p">())</span> <span class="p">{</span>
+        <span class="c1">// 对TaggedPointer的优化
+</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">newObj</span>  <span class="o">&amp;&amp;</span>  <span class="o">!</span><span class="n">newObj</span><span class="o">-&gt;</span><span class="n">isTaggedPointer</span><span class="p">())</span> <span class="p">{</span>
             <span class="n">newObj</span><span class="o">-&gt;</span><span class="n">setWeaklyReferenced_nolock</span><span class="p">();</span>
         <span class="p">}</span>
 
@@ -288,9 +288,7 @@
     <span class="n">SideTable</span><span class="o">::</span><span class="n">unlockTwo</span><span class="o">&lt;</span><span class="n">haveOld</span><span class="p">,</span> <span class="n">haveNew</span><span class="o">&gt;</span><span class="p">(</span><span class="n">oldTable</span><span class="p">,</span> <span class="n">newTable</span><span class="p">);</span>
 
     <span class="k">return</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="n">newObj</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <p>而WeakTable是一个Hash表设计，以对象的地址为key，value是所有指向这个对象的weak指针的地址集合。通过这种设计，在废弃对象时，可以通过weak表快速找到value即所有weak指针并统一设置为nil并删除该记录。</p>
 
 <p><strong>所以苹果对于weak的实现其实类似于通知的实现，指明谁（weak指针）要监听谁（赋值对象）什么事件（dealloc操作）执行什么操作（置nil）。</strong></p>
@@ -313,7 +311,7 @@
 <p>在它dealloc时置我们需要的指针为nil是合适的选择，因为之后的时机指向的对象也会被销毁，销毁之前置nil刚刚好。</p>
 
 <p>为了保证关联对象的引用指针为1，在weak赋值时z只要创建一次就好了。由于我们需要置nil这个操作，关联对象的dealloc跑一个block是灵活性最大的选择了，也就是由关联对象持有一个block，并在weak赋值时顺便告诉这个block里面执行什么。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="k">@interface</span> <span class="nc">CDZDeallocObserver</span> : <span class="bp">NSObject</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@interface</span> <span class="nc">CDZDeallocObserver</span> : <span class="nc">NSObject</span>
 <span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">copy</span><span class="p">)</span> <span class="kt">void</span> <span class="p">(</span><span class="o">^</span><span class="n">block</span><span class="p">)(</span><span class="kt">void</span><span class="p">);</span>
 <span class="k">@end</span>
 
@@ -323,12 +321,10 @@
         <span class="nb">self</span><span class="p">.</span><span class="n">block</span><span class="p">();</span>
     <span class="p">}</span>
 <span class="p">}</span>
-<span class="k">@end</span>
-</code></pre></div>
-
+<span class="k">@end</span></code></pre></div>
 <p>用分类实现一个setBlock的方法，拓展给NSObject类。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">CDZDellocBlockKey</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">CDZDellocBlockKey</span><span class="p">;</span>
-<span class="k">@implementation</span> <span class="bp">NSObject</span> <span class="nl">(DeallocBlock)</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">CDZDellocBlockKey</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">CDZDellocBlockKey</span><span class="p">;</span>
+<span class="k">@implementation</span> <span class="nc">NSObject</span> <span class="nl">(DeallocBlock)</span>
 
 <span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">cdz_deallocBlock:</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">^</span><span class="p">)(</span><span class="kt">void</span><span class="p">))</span><span class="nv">block</span><span class="p">{</span>
     <span class="n">CDZDeallocObserver</span> <span class="o">*</span><span class="n">observer</span> <span class="o">=</span> <span class="n">objc_getAssociatedObject</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">CDZDellocBlockKey</span><span class="p">);</span>
@@ -338,14 +334,12 @@
     <span class="p">}</span>
     <span class="n">observer</span><span class="p">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">block</span><span class="p">;</span>
 <span class="p">}</span>
-<span class="k">@end</span>
-</code></pre></div>
-
+<span class="k">@end</span></code></pre></div>
 <h3 id="弱引用容器的拓展">弱引用容器的拓展</h3>
 
 <p>之前我们知道CoreFoundation和MRC法都可以使引用计数不变，那么其实我们只要在Add的时候顺便关联上释放时移除对象即可，因为保留一堆nil指针在容器内并不是一个好的选择。置nil其实更希望是表示这个元素不存在了。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="c1">//与CoreFoundation配套的add方法，用unsafe_unretain是不希望被置nil，系统置nil的时机可能比实际dealloc的时机早</span>
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">cf_addObject:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">object</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="c1">//与CoreFoundation配套的add方法，用unsafe_unretain是不希望被置nil，系统置nil的时机可能比实际dealloc的时机早
+</span><span class="c1"></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">cf_addObject:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">object</span><span class="p">{</span>
     <span class="p">[</span><span class="nb">self</span> <span class="nl">addObject</span><span class="p">:</span><span class="n">object</span><span class="p">];</span>
     <span class="n">__unsafe_unretained</span> <span class="k">typeof</span> <span class="p">(</span><span class="n">object</span><span class="p">)</span> <span class="n">unRetainObject</span> <span class="o">=</span> <span class="n">object</span><span class="p">;</span>
     <span class="k">__weak</span> <span class="k">typeof</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="n">weakSelf</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
@@ -354,10 +348,8 @@
             <span class="p">[</span><span class="n">weakSelf</span> <span class="nl">removeObject</span><span class="p">:</span><span class="n">unRetainObject</span><span class="p">];</span>
         <span class="p">}</span>
     <span class="p">}];</span>
-<span class="p">}</span>
-</code></pre></div>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="c1">//跟mrc配套的</span>
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">mrc_addObject:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">object</span><span class="p">{</span>
+<span class="p">}</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="c1">//跟mrc配套的
+</span><span class="c1"></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">mrc_addObject:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">object</span><span class="p">{</span>
     <span class="p">[</span><span class="nb">self</span> <span class="nl">addObject</span><span class="p">:</span><span class="n">object</span><span class="p">];</span>
     <span class="n">__unsafe_unretained</span> <span class="k">typeof</span> <span class="p">(</span><span class="n">object</span><span class="p">)</span> <span class="n">unRetainObject</span> <span class="o">=</span> <span class="n">object</span><span class="p">;</span>
     <span class="k">__weak</span> <span class="k">typeof</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="n">weakSelf</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
@@ -367,9 +359,7 @@
         <span class="p">}</span>
     <span class="p">}];</span>
     <span class="n">CFRelease</span><span class="p">((</span><span class="k">__bridge</span> <span class="n">CFTypeRef</span><span class="p">)(</span><span class="n">object</span><span class="p">));</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <p>这样才能保证后续在对象销毁时，用容器获取的对象是正确的（置nil或被移除）。</p>
 
 <h3 id="最后">最后</h3>
@@ -388,7 +378,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        
+        This post was published <strong>337</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -416,7 +406,7 @@
     
   </section>
   <footer class="site-footer">
-  <p>© 2017 Nemocdz&#39;s Blog</p>
+  <p>© 2017-2018 Nemocdz&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
   
 </footer>

@@ -33,7 +33,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.27.1" />
+<meta name="generator" content="Hugo 0.34" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/My-blog/post/objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/" />
@@ -112,7 +112,7 @@
   
   <h2 class="title">Nemocdz&#39;s Blog</h2>
   
-  <p class="subtitle">iOS Dev &amp; Photographer</p>
+  <p class="subtitle">iOS&amp;Android Dev</p>
   <button class="menu-toggle" type="button">
     <span class="icon icon-menu"></span>
   </button>
@@ -227,30 +227,24 @@
 <ul>
 <li>Memory Options（内存语义管理选项）</li>
 </ul>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span>  <span class="n">NSPointerFunctionsStrongMemory</span> <span class="c1">// 和strong一样，默认</span>
-  <span class="n">NSPointerFunctionsOpaqueMemory</span> <span class="c1">// 在指针去除时不做任何动作</span>
-  <span class="n">NSPointerFunctionsMallocMemory</span> <span class="c1">// 去除时调用free() , 加入时calloc()</span>
-  <span class="n">NSPointerFunctionsMachVirtualMemory</span> <span class="c1">//使用可执行文件的虚拟内存</span>
-  <span class="n">NSPointerFunctionsWeakMemory</span> <span class="c1">//和weak一样         </span>
-</code></pre></div>
-
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c">  <span class="n">NSPointerFunctionsStrongMemory</span> <span class="c1">// 和strong一样，默认
+</span><span class="c1"></span>  <span class="n">NSPointerFunctionsOpaqueMemory</span> <span class="c1">// 在指针去除时不做任何动作
+</span><span class="c1"></span>  <span class="n">NSPointerFunctionsMallocMemory</span> <span class="c1">// 去除时调用free() , 加入时calloc()
+</span><span class="c1"></span>  <span class="n">NSPointerFunctionsMachVirtualMemory</span> <span class="c1">//使用可执行文件的虚拟内存
+</span><span class="c1"></span>  <span class="n">NSPointerFunctionsWeakMemory</span> <span class="o">//</span><span class="err">和</span><span class="n">weak一样</span>         </code></pre></div>
 <ul>
 <li>Personaility Options(对象处理选项-如何进行哈希算法，判定等同性，描述)</li>
 </ul>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span>  <span class="n">NSPointerFunctionsObjectPersonality</span> <span class="c1">//使用NSObject的hash、isEqual、description，默认</span>
-  <span class="n">NSPointerFunctionsOpaquePersonality</span> <span class="c1">//使用偏移后指针，进行hash和直接比较等同性</span>
-  <span class="n">NSPointerFunctionsObjectPointerPersonality</span> <span class="c1">//和上一个相同，多了description方法	  </span>
-  <span class="n">NSPointerFunctionsCStringPersonality</span> <span class="c1">//使用c字符串的hash和strcmp比较，%s作为decription</span>
-  <span class="n">NSPointerFunctionsStructPersonality</span> <span class="c1">// 使用内存的hash和memcmp </span>
-  <span class="n">NSPointerFunctionsIntegerPersonality</span> <span class="c1">//使用偏移量作为hash和等同性判断</span>
-</code></pre></div>
-
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c">  <span class="n">NSPointerFunctionsObjectPersonality</span> <span class="c1">//使用NSObject的hash、isEqual、description，默认
+</span><span class="c1"></span>  <span class="n">NSPointerFunctionsOpaquePersonality</span> <span class="c1">//使用偏移后指针，进行hash和直接比较等同性
+</span><span class="c1"></span>  <span class="n">NSPointerFunctionsObjectPointerPersonality</span> <span class="c1">//和上一个相同，多了description方法	  
+</span><span class="c1"></span>  <span class="n">NSPointerFunctionsCStringPersonality</span> <span class="c1">//使用c字符串的hash和strcmp比较，%s作为decription
+</span><span class="c1"></span>  <span class="n">NSPointerFunctionsStructPersonality</span> <span class="c1">// 使用内存的hash和memcmp 
+</span><span class="c1"></span>  <span class="n">NSPointerFunctionsIntegerPersonality</span> <span class="o">//</span><span class="err">使用偏移量作为</span><span class="n">hash和等同性判断</span></code></pre></div>
 <ul>
 <li>Copy Options（对象拷贝选项）</li>
 </ul>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span>  <span class="n">NSPointerFunctionsCopyIn</span><span class="c1">//通过NSCopying方法，复制后存入</span>
-</code></pre></div>
-
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c">  <span class="n">NSPointerFunctionsCopyIn</span><span class="o">//</span><span class="err">通过</span><span class="n">NSCopying方法</span><span class="err">，复制后存入</span></code></pre></div>
 <p>另外，文档还强调，<strong>每种类别的选项互斥，只能每种类别选择一个</strong>。</p>
 
 <p>当然，这三种容器还提供了快捷实例化类方法，含有weakObjects字样。</p>
@@ -275,12 +269,10 @@
 <p>在初始化时，使用CFFoundation里的容器类实现后转成Foundation对象</p>
 
 <p>以NSMutableSet为例，可以增加一个新的分类，自定义一个实例化方法</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">+</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">cdz_weakSet</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">+</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">cdz_weakSet</span><span class="p">{</span>
     <span class="n">CFSetCallBacks</span> <span class="n">callbacks</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">CFCopyDescription</span><span class="p">,</span> <span class="n">CFEqual</span><span class="p">,</span> <span class="n">CFHash</span><span class="p">};</span>
-    <span class="k">return</span> <span class="p">(</span><span class="bp">NSMutableSet</span> <span class="o">*</span><span class="p">)</span><span class="n">CFBridgingRelease</span><span class="p">(</span><span class="n">CFSetCreateMutable</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">callbacks</span><span class="p">));</span>
-<span class="p">}</span>
-</code></pre></div>
-
+    <span class="k">return</span> <span class="p">(</span><span class="n">NSMutableSet</span> <span class="o">*</span><span class="p">)</span><span class="n">CFBridgingRelease</span><span class="p">(</span><span class="n">CFSetCreateMutable</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">callbacks</span><span class="p">));</span>
+<span class="p">}</span></code></pre></div>
 <p>建立容器类的步骤</p>
 
 <h5 id="1-生成callbacks结构体">1.生成CallBacks结构体</h5>
@@ -288,16 +280,14 @@
 <p>结构体中的对象其实就是一些描述容器的选项</p>
 
 <p>同样以CFSetCallBacks为例，其结构体定义如下</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
     <span class="n">CFIndex</span>				<span class="n">version</span><span class="p">;</span>
     <span class="n">CFSetRetainCallBack</span>			<span class="k">retain</span><span class="p">;</span>
     <span class="n">CFSetReleaseCallBack</span>		<span class="k">release</span><span class="p">;</span>
     <span class="n">CFSetCopyDescriptionCallBack</span>	<span class="n">copyDescription</span><span class="p">;</span>
     <span class="n">CFSetEqualCallBack</span>			<span class="n">equal</span><span class="p">;</span>
     <span class="n">CFSetHashCallBack</span>			<span class="n">hash</span><span class="p">;</span>
-<span class="p">}</span> <span class="n">CFSetCallBacks</span><span class="p">;</span>
-</code></pre></div>
-
+<span class="p">}</span> <span class="n">CFSetCallBacks</span><span class="p">;</span></code></pre></div>
 <p>version暂时不管它，看下剩下变量类型名字，是否感觉比较熟悉</p>
 
 <p>其实和之前NSPointerFunctionsOptions类似，还是分三种，retain和release是内存管理，equal和hash和是对象处理，copyDescription是复制处理。</p>
@@ -324,12 +314,10 @@
 </ol>
 
 <p>例子中使用第二种，在分类中新增一个方法</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">mrc_weakAddObject:</span><span class="p">(</span><span class="bp">NSObject</span> <span class="o">*</span><span class="p">)</span><span class="nv">object</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">mrc_weakAddObject:</span><span class="p">(</span><span class="n">NSObject</span> <span class="o">*</span><span class="p">)</span><span class="nv">object</span><span class="p">{</span>
     <span class="p">[</span><span class="nb">self</span> <span class="nl">addObject</span><span class="p">:</span><span class="n">object</span><span class="p">];</span>
     <span class="n">CFRelease</span><span class="p">((</span><span class="k">__bridge</span> <span class="n">CFTypeRef</span><span class="p">)(</span><span class="n">object</span><span class="p">));</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <p><strong>注意！！</strong></p>
 
 <p>在使用这种方法后，这个容器将变得极其不安全，必须搭配一整套API来操作容器，包括add/remove/objectOfxxx，而不搭配使用的话，将可能将引用计数变得混乱，甚至导致崩溃。</p>
@@ -355,16 +343,14 @@
 <p>这个方法会弱引用这个object。</p>
 
 <p>取的时候用value的nonretainedObjectValue属性</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="bp">NSValue</span> <span class="o">*</span><span class="n">weakObject</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSValue</span> <span class="nl">valueWithNonretainedObject</span><span class="p">:</span><span class="n">object</span><span class="p">];</span>
-<span class="n">weakObject</span><span class="p">.</span><span class="n">nonretainedObjectValue</span><span class="p">;</span>
-</code></pre></div>
-
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="n">NSValue</span> <span class="o">*</span><span class="n">weakObject</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSValue</span> <span class="nl">valueWithNonretainedObject</span><span class="p">:</span><span class="n">object</span><span class="p">];</span>
+<span class="n">weakObject</span><span class="p">.</span><span class="n">nonretainedObjectValue</span><span class="p">;</span></code></pre></div>
 <h4 id="2-使用block">2.使用block</h4>
 
 <p>先对object加上weak修饰符，在包在block中就可</p>
 
 <p>使用时可搭配以下简便方法</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="k">typedef</span> <span class="nf">id</span><span class="p">(</span><span class="o">^</span><span class="n">CDZWeakObjectBlock</span><span class="p">)();</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">typedef</span> <span class="nf">id</span><span class="p">(</span><span class="o">^</span><span class="n">CDZWeakObjectBlock</span><span class="p">)();</span>
 <span class="n">CDZWeakObjectBlock</span> <span class="nf">blockOfObjcet</span> <span class="p">(</span><span class="kt">id</span> <span class="n">object</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">__weak</span> <span class="kt">id</span> <span class="n">weakObjcet</span> <span class="o">=</span> <span class="n">object</span><span class="p">;</span>
     <span class="k">return</span> <span class="o">^</span><span class="p">{</span>
@@ -379,9 +365,7 @@
     <span class="k">else</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <p>当然也可以实现自定义对象进行持有，而缺点就是，<strong>没办法使用容器的泛型进行约束和警告</strong>，差异值被抹去了。</p>
 
 <h3 id="最终方案">最终方案</h3>
@@ -446,7 +430,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        
+        This post was published <strong>378</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -474,7 +458,7 @@
     
   </section>
   <footer class="site-footer">
-  <p>© 2017 Nemocdz&#39;s Blog</p>
+  <p>© 2017-2018 Nemocdz&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
   
 </footer>

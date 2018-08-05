@@ -33,7 +33,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.27.1" />
+<meta name="generator" content="Hugo 0.34" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81cell%E9%80%9A%E7%94%A8%E7%9A%84tableviewmanager/" />
@@ -112,7 +112,7 @@
   
   <h2 class="title">Nemocdz&#39;s Blog</h2>
   
-  <p class="subtitle">iOS Dev &amp; Photographer</p>
+  <p class="subtitle">iOS&amp;Android Dev</p>
   <button class="menu-toggle" type="button">
     <span class="icon icon-menu"></span>
   </button>
@@ -213,7 +213,7 @@
 <h3 id="关于tableviewdatasource的思考">关于TableViewDatasource的思考</h3>
 
 <p>在之前的<a href="http://www.jianshu.com/p/1f7304634600">文章（iOS通用的DataSource）</a>中，已经对Datasource和SectionObject进行了抽象，datasource本质是告诉Cell如何去处理Model的桥梁，之前笔者是通过维护一个字典去一一对应Model的种类和Cell种类的，但后来发现，有时候Model和Cell的种类并不一定是1对1的，比如有些时候cell只要只要展示一个title，可能使用者只想写一个String去对应，而不用去建一个Model，在静态不变的Model中，这种情况更突出，因为并不需要从网络解析数据，不用用反射机制去进行json转model的处理，有时候，一个NSDictionary甚至一个NSString或者Bool就可以满足一个cell的展示需求，那么对于这种可能是多Cell对多Model（String也可以是一种Model）的情况，且每个TableView的Cell数量不多（一般设置页不会超过20个），可以考虑为在字典里每个model配置对应的Cell类型的键值对。而且因为Model种类不一，我们也需要手动Add到SectionObject里，那么我们可以把这个字典分在每个sectionObject里去管理。在section类里添加以下方法，而model的唯一性可以用hash属性标识，默认hash属性就是对象的内存地址。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">addItem:</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="bp">NSObject</span><span class="o">&gt;</span><span class="p">)</span><span class="nv">item</span> <span class="nf">cellClass:</span><span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nv">cellClass</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">addItem:</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="n">NSObject</span><span class="o">&gt;</span><span class="p">)</span><span class="nv">item</span> <span class="nf">cellClass:</span><span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nv">cellClass</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">item</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span><span class="p">;</span>
     <span class="p">}</span>
@@ -221,57 +221,49 @@
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">cellClass</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span><span class="p">;</span>
     <span class="p">}</span>
-    <span class="bp">NSString</span> <span class="o">*</span><span class="n">itemHash</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSString</span> <span class="nl">stringWithFormat</span><span class="p">:</span><span class="s">@&quot;%tu&quot;</span><span class="p">,</span><span class="n">item</span><span class="p">.</span><span class="n">hash</span><span class="p">];</span>
+    <span class="n">NSString</span> <span class="o">*</span><span class="n">itemHash</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSString</span> <span class="nl">stringWithFormat</span><span class="p">:</span><span class="s">@&#34;%tu&#34;</span><span class="p">,</span><span class="n">item</span><span class="p">.</span><span class="n">hash</span><span class="p">];</span>
     <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">sectionCellDic</span> <span class="nl">setObject</span><span class="p">:</span><span class="n">cellClass</span> <span class="nl">forKey</span><span class="p">:</span><span class="n">itemHash</span><span class="p">];</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <p>然后再增加外部通过indexPath读取对应Cell Class的方法</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nf">cellClassIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nf">cellClassIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
     <span class="k">return</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">cellClassForItem</span><span class="p">:[</span><span class="nb">self</span> <span class="nl">itemForIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">]];</span>
 <span class="p">}</span>
 
-<span class="p">-</span> <span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nf">cellClassForItem:</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="bp">NSObject</span><span class="o">&gt;</span><span class="p">)</span><span class="nv">item</span><span class="p">{</span>
-    <span class="bp">NSString</span> <span class="o">*</span><span class="n">itemHash</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSString</span> <span class="nl">stringWithFormat</span><span class="p">:</span><span class="s">@&quot;%tu&quot;</span><span class="p">,</span><span class="n">item</span><span class="p">.</span><span class="n">hash</span><span class="p">];</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nf">cellClassForItem:</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="n">NSObject</span><span class="o">&gt;</span><span class="p">)</span><span class="nv">item</span><span class="p">{</span>
+    <span class="n">NSString</span> <span class="o">*</span><span class="n">itemHash</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSString</span> <span class="nl">stringWithFormat</span><span class="p">:</span><span class="s">@&#34;%tu&#34;</span><span class="p">,</span><span class="n">item</span><span class="p">.</span><span class="n">hash</span><span class="p">];</span>
     <span class="kt">Class</span> <span class="n">cellClass</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">sectionCellDic</span> <span class="nl">objectForKey</span><span class="p">:</span><span class="n">itemHash</span><span class="p">];</span>
     <span class="k">return</span> <span class="n">cellClass</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">itemForIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">itemForIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">items</span><span class="p">.</span><span class="n">count</span> <span class="o">&gt;</span> <span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">items</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">];</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <h3 id="接管tableviewdelegate">接管TableViewDelegate</h3>
 
 <p>和很多动态Cell会有一些奇奇怪怪的Delegate不同，静态cell主要就是展示和点击事件，一般会用到以下原生delegate</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">didSelectRowAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">;</span>
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">willDisplayCell:</span><span class="p">(</span><span class="bp">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nv">cell</span> <span class="nf">forRowAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">;</span>
-<span class="p">-</span> <span class="p">(</span><span class="bp">UIView</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">viewForFooterInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">sectionIndex</span><span class="p">;</span>
-<span class="p">-</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">heightForFooterInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">sectionIndex</span><span class="p">;</span>
-<span class="p">-</span> <span class="p">(</span><span class="bp">UIView</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">viewForHeaderInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">sectionIndex</span><span class="p">;</span>
-<span class="p">-</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">heightForHeaderInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">sectionIndex</span><span class="p">;</span>
-<span class="p">-</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">heightForRowAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">;</span>
-</code></pre></div>
-
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">didSelectRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">willDisplayCell:</span><span class="p">(</span><span class="n">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nv">cell</span> <span class="nf">forRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="n">UIView</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">viewForFooterInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">sectionIndex</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">heightForFooterInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">sectionIndex</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="n">UIView</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">viewForHeaderInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">sectionIndex</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">heightForHeaderInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">sectionIndex</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">heightForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">;</span></code></pre></div>
 <p>所以我们可以让TableViewManager接管这些协议的实现，同时新建一个TableViewManagerDelegate为UITableViewDelegate的子协议，并开放这些协议给使用Manager的人，也就是可以让使用者覆写这些delegate。</p>
 
 <p>比如heightForRowAtIndexPath方法，就可以在判断外部是否实现，否则则内部实现。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">heightForRowAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">heightForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">([</span><span class="nb">self</span><span class="p">.</span><span class="n">delegate</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">tableView</span><span class="p">:</span><span class="nl">heightForRowAtIndexPath</span><span class="p">:)])</span> <span class="p">{</span>
         <span class="k">return</span> <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">delegate</span> <span class="nl">tableView</span><span class="p">:</span><span class="n">tableView</span> <span class="nl">heightForRowAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
     <span class="p">}</span>
     <span class="kt">Class</span> <span class="n">cellClass</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">tableView</span><span class="p">:</span><span class="n">tableView</span> <span class="nl">cellClassForRowAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
     <span class="kt">id</span> <span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">tableView</span><span class="p">:</span><span class="n">tableView</span> <span class="nl">itemForRowAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">cellClass</span> <span class="o">==</span> <span class="p">[</span><span class="bp">UITableViewCell</span> <span class="k">class</span><span class="p">])</span><span class="o">?</span><span class="mf">44.f</span><span class="o">:</span><span class="p">[</span><span class="n">cellClass</span> <span class="nl">tableView</span><span class="p">:</span><span class="n">tableView</span> <span class="nl">rowHeightForItem</span><span class="p">:</span><span class="n">item</span><span class="p">];</span>
-<span class="p">}</span>
-</code></pre></div>
-
+    <span class="k">return</span> <span class="p">(</span><span class="n">cellClass</span> <span class="o">==</span> <span class="p">[</span><span class="n">UITableViewCell</span> <span class="k">class</span><span class="p">])</span><span class="o">?</span><span class="mf">44.f</span><span class="o">:</span><span class="p">[</span><span class="n">cellClass</span> <span class="nl">tableView</span><span class="p">:</span><span class="n">tableView</span> <span class="nl">rowHeightForItem</span><span class="p">:</span><span class="n">item</span><span class="p">];</span>
+<span class="p">}</span></code></pre></div>
 <p>同理，这些协议的默认实现可以根据实际情况作调整，比如对于didSelectRowAtIndexPath，我们也可以带上其item再返回给外部，带上item的好处，等会会讲到。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">didSelectRowAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span> <span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">didSelectRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">([</span><span class="nb">self</span><span class="p">.</span><span class="n">delegate</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">tableView</span><span class="p">:</span><span class="nl">didSelectItem</span><span class="p">:</span><span class="nl">atIndexPath</span><span class="p">:)])</span> <span class="p">{</span>
         <span class="kt">id</span> <span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">tableView</span><span class="p">:</span><span class="n">tableView</span> <span class="nl">itemForRowAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
         <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">delegate</span> <span class="nl">tableView</span><span class="p">:</span><span class="n">tableView</span> <span class="nl">didSelectItem</span><span class="p">:</span><span class="n">item</span> <span class="nl">atIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
@@ -280,107 +272,93 @@
     <span class="k">else</span> <span class="k">if</span> <span class="p">([</span><span class="nb">self</span><span class="p">.</span><span class="n">delegate</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">tableView</span><span class="p">:</span><span class="nl">didSelectRowAtIndexPath</span><span class="p">:)])</span> <span class="p">{</span>
         <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">delegate</span> <span class="nl">tableView</span><span class="p">:</span><span class="n">tableView</span> <span class="nl">didSelectRowAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <h3 id="cell的协议里有啥">Cell的协议里有啥</h3>
 
 <p>之前文章讲过，我们可以通过一个CellProtocol去指定configItem的方法让cell自己去解析Model，同时我们也可以让这个协议丰富一点，比如加上CellDelegate的回调，可以让Cell把信息传到外部，这在一些Cell里面的点击事件，或者开关（UISwitch），表单编辑时都很有用，所以我们可以加上delegate</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="k">@protocol</span> <span class="nc">CDZTableViewCellDelegate</span> <span class="o">&lt;</span><span class="bp">NSObject</span><span class="o">&gt;</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@protocol</span> <span class="nc">CDZTableViewCellDelegate</span> <span class="o">&lt;</span><span class="n">NSObject</span><span class="o">&gt;</span>
 <span class="k">@optional</span>
-<span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">didTriggleCell</span><span class="p">:(</span><span class="bp">UITableViewCell</span><span class="o">*</span><span class="p">)</span><span class="n">cell</span> <span class="nl">message</span><span class="p">:(</span><span class="kt">id</span><span class="p">)</span><span class="n">message</span><span class="p">;</span>
+<span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">didTriggleCell</span><span class="p">:(</span><span class="n">UITableViewCell</span><span class="o">*</span><span class="p">)</span><span class="n">cell</span> <span class="nl">message</span><span class="p">:(</span><span class="kt">id</span><span class="p">)</span><span class="n">message</span><span class="p">;</span>
 <span class="k">@end</span>
 
-<span class="k">@protocol</span> <span class="nc">CDZTableViewCell</span><span class="o">&lt;</span><span class="bp">NSObject</span><span class="o">&gt;</span>
+<span class="k">@protocol</span> <span class="nc">CDZTableViewCell</span><span class="o">&lt;</span><span class="n">NSObject</span><span class="o">&gt;</span>
 <span class="k">@required</span>
-<span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">configWithItem</span><span class="p">:(</span><span class="kt">id</span><span class="o">&lt;</span><span class="bp">NSObject</span><span class="o">&gt;</span><span class="p">)</span><span class="n">item</span><span class="p">;</span>
-<span class="p">+</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">rowHeightForItem:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">item</span><span class="p">;</span>
+<span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">configWithItem</span><span class="p">:(</span><span class="kt">id</span><span class="o">&lt;</span><span class="n">NSObject</span><span class="o">&gt;</span><span class="p">)</span><span class="n">item</span><span class="p">;</span>
+<span class="p">+</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">rowHeightForItem:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">item</span><span class="p">;</span>
 <span class="k">@optional</span>
 <span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">setCDZCellDelegate</span><span class="p">:(</span><span class="kt">id</span><span class="o">&lt;</span><span class="n">CDZTableViewCellDelegate</span><span class="o">&gt;</span><span class="p">)</span><span class="n">objectDelegate</span><span class="p">;</span>
-<span class="k">@end</span>
-</code></pre></div>
-
+<span class="k">@end</span></code></pre></div>
 <p>而这个Message的执行者应该是外部调用者而不是Manager本身，所以对于Cell和外部来说，它虽然是个id但实际类型是外部和Cell内部统一知道的，比如是个Bool值表示开关状态，一个NSDictionary里面包含信息，或者是一个NSString。而Manager只要做一个中转就好了。这里我在Manager里把Cell转换成了对应的Item及IndexPath传给外部，因为Cell是可复用的，实际关心的应该是Model。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">didTriggleCell:</span><span class="p">(</span><span class="bp">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nv">cell</span> <span class="nf">message:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">message</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">didTriggleCell:</span><span class="p">(</span><span class="n">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nv">cell</span> <span class="nf">message:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">message</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">([</span><span class="nb">self</span><span class="p">.</span><span class="n">delegate</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">receiveCellMessage</span><span class="p">:</span><span class="nl">atIndexPath</span><span class="p">:</span><span class="nl">item</span><span class="p">:)])</span> <span class="p">{</span>
-        <span class="bp">NSIndexPath</span> <span class="o">*</span><span class="n">indexPath</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">tableView</span> <span class="nl">indexPathForCell</span><span class="p">:</span><span class="n">cell</span><span class="p">];</span>
+        <span class="n">NSIndexPath</span> <span class="o">*</span><span class="n">indexPath</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">tableView</span> <span class="nl">indexPathForCell</span><span class="p">:</span><span class="n">cell</span><span class="p">];</span>
         <span class="kt">id</span> <span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">tableView</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">tableView</span> <span class="nl">itemForRowAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
         <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">delegate</span> <span class="nl">receiveCellMessage</span><span class="p">:</span><span class="n">message</span> <span class="nl">atIndexPath</span><span class="p">:</span><span class="n">indexPath</span> <span class="nl">item</span><span class="p">:</span><span class="n">item</span><span class="p">];</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <h3 id="初始化方法">初始化方法</h3>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">initWithTableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">delegate:</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="n">CDZTableViewManagerDelegate</span><span class="o">&gt;</span><span class="p">)</span><span class="nv">objectDelegate</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">initWithTableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">delegate:</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="n">CDZTableViewManagerDelegate</span><span class="o">&gt;</span><span class="p">)</span><span class="nv">objectDelegate</span><span class="p">{</span>
     <span class="nb">self</span> <span class="o">=</span> <span class="p">[</span><span class="nb">super</span> <span class="n">init</span><span class="p">];</span>
     <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">){</span>
         <span class="n">tableView</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
         <span class="n">tableView</span><span class="p">.</span><span class="n">dataSource</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
         <span class="n">tableView</span><span class="p">.</span><span class="n">separatorStyle</span> <span class="o">=</span> <span class="n">UITableViewCellSeparatorStyleNone</span><span class="p">;</span>
-        <span class="n">_sections</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSMutableArray</span> <span class="n">array</span><span class="p">];</span>
+        <span class="n">_sections</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="n">array</span><span class="p">];</span>
         <span class="n">_delegate</span> <span class="o">=</span> <span class="n">objectDelegate</span><span class="p">;</span>
         <span class="nb">self</span><span class="p">.</span><span class="n">tableView</span> <span class="o">=</span> <span class="n">tableView</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="nb">self</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <p>最后外界只需要初始化一个manager，即可不用写Datasource和Delegate了，因为都被Manager接管了。</p>
 
 <h3 id="item的一些小技巧">item的一些小技巧</h3>
 
 <p>对应一些初展示类或者开关操作的item，我们可以用简单的Bool，NSString，NSDictionry作为Model，而有点击事件的Model，我们可以在model类里增加一个tapBlock，这样我们可以在配置item时顺便配置其点击事件。因为静态cell中的点击事件往往各不相同，所以配置在tapBlock可以让代码更加统一。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="n">TestItem</span> <span class="o">*</span><span class="n">itemD</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TestItem</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
-<span class="n">itemD</span><span class="p">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">@&quot;itemD&quot;</span><span class="p">;</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="n">TestItem</span> <span class="o">*</span><span class="n">itemD</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TestItem</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
+<span class="n">itemD</span><span class="p">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">@&#34;itemD&#34;</span><span class="p">;</span>
 <span class="n">itemD</span><span class="p">.</span><span class="n">tapBlock</span> <span class="o">=</span> <span class="o">^</span><span class="p">(</span><span class="n">TestItem</span> <span class="o">*</span><span class="n">item</span><span class="p">)</span> <span class="p">{</span>
-   <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%@ tap&quot;</span><span class="p">,</span><span class="n">item</span><span class="p">.</span><span class="n">title</span><span class="p">);</span>
+   <span class="n">NSLog</span><span class="p">(</span><span class="s">@&#34;%@ tap&#34;</span><span class="p">,</span><span class="n">item</span><span class="p">.</span><span class="n">title</span><span class="p">);</span>
 <span class="p">};</span>
-<span class="p">[</span><span class="n">firstSection</span> <span class="nl">addItem</span><span class="p">:</span><span class="n">itemD</span> <span class="nl">cellClass</span><span class="p">:[</span><span class="n">TestBCell</span> <span class="k">class</span><span class="p">]];</span>
-</code></pre></div>
-
+<span class="p">[</span><span class="n">firstSection</span> <span class="nl">addItem</span><span class="p">:</span><span class="n">itemD</span> <span class="nl">cellClass</span><span class="p">:[</span><span class="n">TestBCell</span> <span class="k">class</span><span class="p">]];</span></code></pre></div>
 <p>这样不仅好找，一次性把相关的操作配置完成，而且在执行点击事件时，不用再关心具体的点击事件，进行item的识别分类判断。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">didSelectItem:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">item</span> <span class="nf">atIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">didSelectItem:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">item</span> <span class="nf">atIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">([</span><span class="n">item</span> <span class="nl">isMemberOfClass</span><span class="p">:[</span><span class="n">TestItem</span> <span class="k">class</span><span class="p">]])</span> <span class="p">{</span>
         <span class="n">TestItem</span> <span class="o">*</span><span class="n">cellItem</span> <span class="o">=</span> <span class="p">(</span><span class="n">TestItem</span> <span class="o">*</span><span class="p">)</span><span class="n">item</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">cellItem</span><span class="p">.</span><span class="n">tapBlock</span><span class="p">)</span> <span class="p">{</span>
             <span class="n">cellItem</span><span class="p">.</span><span class="n">tapBlock</span><span class="p">(</span><span class="n">cellItem</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <h3 id="最后">最后</h3>
 
 <p>通过这些的Manager，就可以随心所欲搭配model和cell，并把配置写在一起，方便修改，查找，同时也不用重复写Delegate和Datasource，而对老的Cell和Model也有很好的兼容。底下是一个混搭的例子。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="bp">NSMutableArray</span> <span class="o">&lt;</span><span class="n">CDZTableViewSection</span> <span class="o">*&gt;*</span><span class="p">)</span><span class="nf">sections</span><span class="p">{</span>
-    <span class="bp">NSMutableArray</span> <span class="o">&lt;</span><span class="n">CDZTableViewSection</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">sections</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSMutableArray</span> <span class="n">array</span><span class="p">];</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">NSMutableArray</span> <span class="o">&lt;</span><span class="n">CDZTableViewSection</span> <span class="o">*&gt;*</span><span class="p">)</span><span class="nf">sections</span><span class="p">{</span>
+    <span class="n">NSMutableArray</span> <span class="o">&lt;</span><span class="n">CDZTableViewSection</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">sections</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="n">array</span><span class="p">];</span>
     <span class="n">CDZTableViewSection</span> <span class="o">*</span><span class="n">firstSection</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZTableViewSection</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
   
-    <span class="bp">NSString</span> <span class="o">*</span><span class="n">itemA</span> <span class="o">=</span> <span class="s">@&quot;itemA&quot;</span><span class="p">;</span>
+    <span class="n">NSString</span> <span class="o">*</span><span class="n">itemA</span> <span class="o">=</span> <span class="s">@&#34;itemA&#34;</span><span class="p">;</span>
     <span class="p">[</span><span class="n">firstSection</span> <span class="nl">addItem</span><span class="p">:</span><span class="n">itemA</span> <span class="nl">cellClass</span><span class="p">:[</span><span class="n">TestACell</span> <span class="k">class</span><span class="p">]];</span>
     
-  	<span class="bp">NSDictionary</span> <span class="o">*</span><span class="n">itemB</span> <span class="o">=</span> <span class="l">@{</span><span class="s">@&quot;title&quot;</span> <span class="o">:</span> <span class="s">@&quot;itemB&quot;</span><span class="l">}</span><span class="p">;</span>
+  	<span class="n">NSDictionary</span> <span class="o">*</span><span class="n">itemB</span> <span class="o">=</span> <span class="l">@{</span><span class="s">@&#34;title&#34;</span> <span class="o">:</span> <span class="s">@&#34;itemB&#34;</span><span class="l">}</span><span class="p">;</span>
     <span class="p">[</span><span class="n">firstSection</span> <span class="nl">addItem</span><span class="p">:</span><span class="n">itemB</span> <span class="nl">cellClass</span><span class="p">:[</span><span class="n">TestACell</span> <span class="k">class</span><span class="p">]];</span>
    
     <span class="n">TestItem</span> <span class="o">*</span><span class="n">itemC</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TestItem</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
-    <span class="n">itemC</span><span class="p">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">@&quot;itemC&quot;</span><span class="p">;</span>
+    <span class="n">itemC</span><span class="p">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">@&#34;itemC&#34;</span><span class="p">;</span>
     <span class="n">itemC</span><span class="p">.</span><span class="n">tapBlock</span> <span class="o">=</span> <span class="o">^</span><span class="p">(</span><span class="n">TestItem</span> <span class="o">*</span><span class="n">item</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%@ tap&quot;</span><span class="p">,</span><span class="n">item</span><span class="p">.</span><span class="n">title</span><span class="p">);</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&#34;%@ tap&#34;</span><span class="p">,</span><span class="n">item</span><span class="p">.</span><span class="n">title</span><span class="p">);</span>
     <span class="p">};</span>
     <span class="p">[</span><span class="n">firstSection</span> <span class="nl">addItem</span><span class="p">:</span><span class="n">itemC</span> <span class="nl">cellClass</span><span class="p">:[</span><span class="n">TestBCell</span> <span class="k">class</span><span class="p">]];</span>
   
     <span class="n">TestItem</span> <span class="o">*</span><span class="n">itemD</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TestItem</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
-    <span class="n">itemD</span><span class="p">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">@&quot;itemD&quot;</span><span class="p">;</span>
+    <span class="n">itemD</span><span class="p">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">@&#34;itemD&#34;</span><span class="p">;</span>
     <span class="n">itemD</span><span class="p">.</span><span class="n">tapBlock</span> <span class="o">=</span> <span class="o">^</span><span class="p">(</span><span class="n">TestItem</span> <span class="o">*</span><span class="n">item</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%@ tap&quot;</span><span class="p">,</span><span class="n">item</span><span class="p">.</span><span class="n">title</span><span class="p">);</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&#34;%@ tap&#34;</span><span class="p">,</span><span class="n">item</span><span class="p">.</span><span class="n">title</span><span class="p">);</span>
     <span class="p">};</span>
     <span class="p">[</span><span class="n">firstSection</span> <span class="nl">addItem</span><span class="p">:</span><span class="n">itemD</span> <span class="nl">cellClass</span><span class="p">:[</span><span class="n">TestBCell</span> <span class="k">class</span><span class="p">]];</span>
   
     <span class="p">[</span><span class="n">sections</span> <span class="nl">addObject</span><span class="p">:</span><span class="n">firstSection</span><span class="p">];</span>
     <span class="k">return</span> <span class="n">sections</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <p>所有源码和<a href="https://github.com/Nemocdz/CDZTableViewManager">Demo</a>
 可以直接拿文件去使用或修改，也支持Cocoapods.</p>
 
@@ -388,7 +366,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        This post was published <strong>130</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        This post was published <strong>448</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -416,7 +394,7 @@
     
   </section>
   <footer class="site-footer">
-  <p>© 2017 Nemocdz&#39;s Blog</p>
+  <p>© 2017-2018 Nemocdz&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
   
 </footer>

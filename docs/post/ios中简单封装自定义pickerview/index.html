@@ -33,7 +33,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.27.1" />
+<meta name="generator" content="Hugo 0.34" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89pickerview/" />
@@ -112,7 +112,7 @@
   
   <h2 class="title">Nemocdz&#39;s Blog</h2>
   
-  <p class="subtitle">iOS Dev &amp; Photographer</p>
+  <p class="subtitle">iOS&amp;Android Dev</p>
   <button class="menu-toggle" type="button">
     <span class="icon icon-menu"></span>
   </button>
@@ -211,14 +211,12 @@
 <p>点击button弹出picker，并改变指定label的值，效果如下图所示。
 <img src="http://ww1.sinaimg.cn/large/006tNc79gw1f9wp3v4z00g30ku112agf.gif" alt="" />
 最终目的是在viewcontroller中button的event reponse中调用封装好的库的方法进行传值及操作。</p>
-<div class="highlight"><pre><code class="language-objectivec" data-lang="objectivec"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">IBAction</span><span class="p">)</span><span class="nf">showPicker:</span><span class="p">(</span><span class="bp">UIButton</span> <span class="o">*</span><span class="p">)</span><span class="nv">sender</span> <span class="p">{</span>
-    <span class="bp">NSArray</span> <span class="o">*</span><span class="n">array</span> <span class="o">=</span> <span class="l">@[</span><span class="s">@&quot;电子科技大学&quot;</span><span class="p">,</span><span class="s">@&quot;清华大学&quot;</span><span class="p">,</span><span class="s">@&quot;四川大学&quot;</span><span class="p">,</span><span class="s">@&quot;华中科技大学&quot;</span><span class="p">,</span><span class="s">@&quot;西安电子科技大学&quot;</span><span class="l">]</span><span class="p">;</span>
-    <span class="p">[</span><span class="n">CDZPicker</span> <span class="nl">showPickerInView</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">view</span> <span class="nl">withObjectsArray</span><span class="p">:</span><span class="n">array</span> <span class="nl">withlastString</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">text</span> <span class="nl">withStringBlock</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="n">string</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objectivec" data-lang="objectivec"><span class="p">-</span> <span class="p">(</span><span class="kt">IBAction</span><span class="p">)</span><span class="nf">showPicker:</span><span class="p">(</span><span class="n">UIButton</span> <span class="o">*</span><span class="p">)</span><span class="nv">sender</span> <span class="p">{</span>
+    <span class="n">NSArray</span> <span class="o">*</span><span class="n">array</span> <span class="o">=</span> <span class="l">@[</span><span class="s">@&#34;电子科技大学&#34;</span><span class="p">,</span><span class="s">@&#34;清华大学&#34;</span><span class="p">,</span><span class="s">@&#34;四川大学&#34;</span><span class="p">,</span><span class="s">@&#34;华中科技大学&#34;</span><span class="p">,</span><span class="s">@&#34;西安电子科技大学&#34;</span><span class="l">]</span><span class="p">;</span>
+    <span class="p">[</span><span class="n">CDZPicker</span> <span class="nl">showPickerInView</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">view</span> <span class="nl">withObjectsArray</span><span class="p">:</span><span class="n">array</span> <span class="nl">withlastString</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">text</span> <span class="nl">withStringBlock</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="n">string</span><span class="p">)</span> <span class="p">{</span>
         <span class="nb">self</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">string</span><span class="p">;</span>
     <span class="p">}];</span>
-    <span class="p">}</span>
-</code></pre></div>
-
+    <span class="p">}</span></code></pre></div>
 <p>实现思路从数据，视图，按钮处理三个方面说
 ###1. 数据</p>
 
@@ -235,11 +233,9 @@
 <p><code>typedef void (^CDZStringResultBlock)(NSString *string);</code></p>
 
 <p>.m中增加以下属性</p>
-<div class="highlight"><pre><code class="language-objectivec" data-lang="objectivec"><span></span><span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span><span class="k">strong</span><span class="p">)</span> <span class="bp">NSArray</span> <span class="o">*</span><span class="n">dataArray</span><span class="p">;</span>
-<span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span><span class="k">strong</span><span class="p">)</span> <span class="bp">NSString</span> <span class="o">*</span><span class="n">lastString</span><span class="p">;</span>
-<span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span>  <span class="k">copy</span><span class="p">)</span> <span class="n">CDZStringResultBlock</span> <span class="n">block</span><span class="p">;</span>
-</code></pre></div>
-
+<div class="highlight"><pre class="chroma"><code class="language-objectivec" data-lang="objectivec"><span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span><span class="k">strong</span><span class="p">)</span> <span class="n">NSArray</span> <span class="o">*</span><span class="n">dataArray</span><span class="p">;</span>
+<span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span><span class="k">strong</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">lastString</span><span class="p">;</span>
+<span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span>  <span class="k">copy</span><span class="p">)</span> <span class="n">CDZStringResultBlock</span> <span class="n">block</span><span class="p">;</span></code></pre></div>
 <p>实现Pickerview的Delegate和DataSource协议
 <code>&lt;UIPickerViewDelegate,UIPickerViewDataSource&gt;</code>
 实现Pickerview的Delegate和DataSource相关方法</p>
@@ -376,7 +372,7 @@ static const int toolBarHeight = 44;
     <footer class="post-footer">
       
       <p class="post-copyright">
-        This post was published <strong>307</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        This post was published <strong>624</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -404,7 +400,7 @@ static const int toolBarHeight = 44;
     
   </section>
   <footer class="site-footer">
-  <p>© 2017 Nemocdz&#39;s Blog</p>
+  <p>© 2017-2018 Nemocdz&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
   
 </footer>

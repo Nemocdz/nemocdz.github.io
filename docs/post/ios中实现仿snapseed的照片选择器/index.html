@@ -31,7 +31,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.27.1" />
+<meta name="generator" content="Hugo 0.34" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BFsnapseed%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/" />
@@ -110,7 +110,7 @@
   
   <h2 class="title">Nemocdz&#39;s Blog</h2>
   
-  <p class="subtitle">iOS Dev &amp; Photographer</p>
+  <p class="subtitle">iOS&amp;Android Dev</p>
   <button class="menu-toggle" type="button">
     <span class="icon icon-menu"></span>
   </button>
@@ -222,22 +222,18 @@
 </ul>
 
 <p>自定义item对象，item对象定义了action的显示名字，类型，图片</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="k">@property</span><span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">copy</span><span class="p">)</span> <span class="bp">NSString</span> <span class="o">*</span><span class="n">actionTitle</span><span class="p">;</span>
-<span class="k">@property</span><span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">strong</span><span class="p">)</span> <span class="bp">UIImage</span> <span class="o">*</span><span class="n">actionImage</span><span class="p">;</span>
-<span class="k">@property</span><span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">assign</span><span class="p">)</span> <span class="n">CDZImagePickerActionType</span> <span class="n">actionType</span><span class="p">;</span>
-</code></pre></div>
-
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@property</span><span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">copy</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">actionTitle</span><span class="p">;</span>
+<span class="k">@property</span><span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">strong</span><span class="p">)</span> <span class="n">UIImage</span> <span class="o">*</span><span class="n">actionImage</span><span class="p">;</span>
+<span class="k">@property</span><span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">assign</span><span class="p">)</span> <span class="n">CDZImagePickerActionType</span> <span class="n">actionType</span><span class="p">;</span></code></pre></div>
 <p>其中CDZImagePickerActionType可用来定义按钮动作类型，可以用枚举来定义</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="k">typedef</span> <span class="nf">NS_ENUM</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">,</span> <span class="n">CDZImagePickerActionType</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">typedef</span> <span class="nf">NS_ENUM</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">,</span> <span class="n">CDZImagePickerActionType</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">CDZImagePickerCameraAction</span><span class="p">,</span>
     <span class="n">CDZImagePickerLibraryAction</span><span class="p">,</span>
     <span class="n">CDZImagePickerRecentAction</span><span class="p">,</span>
     <span class="n">CDZImagePickerCloseAction</span>
-<span class="p">};</span>
-</code></pre></div>
-
+<span class="p">};</span></code></pre></div>
 <p>定义一个init方法用来快捷初始化item对象</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">initWithTitle:</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">titele</span> <span class="nf">withActionType:</span><span class="p">(</span><span class="n">CDZImagePickerActionType</span><span class="p">)</span><span class="nv">type</span> <span class="nf">withImage:</span><span class="p">(</span><span class="bp">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="nv">image</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">initWithTitle:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">titele</span> <span class="nf">withActionType:</span><span class="p">(</span><span class="n">CDZImagePickerActionType</span><span class="p">)</span><span class="nv">type</span> <span class="nf">withImage:</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="nv">image</span><span class="p">{</span>
     <span class="nb">self</span> <span class="o">=</span> <span class="p">[</span><span class="nb">super</span> <span class="n">init</span><span class="p">];</span>
     <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">_actionTitle</span> <span class="o">=</span> <span class="n">titele</span><span class="p">;</span>
@@ -245,26 +241,22 @@
         <span class="n">_actionImage</span> <span class="o">=</span> <span class="n">image</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="nb">self</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <hr />
 
 <p>自定义cell对象，封装一个方法来对应item和cell的关系</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setCellFromItem:</span><span class="p">(</span><span class="n">CDZImagePickerActionsItem</span> <span class="o">*</span><span class="p">)</span><span class="nv">item</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setCellFromItem:</span><span class="p">(</span><span class="n">CDZImagePickerActionsItem</span> <span class="o">*</span><span class="p">)</span><span class="nv">item</span><span class="p">{</span>
     <span class="nb">self</span><span class="p">.</span><span class="n">textLabel</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">item</span><span class="p">.</span><span class="n">actionTitle</span><span class="p">;</span>
     <span class="nb">self</span><span class="p">.</span><span class="n">imageView</span><span class="p">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">item</span><span class="p">.</span><span class="n">actionImage</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <p>可以重写layoutSubviews方法达到cell中文字，图片样式自定义的效果，比如可以写有图片和无图片的样式布局</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">layoutSubviews</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">layoutSubviews</span><span class="p">{</span>
     <span class="p">[</span><span class="nb">super</span> <span class="n">layoutSubviews</span><span class="p">];</span>
-    <span class="nb">self</span><span class="p">.</span><span class="n">selectionStyle</span> <span class="o">=</span> <span class="n">UITableViewCellSelectionStyleNone</span><span class="p">;</span><span class="c1">//点击不变色</span>
-    <span class="nb">self</span><span class="p">.</span><span class="n">imageView</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">22</span><span class="p">);</span>
+    <span class="nb">self</span><span class="p">.</span><span class="n">selectionStyle</span> <span class="o">=</span> <span class="n">UITableViewCellSelectionStyleNone</span><span class="p">;</span><span class="c1">//点击不变色
+</span><span class="c1"></span>    <span class="nb">self</span><span class="p">.</span><span class="n">imageView</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">22</span><span class="p">);</span>
     <span class="nb">self</span><span class="p">.</span><span class="n">imageView</span><span class="p">.</span><span class="n">contentMode</span> <span class="o">=</span> <span class="n">UIViewContentModeScaleAspectFit</span><span class="p">;</span>
-    <span class="nb">self</span><span class="p">.</span><span class="n">textLabel</span><span class="p">.</span><span class="n">font</span> <span class="o">=</span> <span class="p">[</span><span class="bp">UIFont</span> <span class="nl">systemFontOfSize</span><span class="p">:</span><span class="mf">16.0f</span><span class="p">];</span>
-    <span class="nb">self</span><span class="p">.</span><span class="n">textLabel</span><span class="p">.</span><span class="n">textColor</span> <span class="o">=</span> <span class="p">[</span><span class="bp">UIColor</span> <span class="nl">colorWithRed</span><span class="p">:</span><span class="mf">0.30</span> <span class="nl">green</span><span class="p">:</span><span class="mf">0.30</span> <span class="nl">blue</span><span class="p">:</span><span class="mf">0.30</span> <span class="nl">alpha</span><span class="p">:</span><span class="mf">1.00</span><span class="p">];</span>
+    <span class="nb">self</span><span class="p">.</span><span class="n">textLabel</span><span class="p">.</span><span class="n">font</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIFont</span> <span class="nl">systemFontOfSize</span><span class="p">:</span><span class="mf">16.0f</span><span class="p">];</span>
+    <span class="nb">self</span><span class="p">.</span><span class="n">textLabel</span><span class="p">.</span><span class="n">textColor</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIColor</span> <span class="nl">colorWithRed</span><span class="p">:</span><span class="mf">0.30</span> <span class="nl">green</span><span class="p">:</span><span class="mf">0.30</span> <span class="nl">blue</span><span class="p">:</span><span class="mf">0.30</span> <span class="nl">alpha</span><span class="p">:</span><span class="mf">1.00</span><span class="p">];</span>
     <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">imageView</span><span class="p">.</span><span class="n">image</span><span class="p">){</span>
         <span class="nb">self</span><span class="p">.</span><span class="n">textLabel</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">48</span><span class="p">);</span>
         <span class="nb">self</span><span class="p">.</span><span class="n">textLabel</span><span class="p">.</span><span class="n">textAlignment</span> <span class="o">=</span> <span class="n">NSTextAlignmentLeft</span><span class="p">;</span>
@@ -272,49 +264,43 @@
     <span class="k">else</span><span class="p">{</span>
         <span class="nb">self</span><span class="p">.</span><span class="n">textLabel</span><span class="p">.</span><span class="n">textAlignment</span> <span class="o">=</span> <span class="n">NSTextAlignmentCenter</span><span class="p">;</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <hr />
 
 <p>自定义datasource，这一步可以根据个人选择，个人习惯是把datasource从viewcontroller里抽离，可以让controller更少代码,datasource有数组对象用于存放item</p>
 
 <p><code>@property (nonatomic, strong) NSMutableArray *itemArray;</code>
 实现datasource方法</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="cp">#pragma mark - tableViewDataSourceRequried</span>
-<span class="p">-</span> <span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">numberOfRowsInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">section</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="cp">#pragma mark - tableViewDataSourceRequried
+</span><span class="cp"></span><span class="p">-</span> <span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">numberOfRowsInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">section</span><span class="p">{</span>
     <span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">itemArray</span><span class="p">.</span><span class="n">count</span><span class="p">;</span>
 <span class="p">}</span>
 		
 
-<span class="p">-</span> <span class="p">(</span><span class="bp">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+<span class="p">-</span> <span class="p">(</span><span class="n">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
     <span class="n">CDZImagePickerActionsItem</span> <span class="o">*</span><span class="n">item</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">itemArray</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">];</span>
     <span class="n">CDZImagePickerActionsCell</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">tableView</span> <span class="nl">dequeueReusableCellWithIdentifier</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">([</span><span class="n">CDZImagePickerActionsCell</span> <span class="k">class</span><span class="p">])];</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">cell</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">cell</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZImagePickerActionsCell</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithStyle</span><span class="p">:</span><span class="n">UITableViewCellStyleDefault</span> <span class="nl">reuseIdentifier</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">([</span><span class="n">CDZImagePickerActionsCell</span> <span class="k">class</span><span class="p">])];</span>
     <span class="p">}</span>
-    <span class="p">[</span><span class="n">cell</span> <span class="nl">setCellFromItem</span><span class="p">:</span><span class="n">item</span><span class="p">];</span><span class="c1">//将cell和item对应起来</span>
-    <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+    <span class="p">[</span><span class="n">cell</span> <span class="nl">setCellFromItem</span><span class="p">:</span><span class="n">item</span><span class="p">];</span><span class="c1">//将cell和item对应起来
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
 <hr />
 
 <p>实现delegate和点击事件</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="cp">#pragma mark - tableViewDelegate</span>
-
-<span class="p">-</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">heightForRowAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="cp">#pragma mark - tableViewDelegate
+</span><span class="cp"></span>
+<span class="p">-</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">heightForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
     <span class="k">return</span> <span class="n">actionsViewCellHeight</span><span class="p">;</span>
 <span class="p">}</span>
 
 
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">didSelectRowAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">didSelectRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
     <span class="n">CDZImagePickerActionsItem</span> <span class="o">*</span><span class="n">item</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">actionArray</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">];</span>
     <span class="p">[</span><span class="nb">self</span> <span class="nl">doActionsWithType</span><span class="p">:</span><span class="n">item</span><span class="p">.</span><span class="n">actionType</span><span class="p">];</span>
-<span class="p">}</span>
-</code></pre></div>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="cp">#pragma mark - actions</span>
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">doActionsWithType:</span><span class="p">(</span><span class="n">CDZImagePickerActionType</span><span class="p">)</span><span class="nv">type</span><span class="p">{</span>
+<span class="p">}</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="cp">#pragma mark - actions
+</span><span class="cp"></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">doActionsWithType:</span><span class="p">(</span><span class="n">CDZImagePickerActionType</span><span class="p">)</span><span class="nv">type</span><span class="p">{</span>
     <span class="k">switch</span> <span class="p">(</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">case</span>  <span class="nl">CDZImagePickerCameraAction</span><span class="p">:</span>
             <span class="p">[</span><span class="nb">self</span> <span class="n">openCamera</span><span class="p">];</span>
@@ -332,80 +318,72 @@
 <span class="p">}</span>
 
 <span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">openCamera</span><span class="p">{</span>
-    <span class="k">if</span> <span class="p">([</span><span class="bp">UIImagePickerController</span> <span class="nl">isSourceTypeAvailable</span><span class="p">:</span><span class="n">UIImagePickerControllerSourceTypeCamera</span><span class="p">]){</span>
-        <span class="bp">UIImagePickerController</span> <span class="o">*</span><span class="n">pickerController</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">UIImagePickerController</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">([</span><span class="n">UIImagePickerController</span> <span class="nl">isSourceTypeAvailable</span><span class="p">:</span><span class="n">UIImagePickerControllerSourceTypeCamera</span><span class="p">]){</span>
+        <span class="n">UIImagePickerController</span> <span class="o">*</span><span class="n">pickerController</span> <span class="o">=</span> <span class="p">[[</span><span class="n">UIImagePickerController</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
         <span class="n">pickerController</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
         <span class="n">pickerController</span><span class="p">.</span><span class="n">sourceType</span> <span class="o">=</span> <span class="n">UIImagePickerControllerSourceTypeCamera</span><span class="p">;</span>
         <span class="p">[</span><span class="nb">self</span> <span class="nl">presentViewController</span><span class="p">:</span><span class="n">pickerController</span> <span class="nl">animated</span><span class="p">:</span><span class="nb">NO</span> <span class="nl">completion</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
-        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;打开相机&quot;</span><span class="p">);</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&#34;打开相机&#34;</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">openLibrary</span><span class="p">{</span>
-    <span class="bp">UIImagePickerController</span> <span class="o">*</span><span class="n">pickerController</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">UIImagePickerController</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
+    <span class="n">UIImagePickerController</span> <span class="o">*</span><span class="n">pickerController</span> <span class="o">=</span> <span class="p">[[</span><span class="n">UIImagePickerController</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
     <span class="n">pickerController</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
     <span class="n">pickerController</span><span class="p">.</span><span class="n">sourceType</span> <span class="o">=</span> <span class="n">UIImagePickerControllerSourceTypePhotoLibrary</span><span class="p">;</span>
     <span class="p">[</span><span class="nb">self</span> <span class="nl">presentViewController</span><span class="p">:</span><span class="n">pickerController</span> <span class="nl">animated</span><span class="p">:</span><span class="nb">NO</span> <span class="nl">completion</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
-    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;打开图库&quot;</span><span class="p">);</span>
+    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&#34;打开图库&#34;</span><span class="p">);</span>
     
 <span class="p">}</span>
 
 <span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">closeAction</span><span class="p">{</span>
     <span class="p">[</span><span class="nb">self</span> <span class="nl">dismissViewControllerAnimated</span><span class="p">:</span><span class="nb">YES</span> <span class="nl">completion</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
-    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;关闭按钮&quot;</span><span class="p">);</span>
+    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&#34;关闭按钮&#34;</span><span class="p">);</span>
 <span class="p">}</span>
 
 
 <span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">openRecentImage</span><span class="p">{</span>
-    <span class="p">[[</span><span class="bp">PHImageManager</span> <span class="n">defaultManager</span><span class="p">]</span><span class="nl">requestImageForAsset</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">photosDataSource</span><span class="p">.</span><span class="n">itemArray</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="nl">targetSize</span><span class="p">:</span><span class="n">PHImageManagerMaximumSize</span> <span class="nl">contentMode</span><span class="p">:</span><span class="n">PHImageContentModeAspectFill</span> <span class="nl">options</span><span class="p">:</span><span class="nb">nil</span> <span class="nl">resultHandler</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="bp">UIImage</span> <span class="o">*</span> <span class="n">_Nullable</span> <span class="n">result</span><span class="p">,</span> <span class="bp">NSDictionary</span> <span class="o">*</span> <span class="n">_Nullable</span> <span class="n">info</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">[[</span><span class="n">PHImageManager</span> <span class="n">defaultManager</span><span class="p">]</span><span class="nl">requestImageForAsset</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">photosDataSource</span><span class="p">.</span><span class="n">itemArray</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="nl">targetSize</span><span class="p">:</span><span class="n">PHImageManagerMaximumSize</span> <span class="nl">contentMode</span><span class="p">:</span><span class="n">PHImageContentModeAspectFill</span> <span class="nl">options</span><span class="p">:</span><span class="nb">nil</span> <span class="nl">resultHandler</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span> <span class="n">_Nullable</span> <span class="n">result</span><span class="p">,</span> <span class="n">NSDictionary</span> <span class="o">*</span> <span class="n">_Nullable</span> <span class="n">info</span><span class="p">)</span> <span class="p">{</span>
         <span class="nb">self</span><span class="p">.</span><span class="n">resultImage</span> <span class="o">=</span> <span class="n">result</span><span class="p">;</span>
         <span class="p">[</span><span class="nb">self</span> <span class="nl">dismissViewControllerAnimated</span><span class="p">:</span><span class="nb">YES</span> <span class="nl">completion</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
-        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;打开最新图片&quot;</span><span class="p">);</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&#34;打开最新图片&#34;</span><span class="p">);</span>
     <span class="p">}];</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <p>实现imagepicker的delegate（<strong>记得实现UINavigationControllerDelegate，不可只实现UIImagePickerControllerDelegate，会报错</strong>）</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="cp">#pragma mark - imagePickerController delegate</span>
-
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">imagePickerController:</span><span class="p">(</span><span class="bp">UIImagePickerController</span> <span class="o">*</span><span class="p">)</span><span class="nv">picker</span> <span class="nf">didFinishPickingMediaWithInfo:</span><span class="p">(</span><span class="n">nonnull</span> <span class="bp">NSDictionary</span><span class="o">&lt;</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">,</span><span class="kt">id</span><span class="o">&gt;</span> <span class="o">*</span><span class="p">)</span><span class="nv">info</span><span class="p">{</span>
-    <span class="bp">UIImage</span> <span class="o">*</span><span class="n">image</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="n">UIImagePickerControllerOriginalImage</span><span class="p">];</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="cp">#pragma mark - imagePickerController delegate
+</span><span class="cp"></span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">imagePickerController:</span><span class="p">(</span><span class="n">UIImagePickerController</span> <span class="o">*</span><span class="p">)</span><span class="nv">picker</span> <span class="nf">didFinishPickingMediaWithInfo:</span><span class="p">(</span><span class="n">nonnull</span> <span class="n">NSDictionary</span><span class="o">&lt;</span><span class="n">NSString</span> <span class="o">*</span><span class="p">,</span><span class="kt">id</span><span class="o">&gt;</span> <span class="o">*</span><span class="p">)</span><span class="nv">info</span><span class="p">{</span>
+    <span class="n">UIImage</span> <span class="o">*</span><span class="n">image</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="n">UIImagePickerControllerOriginalImage</span><span class="p">];</span>
     <span class="k">if</span><span class="p">(</span><span class="n">picker</span><span class="p">.</span><span class="n">sourceType</span> <span class="o">==</span> <span class="n">UIImagePickerControllerSourceTypeCamera</span><span class="p">){</span>
         <span class="n">UIImageWriteToSavedPhotosAlbum</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="nb">self</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="nl">image</span><span class="p">:</span><span class="nl">didFinishSavingWithError</span><span class="p">:</span><span class="nl">contextInfo</span><span class="p">:),</span> <span class="nb">nil</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="nb">self</span><span class="p">.</span><span class="n">resultImage</span> <span class="o">=</span> <span class="n">image</span><span class="p">;</span>
     <span class="p">[</span><span class="n">picker</span> <span class="nl">dismissViewControllerAnimated</span><span class="p">:</span><span class="nb">NO</span> <span class="nl">completion</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
     <span class="p">[</span><span class="nb">self</span> <span class="nl">dismissViewControllerAnimated</span><span class="p">:</span><span class="nb">YES</span> <span class="nl">completion</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
-    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;从相机或图库获取图片&quot;</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></div>
-
+    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&#34;从相机或图库获取图片&#34;</span><span class="p">);</span>
+<span class="p">}</span></code></pre></div>
 <p>iOS10还要检查一下相机和图库的权限，记得在info.plist中添加两行，不然会崩溃</p>
 
 <h2 id="http-ww3-sinaimg-cn-large-006y8mn6gw1fadyvsos06j30r4024754-jpg"><img src="http://ww3.sinaimg.cn/large/006y8mN6gw1fadyvsos06j30r4024754.jpg" alt="" /></h2>
 
 <p>最后在是tableview初始化与绘制，在datasource初始化自己需要的按钮item数组（acctionArray）</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="n">CDZImagePickerActionsDataSource</span> <span class="o">*</span><span class="p">)</span><span class="nf">actionsDataSource</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">CDZImagePickerActionsDataSource</span> <span class="o">*</span><span class="p">)</span><span class="nf">actionsDataSource</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_actionsDataSource</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">_actionsDataSource</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZImagePickerActionsDataSource</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
         <span class="n">_actionsDataSource</span><span class="p">.</span><span class="n">itemArray</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">actionArray</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">_actionsDataSource</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nf">actionView</span><span class="p">{</span>
+<span class="p">}</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nf">actionView</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_actionView</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">CGFloat</span> <span class="n">actionsViewHeight</span> <span class="o">=</span> <span class="n">actionsViewCellHeight</span> <span class="o">*</span> <span class="nb">self</span><span class="p">.</span><span class="n">actionArray</span><span class="p">.</span><span class="n">count</span><span class="p">;</span>
-        <span class="n">_actionView</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">UITableView</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithFrame</span><span class="p">:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">SCREEN_HEIGHT</span> <span class="o">-</span> <span class="n">actionsViewHeight</span> <span class="p">,</span><span class="n">SCREEN_WIDTH</span><span class="p">,</span> <span class="n">actionsViewHeight</span><span class="p">)</span> <span class="nl">style</span><span class="p">:</span><span class="n">UITableViewStylePlain</span><span class="p">];</span>
-        <span class="n">_actionView</span><span class="p">.</span><span class="n">scrollEnabled</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span> <span class="c1">//不需要滑动</span>
-        <span class="n">_actionView</span><span class="p">.</span><span class="n">separatorStyle</span> <span class="o">=</span> <span class="n">UITableViewCellSeparatorStyleNone</span><span class="p">;</span> <span class="c1">//分割线去除</span>
-        <span class="n">_actionView</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
+        <span class="n">_actionView</span> <span class="o">=</span> <span class="p">[[</span><span class="n">UITableView</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithFrame</span><span class="p">:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">SCREEN_HEIGHT</span> <span class="o">-</span> <span class="n">actionsViewHeight</span> <span class="p">,</span><span class="n">SCREEN_WIDTH</span><span class="p">,</span> <span class="n">actionsViewHeight</span><span class="p">)</span> <span class="nl">style</span><span class="p">:</span><span class="n">UITableViewStylePlain</span><span class="p">];</span>
+        <span class="n">_actionView</span><span class="p">.</span><span class="n">scrollEnabled</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span> <span class="c1">//不需要滑动
+</span><span class="c1"></span>        <span class="n">_actionView</span><span class="p">.</span><span class="n">separatorStyle</span> <span class="o">=</span> <span class="n">UITableViewCellSeparatorStyleNone</span><span class="p">;</span> <span class="c1">//分割线去除
+</span><span class="c1"></span>        <span class="n">_actionView</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
         <span class="n">_actionView</span><span class="p">.</span><span class="n">dataSource</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">actionsDataSource</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">_actionView</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <hr />
 
 <hr />
@@ -425,7 +403,7 @@ collecionview的实现思路和tableview类似</p>
 <p>cell的自定义主要是重写其initWithFrame方法添加imageview（<strong>注意collectionviewcell只用initWithFrame方式初始化，tableviewcell初始化方法有多种</strong>），并在layoutSubviews里改变imageview的大小,和tableview类似写一个setCellFromItem的方法解析item数据。而Photokit获取的图片对象为phasset，用PHImageMange的方法根据将其解析为size为cell的大小uimage，加快加载速度，按需加载（关于Photokit的优点不再赘述，iOS8以后苹果只保留了Photokit用于获取系统图片）</p>
 
 <p>photokit获取时，注意两个地方，targetSize传入的是pixel，而不是平时用的size，且option里的resizeMode默认为None（不缩放），不重写resizeMode属性那么只会抓取不缩放的图，在意质量可以设置resizeMode为Exact（精确），追求速度可以设置为Fast(这样不会完全按照设置的targetSize去获取图片)</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">initWithFrame:</span><span class="p">(</span><span class="bp">CGRect</span><span class="p">)</span><span class="nv">frame</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">initWithFrame:</span><span class="p">(</span><span class="n">CGRect</span><span class="p">)</span><span class="nv">frame</span><span class="p">{</span>
     <span class="nb">self</span> <span class="o">=</span> <span class="p">[</span><span class="nb">super</span> <span class="nl">initWithFrame</span><span class="p">:</span><span class="n">frame</span><span class="p">];</span>
     <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">contentView</span> <span class="nl">addSubview</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">photoImageView</span><span class="p">];</span>
@@ -438,185 +416,159 @@ collecionview的实现思路和tableview类似</p>
     <span class="nb">self</span><span class="p">.</span><span class="n">photoImageView</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">contentView</span><span class="p">.</span><span class="n">bounds</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setCellFromItem:</span><span class="p">(</span><span class="bp">PHAsset</span> <span class="o">*</span><span class="p">)</span><span class="nv">asset</span><span class="p">{</span>
-  <span class="bp">PHImageRequestOptions</span> <span class="o">*</span><span class="n">options</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">PHImageRequestOptions</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setCellFromItem:</span><span class="p">(</span><span class="n">PHAsset</span> <span class="o">*</span><span class="p">)</span><span class="nv">asset</span><span class="p">{</span>
+  <span class="n">PHImageRequestOptions</span> <span class="o">*</span><span class="n">options</span> <span class="o">=</span> <span class="p">[[</span><span class="n">PHImageRequestOptions</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
     <span class="n">options</span><span class="p">.</span><span class="n">resizeMode</span> <span class="o">=</span> <span class="n">PHImageRequestOptionsResizeModeFast</span><span class="p">;</span>
-    <span class="p">[[</span><span class="bp">PHImageManager</span> <span class="n">defaultManager</span><span class="p">]</span><span class="nl">requestImageForAsset</span><span class="p">:</span><span class="n">asset</span> <span class="nl">targetSize</span><span class="p">:[</span><span class="bp">UIScreen</span> <span class="n">mainScreen</span><span class="p">].</span><span class="n">bounds</span><span class="p">.</span><span class="n">size</span> <span class="nl">contentMode</span><span class="p">:</span><span class="n">PHImageContentModeAspectFill</span> <span class="nl">options</span><span class="p">:</span><span class="n">options</span> <span class="nl">resultHandler</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="bp">UIImage</span> <span class="o">*</span> <span class="n">_Nullable</span> <span class="n">result</span><span class="p">,</span> <span class="bp">NSDictionary</span> <span class="o">*</span> <span class="n">_Nullable</span> <span class="n">info</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">[[</span><span class="n">PHImageManager</span> <span class="n">defaultManager</span><span class="p">]</span><span class="nl">requestImageForAsset</span><span class="p">:</span><span class="n">asset</span> <span class="nl">targetSize</span><span class="p">:[</span><span class="n">UIScreen</span> <span class="n">mainScreen</span><span class="p">].</span><span class="n">bounds</span><span class="p">.</span><span class="n">size</span> <span class="nl">contentMode</span><span class="p">:</span><span class="n">PHImageContentModeAspectFill</span> <span class="nl">options</span><span class="p">:</span><span class="n">options</span> <span class="nl">resultHandler</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span> <span class="n">_Nullable</span> <span class="n">result</span><span class="p">,</span> <span class="n">NSDictionary</span> <span class="o">*</span> <span class="n">_Nullable</span> <span class="n">info</span><span class="p">)</span> <span class="p">{</span>
         <span class="nb">self</span><span class="p">.</span><span class="n">photoImageView</span><span class="p">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">result</span><span class="p">;</span>
     <span class="p">}];</span>
 <span class="p">}</span>
 
-<span class="p">-</span> <span class="p">(</span><span class="bp">UIImageView</span> <span class="o">*</span><span class="p">)</span><span class="nf">photoImageView</span><span class="p">{</span>
+<span class="p">-</span> <span class="p">(</span><span class="n">UIImageView</span> <span class="o">*</span><span class="p">)</span><span class="nf">photoImageView</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_photoImageView</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">_photoImageView</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">UIImageView</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
+        <span class="n">_photoImageView</span> <span class="o">=</span> <span class="p">[[</span><span class="n">UIImageView</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
         <span class="n">_photoImageView</span><span class="p">.</span><span class="n">contentMode</span> <span class="o">=</span> <span class="n">UIViewContentModeScaleAspectFill</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">_photoImageView</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <hr />
 
 <p>datasource也类似，定义一个itemArray用于存放图片对象phasset
 <code>@property (nonatomic, strong) NSMutableArray *itemArray;</code>
 实现datasource方法，和tableview类似（<strong>不用判断cell是nil是因为collectionviewcell的初始化只有一种</strong>）</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="cp">#pragma mark - collectionViewDataSourceRequried</span>
-
-<span class="p">-</span> <span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nf">collectionView:</span><span class="p">(</span><span class="bp">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionView</span> <span class="nf">numberOfItemsInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">section</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="cp">#pragma mark - collectionViewDataSourceRequried
+</span><span class="cp"></span>
+<span class="p">-</span> <span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nf">collectionView:</span><span class="p">(</span><span class="n">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionView</span> <span class="nf">numberOfItemsInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">section</span><span class="p">{</span>
     <span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">itemArray</span><span class="p">.</span><span class="n">count</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="p">-</span> <span class="p">(</span><span class="bp">UICollectionViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">collectionView:</span><span class="p">(</span><span class="bp">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionView</span> <span class="nf">cellForItemAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
-    <span class="bp">PHAsset</span> <span class="o">*</span><span class="n">item</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">itemArray</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">];</span>
+<span class="p">-</span> <span class="p">(</span><span class="n">UICollectionViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">collectionView:</span><span class="p">(</span><span class="n">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionView</span> <span class="nf">cellForItemAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+    <span class="n">PHAsset</span> <span class="o">*</span><span class="n">item</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">itemArray</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">];</span>
     <span class="n">CDZImagePickerPhotosCell</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">collectionView</span> <span class="nl">dequeueReusableCellWithReuseIdentifier</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">([</span><span class="n">CDZImagePickerPhotosCell</span> <span class="k">class</span><span class="p">])</span> <span class="nl">forIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
     <span class="p">[</span><span class="n">cell</span> <span class="nl">setCellFromItem</span><span class="p">:</span><span class="n">item</span><span class="p">];</span>
     <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <hr />
 
 <p>在controller中获取全部照片
 再用photokit的方法把所有图片获取到数组里</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="bp">NSMutableArray</span> <span class="o">*</span><span class="p">)</span><span class="nf">getImageAssets</span><span class="p">{</span>
-    <span class="nb">self</span><span class="p">.</span><span class="n">imageAssetsResult</span> <span class="o">=</span> <span class="p">[</span><span class="bp">PHAsset</span> <span class="nl">fetchAssetsWithMediaType</span><span class="p">:</span><span class="n">PHAssetMediaTypeImage</span> <span class="nl">options</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
-    <span class="bp">NSMutableArray</span> <span class="o">*</span><span class="n">assets</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSMutableArray</span> <span class="n">new</span><span class="p">];</span>
-    <span class="k">for</span> <span class="p">(</span><span class="bp">PHAsset</span> <span class="o">*</span><span class="n">asset</span> <span class="k">in</span> <span class="nb">self</span><span class="p">.</span><span class="n">imageAssetsResult</span><span class="p">){</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">NSMutableArray</span> <span class="o">*</span><span class="p">)</span><span class="nf">getImageAssets</span><span class="p">{</span>
+    <span class="nb">self</span><span class="p">.</span><span class="n">imageAssetsResult</span> <span class="o">=</span> <span class="p">[</span><span class="n">PHAsset</span> <span class="nl">fetchAssetsWithMediaType</span><span class="p">:</span><span class="n">PHAssetMediaTypeImage</span> <span class="nl">options</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
+    <span class="n">NSMutableArray</span> <span class="o">*</span><span class="n">assets</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="n">new</span><span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">PHAsset</span> <span class="o">*</span><span class="n">asset</span> <span class="k">in</span> <span class="nb">self</span><span class="p">.</span><span class="n">imageAssetsResult</span><span class="p">){</span>
         <span class="p">[</span><span class="n">assets</span> <span class="nl">insertObject</span><span class="p">:</span><span class="n">asset</span> <span class="nl">atIndex</span><span class="p">:</span><span class="mi">0</span><span class="p">];</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">assets</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <hr />
 
 <p>collectionview的布局，cell的大小排列和间距等，都是由collectionviewlayout决定的，布局是线性的话，推荐用官方的子类collectionviewflowlayout，其deleagate是collectionviewdeleagateflowlayout，是collectionviewdelegate的子delegate。</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="bp">UICollectionViewFlowLayout</span> <span class="o">*</span><span class="p">)</span><span class="nf">photosFlowLayout</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">UICollectionViewFlowLayout</span> <span class="o">*</span><span class="p">)</span><span class="nf">photosFlowLayout</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_photosFlowLayout</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">_photosFlowLayout</span> <span class="o">=</span> <span class="p">[</span><span class="bp">UICollectionViewFlowLayout</span> <span class="n">new</span><span class="p">];</span>
-        <span class="n">_photosFlowLayout</span><span class="p">.</span><span class="n">scrollDirection</span> <span class="o">=</span> <span class="n">UICollectionViewScrollDirectionHorizontal</span><span class="p">;</span> <span class="c1">//水平滚动</span>
-    <span class="p">}</span>
+        <span class="n">_photosFlowLayout</span> <span class="o">=</span> <span class="p">[</span><span class="n">UICollectionViewFlowLayout</span> <span class="n">new</span><span class="p">];</span>
+        <span class="n">_photosFlowLayout</span><span class="p">.</span><span class="n">scrollDirection</span> <span class="o">=</span> <span class="n">UICollectionViewScrollDirectionHorizontal</span><span class="p">;</span> <span class="c1">//水平滚动
+</span><span class="c1"></span>    <span class="p">}</span>
     <span class="k">return</span> <span class="n">_photosFlowLayout</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="cp">#pragma mark - collectionViewDelegateFlowLayout</span>
-<span class="c1">//根据asset的长宽设定每个cell的size</span>
-<span class="p">-</span> <span class="p">(</span><span class="bp">CGSize</span><span class="p">)</span><span class="nf">collectionView:</span><span class="p">(</span><span class="bp">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionView</span> <span class="nf">layout:</span><span class="p">(</span><span class="bp">UICollectionViewLayout</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionViewLayout</span> <span class="nf">sizeForItemAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
-    <span class="bp">PHAsset</span> <span class="o">*</span><span class="n">asset</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">photosDataSource</span><span class="p">.</span><span class="n">itemArray</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">];</span>
+<span class="p">}</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="cp">#pragma mark - collectionViewDelegateFlowLayout
+</span><span class="cp"></span><span class="c1">//根据asset的长宽设定每个cell的size
+</span><span class="c1"></span><span class="p">-</span> <span class="p">(</span><span class="n">CGSize</span><span class="p">)</span><span class="nf">collectionView:</span><span class="p">(</span><span class="n">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionView</span> <span class="nf">layout:</span><span class="p">(</span><span class="n">UICollectionViewLayout</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionViewLayout</span> <span class="nf">sizeForItemAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+    <span class="n">PHAsset</span> <span class="o">*</span><span class="n">asset</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">photosDataSource</span><span class="p">.</span><span class="n">itemArray</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">];</span>
     <span class="n">CGFloat</span> <span class="n">height</span> <span class="o">=</span> <span class="n">photosViewHeight</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">photosViewInset</span><span class="p">;</span>
     <span class="n">CGFloat</span> <span class="n">aspectRatio</span> <span class="o">=</span> <span class="n">asset</span><span class="p">.</span><span class="n">pixelWidth</span> <span class="o">/</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="n">asset</span><span class="p">.</span><span class="n">pixelHeight</span><span class="p">;</span>
     <span class="n">CGFloat</span> <span class="n">width</span> <span class="o">=</span> <span class="n">height</span> <span class="o">*</span> <span class="n">aspectRatio</span><span class="p">;</span>
-    <span class="bp">CGSize</span> <span class="n">size</span> <span class="o">=</span> <span class="n">CGSizeMake</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">);</span>
+    <span class="n">CGSize</span> <span class="n">size</span> <span class="o">=</span> <span class="n">CGSizeMake</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">);</span>
     <span class="k">return</span> <span class="n">size</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="c1">//设置整个collectionview上下左右间距</span>
-<span class="p">-</span> <span class="p">(</span><span class="bp">UIEdgeInsets</span><span class="p">)</span> <span class="nf">collectionView:</span><span class="p">(</span><span class="bp">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionView</span> <span class="nf">layout:</span><span class="p">(</span><span class="bp">UICollectionViewLayout</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionViewLayout</span> <span class="nf">insetForSectionAtIndex:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">section</span><span class="p">{</span>
+<span class="c1">//设置整个collectionview上下左右间距
+</span><span class="c1"></span><span class="p">-</span> <span class="p">(</span><span class="n">UIEdgeInsets</span><span class="p">)</span> <span class="nf">collectionView:</span><span class="p">(</span><span class="n">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionView</span> <span class="nf">layout:</span><span class="p">(</span><span class="n">UICollectionViewLayout</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionViewLayout</span> <span class="nf">insetForSectionAtIndex:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">section</span><span class="p">{</span>
     <span class="k">return</span> <span class="n">UIEdgeInsetsMake</span><span class="p">(</span><span class="n">photosViewInset</span><span class="p">,</span> <span class="n">photosViewInSet</span><span class="p">,</span> <span class="n">photosViewInset</span><span class="p">,</span> <span class="n">photosViewInset</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="c1">//设置cell之间的间距</span>
-<span class="p">-</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span> <span class="nf">collectionView:</span><span class="p">(</span><span class="bp">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionView</span> <span class="nf">layout:</span><span class="p">(</span><span class="bp">UICollectionViewLayout</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionViewLayout</span> <span class="nf">minimumInteritemSpacingForSectionAtIndex:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">section</span><span class="p">{</span>
+<span class="c1">//设置cell之间的间距
+</span><span class="c1"></span><span class="p">-</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span> <span class="nf">collectionView:</span><span class="p">(</span><span class="n">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionView</span> <span class="nf">layout:</span><span class="p">(</span><span class="n">UICollectionViewLayout</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionViewLayout</span> <span class="nf">minimumInteritemSpacingForSectionAtIndex:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">section</span><span class="p">{</span>
     <span class="k">return</span> <span class="n">photosViewInset</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <hr />
 
 <p>设置collecionview的delegate和点击事件</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="cp">#pragma mark - collectionViewDelegate</span>
-
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">collectionView:</span><span class="p">(</span><span class="bp">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionView</span> <span class="nf">didSelectItemAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
-    <span class="p">[[</span><span class="bp">PHImageManager</span> <span class="n">defaultManager</span><span class="p">]</span><span class="nl">requestImageForAsset</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">photosArray</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">]</span> <span class="nl">targetSize</span><span class="p">:</span><span class="n">PHImageManagerMaximumSize</span> <span class="nl">contentMode</span><span class="p">:</span><span class="n">PHImageContentModeAspectFill</span> <span class="nl">options</span><span class="p">:</span><span class="nb">nil</span> <span class="nl">resultHandler</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="bp">UIImage</span> <span class="o">*</span> <span class="n">_Nullable</span> <span class="n">result</span><span class="p">,</span> <span class="bp">NSDictionary</span> <span class="o">*</span> <span class="n">_Nullable</span> <span class="n">info</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="cp">#pragma mark - collectionViewDelegate
+</span><span class="cp"></span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">collectionView:</span><span class="p">(</span><span class="n">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionView</span> <span class="nf">didSelectItemAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+    <span class="p">[[</span><span class="n">PHImageManager</span> <span class="n">defaultManager</span><span class="p">]</span><span class="nl">requestImageForAsset</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">photosArray</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">]</span> <span class="nl">targetSize</span><span class="p">:</span><span class="n">PHImageManagerMaximumSize</span> <span class="nl">contentMode</span><span class="p">:</span><span class="n">PHImageContentModeAspectFill</span> <span class="nl">options</span><span class="p">:</span><span class="nb">nil</span> <span class="nl">resultHandler</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span> <span class="n">_Nullable</span> <span class="n">result</span><span class="p">,</span> <span class="n">NSDictionary</span> <span class="o">*</span> <span class="n">_Nullable</span> <span class="n">info</span><span class="p">)</span> <span class="p">{</span>
         <span class="nb">self</span><span class="p">.</span><span class="n">resultImage</span> <span class="o">=</span> <span class="n">result</span><span class="p">;</span>
         <span class="p">[</span><span class="nb">self</span> <span class="nl">dismissViewControllerAnimated</span><span class="p">:</span><span class="nb">YES</span> <span class="nl">completion</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
-        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;已选择图片&quot;</span><span class="p">);</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&#34;已选择图片&#34;</span><span class="p">);</span>
     <span class="p">}];</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <hr />
 
 <p>最后就是collectionview的初始化和绘制和tableview类似，多了一步注册collectionview的cell（<strong>collectionviewcell必须让collecionview注册重用标识，而tableviewcell可以在自己init方法里注册</strong>）</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="bp">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nf">photosView</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nf">photosView</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_photosView</span><span class="p">){</span>
         <span class="n">CGFloat</span> <span class="n">actionsViewHeight</span> <span class="o">=</span> <span class="n">actionsViewCellHeight</span> <span class="o">*</span> <span class="nb">self</span><span class="p">.</span><span class="n">actionArray</span><span class="p">.</span><span class="n">count</span><span class="p">;</span>
-        <span class="n">_photosView</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">UICollectionView</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithFrame</span><span class="p">:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">SCREEN_HEIGHT</span> <span class="o">-</span> <span class="n">actionsViewHeight</span> <span class="o">-</span> <span class="n">photosViewHeight</span> <span class="p">,</span> <span class="n">SCREEN_WIDTH</span><span class="p">,</span> <span class="n">photosViewHeight</span><span class="p">)</span> <span class="nl">collectionViewLayout</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">photosFlowLayout</span><span class="p">];</span>
+        <span class="n">_photosView</span> <span class="o">=</span> <span class="p">[[</span><span class="n">UICollectionView</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithFrame</span><span class="p">:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">SCREEN_HEIGHT</span> <span class="o">-</span> <span class="n">actionsViewHeight</span> <span class="o">-</span> <span class="n">photosViewHeight</span> <span class="p">,</span> <span class="n">SCREEN_WIDTH</span><span class="p">,</span> <span class="n">photosViewHeight</span><span class="p">)</span> <span class="nl">collectionViewLayout</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">photosFlowLayout</span><span class="p">];</span>
         <span class="n">_photosView</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
         <span class="n">_photosView</span><span class="p">.</span><span class="n">dataSource</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">photosDataSource</span><span class="p">;</span>
-        <span class="n">_photosView</span><span class="p">.</span><span class="n">backgroundColor</span> <span class="o">=</span> <span class="p">[</span><span class="bp">UIColor</span> <span class="n">whiteColor</span><span class="p">];</span>
+        <span class="n">_photosView</span><span class="p">.</span><span class="n">backgroundColor</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIColor</span> <span class="n">whiteColor</span><span class="p">];</span>
         <span class="n">_photosView</span><span class="p">.</span><span class="n">showsHorizontalScrollIndicator</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span>
         <span class="p">[</span><span class="n">_photosView</span> <span class="nl">registerClass</span><span class="p">:[</span><span class="n">CDZImagePickerPhotosCell</span> <span class="k">class</span><span class="p">]</span> <span class="nl">forCellWithReuseIdentifier</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">([</span><span class="n">CDZImagePickerPhotosCell</span> <span class="k">class</span><span class="p">])];</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">_photosView</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="n">CDZImagePickerPhotosDataSource</span> <span class="o">*</span><span class="p">)</span><span class="nf">photosDataSource</span><span class="p">{</span>
+<span class="p">}</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">CDZImagePickerPhotosDataSource</span> <span class="o">*</span><span class="p">)</span><span class="nf">photosDataSource</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_photosDataSource</span><span class="p">){</span>
         <span class="n">_photosDataSource</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZImagePickerPhotosDataSource</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
         <span class="n">_photosDataSource</span><span class="p">.</span><span class="n">itemArray</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="n">getImageAssets</span><span class="p">];</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">_photosDataSource</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <hr />
 
 <p>##3.透明图层（用于实现空白处点击消失）
 比较简单，增加一个tap手势即可，直接上代码（记得实现UIGestureRecognizerDelegate）</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="bp">UIView</span> <span class="o">*</span><span class="p">)</span><span class="nf">backgroundView</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">UIView</span> <span class="o">*</span><span class="p">)</span><span class="nf">backgroundView</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_backgroundView</span><span class="p">){</span>
         <span class="n">CGFloat</span> <span class="n">actionsViewHeight</span> <span class="o">=</span> <span class="n">actionsViewCellHeight</span> <span class="o">*</span> <span class="nb">self</span><span class="p">.</span><span class="n">actionArray</span><span class="p">.</span><span class="n">count</span><span class="p">;</span>
-        <span class="n">_backgroundView</span> <span class="o">=</span><span class="p">[[</span><span class="bp">UIView</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithFrame</span><span class="p">:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SCREEN_WIDTH</span><span class="p">,</span> <span class="n">SCREEN_HEIGHT</span> <span class="o">-</span> <span class="n">photosViewHeight</span> <span class="o">-</span> <span class="n">actionsViewHeight</span><span class="p">)];</span>
-        <span class="n">_backgroundView</span><span class="p">.</span><span class="n">backgroundColor</span><span class="p">.</span><span class="n">opaque</span> <span class="o">=</span> <span class="nb">YES</span><span class="p">;</span><span class="c1">//设置为透明</span>
-        <span class="n">_backgroundView</span><span class="p">.</span><span class="n">userInteractionEnabled</span> <span class="o">=</span> <span class="nb">YES</span><span class="p">;</span>
-        <span class="bp">UITapGestureRecognizer</span> <span class="o">*</span><span class="n">tap</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">UITapGestureRecognizer</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithTarget</span><span class="p">:</span><span class="nb">self</span> <span class="nl">action</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">dissPicker</span><span class="p">:)];</span>
+        <span class="n">_backgroundView</span> <span class="o">=</span><span class="p">[[</span><span class="n">UIView</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithFrame</span><span class="p">:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SCREEN_WIDTH</span><span class="p">,</span> <span class="n">SCREEN_HEIGHT</span> <span class="o">-</span> <span class="n">photosViewHeight</span> <span class="o">-</span> <span class="n">actionsViewHeight</span><span class="p">)];</span>
+        <span class="n">_backgroundView</span><span class="p">.</span><span class="n">backgroundColor</span><span class="p">.</span><span class="n">opaque</span> <span class="o">=</span> <span class="nb">YES</span><span class="p">;</span><span class="c1">//设置为透明
+</span><span class="c1"></span>        <span class="n">_backgroundView</span><span class="p">.</span><span class="n">userInteractionEnabled</span> <span class="o">=</span> <span class="nb">YES</span><span class="p">;</span>
+        <span class="n">UITapGestureRecognizer</span> <span class="o">*</span><span class="n">tap</span> <span class="o">=</span> <span class="p">[[</span><span class="n">UITapGestureRecognizer</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithTarget</span><span class="p">:</span><span class="nb">self</span> <span class="nl">action</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">dissPicker</span><span class="p">:)];</span>
         <span class="p">[</span><span class="n">_backgroundView</span> <span class="nl">addGestureRecognizer</span><span class="p">:</span><span class="n">tap</span><span class="p">];</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">_backgroundView</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <p>##4.收尾&amp;封装
 定义一个block用于回调传照片
 <code>typedef void (^CDZImageResultBlock) (UIImage *image);</code>
 一个内部block属性
 <code>@property (nonatomic ,copy) CDZImageResultBlock block;</code>
 封装方法</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">openPickerInController:</span><span class="p">(</span><span class="bp">UIViewController</span> <span class="o">*</span><span class="p">)</span><span class="nv">controller</span> <span class="nf">withImageBlock:</span><span class="p">(</span><span class="n">CDZImageResultBlock</span><span class="p">)</span><span class="nv">imageBlock</span><span class="p">{</span>
-    <span class="nb">self</span><span class="p">.</span><span class="n">modalPresentationStyle</span> <span class="o">=</span> <span class="n">UIModalPresentationOverCurrentContext</span><span class="p">;</span><span class="c1">//iOS8上默认presentviewcontroller不透明，需设置style</span>
-    <span class="nb">self</span><span class="p">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">imageBlock</span><span class="p">;</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">openPickerInController:</span><span class="p">(</span><span class="n">UIViewController</span> <span class="o">*</span><span class="p">)</span><span class="nv">controller</span> <span class="nf">withImageBlock:</span><span class="p">(</span><span class="n">CDZImageResultBlock</span><span class="p">)</span><span class="nv">imageBlock</span><span class="p">{</span>
+    <span class="nb">self</span><span class="p">.</span><span class="n">modalPresentationStyle</span> <span class="o">=</span> <span class="n">UIModalPresentationOverCurrentContext</span><span class="p">;</span><span class="c1">//iOS8上默认presentviewcontroller不透明，需设置style
+</span><span class="c1"></span>    <span class="nb">self</span><span class="p">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">imageBlock</span><span class="p">;</span>
     <span class="p">[</span><span class="n">controller</span> <span class="nl">presentViewController</span><span class="p">:</span><span class="nb">self</span> <span class="nl">animated</span><span class="p">:</span><span class="nb">YES</span> <span class="nl">completion</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
-<span class="p">}</span>
-</code></pre></div>
-
+<span class="p">}</span></code></pre></div>
 <p>在Dealloc方法里调用block回调</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">dealloc</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">dealloc</span><span class="p">{</span>
     <span class="nb">self</span><span class="p">.</span><span class="n">block</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">resultImage</span><span class="p">);</span>
-    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;ImagePicker已销毁&quot;</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></div>
-
+    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&#34;ImagePicker已销毁&#34;</span><span class="p">);</span>
+<span class="p">}</span></code></pre></div>
 <p>##5.使用方法</p>
 
 <p>将CDZImagePicker文件夹拖入项目</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="n">CDZImagePickerViewController</span> <span class="o">*</span><span class="n">imagePickerController</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZImagePickerViewController</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
-<span class="p">[</span><span class="n">imagePickerController</span> <span class="nl">openPickerInController</span><span class="p">:</span><span class="nb">self</span> <span class="nl">withImageBlock</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="bp">UIImage</span> <span class="o">*</span><span class="n">image</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">image</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//如果没选照片会回调nil，若想让之前照片不变就加上判断</span>
-           <span class="c1">//yourcode</span>
-        <span class="p">}</span>
-       <span class="c1">// yourcode</span>
-<span class="p">}];</span>
-</code></pre></div>
-
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="n">CDZImagePickerViewController</span> <span class="o">*</span><span class="n">imagePickerController</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZImagePickerViewController</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
+<span class="p">[</span><span class="n">imagePickerController</span> <span class="nl">openPickerInController</span><span class="p">:</span><span class="nb">self</span> <span class="nl">withImageBlock</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="n">image</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">image</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//如果没选照片会回调nil，若想让之前照片不变就加上判断
+</span><span class="c1"></span>           <span class="c1">//yourcode
+</span><span class="c1"></span>        <span class="p">}</span>
+       <span class="c1">// yourcode
+</span><span class="c1"></span><span class="p">}];</span></code></pre></div>
 <p>也可以自定义CDZActionsItem自定义文字和图片</p>
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span></span><span class="n">imagePickerController</span><span class="p">.</span><span class="n">actionArray</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSMutableArray</span> <span class="nl">arrayWithObjects</span><span class="p">:</span>
-                      <span class="p">[[</span><span class="n">CDZImagePickerActionsItem</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithTitle</span><span class="p">:</span><span class="s">@&quot;打开设备上的图片&quot;</span> <span class="nl">withActionType</span><span class="p">:</span><span class="n">CDZImagePickerLibraryAction</span> <span class="nl">withImage</span><span class="p">:[</span><span class="bp">UIImage</span> <span class="nl">imageNamed</span><span class="p">:</span><span class="s">@&quot;phone-icon.png&quot;</span><span class="p">]],</span>
-                      <span class="p">[[</span><span class="n">CDZImagePickerActionsItem</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithTitle</span><span class="p">:</span><span class="s">@&quot;相机&quot;</span> <span class="nl">withActionType</span><span class="p">:</span><span class="n">CDZImagePickerCameraAction</span> <span class="nl">withImage</span><span class="p">:[</span><span class="bp">UIImage</span> <span class="nl">imageNamed</span><span class="p">:</span><span class="s">@&quot;camera-icon.png&quot;</span><span class="p">]],</span>
-                      <span class="p">[[</span><span class="n">CDZImagePickerActionsItem</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithTitle</span><span class="p">:</span><span class="s">@&quot;打开最新图片&quot;</span> <span class="nl">withActionType</span><span class="p">:</span><span class="n">CDZImagePickerRecentAction</span> <span class="nl">withImage</span><span class="p">:[</span><span class="bp">UIImage</span> <span class="nl">imageNamed</span><span class="p">:</span><span class="s">@&quot;clock-icon.png&quot;</span><span class="p">]],</span>
-                      <span class="nb">nil</span><span class="p">];</span>
-</code></pre></div>
-
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="n">imagePickerController</span><span class="p">.</span><span class="n">actionArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="nl">arrayWithObjects</span><span class="p">:</span>
+                      <span class="p">[[</span><span class="n">CDZImagePickerActionsItem</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithTitle</span><span class="p">:</span><span class="s">@&#34;打开设备上的图片&#34;</span> <span class="nl">withActionType</span><span class="p">:</span><span class="n">CDZImagePickerLibraryAction</span> <span class="nl">withImage</span><span class="p">:[</span><span class="n">UIImage</span> <span class="nl">imageNamed</span><span class="p">:</span><span class="s">@&#34;phone-icon.png&#34;</span><span class="p">]],</span>
+                      <span class="p">[[</span><span class="n">CDZImagePickerActionsItem</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithTitle</span><span class="p">:</span><span class="s">@&#34;相机&#34;</span> <span class="nl">withActionType</span><span class="p">:</span><span class="n">CDZImagePickerCameraAction</span> <span class="nl">withImage</span><span class="p">:[</span><span class="n">UIImage</span> <span class="nl">imageNamed</span><span class="p">:</span><span class="s">@&#34;camera-icon.png&#34;</span><span class="p">]],</span>
+                      <span class="p">[[</span><span class="n">CDZImagePickerActionsItem</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithTitle</span><span class="p">:</span><span class="s">@&#34;打开最新图片&#34;</span> <span class="nl">withActionType</span><span class="p">:</span><span class="n">CDZImagePickerRecentAction</span> <span class="nl">withImage</span><span class="p">:[</span><span class="n">UIImage</span> <span class="nl">imageNamed</span><span class="p">:</span><span class="s">@&#34;clock-icon.png&#34;</span><span class="p">]],</span>
+                      <span class="nb">nil</span><span class="p">];</span></code></pre></div>
 <p>效果就和snapseed很像啦！
 <img src="http://ww4.sinaimg.cn/large/006y8mN6gw1fae4wt2mk0g30ku1124oj.gif" alt="" /></p>
 
@@ -631,7 +583,7 @@ collecionview的实现思路和tableview类似</p>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        This post was published <strong>292</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        This post was published <strong>609</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -659,7 +611,7 @@ collecionview的实现思路和tableview类似</p>
     
   </section>
   <footer class="site-footer">
-  <p>© 2017 Nemocdz&#39;s Blog</p>
+  <p>© 2017-2018 Nemocdz&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
   
 </footer>
