@@ -31,7 +31,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.34" />
+<meta name="generator" content="Hugo 0.46" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/My-blog/post/%E5%86%8D%E8%B0%88objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/" />
@@ -288,7 +288,8 @@
     <span class="n">SideTable</span><span class="o">::</span><span class="n">unlockTwo</span><span class="o">&lt;</span><span class="n">haveOld</span><span class="p">,</span> <span class="n">haveNew</span><span class="o">&gt;</span><span class="p">(</span><span class="n">oldTable</span><span class="p">,</span> <span class="n">newTable</span><span class="p">);</span>
 
     <span class="k">return</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="n">newObj</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span>
+</code></pre></div>
 <p>而WeakTable是一个Hash表设计，以对象的地址为key，value是所有指向这个对象的weak指针的地址集合。通过这种设计，在废弃对象时，可以通过weak表快速找到value即所有weak指针并统一设置为nil并删除该记录。</p>
 
 <p><strong>所以苹果对于weak的实现其实类似于通知的实现，指明谁（weak指针）要监听谁（赋值对象）什么事件（dealloc操作）执行什么操作（置nil）。</strong></p>
@@ -378,7 +379,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        This post was published <strong>337</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        This post was published <strong>338</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

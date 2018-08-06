@@ -31,7 +31,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.34" />
+<meta name="generator" content="Hugo 0.46" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/My-blog/post/tableview%E6%94%AF%E6%8C%81%E4%B8%8D%E5%90%8C%E7%A7%8D%E7%B1%BB%E7%9A%84cell/" />
@@ -250,7 +250,7 @@
 <h3 id="方法二-在init时创建不同identifer的cell">方法二:在init时创建不同identifer的cell</h3>
 
 <p>在<code>- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</code>中判断cell是否为nil，并根据index所在cell的种类初始化cell和其identifer。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span><span class="p">(</span><span class="n">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-(</span><span class="n">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
     <span class="n">CDZBaseCell</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">tableView</span> <span class="nl">dequeueReusableCellWithIdentifier</span><span class="p">:[</span><span class="nb">self</span> <span class="nl">cellIdentiferAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">]];</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">cell</span><span class="p">)</span> <span class="p">{</span>
         <span class="kt">Class</span> <span class="n">cls</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">cellClassAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
@@ -271,7 +271,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        This post was published <strong>574</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        This post was published <strong>575</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

@@ -33,7 +33,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.34" />
+<meta name="generator" content="Hugo 0.46" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/My-blog/post/why-is-metaclass-in-objective-c/" />
@@ -223,7 +223,8 @@
     <span class="n">cache_t</span> <span class="n">cache</span><span class="p">;</span>     <span class="c1">// 用来缓存指针和虚函数表  
 </span><span class="c1"></span>    <span class="n">class_data_bits_t</span> <span class="n">bits</span><span class="p">;</span>  <span class="c1">//方法列表等
 </span><span class="c1"></span>  	<span class="c1">//...
-</span><span class="c1"></span><span class="p">}</span></code></pre></div>
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div>
 <p>可以看到，对象最基本的就是有一个isa指针，指向他的class，而Class本身是继承自object。isa指针的理解诶就是英文is a，代表“xxx is a （class）”。那么也就是说，一个对象的isa指向哪个class，代表它是那个类的对象。那么对于class来说，它也是一个对象，它的isa指针指向什么呢？</p>
 
 <p>对于Class来说，也就需要一个描述他的类，也就是“类的类”，而meta正是“关于某事自身的某事”的解释，所以MetaClass就因此而生了。</p>
@@ -249,7 +250,8 @@
 </span><span class="c1"></span>    <span class="n">objc_initializeClassPair_internal</span><span class="p">(</span><span class="n">superclass</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">cls</span><span class="p">,</span> <span class="n">meta</span><span class="p">);</span>
 
     <span class="k">return</span> <span class="n">cls</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span>
+</code></pre></div>
 <p>通过这个方法生成后，就成了大家熟悉的那张图。</p>
 
 <p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fjjcy2lrq9j30zg112jvt.jpg" alt="v2-ce4b3fa6d104a632f4f34dec0d50f71f_r" /></p>
@@ -288,13 +290,13 @@
 </span><span class="c1"></span><span class="p">}</span> <span class="n">PyVarObject</span><span class="p">;</span></code></pre></div>
 <p>PyVarObject是一种可变长度对象，是在PyObject基础上加上了对象的长度。而开始的内存包括了ob_base这个PyObject，就代表可以用PyObject指针进行引用。所以可以说，结构体中刚开始的部分是一个PyObject对象，在Python中引用就是一个对象。那么PyTypeObject开头是一个PyVarObject，也就是一个对象。也就是说，Python里的Class，也是一个对象。</p>
 <div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="c1">#在python中生成一个Class</span>
-<span class="n">MyClass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;MyClass&#39;</span><span class="p">,</span> <span class="p">(),</span> <span class="p">{})</span>           </code></pre></div>
+<span class="n">MyClass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s1">&#39;MyClass&#39;</span><span class="p">,</span> <span class="p">(),</span> <span class="p">{})</span>           </code></pre></div>
 <p>先看看Python里面的type关键字是什么。</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">//bltinmodule.c
-</span><span class="c1"></span><span class="n">SETBUILTIN</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;type&#34;</span><span class="p">,</span>                  <span class="o">&amp;</span><span class="n">PyType_Type</span><span class="p">);</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">//typeobject.c
+</span><span class="c1"></span><span class="n">SETBUILTIN</span><span class="p">(</span><span class="s">&#34;type&#34;</span><span class="p">,</span>                  <span class="o">&amp;</span><span class="n">PyType_Type</span><span class="p">);</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">//typeobject.c
 </span><span class="c1"></span><span class="n">PyTypeObject</span> <span class="n">PyType_Type</span> <span class="o">=</span> <span class="p">{</span>
     <span class="n">PyVarObject_HEAD_INIT</span><span class="p">(</span><span class="o">&amp;</span><span class="n">PyType_Type</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="sa"></span><span class="s">&#34;type&#34;</span><span class="p">,</span>                                     <span class="cm">/* tp_name */</span>
+    <span class="s">&#34;type&#34;</span><span class="p">,</span>                                     <span class="cm">/* tp_name */</span>
     <span class="c1">//.....
 </span><span class="c1"></span>    <span class="n">type_init</span><span class="p">,</span>                                  <span class="cm">/* tp_init */</span>
 	<span class="c1">//....                                
@@ -375,7 +377,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        This post was published <strong>324</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        This post was published <strong>325</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

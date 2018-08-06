@@ -33,7 +33,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.34" />
+<meta name="generator" content="Hugo 0.46" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/My-blog/post/%E7%94%A8cocoapods%E7%AE%A1%E7%90%86%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%A1%AB%E5%9D%91%E4%B9%8B%E6%97%85/" />
@@ -223,7 +223,7 @@
 <p><img src="http://ww2.sinaimg.cn/large/006tNc79ly1fekhgrb3ocj308g08cwes.jpg" alt="屏幕快照 2017-04-12 23.38.20" /></p>
 
 <p>？？？这个Target的icon，有点不对劲啊…原来Cocoapods默认生成的Pod是作为一个Target集成进Pods这个XcodeProject里的，而且Target的默认类型是Static Libaray，也就是一个静态库。咋办呢？我要的是XCTest的Target类型。好吧，那看看Cocoapods的<a href="https://github.com/CocoaPods/CocoaPods">源码</a>吧。怎么找呢，有点Ruby基础的人知道，Podfile里面写东西实际上都是用Ruby语法实现的DSL（Domain Specific Language 领域特定语言）。也就是相当于实现了一套语法规则，比如target do，比如pod，比如:path=&gt;这些，在Cocoapods都有对应的语法实现。在执行pod install的过程中，podfile中的信息被解析，然后把pod的信息进行处理，并生成target并生成集成后的project文件。那对target的类型的写入，也肯定也在生成Pods.xcodeproj的过程中。查看cocoapods的installer.rb，发现里面有个intall方法如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">install!</span>
+<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">install!</span>
     <span class="n">prepare</span>
     <span class="n">resolve_dependencies</span>
     <span class="n">download_dependencies</span>
@@ -239,7 +239,7 @@
     <span class="n">perform_post_install_actions</span>
 <span class="k">end</span></code></pre></div>
 <p>看起来这个过程可能是install的过程，里面的<code>generate_pods_project</code>方法，应该就是生成pod_project的方法了。这个方法实现如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">generate_pods_project</span><span class="p">(</span><span class="n">generator</span> <span class="o">=</span> <span class="n">create_generator</span><span class="p">)</span>
+<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">generate_pods_project</span><span class="p">(</span><span class="n">generator</span> <span class="o">=</span> <span class="n">create_generator</span><span class="p">)</span>
     <span class="no">UI</span><span class="o">.</span><span class="n">section</span> <span class="s1">&#39;Generating Pods project&#39;</span> <span class="k">do</span>
     	<span class="n">generator</span><span class="o">.</span><span class="n">generate!</span>
         <span class="vi">@pods_project</span> <span class="o">=</span> <span class="n">generator</span><span class="o">.</span><span class="n">project</span>
@@ -250,14 +250,14 @@
      <span class="k">end</span>
 <span class="k">end</span></code></pre></div>
 <p>再查看其类pods_project_generator.rb的generate方法(相当于初始化方法)</p>
-<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">generate!</span>
+<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">generate!</span>
   <span class="n">prepare</span>
   <span class="n">install_file_references</span>
   <span class="n">install_libraries</span>
   <span class="n">set_target_dependencies</span>
 <span class="k">end</span></code></pre></div>
 <p>这里面大概就是将依赖的文件和library加入工程，设置目标依赖。再看看<code>install_libraries</code>方法</p>
-<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">install_libraries</span>
+<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">install_libraries</span>
 	<span class="no">UI</span><span class="o">.</span><span class="n">message</span> <span class="s1">&#39;- Installing targets&#39;</span> <span class="k">do</span>
 		<span class="n">pod_targets</span><span class="o">.</span><span class="n">sort_by</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:name</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">pod_target</span><span class="o">|</span>
 		 <span class="n">target_installer</span> <span class="o">=</span> <span class="no">PodTargetInstaller</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">sandbox</span><span class="p">,</span> <span class="n">pod_target</span><span class="p">)</span>
@@ -273,7 +273,7 @@
 <p>在看看之类这个target_Installer实例，就是PodTargetInstaller类生成的。看来这个类，应该是生成target的类。再看看这个pod_target_installer.rb，里面搜索一下type，居然没有？？？难道找错了？我又仔细看了一下，发现开始处有怎么一行代码：</p>
 <div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">PodTargetInstaller</span> <span class="o">&lt;</span> <span class="no">TargetInstaller</span></code></pre></div>
 <p>看到这行代码，我感觉和OC里的<code>AClass : BClass</code>，这大概是继承吧。又找到了target_installer.rb里面的TargetInstaller类，终于发现了一行蛛丝马迹。</p>
-<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">add_target</span>
+<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">add_target</span>
 	<span class="n">product_type</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">product_type</span></code></pre></div>
 <p>也就是说，target的类型，在cocoapods里，是target的product_type属性。剩下的就是要把target的product_type，设置成cocoapods里的XCTest类型了。那么接下来，就有两个问题要解决</p>
 
@@ -288,7 +288,7 @@
 <p>也就是说，product_type属性其实是个String类型，而XCTest的类型，就是<code>'com.apple.product-type.bundle.unit-test'</code>那么第一个问题就解决了。</p>
 
 <p>剩下就是在哪里改变它了。还记得刚才的<code>generate_pods_project</code>方法么</p>
-<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">generate_pods_project</span><span class="p">(</span><span class="n">generator</span> <span class="o">=</span> <span class="n">create_generator</span><span class="p">)</span>
+<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">generate_pods_project</span><span class="p">(</span><span class="n">generator</span> <span class="o">=</span> <span class="n">create_generator</span><span class="p">)</span>
     <span class="no">UI</span><span class="o">.</span><span class="n">section</span> <span class="s1">&#39;Generating Pods project&#39;</span> <span class="k">do</span>
     	<span class="n">generator</span><span class="o">.</span><span class="n">generate!</span>
         <span class="vi">@pods_project</span> <span class="o">=</span> <span class="n">generator</span><span class="o">.</span><span class="n">project</span>
@@ -385,7 +385,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        This post was published <strong>479</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        This post was published <strong>480</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

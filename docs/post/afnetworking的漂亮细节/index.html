@@ -33,7 +33,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.34" />
+<meta name="generator" content="Hugo 0.46" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/My-blog/post/afnetworking%E7%9A%84%E6%BC%82%E4%BA%AE%E7%BB%86%E8%8A%82/" />
@@ -219,7 +219,7 @@
     <span class="k">static</span> <span class="n">dispatch_queue_t</span> <span class="n">af_url_session_manager_creation_queue</span><span class="p">;</span>
     <span class="k">static</span> <span class="n">dispatch_once_t</span> <span class="n">onceToken</span><span class="p">;</span>
     <span class="n">dispatch_once</span><span class="p">(</span><span class="o">&amp;</span><span class="n">onceToken</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
-        <span class="n">af_url_session_manager_creation_queue</span> <span class="o">=</span> <span class="n">dispatch_queue_create</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;com.alamofire.networking.session.manager.creation&#34;</span><span class="p">,</span> <span class="n">DISPATCH_QUEUE_SERIAL</span><span class="p">);</span>
+        <span class="n">af_url_session_manager_creation_queue</span> <span class="o">=</span> <span class="n">dispatch_queue_create</span><span class="p">(</span><span class="s">&#34;com.alamofire.networking.session.manager.creation&#34;</span><span class="p">,</span> <span class="n">DISPATCH_QUEUE_SERIAL</span><span class="p">);</span>
     <span class="p">});</span>
 
     <span class="k">return</span> <span class="n">af_url_session_manager_creation_queue</span><span class="p">;</span>
@@ -292,7 +292,7 @@
     <span class="k">static</span> <span class="n">dispatch_once_t</span> <span class="n">onceToken</span><span class="p">;</span>
  	<span class="c1">//创建一个串行队列，只创建一次
 </span><span class="c1"></span>    <span class="n">dispatch_once</span><span class="p">(</span><span class="o">&amp;</span><span class="n">onceToken</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
-        <span class="n">af_url_session_manager_creation_queue</span> <span class="o">=</span> <span class="n">dispatch_queue_create</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;com.alamofire.networking.session.manager.creation&#34;</span><span class="p">,</span> <span class="n">DISPATCH_QUEUE_SERIAL</span><span class="p">);</span>
+        <span class="n">af_url_session_manager_creation_queue</span> <span class="o">=</span> <span class="n">dispatch_queue_create</span><span class="p">(</span><span class="s">&#34;com.alamofire.networking.session.manager.creation&#34;</span><span class="p">,</span> <span class="n">DISPATCH_QUEUE_SERIAL</span><span class="p">);</span>
     <span class="p">});</span>
     <span class="k">return</span> <span class="n">af_url_session_manager_creation_queue</span><span class="p">;</span>
 <span class="p">}</span>
@@ -434,7 +434,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        This post was published <strong>354</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        This post was published <strong>355</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
