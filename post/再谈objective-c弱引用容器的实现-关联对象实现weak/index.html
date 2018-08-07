@@ -46,9 +46,9 @@
 
 <meta name="robots" content="index,follow" />
 <meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="_moDmnnBNVLBN1rzNxyGUGdPHE20YgbmrtzLIbxaWFc" />
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
 <meta name="msvalidate.01" content="22596E34341DD1D17D6022C44647E587" />
-
+<meta name="baidu-site-verification" content="iVpH4VhHBT" />
 
 
 
@@ -202,7 +202,7 @@
       <h1 class="post-title">再谈Objective-C弱引用容器的实现-关联对象实现weak</h1>
       <p class="post-meta">@Nemocdz · Sep 2, 2017 · 2 min read</p>
     </header>
-    <article class="post-content"><p>之前写了一篇<a href="https://nemocdz.github.io/My-blog/post/objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">文章</a>总结了OC中弱引用容器实现，在小米面试中提到其中CFFoundation的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现Weak特质，也就是没有在销毁后置nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。</p>
+    <article class="post-content"><p>之前写了一篇<a href="https://nemocdz.github.io/post/objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">文章</a>总结了OC中弱引用容器实现，在小米面试中提到其中CFFoundation的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现Weak特质，也就是没有在销毁后置nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。</p>
 
 <p>所以看了Runtime源码和文章后，订正弱引用容器的一些实现方法。
 </p>

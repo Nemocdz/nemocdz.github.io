@@ -48,9 +48,9 @@
 
 <meta name="robots" content="index,follow" />
 <meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="_moDmnnBNVLBN1rzNxyGUGdPHE20YgbmrtzLIbxaWFc" />
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
 <meta name="msvalidate.01" content="22596E34341DD1D17D6022C44647E587" />
-
+<meta name="baidu-site-verification" content="iVpH4VhHBT" />
 
 
 
@@ -204,7 +204,7 @@
       <h1 class="post-title">iOS中实现静态Cell通用的TableViewManager</h1>
       <p class="post-meta">@Nemocdz · May 14, 2017 · 2 min read</p>
     </header>
-    <article class="post-content"><p>在App中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态Cell构成的TableView，这些界面的特点是，Cell种类繁多，Model种类繁多，点击事件处理分散但单调（页面跳转，编辑textFiled），重复写tableViewDelegate和datasource的相关方法，但不会用到一些奇怪的datasource和delegate方法，而且显示内容一般是固定的，每个页面Cell的数量不会很多。像笔者所在的项目里的侧边栏模块，里面有很多tableView，由于没有使用StoryBoard且很久之前写的，充斥着各种if&hellip;else if用model的某个key值进行判断的逻辑去让cell去显示和隐藏某些视图，已经进行点击跳转逻辑，更有甚者，有<code>if (indexPath == 0)</code>之类的通过行数判断去处理的逻辑。增加新的cell时，便要在各种地方再加上else if的新判断，而做新界面时，也没有很好的方法进行复用。笔者结合之前<a href="https://nemocdz.github.io/My-blog/post/tableview%E5%92%8Ccollectionview%E9%80%9A%E7%94%A8datasource%E5%92%8Ccell/">文章</a>进行进一步思考，抽象出一个适合这种特点tableView的管理类，记录一下思路供参考。</p>
+    <article class="post-content"><p>在App中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态Cell构成的TableView，这些界面的特点是，Cell种类繁多，Model种类繁多，点击事件处理分散但单调（页面跳转，编辑textFiled），重复写tableViewDelegate和datasource的相关方法，但不会用到一些奇怪的datasource和delegate方法，而且显示内容一般是固定的，每个页面Cell的数量不会很多。像笔者所在的项目里的侧边栏模块，里面有很多tableView，由于没有使用StoryBoard且很久之前写的，充斥着各种if&hellip;else if用model的某个key值进行判断的逻辑去让cell去显示和隐藏某些视图，已经进行点击跳转逻辑，更有甚者，有<code>if (indexPath == 0)</code>之类的通过行数判断去处理的逻辑。增加新的cell时，便要在各种地方再加上else if的新判断，而做新界面时，也没有很好的方法进行复用。笔者结合之前<a href="https://nemocdz.github.io/post/tableview%E5%92%8Ccollectionview%E9%80%9A%E7%94%A8datasource%E5%92%8Ccell/">文章</a>进行进一步思考，抽象出一个适合这种特点tableView的管理类，记录一下思路供参考。</p>
 
 <p></p>
 
@@ -212,7 +212,7 @@
 
 <h3 id="关于tableviewdatasource的思考">关于TableViewDatasource的思考</h3>
 
-<p>在之前的<a href="http://www.jianshu.com/p/1f7304634600">文章（iOS通用的DataSource）</a>中，已经对Datasource和SectionObject进行了抽象，datasource本质是告诉Cell如何去处理Model的桥梁，之前笔者是通过维护一个字典去一一对应Model的种类和Cell种类的，但后来发现，有时候Model和Cell的种类并不一定是1对1的，比如有些时候cell只要只要展示一个title，可能使用者只想写一个String去对应，而不用去建一个Model，在静态不变的Model中，这种情况更突出，因为并不需要从网络解析数据，不用用反射机制去进行json转model的处理，有时候，一个NSDictionary甚至一个NSString或者Bool就可以满足一个cell的展示需求，那么对于这种可能是多Cell对多Model（String也可以是一种Model）的情况，且每个TableView的Cell数量不多（一般设置页不会超过20个），可以考虑为在字典里每个model配置对应的Cell类型的键值对。而且因为Model种类不一，我们也需要手动Add到SectionObject里，那么我们可以把这个字典分在每个sectionObject里去管理。在section类里添加以下方法，而model的唯一性可以用hash属性标识，默认hash属性就是对象的内存地址。</p>
+<p>在之前的文章中，已经对Datasource和SectionObject进行了抽象，datasource本质是告诉Cell如何去处理Model的桥梁，之前笔者是通过维护一个字典去一一对应Model的种类和Cell种类的，但后来发现，有时候Model和Cell的种类并不一定是1对1的，比如有些时候cell只要只要展示一个title，可能使用者只想写一个String去对应，而不用去建一个Model，在静态不变的Model中，这种情况更突出，因为并不需要从网络解析数据，不用用反射机制去进行json转model的处理，有时候，一个NSDictionary甚至一个NSString或者Bool就可以满足一个cell的展示需求，那么对于这种可能是多Cell对多Model（String也可以是一种Model）的情况，且每个TableView的Cell数量不多（一般设置页不会超过20个），可以考虑为在字典里每个model配置对应的Cell类型的键值对。而且因为Model种类不一，我们也需要手动Add到SectionObject里，那么我们可以把这个字典分在每个sectionObject里去管理。在section类里添加以下方法，而model的唯一性可以用hash属性标识，默认hash属性就是对象的内存地址。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">addItem:</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="n">NSObject</span><span class="o">&gt;</span><span class="p">)</span><span class="nv">item</span> <span class="nf">cellClass:</span><span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nv">cellClass</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">item</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span><span class="p">;</span>

@@ -52,7 +52,7 @@
       <pubDate>Sat, 02 Sep 2017 03:36:00 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/</guid>
-      <description>&lt;p&gt;之前写了一篇&lt;a href=&#34;https://nemocdz.github.io/My-blog/post/objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/&#34;&gt;文章&lt;/a&gt;总结了OC中弱引用容器实现，在小米面试中提到其中CFFoundation的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现Weak特质，也就是没有在销毁后置nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。&lt;/p&gt;
+      <description>&lt;p&gt;之前写了一篇&lt;a href=&#34;https://nemocdz.github.io/post/objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/&#34;&gt;文章&lt;/a&gt;总结了OC中弱引用容器实现，在小米面试中提到其中CFFoundation的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现Weak特质，也就是没有在销毁后置nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。&lt;/p&gt;
 
 &lt;p&gt;所以看了Runtime源码和文章后，订正弱引用容器的一些实现方法。
 &lt;/p&gt;</description>
@@ -228,7 +228,7 @@
       <pubDate>Sun, 14 May 2017 21:36:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81cell%E9%80%9A%E7%94%A8%E7%9A%84tableviewmanager/</guid>
-      <description>&lt;p&gt;在App中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态Cell构成的TableView，这些界面的特点是，Cell种类繁多，Model种类繁多，点击事件处理分散但单调（页面跳转，编辑textFiled），重复写tableViewDelegate和datasource的相关方法，但不会用到一些奇怪的datasource和delegate方法，而且显示内容一般是固定的，每个页面Cell的数量不会很多。像笔者所在的项目里的侧边栏模块，里面有很多tableView，由于没有使用StoryBoard且很久之前写的，充斥着各种if&amp;hellip;else if用model的某个key值进行判断的逻辑去让cell去显示和隐藏某些视图，已经进行点击跳转逻辑，更有甚者，有&lt;code&gt;if (indexPath == 0)&lt;/code&gt;之类的通过行数判断去处理的逻辑。增加新的cell时，便要在各种地方再加上else if的新判断，而做新界面时，也没有很好的方法进行复用。笔者结合之前&lt;a href=&#34;https://nemocdz.github.io/My-blog/post/tableview%E5%92%8Ccollectionview%E9%80%9A%E7%94%A8datasource%E5%92%8Ccell/&#34;&gt;文章&lt;/a&gt;进行进一步思考，抽象出一个适合这种特点tableView的管理类，记录一下思路供参考。&lt;/p&gt;
+      <description>&lt;p&gt;在App中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态Cell构成的TableView，这些界面的特点是，Cell种类繁多，Model种类繁多，点击事件处理分散但单调（页面跳转，编辑textFiled），重复写tableViewDelegate和datasource的相关方法，但不会用到一些奇怪的datasource和delegate方法，而且显示内容一般是固定的，每个页面Cell的数量不会很多。像笔者所在的项目里的侧边栏模块，里面有很多tableView，由于没有使用StoryBoard且很久之前写的，充斥着各种if&amp;hellip;else if用model的某个key值进行判断的逻辑去让cell去显示和隐藏某些视图，已经进行点击跳转逻辑，更有甚者，有&lt;code&gt;if (indexPath == 0)&lt;/code&gt;之类的通过行数判断去处理的逻辑。增加新的cell时，便要在各种地方再加上else if的新判断，而做新界面时，也没有很好的方法进行复用。笔者结合之前&lt;a href=&#34;https://nemocdz.github.io/post/tableview%E5%92%8Ccollectionview%E9%80%9A%E7%94%A8datasource%E5%92%8Ccell/&#34;&gt;文章&lt;/a&gt;进行进一步思考，抽象出一个适合这种特点tableView的管理类，记录一下思路供参考。&lt;/p&gt;
 
 &lt;p&gt;&lt;/p&gt;</description>
     </item>
@@ -239,7 +239,7 @@
       <pubDate>Sun, 14 May 2017 01:33:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/post/ios%E5%8E%9F%E7%94%9F%E4%BA%8C%E7%BB%B4%E7%A0%81%E7%95%8C%E9%9D%A2%E7%9A%84%E4%B8%80%E4%BA%9B%E6%B3%A8%E6%84%8F%E7%82%B9/</guid>
-      <description>&lt;p&gt;之前的&lt;a href=&#34;https://nemocdz.github.io/My-blog/post/ios%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/&#34;&gt;文章&lt;/a&gt;是在ViewController里实现了原生二维码扫描的功能，后来觉得VC太重了，便把功能抽成了一个View，在抽象的过程中也仔细捉摸了一些没有仔细思考过的问题，特此记录下来。&lt;/p&gt;
+      <description>&lt;p&gt;之前的&lt;a href=&#34;https://nemocdz.github.io/post/ios%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/&#34;&gt;文章&lt;/a&gt;是在ViewController里实现了原生二维码扫描的功能，后来觉得VC太重了，便把功能抽成了一个View，在抽象的过程中也仔细捉摸了一些没有仔细思考过的问题，特此记录下来。&lt;/p&gt;
 
 &lt;p&gt;&lt;/p&gt;</description>
     </item>
@@ -272,7 +272,7 @@
       <pubDate>Wed, 29 Mar 2017 01:33:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A4%9A%E5%88%97%E8%81%94%E5%8A%A8%E7%9A%84pickerview/</guid>
-      <description>&lt;p&gt;去年年底写了一个自定义的PickerView，&lt;a href=&#34;https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89pickerview/&#34;&gt;文章&lt;/a&gt;在这里。当时对Block和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的Picker，前几天还看到评论有人给我提了些建议，便花了一天时间做了些升级，做了多列联动的实现。多列联动的Picker很常见，比如用在地址选择，如省-市-区中。网上搜索的例子要不是只写死指定的列数，要不然就是指定数据格式严格而复杂。我的强迫症又犯了，要写，就写一个，简单而且，能无限列联动的。&lt;/p&gt;</description>
+      <description>&lt;p&gt;去年年底写了一个自定义的PickerView，&lt;a href=&#34;https://nemocdz.github.io/post/ios%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89pickerview/&#34;&gt;文章&lt;/a&gt;在这里。当时对Block和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的Picker，前几天还看到评论有人给我提了些建议，便花了一天时间做了些升级，做了多列联动的实现。多列联动的Picker很常见，比如用在地址选择，如省-市-区中。网上搜索的例子要不是只写死指定的列数，要不然就是指定数据格式严格而复杂。我的强迫症又犯了，要写，就写一个，简单而且，能无限列联动的。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -310,7 +310,7 @@
       <pubDate>Wed, 14 Dec 2016 23:05:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/post/ios%E4%B8%AD%E6%9D%83%E9%99%90%E5%B0%81%E8%A3%85%E5%B0%8Ftips%E5%92%8C%E7%9B%91%E6%B5%8B%E7%9B%B8%E5%86%8C%E5%8F%98%E5%8C%96/</guid>
-      <description>&lt;p&gt;之前写了一个仿Snapseed的ImagePicker，见&lt;a href=&#34;https://github.com/Nemocdz/CDZImagePickerDemo&#34;&gt;Demo&lt;/a&gt;和之前的&lt;a href=&#34;https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BFsnapseed%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/&#34;&gt;文章&lt;/a&gt;。&lt;/p&gt;
+      <description>&lt;p&gt;之前写了一个仿Snapseed的ImagePicker，见&lt;a href=&#34;https://github.com/Nemocdz/CDZImagePickerDemo&#34;&gt;Demo&lt;/a&gt;和之前的&lt;a href=&#34;https://nemocdz.github.io/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BFsnapseed%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/&#34;&gt;文章&lt;/a&gt;。&lt;/p&gt;
 
 &lt;p&gt;之后发现有人说第一次未授权时collectionview会加载不出照片，发现没有在合适时候调用权限管理。iOS10的这个权限管理是info.plist的一个键值，没有回调方法。查询photoskit方法里，发现有一个权限回调方法，就想封装一个方法来友好的询问用户权限。&lt;/p&gt;
 
