@@ -202,7 +202,7 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">把setState整明白</h1>
-      <p class="post-meta">@Nemocdz · Aug 6, 2018 · 4 min read</p>
+      <p class="post-meta">@Nemocdz · Aug 6, 2018 · 5 min read</p>
     </header>
     <article class="post-content"><p>加入新团队后，团队项目使用了React Native。刚开始接触React Native，除了学习React Native的使用，更要了解React.js这个框架，才能更好的使用。而React框架中，笔者一开始就感觉奇妙的，就是这个看似同步，表现却不一定是同步的setState方法。看了网上一些文章，结论似乎都是从某几篇博客相互借鉴的结论，但里面笔者还是觉得有一些不太明白的地方，幸亏<a href="https://github.com/facebook/react">React.js源码</a>是开源的。顺着源码看下去，一些困惑的问题终于有些眉目。</p>
 
@@ -498,14 +498,53 @@
     <span class="kd">var</span> <span class="nx">shouldUpdate</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         
     <span class="k">if</span> <span class="p">(</span><span class="nx">shouldUpdate</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">//...
-</span><span class="c1"></span>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    	<span class="k">this</span><span class="p">.</span><span class="nx">_pendingForceUpdate</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+      	<span class="c1">// Will set `this.props`, `this.state` and `this.context`.
+</span><span class="c1"></span>        <span class="c1">// 这里才正式更新state
+</span><span class="c1"></span>      	<span class="k">this</span><span class="p">.</span><span class="nx">_performComponentUpdate</span><span class="p">(</span>
+        	<span class="nx">nextParentElement</span><span class="p">,</span>
+        	<span class="nx">nextProps</span><span class="p">,</span>
+        	<span class="nx">nextState</span><span class="p">,</span>
+        	<span class="nx">nextContext</span><span class="p">,</span>
+        	<span class="nx">transaction</span><span class="p">,</span>
+        	<span class="nx">nextUnmaskedContext</span><span class="p">,</span>
+      	<span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
       <span class="c1">// 这里才正式更新state
 </span><span class="c1"></span>      <span class="c1">//...
 </span><span class="c1"></span>      <span class="nx">inst</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">nextState</span><span class="p">;</span>
       <span class="c1">//...
 </span><span class="c1"></span>    <span class="p">}</span>
 <span class="p">}</span>
+
+<span class="nx">_performComponentUpdate</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span>
+    <span class="nx">nextElement</span><span class="p">,</span>
+    <span class="nx">nextProps</span><span class="p">,</span>
+    <span class="nx">nextState</span><span class="p">,</span>
+    <span class="nx">nextContext</span><span class="p">,</span>
+    <span class="nx">transaction</span><span class="p">,</span>
+    <span class="nx">unmaskedContext</span><span class="p">,</span>
+  <span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_instance</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">hasComponentDidUpdate</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">inst</span><span class="p">.</span><span class="nx">componentDidUpdate</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">prevProps</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">prevState</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">hasComponentDidUpdate</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">prevProps</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+      <span class="nx">prevState</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">state</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// ...
+</span><span class="c1"></span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_currentElement</span> <span class="o">=</span> <span class="nx">nextElement</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_context</span> <span class="o">=</span> <span class="nx">unmaskedContext</span><span class="p">;</span>
+    <span class="nx">inst</span><span class="p">.</span><span class="nx">props</span> <span class="o">=</span> <span class="nx">nextProps</span><span class="p">;</span>
+    <span class="nx">inst</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">nextState</span><span class="p">;</span>
+    <span class="nx">inst</span><span class="p">.</span><span class="nx">context</span> <span class="o">=</span> <span class="nx">nextContext</span><span class="p">;</span>
+
+    <span class="c1">// ...
+</span><span class="c1"></span><span class="p">},</span>
 </code></pre></div>
 <p>这个方法也解释了为什么传入函数的state会更新。</p>
 <div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">_processPendingState</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">props</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
