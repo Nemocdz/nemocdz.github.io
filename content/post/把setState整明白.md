@@ -343,7 +343,17 @@ updateComponent: function(
     var shouldUpdate = true;
         
     if (shouldUpdate) {
-    //...
+    	this._pendingForceUpdate = false;
+      	// Will set `this.props`, `this.state` and `this.context`.
+        // 这里才正式更新state
+      	this._performComponentUpdate(
+        	nextParentElement,
+        	nextProps,
+        	nextState,
+        	nextContext,
+        	transaction,
+        	nextUnmaskedContext,
+      	);
     } else {
       // 这里才正式更新state
       //...
@@ -351,6 +361,35 @@ updateComponent: function(
       //...
     }
 }
+
+_performComponentUpdate: function(
+    nextElement,
+    nextProps,
+    nextState,
+    nextContext,
+    transaction,
+    unmaskedContext,
+  ) {
+    var inst = this._instance;
+
+    var hasComponentDidUpdate = !!inst.componentDidUpdate;
+    var prevProps;
+    var prevState;
+    if (hasComponentDidUpdate) {
+      prevProps = inst.props;
+      prevState = inst.state;
+    }
+
+    // ...
+
+    this._currentElement = nextElement;
+    this._context = unmaskedContext;
+    inst.props = nextProps;
+    inst.state = nextState;
+    inst.context = nextContext;
+
+    // ...
+},
 ```
 
 这个方法也解释了为什么传入函数的state会更新。
