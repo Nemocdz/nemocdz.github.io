@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>iOS设置代理（Proxy）方案总结</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Nemocdz" />
+  <meta name="description" content="最近因为项目需要，需要在打开某个网址时设置HTTP代理。所以做了相关的技术方案调研，并总结下来。
+在WebView设置Proxy的方式，就是对请求进行拦截并重新处理。还有一种全局的实现方案，使用iOS9以后才有的NetworkExtension，但是这种方案会在用户看来像是个微皮恩的App，不友好且太重了。
+使用URLProtocol 1. 自定义URLProtocol URLProtocol是拦截可以拦截网络请求的抽象类，实际使用时需要自定义其子类使用。
+使用时，需要将子类URLProtocol的类型进行注册。
+static var isRegistered = false class func start() { guard isRegistered == false else { return } URLProtocol.registerClass(self) isRegistered = true } 核心是重写几个方法
+/// 这个方法用来对请求进行处理，比如加上头，不处理直接返回就行 override class func canonicalRequest(for request: URLRequest) -&amp;gt; URLRequest { return request } static let customKey = &amp;#34;HttpProxyProtocolKey&amp;#34; /// 判断是否需要处理，对处理过请求打上唯一标识符customKey的属性，避免循环处理 override class func canInit(with request: URLRequest) -&amp;gt; Bool { guard let url = request.url else { return false } guard let scheme = url." />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@Nemocdz" />
+    <meta name="twitter:title" content="iOS设置代理（Proxy）方案总结" />
+    <meta name="twitter:description" content="最近因为项目需要，需要在打开某个网址时设置HTTP代理。所以做了相关的技术方案调研，并总结下来。
+在WebView设置Proxy的方式，就是对请求进行拦截并重新处理。还有一种全局的实现方案，使用iOS9以后才有的NetworkExtension，但是这种方案会在用户看来像是个微皮恩的App，不友好且太重了。
+使用URLProtocol 1. 自定义URLProtocol URLProtocol是拦截可以拦截网络请求的抽象类，实际使用时需要自定义其子类使用。
+使用时，需要将子类URLProtocol的类型进行注册。
+static var isRegistered = false class func start() { guard isRegistered == false else { return } URLProtocol.registerClass(self) isRegistered = true } 核心是重写几个方法
+/// 这个方法用来对请求进行处理，比如加上头，不处理直接返回就行 override class func canonicalRequest(for request: URLRequest) -&amp;gt; URLRequest { return request } static let customKey = &amp;#34;HttpProxyProtocolKey&amp;#34; /// 判断是否需要处理，对处理过请求打上唯一标识符customKey的属性，避免循环处理 override class func canInit(with request: URLRequest) -&amp;gt; Bool { guard let url = request.url else { return false } guard let scheme = url." />
+    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.46" />
+
+
+<link rel="canonical" href="https://nemocdz.github.io/post/ios%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86proxy%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/" />
+<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
+<meta name="baidu-site-verification" content="iVpH4VhHBT" />
+<meta name="sogou_site_verification" content="YPqjjJgiSh" />
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+
+<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  
+  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  
+  <p class="subtitle">iOS&amp;Android Dev</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+      
+        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+      <li class="social-item">
+        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
+      </li>
+
+      
+      <li class="social-item">
+        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
+      </li>
+
+      
+
+      <li class="social-item">
+        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">iOS设置代理（Proxy）方案总结</h1>
+      <p class="post-meta">@Nemocdz · Sep 26, 2018 · 5 min read</p>
+    </header>
+    <article class="post-content">
+
+<p>最近因为项目需要，需要在打开某个网址时设置HTTP代理。所以做了相关的技术方案调研，并总结下来。</p>
+
+<p>在WebView设置Proxy的方式，就是对请求进行拦截并重新处理。还有一种全局的实现方案，使用iOS9以后才有的NetworkExtension，但是这种方案会在用户看来像是个微皮恩的App，不友好且太重了。</p>
+
+<h3 id="使用urlprotocol">使用URLProtocol</h3>
+
+<h4 id="1-自定义urlprotocol">1. 自定义URLProtocol</h4>
+
+<p>URLProtocol是拦截可以拦截网络请求的抽象类，实际使用时需要自定义其子类使用。</p>
+
+<p>使用时，需要将子类URLProtocol的类型进行注册。</p>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">static</span> <span class="kd">var</span> <span class="nv">isRegistered</span> <span class="p">=</span> <span class="kc">false</span>
+
+<span class="kd">class</span> <span class="nc">func</span> <span class="n">start</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">guard</span> <span class="n">isRegistered</span> <span class="p">==</span> <span class="kc">false</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">return</span>
+     <span class="p">}</span>
+     <span class="n">URLProtocol</span><span class="p">.</span><span class="n">registerClass</span><span class="p">(</span><span class="kc">self</span><span class="p">)</span>
+     <span class="n">isRegistered</span> <span class="p">=</span> <span class="kc">true</span>
+ <span class="p">}</span></code></pre></div>
+<p>核心是重写几个方法</p>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="c1">/// 这个方法用来对请求进行处理，比如加上头，不处理直接返回就行</span>
+<span class="kr">override</span> <span class="kd">class</span> <span class="nc">func</span> <span class="n">canonicalRequest</span><span class="p">(</span><span class="k">for</span> <span class="n">request</span><span class="p">:</span> <span class="n">URLRequest</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">URLRequest</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="n">request</span>
+<span class="p">}</span>
+
+
+<span class="kd">static</span> <span class="kd">let</span> <span class="nv">customKey</span> <span class="p">=</span> <span class="s">&#34;HttpProxyProtocolKey&#34;</span>
+
+<span class="c1">/// 判断是否需要处理，对处理过请求打上唯一标识符customKey的属性，避免循环处理</span>
+<span class="kr">override</span> <span class="kd">class</span> <span class="nc">func</span> <span class="n">canInit</span><span class="p">(</span><span class="n">with</span> <span class="n">request</span><span class="p">:</span> <span class="n">URLRequest</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nb">Bool</span> <span class="p">{</span>
+    <span class="k">guard</span> <span class="kd">let</span> <span class="nv">url</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">url</span> <span class="k">else</span> <span class="p">{</span>
+    	<span class="k">return</span> <span class="kc">false</span>
+    <span class="p">}</span>
+        
+    <span class="k">guard</span> <span class="kd">let</span> <span class="nv">scheme</span> <span class="p">=</span> <span class="n">url</span><span class="p">.</span><span class="n">scheme</span><span class="p">?.</span><span class="n">lowercased</span><span class="p">()</span> <span class="k">else</span> <span class="p">{</span>
+         <span class="k">return</span> <span class="kc">false</span>
+    <span class="p">}</span>
+        
+    <span class="k">guard</span> <span class="n">scheme</span> <span class="p">==</span> <span class="s">&#34;http&#34;</span><span class="p">,</span> <span class="n">scheme</span> <span class="p">==</span> <span class="s">&#34;https&#34;</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="kc">false</span>
+    <span class="p">}</span>
+        
+    <span class="k">if</span> <span class="kd">let</span> <span class="nv">_</span> <span class="p">=</span> <span class="n">URLProtocol</span><span class="p">.</span><span class="n">property</span><span class="p">(</span><span class="n">forKey</span><span class="p">:</span><span class="n">customKey</span><span class="p">,</span> <span class="k">in</span><span class="p">:</span> <span class="n">request</span><span class="p">)</span> <span class="p">{</span>
+         <span class="k">return</span> <span class="kc">false</span>
+    <span class="p">}</span>
+        
+    <span class="k">return</span> <span class="kc">true</span>
+<span class="p">}</span>
+
+<span class="kd">private</span> <span class="kd">var</span> <span class="nv">dataTask</span><span class="p">:</span><span class="n">URLSessionDataTask</span><span class="p">?</span>
+
+<span class="c1">/// 核心是在startLoading中对请求进行重发，将Proxy信息设置进URLSessionConfigration，并生成URLSession发送请求</span>
+<span class="kr">override</span> <span class="kd">func</span> <span class="nf">startLoading</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 1. 为请求打上标记</span>
+    <span class="kd">let</span> <span class="nv">newRequest</span> <span class="p">=</span> <span class="n">request</span> <span class="k">as</span><span class="o">!</span> <span class="n">NSMutableURLRequest</span>
+    <span class="n">URLProtocol</span><span class="p">.</span><span class="n">setProperty</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="n">forKey</span><span class="p">:</span> <span class="n">type</span><span class="p">(</span><span class="n">of</span><span class="p">:</span> <span class="kc">self</span><span class="p">).</span><span class="n">customKey</span><span class="p">,</span> <span class="k">in</span><span class="p">:</span> <span class="n">newRequest</span><span class="p">)</span>
+        
+    <span class="c1">// 2. 设置Proxy配置</span>
+    <span class="kd">let</span> <span class="nv">proxy_server</span> <span class="p">=</span> <span class="s">&#34;YourProxyServer&#34;</span> <span class="c1">// proxy server</span>
+    <span class="kd">let</span> <span class="nv">proxy_port</span> <span class="p">=</span> <span class="mi">1234</span> <span class="c1">// your port</span>
+    <span class="kd">let</span> <span class="nv">hostKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPProxy</span> <span class="k">as</span> <span class="nb">String</span>
+    <span class="kd">let</span> <span class="nv">portKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPPort</span> <span class="k">as</span> <span class="nb">String</span>
+    <span class="kd">let</span> <span class="nv">proxyDict</span><span class="p">:[</span><span class="nb">String</span><span class="p">:</span><span class="nb">Any</span><span class="p">]</span> <span class="p">=</span> <span class="p">[</span><span class="n">kCFNetworkProxiesHTTPEnable</span> <span class="k">as</span> <span class="nb">String</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="n">hostKey</span><span class="p">:</span><span class="n">proxy_server</span><span class="p">,</span> <span class="n">portKey</span><span class="p">:</span> <span class="n">proxy_port</span><span class="p">]</span>
+    <span class="kd">let</span> <span class="nv">config</span> <span class="p">=</span> <span class="n">URLSessionConfiguration</span><span class="p">.</span><span class="n">ephemeral</span>
+    <span class="n">config</span><span class="p">.</span><span class="n">connectionProxyDictionary</span> <span class="p">=</span> <span class="n">proxyDict</span>
+     
+   	 <span class="c1">// 3. 用配置生成URLSession</span>
+     <span class="kd">let</span> <span class="nv">defaultSession</span> <span class="p">=</span> <span class="n">URLSession</span><span class="p">(</span><span class="n">configuration</span><span class="p">:</span> <span class="n">config</span><span class="p">,</span> <span class="n">delegate</span><span class="p">:</span> <span class="kc">self</span><span class="p">,</span> <span class="n">delegateQueue</span><span class="p">:</span> <span class="kc">nil</span><span class="p">)</span>
+        
+     <span class="c1">// 4. 发起请求</span>
+     <span class="n">dataTask</span> <span class="p">=</span> <span class="n">defaultSession</span><span class="p">.</span><span class="n">dataTask</span><span class="p">(</span><span class="n">with</span><span class="p">:</span><span class="n">newRequest</span> <span class="k">as</span> <span class="n">URLRequest</span><span class="p">)</span>
+     <span class="n">dataTask</span><span class="o">!</span><span class="p">.</span><span class="n">resume</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="c1">/// 在stopLoading中cancel任务</span>
+<span class="kr">override</span> <span class="kd">func</span> <span class="nf">stopLoading</span><span class="p">()</span> <span class="p">{</span>
+      <span class="n">dataTask</span><span class="p">?.</span><span class="n">cancel</span><span class="p">()</span>
+<span class="p">}</span></code></pre></div>
+<p>同时，上层调用者对拦截应该是无感知的。当这个网络请求被 URLProtocol 拦截，需要保证上层实现的网络相关回调或block都能被调用。解决这个问题，苹果定义了 NSURLProtocolClient 协议，协议方法覆盖了网络请求完整的生命周期。在拦截之后重发的请求的各阶段适时，完整地调用了协议中的方法，上层调用者的回调或者 block 都会在正确的时机被执行。</p>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">extension</span> <span class="nc">HttpProxyProtocol</span><span class="p">:</span> <span class="n">URLSessionDataDelegate</span><span class="p">{</span>
+    <span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="kc">_</span> <span class="n">session</span><span class="p">:</span> <span class="n">URLSession</span><span class="p">,</span> <span class="n">dataTask</span><span class="p">:</span> <span class="n">URLSessionDataTask</span><span class="p">,</span>
+                    <span class="n">didReceive</span> <span class="n">response</span><span class="p">:</span> <span class="n">URLResponse</span><span class="p">,</span>
+                    <span class="n">completionHandler</span><span class="p">:</span> <span class="p">(</span><span class="n">URLSession</span><span class="p">.</span><span class="n">ResponseDisposition</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nb">Void</span><span class="p">)</span> <span class="p">{</span>
+        
+        <span class="n">client</span><span class="p">?.</span><span class="n">urlProtocol</span><span class="p">(</span><span class="kc">self</span><span class="p">,</span> <span class="n">didReceive</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span> <span class="n">cacheStoragePolicy</span><span class="p">:</span> <span class="p">.</span><span class="n">notAllowed</span><span class="p">)</span>
+        <span class="n">completionHandler</span><span class="p">(.</span><span class="n">allow</span><span class="p">)</span>
+    <span class="p">}</span>
+    
+    <span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="kc">_</span> <span class="n">session</span><span class="p">:</span> <span class="n">URLSession</span><span class="p">,</span> <span class="n">dataTask</span><span class="p">:</span> <span class="n">URLSessionDataTask</span><span class="p">,</span> <span class="n">didReceive</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">client</span><span class="p">?.</span><span class="n">urlProtocol</span><span class="p">(</span><span class="kc">self</span><span class="p">,</span> <span class="n">didLoad</span><span class="p">:</span> <span class="n">data</span> <span class="k">as</span> <span class="n">Data</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">extension</span> <span class="nc">HttpProxyProtocol</span><span class="p">:</span> <span class="n">URLSessionTaskDelegate</span><span class="p">{</span>
+    <span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="kc">_</span> <span class="n">session</span><span class="p">:</span> <span class="n">URLSession</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">URLSessionTask</span><span class="p">,</span> <span class="n">didCompleteWithError</span> <span class="n">error</span><span class="p">:</span> <span class="n">Error</span><span class="p">?)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="n">error</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">&amp;&amp;</span> <span class="n">error</span><span class="o">!</span><span class="p">.</span><span class="n">_code</span> <span class="o">!=</span> <span class="n">NSURLErrorCancelled</span> <span class="p">{</span>
+            <span class="n">client</span><span class="p">?.</span><span class="n">urlProtocol</span><span class="p">(</span><span class="kc">self</span><span class="p">,</span> <span class="n">didFailWithError</span><span class="p">:</span> <span class="n">error</span><span class="o">!</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">client</span><span class="p">?.</span><span class="n">urlProtocolDidFinishLoading</span><span class="p">(</span><span class="kc">self</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>到此完整的URLProtocol定义完了。但是里面有一点不好的地方是，每次发送一个请求时就会新建一个URLSession，非常低效。苹果也不推荐这种做法，而且某些情况下由于请求未完全发送完还有可能造成内存泄露等问题。因此，我们需要共享一个Session，并仅在代理的Host或者Port发生改变时，才重新生成新的实例。笔者模仿iOS上网络框架<a href="https://github.com/Alamofire/Alamofire/">Alamofire</a>的做法，简单写了一个SessionManager进行管理。</p>
+
+<h4 id="2-自定义urlsessionmanager">2. 自定义URLSessionManager</h4>
+
+<p>主要分两个类</p>
+
+<ul>
+<li>ProxySessionManager，负责持有URLSession，对Session是否需要重新生成或者共享进行管理</li>
+<li>ProxySessionDelegate，和URLSession一一对应。将URLSession的Delegate分发到对应的Task的Delegate，维护Task的对应Delegate</li>
+</ul>
+
+<p>ProxySessionManager主要就是对外提供接口，对外层隐藏细节，将Delegate和Task生成配置好。</p>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">class</span> <span class="nc">ProxySessionManager</span><span class="p">:</span> <span class="n">NSObject</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nv">host</span> <span class="p">=</span> <span class="s">&#34;&#34;</span>
+    <span class="kd">var</span> <span class="nv">port</span> <span class="p">=</span> <span class="mi">0</span>
+    
+    <span class="kd">static</span> <span class="kd">let</span> <span class="nv">shared</span> <span class="p">=</span> <span class="n">ProxySessionManager</span><span class="p">()</span>
+    <span class="kd">private</span> <span class="kr">override</span> <span class="kd">init</span><span class="p">()</span> <span class="p">{}</span>
+    
+    <span class="kd">private</span> <span class="kd">var</span> <span class="nv">currentSession</span><span class="p">:</span> <span class="n">URLSession</span><span class="p">?</span>
+    <span class="kd">private</span> <span class="kd">var</span> <span class="nv">sessionDelegate</span><span class="p">:</span> <span class="n">ProxySessionDelegate</span><span class="p">?</span>
+    
+    <span class="kd">func</span> <span class="nf">dataTask</span><span class="p">(</span><span class="n">with</span> <span class="n">request</span><span class="p">:</span> <span class="n">URLRequest</span><span class="p">,</span> <span class="n">delegate</span><span class="p">:</span> <span class="n">URLSessionDelegate</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">URLSessionDataTask</span> <span class="p">{</span>
+        <span class="c1">/// 判断是否需要生成新的Session</span>
+        <span class="k">if</span> <span class="kd">let</span> <span class="nv">currentSession</span> <span class="p">=</span> <span class="n">currentSession</span><span class="p">,</span> <span class="n">currentSession</span><span class="p">.</span><span class="n">isProxyConfig</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">){</span>
+            
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nv">config</span> <span class="p">=</span> <span class="n">URLSessionConfiguration</span><span class="p">.</span><span class="n">proxyConfig</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+            <span class="n">sessionDelegate</span> <span class="p">=</span> <span class="n">ProxySessionDelegate</span><span class="p">()</span>
+            <span class="n">currentSession</span> <span class="p">=</span> <span class="n">URLSession</span><span class="p">(</span><span class="n">configuration</span><span class="p">:</span> <span class="n">config</span><span class="p">,</span> <span class="n">delegate</span><span class="p">:</span> <span class="kc">self</span><span class="p">.</span><span class="n">sessionDelegate</span><span class="p">,</span> <span class="n">delegateQueue</span><span class="p">:</span> <span class="kc">nil</span><span class="p">)</span>
+        <span class="p">}</span>
+        
+        <span class="kd">let</span> <span class="nv">dataTask</span> <span class="p">=</span> <span class="n">currentSession</span><span class="o">!</span><span class="p">.</span><span class="n">dataTask</span><span class="p">(</span><span class="n">with</span><span class="p">:</span> <span class="n">request</span><span class="p">)</span>
+        <span class="c1">/// 保存Task对应的Delegate</span>
+        <span class="n">sessionDelegate</span><span class="p">?[</span><span class="n">dataTask</span><span class="p">]</span> <span class="p">=</span> <span class="n">delegate</span>
+        <span class="k">return</span> <span class="n">dataTask</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">extension</span> <span class="nc">URLSessionConfiguration</span><span class="p">{</span>
+    <span class="kd">class</span> <span class="nc">func</span> <span class="n">proxyConfig</span><span class="p">(</span><span class="kc">_</span> <span class="n">host</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span> <span class="kc">_</span> <span class="n">port</span><span class="p">:</span> <span class="nb">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">URLSessionConfiguration</span><span class="p">{</span>
+        <span class="kd">let</span> <span class="nv">config</span> <span class="p">=</span> <span class="n">URLSessionConfiguration</span><span class="p">.</span><span class="n">ephemeral</span>
+        <span class="k">if</span> <span class="o">!</span><span class="n">host</span><span class="p">.</span><span class="bp">isEmpty</span><span class="p">,</span> <span class="n">port</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">{</span>
+            <span class="kd">let</span> <span class="nv">httpProxyKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPEnable</span> <span class="k">as</span> <span class="nb">String</span>
+            <span class="kd">let</span> <span class="nv">hostKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPProxy</span> <span class="k">as</span> <span class="nb">String</span>
+            <span class="kd">let</span> <span class="nv">portKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPPort</span> <span class="k">as</span> <span class="nb">String</span>
+            <span class="kd">let</span> <span class="nv">proxyDict</span><span class="p">:[</span><span class="nb">String</span><span class="p">:</span><span class="nb">Any</span><span class="p">]</span> <span class="p">=</span> <span class="p">[</span><span class="n">httpProxyKey</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span><span class="n">hostKey</span><span class="p">:</span> <span class="n">host</span><span class="p">,</span> <span class="n">portKey</span><span class="p">:</span> <span class="n">port</span><span class="p">]</span>
+            <span class="n">config</span><span class="p">.</span><span class="n">connectionProxyDictionary</span> <span class="p">=</span> <span class="n">proxyDict</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">config</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">extension</span> <span class="nc">URLSession</span><span class="p">{</span>
+    <span class="kd">func</span> <span class="nf">isProxyConfig</span><span class="p">(</span><span class="kc">_</span> <span class="n">aHost</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span> <span class="kc">_</span> <span class="n">aPort</span><span class="p">:</span> <span class="nb">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nb">Bool</span><span class="p">{</span>
+        <span class="k">guard</span> <span class="kd">let</span> <span class="nv">proxyDic</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="n">configuration</span><span class="p">.</span><span class="n">connectionProxyDictionary</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">false</span>
+        <span class="p">}</span>
+        <span class="kd">let</span> <span class="nv">hostKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPProxy</span> <span class="k">as</span> <span class="nb">String</span>
+        <span class="kd">let</span> <span class="nv">portKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPPort</span> <span class="k">as</span> <span class="nb">String</span>
+        <span class="k">guard</span> <span class="kd">let</span> <span class="nv">host</span> <span class="p">=</span> <span class="n">proxyDic</span><span class="p">[</span><span class="n">hostKey</span><span class="p">]</span> <span class="k">as</span><span class="p">?</span> <span class="nb">String</span><span class="p">,</span> <span class="kd">let</span> <span class="nv">port</span> <span class="p">=</span> <span class="n">proxyDic</span><span class="p">[</span><span class="n">portKey</span><span class="p">]</span> <span class="k">as</span><span class="p">?</span> <span class="nb">Int</span> <span class="k">else</span><span class="p">{</span>
+            <span class="k">if</span> <span class="n">aHost</span><span class="p">.</span><span class="bp">isEmpty</span><span class="p">,</span> <span class="n">aPort</span> <span class="p">==</span> <span class="mi">0</span><span class="p">{</span>
+                <span class="k">return</span> <span class="kc">true</span>
+            <span class="p">}</span> <span class="k">else</span><span class="p">{</span>
+                <span class="k">return</span> <span class="kc">false</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        
+        <span class="k">guard</span> <span class="n">host</span> <span class="p">==</span> <span class="n">aHost</span><span class="p">,</span> <span class="n">port</span> <span class="p">==</span> <span class="n">aPort</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">false</span>
+        <span class="p">}</span>
+        
+        <span class="k">return</span> <span class="kc">true</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>ProxySessionDelegate，主要做的是将Delegate分发到每个Task的Delegate，并存储TaskIdentifer对应的Delegate，内部实际使用Key-Value结构的字典储存，在设置和取值时加锁，避免回调错误。</p>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="n">fileprivate</span> <span class="kd">class</span> <span class="nc">ProxySessionDelegate</span><span class="p">:</span> <span class="n">NSObject</span> <span class="p">{</span>
+    <span class="kd">private</span> <span class="kd">let</span> <span class="nv">lock</span> <span class="p">=</span> <span class="n">NSLock</span><span class="p">()</span>
+    <span class="kd">var</span> <span class="nv">taskDelegates</span> <span class="p">=</span> <span class="p">[</span><span class="nb">Int</span><span class="p">:</span> <span class="n">URLSessionDelegate</span><span class="p">]()</span>
+    <span class="c1">/// 借鉴Alamofire，扩展下标方法</span>
+    <span class="kd">subscript</span><span class="p">(</span><span class="n">task</span><span class="p">:</span> <span class="n">URLSessionTask</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">URLSessionDelegate</span><span class="p">?</span> <span class="p">{</span>
+        <span class="kr">get</span> <span class="p">{</span>
+            <span class="n">lock</span><span class="p">.</span><span class="n">lock</span><span class="p">()</span>
+            <span class="k">defer</span> <span class="p">{</span>
+                <span class="n">lock</span><span class="p">.</span><span class="n">unlock</span><span class="p">()</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="n">taskDelegates</span><span class="p">[</span><span class="n">task</span><span class="p">.</span><span class="n">taskIdentifier</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="kr">set</span> <span class="p">{</span>
+            <span class="n">lock</span><span class="p">.</span><span class="n">lock</span><span class="p">()</span>
+            <span class="k">defer</span> <span class="p">{</span>
+                <span class="n">lock</span><span class="p">.</span><span class="n">unlock</span><span class="p">()</span>
+            <span class="p">}</span>
+            <span class="n">taskDelegates</span><span class="p">[</span><span class="n">task</span><span class="p">.</span><span class="n">taskIdentifier</span><span class="p">]</span> <span class="p">=</span> <span class="n">newValue</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 对回调进行分发</span>
+<span class="kd">extension</span> <span class="nc">ProxySessionDelegate</span><span class="p">:</span> <span class="n">URLSessionDataDelegate</span><span class="p">{</span>
+    <span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="kc">_</span> <span class="n">session</span><span class="p">:</span> <span class="n">URLSession</span><span class="p">,</span> <span class="n">dataTask</span><span class="p">:</span> <span class="n">URLSessionDataTask</span><span class="p">,</span>
+                    <span class="n">didReceive</span> <span class="n">response</span><span class="p">:</span> <span class="n">URLResponse</span><span class="p">,</span>
+                    <span class="n">completionHandler</span><span class="p">:</span> <span class="p">@</span><span class="n">escaping</span> <span class="p">(</span><span class="n">URLSession</span><span class="p">.</span><span class="n">ResponseDisposition</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nb">Void</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="kd">let</span> <span class="nv">delegate</span> <span class="p">=</span> <span class="kc">self</span><span class="p">[</span><span class="n">dataTask</span><span class="p">]</span> <span class="k">as</span><span class="p">?</span> <span class="n">URLSessionDataDelegate</span><span class="p">{</span>
+            <span class="n">delegate</span><span class="p">.</span><span class="n">urlSession</span><span class="o">!</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">dataTask</span><span class="p">:</span> <span class="n">dataTask</span><span class="p">,</span> <span class="n">didReceive</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span> <span class="n">completionHandler</span><span class="p">:</span> <span class="n">completionHandler</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">completionHandler</span><span class="p">(.</span><span class="n">cancel</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    
+    <span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="kc">_</span> <span class="n">session</span><span class="p">:</span> <span class="n">URLSession</span><span class="p">,</span> <span class="n">dataTask</span><span class="p">:</span> <span class="n">URLSessionDataTask</span><span class="p">,</span> <span class="n">didReceive</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="kd">let</span> <span class="nv">delegate</span> <span class="p">=</span> <span class="kc">self</span><span class="p">[</span><span class="n">dataTask</span><span class="p">]</span> <span class="k">as</span><span class="p">?</span> <span class="n">URLSessionDataDelegate</span><span class="p">{</span>
+            <span class="n">delegate</span><span class="p">.</span><span class="n">urlSession</span><span class="o">!</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">dataTask</span><span class="p">:</span> <span class="n">dataTask</span><span class="p">,</span> <span class="n">didReceive</span><span class="p">:</span> <span class="n">data</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">extension</span> <span class="nc">ProxySessionDelegate</span><span class="p">:</span> <span class="n">URLSessionTaskDelegate</span><span class="p">{</span>
+    <span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="kc">_</span> <span class="n">session</span><span class="p">:</span> <span class="n">URLSession</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">URLSessionTask</span><span class="p">,</span> <span class="n">didCompleteWithError</span> <span class="n">error</span><span class="p">:</span> <span class="n">Error</span><span class="p">?)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="kd">let</span> <span class="nv">delegate</span> <span class="p">=</span> <span class="kc">self</span><span class="p">[</span><span class="n">task</span><span class="p">]</span> <span class="k">as</span><span class="p">?</span> <span class="n">URLSessionTaskDelegate</span><span class="p">{</span>
+            <span class="n">delegate</span><span class="p">.</span><span class="n">urlSession</span><span class="o">!</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">task</span><span class="p">,</span> <span class="n">didCompleteWithError</span><span class="p">:</span> <span class="n">error</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="kc">self</span><span class="p">[</span><span class="n">task</span><span class="p">]</span> <span class="p">=</span> <span class="kc">nil</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>这样，只要调用ProxySessionManager或者直接使用Alamofire进行网络请求，就可以做到URLSession尽量少创建了。苹果官方也有一个<a href="https://developer.apple.com/library/archive/samplecode/CustomHTTPProtocol/Introduction/Intro.html">SampleProject</a>讲自定义URLProtocol，做法也是用类似用一个单例进行管理。</p>
+
+<h4 id="3-wkwebview的特别处理">3. WKWebView的特别处理</h4>
+
+<p>和UIWebView不一样，WKWebView中的http&amp;https的Scheme默认不走URLPrococol。需要让WKWebView支持NSURLProtocol的话，需要调用苹果私用方法，让WKWebview放行http&amp;https的Scheme。</p>
+
+<p>通过Webkit的源码发现，需要调用的私有方法如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">[</span><span class="n">WKBrowsingContextController</span> <span class="nl">registerSchemeForCustomProtocol</span><span class="p">:</span><span class="s">&#34;http&#34;</span><span class="p">];</span>
+<span class="p">[</span><span class="n">WKBrowsingContextController</span> <span class="nl">registerSchemeForCustomProtocol</span><span class="p">:</span><span class="s">&#34;https&#34;</span><span class="p">];</span></code></pre></div>
+<p>而使用的话需要使用反射进行调用</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="kt">Class</span> <span class="n">cls</span> <span class="o">=</span> <span class="n">NSClassFromString</span><span class="p">(</span><span class="s">@&#34;WKBrowsingContextController&#34;</span><span class="p">);</span>
+<span class="kt">SEL</span> <span class="n">sel</span> <span class="o">=</span> <span class="n">NSSelectorFromString</span><span class="p">(</span><span class="s">@&#34;registerSchemeForCustomProtocol:&#34;</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">([(</span><span class="kt">id</span><span class="p">)</span><span class="n">cls</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="n">sel</span><span class="p">])</span> <span class="p">{</span>
+    <span class="c1">// 把 http 和 https 请求交给 NSURLProtocol 处理
+</span><span class="c1"></span>    <span class="p">[(</span><span class="kt">id</span><span class="p">)</span><span class="n">cls</span> <span class="nl">performSelector</span><span class="p">:</span><span class="n">sel</span> <span class="nl">withObject</span><span class="p">:</span><span class="s">@&#34;http&#34;</span><span class="p">];</span>
+    <span class="p">[(</span><span class="kt">id</span><span class="p">)</span><span class="n">cls</span> <span class="nl">performSelector</span><span class="p">:</span><span class="n">sel</span> <span class="nl">withObject</span><span class="p">:</span><span class="s">@&#34;https&#34;</span><span class="p">];</span>
+<span class="p">}</span></code></pre></div>
+<p>其中需要绕过审核检查主要是类名WKBrowsingContextController，除了可以对字符串进行加密或者拆分外，由于在iOS8.4以上，可使用WKWebview的私有方法browsingContextController取到该类型的实例。</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="kt">Class</span> <span class="n">cls</span> <span class="o">=</span> <span class="p">[[[</span><span class="n">WKWebView</span> <span class="n">new</span><span class="p">]</span> <span class="nl">valueForKey</span><span class="p">:</span><span class="s">@&#34;browsingContextController&#34;</span><span class="p">]</span> <span class="k">class</span><span class="p">];</span></code></pre></div>
+<p>然后使用上就能大大降低风险了,swift上写法如下。</p>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">let</span> <span class="nv">sel</span> <span class="p">=</span> <span class="nb">Selector</span><span class="p">((</span><span class="s">&#34;registerSchemeForCustomProtocol:&#34;</span><span class="p">))</span>
+<span class="kd">let</span> <span class="nv">vc</span> <span class="p">=</span> <span class="n">WKWebView</span><span class="p">().</span><span class="n">value</span><span class="p">(</span><span class="n">forKey</span><span class="p">:</span> <span class="s">&#34;browsingContextController&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="nb">AnyObject</span>
+<span class="kd">let</span> <span class="nv">cls</span> <span class="p">=</span> <span class="n">type</span><span class="p">(</span><span class="n">of</span><span class="p">:</span> <span class="n">vc</span><span class="p">)</span> <span class="k">as</span> <span class="nb">AnyObject</span>
+
+<span class="kd">let</span> <span class="nv">_</span> <span class="p">=</span> <span class="n">cls</span><span class="p">.</span><span class="n">perform</span><span class="p">(</span><span class="n">sel</span><span class="p">,</span> <span class="n">with</span><span class="p">:</span> <span class="s">&#34;http&#34;</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nv">_</span> <span class="p">=</span> <span class="n">cls</span><span class="p">.</span><span class="n">perform</span><span class="p">(</span><span class="n">sel</span><span class="p">,</span> <span class="n">with</span><span class="p">:</span> <span class="s">&#34;https&#34;</span><span class="p">)</span></code></pre></div>
+<p>优点：</p>
+
+<ul>
+<li>拦截能力强大</li>
+<li>同时支持UIWebView&amp;WKWebView</li>
+<li>对系统无要求</li>
+</ul>
+
+<p>缺点：</p>
+
+<ul>
+<li><p>对WKWebView支持不够友好</p>
+
+<ul>
+<li><p>审核有一定风险</p></li>
+
+<li><p>iOS8.0-8.3需要额外开发量（私有类型&amp;方法的混淆）</p></li>
+
+<li><p>Post 请求 body 数据被清空</p></li>
+
+<li><p>对ATS支持不足</p></li>
+</ul></li>
+</ul>
+
+<h3 id="使用wkweburlschemehandler">使用WKWebURLSchemeHandler</h3>
+
+<p>iOS11以上，苹果为WKWebView增加了WKURLSchemeHandler协议，可以为自定义的Scheme增加遵循WKURLSchemeHandler协议的处理。其中可以在start和stop的时机增加自己的处理。</p>
+
+<p>遵循协议中的两个方法</p>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">func</span> <span class="nf">webView</span><span class="p">(</span><span class="kc">_</span> <span class="n">webView</span><span class="p">:</span> <span class="n">WKWebView</span><span class="p">,</span> <span class="n">start</span> <span class="n">urlSchemeTask</span><span class="p">:</span> <span class="n">WKURLSchemeTask</span><span class="p">)</span> <span class="p">{</span>
+    	<span class="kd">let</span> <span class="nv">proxy_server</span> <span class="p">=</span> <span class="s">&#34;YourProxyServer&#34;</span> <span class="c1">// proxy server</span>
+        <span class="kd">let</span> <span class="nv">proxy_port</span> <span class="p">=</span> <span class="mi">1234</span> <span class="c1">// your port</span>
+        <span class="kd">let</span> <span class="nv">hostKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPProxy</span> <span class="k">as</span> <span class="nb">String</span>
+        <span class="kd">let</span> <span class="nv">portKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPPort</span> <span class="k">as</span> <span class="nb">String</span>
+        <span class="kd">let</span> <span class="nv">proxyDict</span><span class="p">:[</span><span class="nb">String</span><span class="p">:</span><span class="nb">Any</span><span class="p">]</span> <span class="p">=</span> <span class="p">[</span><span class="n">kCFNetworkProxiesHTTPEnable</span> <span class="k">as</span> <span class="nb">String</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="n">hostKey</span><span class="p">:</span><span class="n">proxy_server</span><span class="p">,</span> <span class="n">portKey</span><span class="p">:</span> <span class="n">proxy_port</span><span class="p">]</span>
+        <span class="kd">let</span> <span class="nv">config</span> <span class="p">=</span> <span class="n">URLSessionConfiguration</span><span class="p">.</span><span class="n">ephemeral</span>
+        <span class="n">config</span><span class="p">.</span><span class="n">connectionProxyDictionary</span> <span class="p">=</span> <span class="n">proxyDict</span>
+    
+        <span class="kd">let</span> <span class="nv">defaultSession</span> <span class="p">=</span> <span class="n">URLSession</span><span class="p">(</span><span class="n">configuration</span><span class="p">:</span> <span class="n">config</span><span class="p">)</span>
+        
+        <span class="n">dataTask</span> <span class="p">=</span> <span class="n">defaultSession</span><span class="p">.</span><span class="n">dataTask</span><span class="p">(</span><span class="n">with</span><span class="p">:</span> <span class="n">urlSchemeTask</span><span class="p">.</span><span class="n">request</span><span class="p">,</span> <span class="n">completionHandler</span><span class="p">:</span> <span class="p">{[</span><span class="kr">weak</span> <span class="n">urlSchemeTask</span><span class="p">]</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span> <span class="k">in</span>
+            <span class="c1">/// 回调时urlSchemeTask容易崩溃，可能苹果没有考虑会在handler里做异步操作，这里试了一下weak写法，崩溃不出现了，不确定是否为完全解决方案                                                                             </span>
+            <span class="k">guard</span> <span class="kd">let</span> <span class="nv">urlSchemeTask</span> <span class="p">=</span> <span class="n">urlSchemeTask</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span>
+            <span class="p">}</span>
+            
+            <span class="k">if</span> <span class="kd">let</span> <span class="nv">error</span> <span class="p">=</span> <span class="n">error</span> <span class="p">{</span>
+                <span class="n">urlSchemeTask</span><span class="p">.</span><span class="n">didFailWithError</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="kd">let</span> <span class="nv">response</span> <span class="p">=</span> <span class="n">response</span> <span class="p">{</span>
+                    <span class="n">urlSchemeTask</span><span class="p">.</span><span class="n">didReceive</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+                <span class="p">}</span>
+                
+                <span class="k">if</span> <span class="kd">let</span> <span class="nv">data</span> <span class="p">=</span> <span class="n">data</span> <span class="p">{</span>
+                    <span class="n">urlSchemeTask</span><span class="p">.</span><span class="n">didReceive</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="p">}</span>
+                <span class="n">urlSchemeTask</span><span class="p">.</span><span class="n">didFinish</span><span class="p">()</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+        <span class="n">dataTask</span><span class="p">?.</span><span class="n">resume</span><span class="p">()</span>
+<span class="p">}</span></code></pre></div>
+<p>当然这里URLSession的处理和URLProtocol一样，可以进行复用处理。</p>
+
+<p>然后生成WKWebviewConfiguration，并使用官方API将handler设置进去。</p>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">let</span> <span class="nv">config</span> <span class="p">=</span> <span class="n">WKWebViewConfiguration</span><span class="p">()</span>
+<span class="n">config</span><span class="p">.</span><span class="n">setURLSchemeHandler</span><span class="p">(</span><span class="n">HttpProxyHandler</span><span class="p">(),</span> <span class="n">forURLScheme</span><span class="p">:</span> <span class="s">&#34;http&#34;</span><span class="p">)</span><span class="c1">//抛出异常</span></code></pre></div>
+<p>但因为苹果的setURLSchemeHandler只能对自定义的Scheme进行设置，所以像http和https这种scheme，已经默认处理了，不能调用这个API，需要用KVC取值进行设置。</p>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">extension</span> <span class="nc">WKWebViewConfiguration</span><span class="p">{</span>
+    <span class="kd">class</span> <span class="nc">func</span> <span class="n">proxyConifg</span><span class="p">()</span> <span class="p">-&gt;</span> <span class="n">WKWebViewConfiguration</span><span class="p">{</span>
+        <span class="kd">let</span> <span class="nv">config</span> <span class="p">=</span> <span class="n">WKWebViewConfiguration</span><span class="p">()</span>
+        <span class="kd">let</span> <span class="nv">handler</span> <span class="p">=</span> <span class="n">HttpProxyHandler</span><span class="p">()</span>
+        <span class="c1">/// 先设置</span>
+        <span class="n">config</span><span class="p">.</span><span class="n">setURLSchemeHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="n">forURLScheme</span><span class="p">:</span> <span class="s">&#34;dummy&#34;</span><span class="p">)</span>
+        <span class="kd">let</span> <span class="nv">handlers</span> <span class="p">=</span> <span class="n">config</span><span class="p">.</span><span class="n">value</span><span class="p">(</span><span class="n">forKey</span><span class="p">:</span> <span class="s">&#34;_urlSchemeHandlers&#34;</span><span class="p">)</span> <span class="k">as</span><span class="o">!</span> <span class="n">NSMutableDictionary</span>
+        <span class="n">handlers</span><span class="p">[</span><span class="s">&#34;http&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="n">handler</span>
+        <span class="n">handlers</span><span class="p">[</span><span class="s">&#34;https&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="n">handler</span>
+        <span class="k">return</span> <span class="n">config</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>然后给WKWebview设置就能使用了。</p>
+
+<p>优点:</p>
+
+<ul>
+<li>苹果官方方法</li>
+<li>无审核风险</li>
+</ul>
+
+<p>缺点：</p>
+
+<ul>
+<li>仅支持iOS11以上</li>
+<li>官方不支持非自定义Scheme，非正规设置方法可能出现其他问题</li>
+</ul>
+
+<h3 id="使用networkextension">使用NetworkExtension</h3>
+
+<p>使用NetworkExtension，需要开发者额外申请权限（证书）。</p>
+
+<p>可以建立全局VPN，影响全局流量，可以获取全局Wifi列表，抓包，等和网络相关的功能。</p>
+
+<p>其中可以使用第三方库<a href="https://github.com/zhuhaow/NEKit">NEKit</a>，进行开发，已经处理了大部分坑和进行封装。</p>
+
+<p>优点：</p>
+
+<ul>
+<li>功能强大</li>
+<li>使用原生功能，无审核风险</li>
+</ul>
+
+<p>缺点：</p>
+
+<ul>
+<li>权限申请流程复杂</li>
+<li>仅支持iOS9以上（iOS8上仅支持系统自带的 IPSec 和 IKEv2 协议的 VPN）</li>
+<li>原生接口实现复杂，第三方库NEKit坑不知道有多少</li>
+</ul>
+
+<h3 id="最后">最后</h3>
+
+<p>总结了相关代码在<a href="https://github.com/Nemocdz/iOSHttpProxyDemo">Demo</a>里，可以直接使用HttpProxyProtocol，HttpProxyHandler，HttpProxySessionManager。</p>
+
+<h3 id="reference">Reference</h3>
+
+<ul>
+<li><a href="https://stackoverflow.com/questions/16847858/ios-any-body-knows-how-to-add-a-proxy-to-nsurlrequest">iOS any body knows how to add a proxy to NSURLRequest?</a></li>
+<li><a href="https://stackoverflow.com/questions/38968040/how-to-set-proxy-in-web-view-swift">How to set Proxy in web-view swift?</a></li>
+<li><a href="https://developer.apple.com/library/archive/samplecode/CustomHTTPProtocol/Introduction/Intro.html">CustomHTTPProtocol</a></li>
+
+<li><p><a href="https://juejin.im/post/594a4f0961ff4b006c131862?utm_source=weibo&amp;utm_campaign=user">NSURLProtocol对WKWebView的处理</a></p></li>
+
+<li><p><a href="https://mp.weixin.qq.com/s?__biz=MzA3NTYzODYzMg==&amp;mid=2653578513&amp;idx=1&amp;sn=961bf5394eecde40a43060550b81b0bb">WKWebView 那些坑</a></p></li>
+
+<li><p><a href="https://blog.moecoder.com/2016/10/26/support-nsurlprotocol-in-wkwebview/">让 WKWebView 支持 NSURLProtocol</a></p></li>
+
+<li><p><a href="https://github.com/zhuhaow/NEKit">NEKit</a></p></li>
+
+<li><p><a href="http://blog.w2fzu.com/2016/11/21/2016-11-12-learn-NetworkExtenison/">初探NetworkExtension</a></p></li>
+</ul>
+</article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © 2018 Nemocdz
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-nemocdz-github-io-my-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017-2018 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
+<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+
+
+
+  </body>
+</html>

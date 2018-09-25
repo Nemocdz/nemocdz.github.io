@@ -196,6 +196,24 @@
       
         <article class="post-entry">
   <header class="post-header">
+    <h3 class="post-title"><a href="https://nemocdz.github.io/post/ios%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86proxy%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/" class="post-link">iOS设置代理（Proxy）方案总结</a></h3>
+    <p class="post-meta">@Nemocdz · Sep 26, 2018 · 5 min read</p>
+  </header>
+  
+  <p class="post-summary">最近因为项目需要，需要在打开某个网址时设置HTTP代理。所以做了相关的技术方案调研，并总结下来。
+在WebView设置Proxy的方式，就是对请求进行拦截并重新处理。还有一种全局的实现方案，使用iOS9以后才有的NetworkExtension，但是这种方案会在用户看来像是个微皮恩的App，不友好且太重了。
+使用URLProtocol 1. 自定义URLProtocol URLProtocol是拦截可以拦截网络请求的抽象类，实际使用时需要自定义其子类使用。
+使用时，需要将子类URLProtocol的类型进行注册。
+static var isRegistered = false class func start() { guard isRegistered == false else { return } URLProtocol.registerClass(self) isRegistered = true } 核心是重写几个方法
+/// 这个方法用来对请求进行处理，比如加上头，不处理直接返回就行 override class func canonicalRequest(for request: URLRequest) -&gt; URLRequest { return request } static let customKey = &#34;HttpProxyProtocolKey&#34; /// 判断是否需要处理，对处理过请求打上唯一标识符customKey的属性，避免循环处理 override class func canInit(with request: URLRequest) -&gt; Bool { guard let url = request.url else { return false } guard let scheme = url.</p>
+  <footer class="post-footer">
+    <a class="read-more" href="https://nemocdz.github.io/post/ios%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86proxy%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
     <h3 class="post-title"><a href="https://nemocdz.github.io/post/%E6%8A%8Asetstate%E6%95%B4%E6%98%8E%E7%99%BD/" class="post-link">把setState整明白</a></h3>
     <p class="post-meta">@Nemocdz · Aug 6, 2018 · 5 min read</p>
   </header>
@@ -264,23 +282,6 @@
 </p>
   <footer class="post-footer">
     <a class="read-more" href="https://nemocdz.github.io/post/tcpip%E5%8D%8F%E8%AE%AE%E6%97%8F%E8%BE%B9%E5%AD%A6%E8%BE%B9%E6%83%B3/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://nemocdz.github.io/post/%E5%BE%81%E6%9C%8Dc%E6%8C%87%E9%92%88%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" class="post-link">《征服C指针》读书笔记</a></h3>
-    <p class="post-meta">@Nemocdz · Aug 21, 2017 · 1 min read</p>
-  </header>
-  
-  <p class="post-summary">用英语来解读C的声明  首先着眼于识别符（变量名或者函数名）。 从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。优先顺序说明如下：
- 用于整理声明内容的括弧 用于表示数组的[]，用于表示函数的() 用于表示指针的*  解释完成派生型，使用“of”或“to”或“returning”将它们连接起来。
- C里面不存在多维数组。
-  
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://nemocdz.github.io/post/%E5%BE%81%E6%9C%8Dc%E6%8C%87%E9%92%88%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">Read More →</a>
   </footer>
 </article>
 

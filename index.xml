@@ -26,6 +26,20 @@
     </item>
     
     <item>
+      <title>iOS设置代理（Proxy）方案总结</title>
+      <link>https://nemocdz.github.io/post/ios%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86proxy%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Wed, 26 Sep 2018 02:16:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/post/ios%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86proxy%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/</guid>
+      <description>最近因为项目需要，需要在打开某个网址时设置HTTP代理。所以做了相关的技术方案调研，并总结下来。
+在WebView设置Proxy的方式，就是对请求进行拦截并重新处理。还有一种全局的实现方案，使用iOS9以后才有的NetworkExtension，但是这种方案会在用户看来像是个微皮恩的App，不友好且太重了。
+使用URLProtocol 1. 自定义URLProtocol URLProtocol是拦截可以拦截网络请求的抽象类，实际使用时需要自定义其子类使用。
+使用时，需要将子类URLProtocol的类型进行注册。
+static var isRegistered = false class func start() { guard isRegistered == false else { return } URLProtocol.registerClass(self) isRegistered = true } 核心是重写几个方法
+/// 这个方法用来对请求进行处理，比如加上头，不处理直接返回就行 override class func canonicalRequest(for request: URLRequest) -&amp;gt; URLRequest { return request } static let customKey = &amp;#34;HttpProxyProtocolKey&amp;#34; /// 判断是否需要处理，对处理过请求打上唯一标识符customKey的属性，避免循环处理 override class func canInit(with request: URLRequest) -&amp;gt; Bool { guard let url = request.url else { return false } guard let scheme = url.</description>
+    </item>
+    
+    <item>
       <title>把setState整明白</title>
       <link>https://nemocdz.github.io/post/%E6%8A%8Asetstate%E6%95%B4%E6%98%8E%E7%99%BD/</link>
       <pubDate>Mon, 06 Aug 2018 11:17:00 +0800</pubDate>
@@ -247,10 +261,10 @@
     
     <item>
       <title>iOS中实现原生的二维码扫描界面</title>
-      <link>https://nemocdz.github.io/post/ios%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/</link>
+      <link>https://nemocdz.github.io/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/</link>
       <pubDate>Fri, 21 Apr 2017 18:49:13 +0800</pubDate>
       
-      <guid>https://nemocdz.github.io/post/ios%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/</guid>
+      <guid>https://nemocdz.github.io/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/</guid>
       <description>&lt;p&gt;二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是Google出品的&lt;a href=&#34;https://github.com/zxing/zxing&#34;&gt;ZXing&lt;/a&gt;，其的OC的移植版本是&lt;a href=&#34;https://github.com/TheLevelUp/ZXingObjC&#34;&gt;ZXingObjc&lt;/a&gt;。但是从iOS7开始，苹果就加入了原生Api的相机二维码扫描功能，而在iOS8中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。&lt;/p&gt;
 
 &lt;p&gt;&lt;/p&gt;</description>
