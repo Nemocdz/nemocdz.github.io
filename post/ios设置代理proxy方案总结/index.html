@@ -247,7 +247,7 @@
          <span class="k">return</span> <span class="kc">false</span>
     <span class="p">}</span>
         
-    <span class="k">guard</span> <span class="n">scheme</span> <span class="p">==</span> <span class="s">&#34;http&#34;</span><span class="p">,</span> <span class="n">scheme</span> <span class="p">==</span> <span class="s">&#34;https&#34;</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">guard</span> <span class="n">scheme</span> <span class="p">==</span> <span class="s">&#34;http&#34;</span> <span class="o">||</span> <span class="n">scheme</span> <span class="p">==</span> <span class="s">&#34;https&#34;</span> <span class="k">else</span> <span class="p">{</span>
           <span class="k">return</span> <span class="kc">false</span>
     <span class="p">}</span>
         
@@ -298,7 +298,7 @@
     <span class="p">}</span>
     
     <span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="kc">_</span> <span class="n">session</span><span class="p">:</span> <span class="n">URLSession</span><span class="p">,</span> <span class="n">dataTask</span><span class="p">:</span> <span class="n">URLSessionDataTask</span><span class="p">,</span> <span class="n">didReceive</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">client</span><span class="p">?.</span><span class="n">urlProtocol</span><span class="p">(</span><span class="kc">self</span><span class="p">,</span> <span class="n">didLoad</span><span class="p">:</span> <span class="n">data</span> <span class="k">as</span> <span class="n">Data</span><span class="p">)</span>
+        <span class="n">client</span><span class="p">?.</span><span class="n">urlProtocol</span><span class="p">(</span><span class="kc">self</span><span class="p">,</span> <span class="n">didLoad</span><span class="p">:</span> <span class="n">data</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
@@ -324,8 +324,8 @@
 
 <p>ProxySessionManager主要就是对外提供接口，对外层隐藏细节，将Delegate和Task生成配置好。</p>
 <div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">class</span> <span class="nc">ProxySessionManager</span><span class="p">:</span> <span class="n">NSObject</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nv">host</span> <span class="p">=</span> <span class="s">&#34;&#34;</span>
-    <span class="kd">var</span> <span class="nv">port</span> <span class="p">=</span> <span class="mi">0</span>
+    <span class="kd">var</span> <span class="nv">host</span><span class="p">:</span> <span class="nb">String</span><span class="p">?</span>
+    <span class="kd">var</span> <span class="nv">port</span><span class="p">:</span> <span class="nb">Int</span><span class="p">?</span>
     
     <span class="kd">static</span> <span class="kd">let</span> <span class="nv">shared</span> <span class="p">=</span> <span class="n">ProxySessionManager</span><span class="p">()</span>
     <span class="kd">private</span> <span class="kr">override</span> <span class="kd">init</span><span class="p">()</span> <span class="p">{}</span>
@@ -348,16 +348,105 @@
         <span class="n">sessionDelegate</span><span class="p">?[</span><span class="n">dataTask</span><span class="p">]</span> <span class="p">=</span> <span class="n">delegate</span>
         <span class="k">return</span> <span class="n">dataTask</span>
     <span class="p">}</span>
-<span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>而对Session的connectionProxyDictionary的设置的Key，没有HTTPS的。查看CFNetwork里的常量定义，发现有<code>kCFNetworkProxiesHTTPSEnable</code>，但是在iOS上被标记为不可用，只可以在MacOS上使用，那么我们其实可以直接取这个常量的值进行设置，下面总结了相关的常量里的对应的值。</p>
+
+<table>
+<thead>
+<tr>
+<th>Raw值</th>
+<th>CFNetwork/CFProxySupport.h</th>
+<th>CFNetwork/CFHTTPStream.h CFNetwork/CFSocketStream.h</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>&quot;HTTPEnable&quot;</code></td>
+<td><code>kCFNetworkProxiesHTTPEnable</code></td>
+<td>N/A</td>
+</tr>
+
+<tr>
+<td><code>&quot;HTTPProxy&quot;</code></td>
+<td><code>kCFNetworkProxiesHTTPProxy</code></td>
+<td><code>kCFStreamPropertyHTTPProxyHost</code></td>
+</tr>
+
+<tr>
+<td><code>&quot;HTTPPort&quot;</code></td>
+<td><code>kCFNetworkProxiesHTTPPort</code></td>
+<td><code>kCFStreamPropertyHTTPProxyPort</code></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td><code>&quot;HTTPSEnable&quot;</code></td>
+<td><code>kCFNetworkProxiesHTTPSEnable</code></td>
+<td>N/A</td>
+</tr>
+
+<tr>
+<td><code>&quot;HTTPSProxy&quot;</code></td>
+<td><code>kCFNetworkProxiesHTTPSProxy</code></td>
+<td><code>kCFStreamPropertyHTTPSProxyHost</code></td>
+</tr>
+
+<tr>
+<td><code>&quot;HTTPSPort&quot;</code></td>
+<td><code>kCFNetworkProxiesHTTPSPort</code></td>
+<td><code>kCFStreamPropertyHTTPSProxyPort</code></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td><code>&quot;SOCKSEnable&quot;</code></td>
+<td><code>kCFNetworkProxiesSOCKSEnable</code></td>
+<td>N/A</td>
+</tr>
+
+<tr>
+<td><code>&quot;SOCKSProxy&quot;</code></td>
+<td><code>kCFNetworkProxiesSOCKSProxy</code></td>
+<td><code>kCFStreamPropertySOCKSProxyHost</code></td>
+</tr>
+
+<tr>
+<td><code>&quot;SOCKSPort&quot;</code></td>
+<td><code>kCFNetworkProxiesSOCKSPort</code></td>
+<td><code>kCFStreamPropertySOCKSProxyPort</code></td>
+</tr>
+</tbody>
+</table>
+
+<p>这样我们就可以拓展两个Extension方法了。</p>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="n">fileprivate</span> <span class="kd">let</span> <span class="nv">httpProxyKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPEnable</span> <span class="k">as</span> <span class="nb">String</span>
+<span class="n">fileprivate</span> <span class="kd">let</span> <span class="nv">httpHostKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPProxy</span> <span class="k">as</span> <span class="nb">String</span>
+<span class="n">fileprivate</span> <span class="kd">let</span> <span class="nv">httpPortKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPPort</span> <span class="k">as</span> <span class="nb">String</span>
+<span class="n">fileprivate</span> <span class="kd">let</span> <span class="nv">httpsProxyKey</span> <span class="p">=</span> <span class="s">&#34;HTTPSEnable&#34;</span>
+<span class="n">fileprivate</span> <span class="kd">let</span> <span class="nv">httpsHostKey</span> <span class="p">=</span> <span class="s">&#34;HTTPSProxy&#34;</span>
+<span class="n">fileprivate</span> <span class="kd">let</span> <span class="nv">httpsPortKey</span> <span class="p">=</span> <span class="s">&#34;HTTPSPort&#34;</span>
 
 <span class="kd">extension</span> <span class="nc">URLSessionConfiguration</span><span class="p">{</span>
-    <span class="kd">class</span> <span class="nc">func</span> <span class="n">proxyConfig</span><span class="p">(</span><span class="kc">_</span> <span class="n">host</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span> <span class="kc">_</span> <span class="n">port</span><span class="p">:</span> <span class="nb">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">URLSessionConfiguration</span><span class="p">{</span>
+    <span class="kd">class</span> <span class="nc">func</span> <span class="n">proxyConfig</span><span class="p">(</span><span class="kc">_</span> <span class="n">host</span><span class="p">:</span> <span class="nb">String</span><span class="p">?,</span> <span class="kc">_</span> <span class="n">port</span><span class="p">:</span> <span class="nb">Int</span><span class="p">?)</span> <span class="p">-&gt;</span> <span class="n">URLSessionConfiguration</span><span class="p">{</span>
         <span class="kd">let</span> <span class="nv">config</span> <span class="p">=</span> <span class="n">URLSessionConfiguration</span><span class="p">.</span><span class="n">ephemeral</span>
-        <span class="k">if</span> <span class="o">!</span><span class="n">host</span><span class="p">.</span><span class="bp">isEmpty</span><span class="p">,</span> <span class="n">port</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">{</span>
-            <span class="kd">let</span> <span class="nv">httpProxyKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPEnable</span> <span class="k">as</span> <span class="nb">String</span>
-            <span class="kd">let</span> <span class="nv">hostKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPProxy</span> <span class="k">as</span> <span class="nb">String</span>
-            <span class="kd">let</span> <span class="nv">portKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPPort</span> <span class="k">as</span> <span class="nb">String</span>
-            <span class="kd">let</span> <span class="nv">proxyDict</span><span class="p">:[</span><span class="nb">String</span><span class="p">:</span><span class="nb">Any</span><span class="p">]</span> <span class="p">=</span> <span class="p">[</span><span class="n">httpProxyKey</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span><span class="n">hostKey</span><span class="p">:</span> <span class="n">host</span><span class="p">,</span> <span class="n">portKey</span><span class="p">:</span> <span class="n">port</span><span class="p">]</span>
+        <span class="k">if</span> <span class="kd">let</span> <span class="nv">host</span> <span class="p">=</span> <span class="n">host</span><span class="p">,</span> <span class="kd">let</span> <span class="nv">port</span> <span class="p">=</span> <span class="n">port</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nv">proxyDict</span><span class="p">:[</span><span class="nb">String</span><span class="p">:</span><span class="nb">Any</span><span class="p">]</span> <span class="p">=</span> <span class="p">[</span><span class="n">httpProxyKey</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                          <span class="n">httpHostKey</span><span class="p">:</span> <span class="n">host</span><span class="p">,</span>
+                                          <span class="n">httpPortKey</span><span class="p">:</span> <span class="n">port</span><span class="p">,</span>
+                                          <span class="n">httpsProxyKey</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                          <span class="n">httpsHostKey</span><span class="p">:</span> <span class="n">host</span><span class="p">,</span>
+                                          <span class="n">httpsPortKey</span><span class="p">:</span> <span class="n">port</span><span class="p">]</span>
             <span class="n">config</span><span class="p">.</span><span class="n">connectionProxyDictionary</span> <span class="p">=</span> <span class="n">proxyDict</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">config</span>
@@ -365,25 +454,25 @@
 <span class="p">}</span>
 
 <span class="kd">extension</span> <span class="nc">URLSession</span><span class="p">{</span>
-    <span class="kd">func</span> <span class="nf">isProxyConfig</span><span class="p">(</span><span class="kc">_</span> <span class="n">aHost</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span> <span class="kc">_</span> <span class="n">aPort</span><span class="p">:</span> <span class="nb">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nb">Bool</span><span class="p">{</span>
-        <span class="k">guard</span> <span class="kd">let</span> <span class="nv">proxyDic</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="n">configuration</span><span class="p">.</span><span class="n">connectionProxyDictionary</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">false</span>
-        <span class="p">}</span>
-        <span class="kd">let</span> <span class="nv">hostKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPProxy</span> <span class="k">as</span> <span class="nb">String</span>
-        <span class="kd">let</span> <span class="nv">portKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPPort</span> <span class="k">as</span> <span class="nb">String</span>
-        <span class="k">guard</span> <span class="kd">let</span> <span class="nv">host</span> <span class="p">=</span> <span class="n">proxyDic</span><span class="p">[</span><span class="n">hostKey</span><span class="p">]</span> <span class="k">as</span><span class="p">?</span> <span class="nb">String</span><span class="p">,</span> <span class="kd">let</span> <span class="nv">port</span> <span class="p">=</span> <span class="n">proxyDic</span><span class="p">[</span><span class="n">portKey</span><span class="p">]</span> <span class="k">as</span><span class="p">?</span> <span class="nb">Int</span> <span class="k">else</span><span class="p">{</span>
-            <span class="k">if</span> <span class="n">aHost</span><span class="p">.</span><span class="bp">isEmpty</span><span class="p">,</span> <span class="n">aPort</span> <span class="p">==</span> <span class="mi">0</span><span class="p">{</span>
+    <span class="kd">func</span> <span class="nf">isProxyConfig</span><span class="p">(</span><span class="kc">_</span> <span class="n">aHost</span><span class="p">:</span> <span class="nb">String</span><span class="p">?,</span> <span class="kc">_</span> <span class="n">aPort</span><span class="p">:</span> <span class="nb">Int</span><span class="p">?)</span> <span class="p">-&gt;</span> <span class="nb">Bool</span><span class="p">{</span>
+        <span class="k">if</span> <span class="kc">self</span><span class="p">.</span><span class="n">configuration</span><span class="p">.</span><span class="n">connectionProxyDictionary</span> <span class="p">==</span> <span class="kc">nil</span> <span class="o">&amp;&amp;</span> <span class="n">aHost</span> <span class="p">==</span> <span class="kc">nil</span> <span class="o">&amp;&amp;</span> <span class="n">aPort</span> <span class="p">==</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">true</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">guard</span> <span class="kd">let</span> <span class="nv">proxyDic</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="n">configuration</span><span class="p">.</span><span class="n">connectionProxyDictionary</span><span class="p">,</span>
+                <span class="kd">let</span> <span class="nv">aHost</span> <span class="p">=</span> <span class="n">aHost</span><span class="p">,</span>
+                <span class="kd">let</span> <span class="nv">aPort</span> <span class="p">=</span> <span class="n">aPort</span><span class="p">,</span>
+                <span class="kd">let</span> <span class="nv">host</span> <span class="p">=</span> <span class="n">proxyDic</span><span class="p">[</span><span class="n">httpHostKey</span><span class="p">]</span> <span class="k">as</span><span class="p">?</span> <span class="nb">String</span><span class="p">,</span>
+                <span class="kd">let</span> <span class="nv">port</span> <span class="p">=</span> <span class="n">proxyDic</span><span class="p">[</span><span class="n">httpPortKey</span><span class="p">]</span> <span class="k">as</span><span class="p">?</span> <span class="nb">Int</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="kc">false</span>
+            <span class="p">}</span>
+            
+            <span class="k">if</span> <span class="n">aHost</span> <span class="p">==</span> <span class="n">host</span><span class="p">,</span> <span class="n">aPort</span> <span class="p">==</span> <span class="n">port</span><span class="p">{</span>
                 <span class="k">return</span> <span class="kc">true</span>
-            <span class="p">}</span> <span class="k">else</span><span class="p">{</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="kc">false</span>
             <span class="p">}</span>
+            
         <span class="p">}</span>
-        
-        <span class="k">guard</span> <span class="n">host</span> <span class="p">==</span> <span class="n">aHost</span><span class="p">,</span> <span class="n">port</span> <span class="p">==</span> <span class="n">aPort</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">false</span>
-        <span class="p">}</span>
-        
-        <span class="k">return</span> <span class="kc">true</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
 <p>ProxySessionDelegate，主要做的是将Delegate分发到每个Task的Delegate，并存储TaskIdentifer对应的Delegate，内部实际使用Key-Value结构的字典储存，在设置和取值时加锁，避免回调错误。</p>
@@ -587,9 +676,13 @@
 <h3 id="reference">Reference</h3>
 
 <ul>
-<li><a href="https://stackoverflow.com/questions/16847858/ios-any-body-knows-how-to-add-a-proxy-to-nsurlrequest">iOS any body knows how to add a proxy to NSURLRequest?</a></li>
-<li><a href="https://stackoverflow.com/questions/38968040/how-to-set-proxy-in-web-view-swift">How to set Proxy in web-view swift?</a></li>
-<li><a href="https://developer.apple.com/library/archive/samplecode/CustomHTTPProtocol/Introduction/Intro.html">CustomHTTPProtocol</a></li>
+<li><p><a href="https://www.jianshu.com/p/4012c8a4bee9">iOS App 通过代理服务器访问网络</a></p></li>
+
+<li><p><a href="https://stackoverflow.com/questions/16847858/ios-any-body-knows-how-to-add-a-proxy-to-nsurlrequest">iOS any body knows how to add a proxy to NSURLRequest?</a></p></li>
+
+<li><p><a href="https://stackoverflow.com/questions/38968040/how-to-set-proxy-in-web-view-swift">How to set Proxy in web-view swift?</a></p></li>
+
+<li><p><a href="https://developer.apple.com/library/archive/samplecode/CustomHTTPProtocol/Introduction/Intro.html">CustomHTTPProtocol</a></p></li>
 
 <li><p><a href="https://juejin.im/post/594a4f0961ff4b006c131862?utm_source=weibo&amp;utm_campaign=user">NSURLProtocol对WKWebView的处理</a></p></li>
 
