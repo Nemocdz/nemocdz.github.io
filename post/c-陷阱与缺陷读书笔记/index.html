@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
 
   
-  <title>《iOS Core Animation》读书笔记</title>
+  <title>《C 陷阱与缺陷》读书笔记</title>
 
   
   
@@ -15,17 +15,15 @@
 
   
   <meta name="author" content="Nemocdz" />
-  <meta name="description" content="CALayer UIView = 绘制 &#43; 响应触摸事件
- 负责屏幕和显示，不负责触摸事件响应链 UIView 是其高级封装 和 UIView 层级一一对应  
+  <meta name="description" content="多字符记号  输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号 组合赋值运算符是两个记号，如&#43;=  
 " />
 
   
   
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@Nemocdz" />
-    <meta name="twitter:title" content="《iOS Core Animation》读书笔记" />
-    <meta name="twitter:description" content="CALayer UIView = 绘制 &#43; 响应触摸事件
- 负责屏幕和显示，不负责触摸事件响应链 UIView 是其高级封装 和 UIView 层级一一对应  
+    <meta name="twitter:title" content="《C 陷阱与缺陷》读书笔记" />
+    <meta name="twitter:description" content="多字符记号  输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号 组合赋值运算符是两个记号，如&#43;=  
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -36,7 +34,7 @@
 <meta name="generator" content="Hugo 0.46" />
 
 
-<link rel="canonical" href="https://nemocdz.github.io/post/ios-core-animation%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" />
+<link rel="canonical" href="https://nemocdz.github.io/post/c-%E9%99%B7%E9%98%B1%E4%B8%8E%E7%BC%BA%E9%99%B7%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" />
 <link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
 
 
@@ -201,155 +199,91 @@
 
   <section class="main post-detail">
     <header class="post-header">
-      <h1 class="post-title">《iOS Core Animation》读书笔记</h1>
+      <h1 class="post-title">《C 陷阱与缺陷》读书笔记</h1>
       <p class="post-meta">@Nemocdz · Jul 13, 2017 · 1 min read</p>
     </header>
-    <article class="post-content"><h4 id="calayer">CALayer</h4>
-
-<p>UIView = 绘制 + 响应触摸事件</p>
+    <article class="post-content"><h5 id="多字符记号">多字符记号</h5>
 
 <ul>
-<li>负责屏幕和显示，不负责触摸事件响应链</li>
-<li>UIView 是其高级封装</li>
-<li>和 UIView 层级一一对应</li>
+<li>输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号</li>
+<li>组合赋值运算符是两个记号，如+=</li>
 </ul>
 
 <p></p>
 
-<p>UIView 未暴露 CALayer 的接口</p>
+<h5 id="单引号与双引号">单引号与双引号</h5>
 
 <ul>
-<li>阴影，圆角，带颜色的边框</li>
-<li>3D 变换</li>
-<li>非矩形范围</li>
-<li>透明遮罩</li>
-<li>多级非线性动画</li>
+<li>单引号是当中字符对照整数序列的值</li>
+<li>双引号是初始化一个无名数组指针包括挡住字符和一个附近二进制为 0 的字符</li>
 </ul>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">printf</span><span class="p">(</span><span class="s">&#34;Hello world</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+<span class="c1">//等价于
+</span><span class="c1"></span><span class="kt">char</span> <span class="n">hello</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="sc">&#39;H&#39;</span><span class="p">,</span> <span class="sc">&#39;e&#39;</span><span class="p">,</span> <span class="sc">&#39;l&#39;</span><span class="p">,</span> <span class="sc">&#39;l&#39;</span><span class="p">,</span> <span class="sc">&#39;o&#39;</span><span class="p">,</span> <span class="sc">&#39; &#39;</span><span class="p">,</span> <span class="sc">&#39;w&#39;</span><span class="p">,</span> <span class="sc">&#39;o&#39;</span><span class="p">,</span> <span class="sc">&#39;r&#39;</span><span class="p">,</span> <span class="sc">&#39;l&#39;</span><span class="p">,</span> <span class="sc">&#39;d&#39;</span><span class="p">,</span> <span class="sc">&#39;\n&#39;</span><span class="p">,</span> <span class="mi">0</span> <span class="p">};</span>
+<span class="n">printf</span><span class="p">(</span><span class="n">hello</span><span class="p">);</span></code></pre></div>
+<h5 id="声明">声明</h5>
 
-<h4 id="图形和几何">图形和几何</h4>
+<p>变量声明=类型+对该类型求值的表达式</p>
 
-<p>frame：外部坐标，父图层坐标，大小为边与 xy 轴平行能完全容纳图层的最小矩形</p>
+<p>类型的模型=变量声明去除变量名和分号后用括号括起来</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">float</span> <span class="o">*</span><span class="nf">a</span><span class="p">();</span>
+<span class="c1">//a是一个返回float指针的函数，模型为
+</span><span class="c1"></span><span class="p">(</span><span class="kt">float</span> <span class="o">*</span><span class="p">())</span>
 
-<p>bounds：内部坐标，自身坐标，大小为图层大小的矩形</p>
+<span class="c1">//调用地址0的函数
+</span><span class="c1">//调用变量
+</span><span class="c1"></span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">)();</span>
+<span class="c1">//a为返回void的函数的指针
+</span><span class="c1"></span><span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">b</span><span class="p">)();</span>
+<span class="c1">//模型为
+</span><span class="c1"></span><span class="p">(</span><span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="p">)())</span>
+<span class="c1">//将0转为此类型
+</span><span class="c1"></span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">*</span><span class="p">)())</span><span class="mi">0</span><span class="p">;</span>
+<span class="c1">//调用转换后的变量
+</span><span class="c1"></span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">*</span><span class="p">)())</span><span class="mi">0</span><span class="p">)();</span></code></pre></div>
+<h5 id="函数调用">函数调用</h5>
 
-<p>anchorPoint：锚点，旋转基点，左上角{0，0}，右下角{1，1}</p>
-
-<p>center（CALayer的position）:anchorPoint 在父图层的坐标</p>
-
-<h4 id="视觉效果">视觉效果</h4>
-
-<h5 id="拉伸过滤">拉伸过滤</h5>
-
-<p>以正确比例和 1：1 像素显示图片在屏幕上的好处</p>
+<p>需要参数列表，可无参数</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">f</span><span class="p">();</span><span class="c1">//函数调用
+</span><span class="c1"></span><span class="n">f</span><span class="p">;</span><span class="o">//</span><span class="err">函数地址求值，不调用</span></code></pre></div>
+<h5 id="表达式求值顺序">表达式求值顺序</h5>
 
 <ul>
-<li>画质好，像素无压缩拉伸</li>
-<li>更好使用内存</li>
-<li>性能好，无需额外计算</li>
+<li>&amp;&amp;和||先求左边，左边为真才求右边</li>
+<li>a?b:c  b 和 c 只求其中一个</li>
 </ul>
 
-<h4 id="cashapelayer">CAShapeLayer</h4>
+<h5 id="函数参数转换">函数参数转换</h5>
 
-<p>矢量图像而不是 bitmap 绘制图层子类</p>
-
-<p>优点：</p>
-
-<ul>
-<li>渲染快速，硬件加速</li>
-<li>高效使用内存，占用小</li>
-<li>不受边界裁剪，可在边界外绘制</li>
-<li>不会出现像素化</li>
-</ul>
-
-<h4 id="catextlayer">CATextLayer</h4>
-
-<p>CALayer 的子类，几乎拥有 UILabel 所有绘制特性</p>
-
-<p>渲染快于 UILabel，运用 Core text</p>
-
-<h4 id="性能调优">性能调优</h4>
-
-<p>动画和图层被单独的渲染服务进程处理</p>
-
-<h5 id="动画发生过程">动画发生过程</h5>
+<p>规则</p>
 
 <ol>
-<li>布局</li>
-<li>显示</li>
-<li>准备-发送动画数据到渲染服务</li>
-<li>提交-打包图层和动画属性发送到渲染服务</li>
-<li>对所有图层属性计算中间值，设置 OpenGL 几何形状（纹理化三角形）进行渲染</li>
-<li>在屏幕上渲染可见三角形（GPU 执行，前面都在 CPU）</li>
+<li>比 int 短的整型转换为 int</li>
+<li>比 double 短的浮点转换为 double</li>
+<li>其余不转换</li>
 </ol>
 
-<h5 id="可能影响gpu绘制的情况">可能影响GPU绘制的情况</h5>
+<h5 id="指针非数组">指针非数组</h5>
+
+<p>char 指针变量是指向其数组第 0 个元素的指针</p>
+
+<h5 id="除法">除法</h5>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">q</span> <span class="o">=</span> <span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">;</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">a</span> <span class="o">%</span> <span class="n">b</span><span class="p">;</span></code></pre></div>
+<p>保证</p>
 
 <ul>
-<li>过多几何结构</li>
-<li>重绘-重叠半透明图层</li>
-<li>离屏渲染-为屏幕外渲染的图片分配额外内存，切换屏幕内外的绘制上下文</li>
-<li>过大的图片</li>
+<li>q * b + r == a</li>
+<li>绝对值 r&lt; 绝对值 b</li>
+<li>当a &gt;=0 且 b &gt; 0 时，r &gt;= 0</li>
 </ul>
 
-<h5 id="可能影响cpu计算的情况">可能影响CPU计算的情况</h5>
+<p>不一定保证</p>
 
 <ul>
-<li>布局计算：自动布局</li>
-<li>视图懒加载：涉及 IO 的图片显示</li>
-<li>Core Graphics 绘制：drawRect（为支持图层任意绘制需要在内存中创建一个等大小的寄宿图）</li>
-<li>解压图片</li>
-</ul>
-
-<h5 id="图像io">图像IO</h5>
-
-<ul>
-<li>线程加载：合适的后台线程</li>
-<li>分辨率交换：移动时低分辨率，静态时加载高分辨率</li>
-<li>缓存：考虑因素（合适缓存键、缓存时机、失效、回收）</li>
-<li>图像格式</li>
-</ul>
-
-<h5 id="文本">文本</h5>
-
-<p>尽可能避免改变文本的 frame，因为需要重绘</p>
-
-<h5 id="光栅化">光栅化</h5>
-
-<p>将图层及其所有效果绘制成一个屏幕外的图像并缓存，避免运用在内容不断变动的图层上</p>
-
-<h5 id="离屏渲染">离屏渲染</h5>
-
-<p>在混合复杂效果无法直接渲染时，会通过分步渲染，会把分布渲染的结果临时储存在屏幕外的内存中等待组合渲染</p>
-
-<p>影响性能在于</p>
-
-<ul>
-<li>为临时储存部分渲染结果分配内存</li>
-<li>进行将渲染结果从屏幕内-外的上下文切换</li>
-</ul>
-
-<p>图层的属性触发离屏渲染</p>
-
-<ul>
-<li>圆角 + maskToBounds</li>
-<li>图层蒙版</li>
-<li>阴影</li>
-</ul>
-
-<h5 id="图层混合">图层混合</h5>
-
-<ul>
-<li>设定固定不透明的背景颜色</li>
-<li>设置 layer 的 opaue 属性默认为 YES（非 view 的）</li>
-</ul>
-
-<h5 id="颜色格式">颜色格式</h5>
-
-<p>苹果的 GPU 只解析<strong>32bit</strong>的颜色格式，其余的格式 CPU 会先进行颜色格式转换，再让 GPU 渲染。</p>
-
-<h5 id="图像大小缩放">图像大小缩放</h5>
-
-<p>image 和 imageView 的大小尽量保持一致，避免在改变 view 大小时重复计算缩放</p></article>
+<li>a 为负数，q 也为负</li>
+<li>r &gt;= 0</li>
+</ul></article>
     <footer class="post-footer">
       
       <p class="post-copyright">

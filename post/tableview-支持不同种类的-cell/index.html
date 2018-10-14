@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>TableView 支持不同种类的 Cell</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Nemocdz" />
+  <meta name="description" content="在项目中，偶尔需要让 TableView 里支持不同种类的 Cell，比如微博的原创微博和别人转发的微博，就是两种 Cell。又或是类似支付宝的的 timeline 也有各种类型的 Cell。在同一个 Tableview 里实现不同种类的 Cell，一般有两种方法，一种是把所有种类的 Cell 先注册了，再根据不同的 identifer 去加载 Cell，一种是在 init 时创建不同的 identifer 的 Cell。
+" />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@Nemocdz" />
+    <meta name="twitter:title" content="TableView 支持不同种类的 Cell" />
+    <meta name="twitter:description" content="在项目中，偶尔需要让 TableView 里支持不同种类的 Cell，比如微博的原创微博和别人转发的微博，就是两种 Cell。又或是类似支付宝的的 timeline 也有各种类型的 Cell。在同一个 Tableview 里实现不同种类的 Cell，一般有两种方法，一种是把所有种类的 Cell 先注册了，再根据不同的 identifer 去加载 Cell，一种是在 init 时创建不同的 identifer 的 Cell。
+" />
+    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.46" />
+
+
+<link rel="canonical" href="https://nemocdz.github.io/post/tableview-%E6%94%AF%E6%8C%81%E4%B8%8D%E5%90%8C%E7%A7%8D%E7%B1%BB%E7%9A%84-cell/" />
+<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
+<meta name="baidu-site-verification" content="iVpH4VhHBT" />
+<meta name="sogou_site_verification" content="YPqjjJgiSh" />
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+
+<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  
+  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  
+  <p class="subtitle">iOS&amp;Android Dev</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+      
+        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+      <li class="social-item">
+        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
+      </li>
+
+      
+      <li class="social-item">
+        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
+      </li>
+
+      
+
+      <li class="social-item">
+        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">TableView 支持不同种类的 Cell</h1>
+      <p class="post-meta">@Nemocdz · Jan 8, 2017 · 2 min read</p>
+    </header>
+    <article class="post-content"><p>在项目中，偶尔需要让 TableView 里支持不同种类的 Cell，比如微博的原创微博和别人转发的微博，就是两种 Cell。又或是类似支付宝的的 timeline 也有各种类型的 Cell。在同一个 Tableview 里实现不同种类的 Cell，一般有两种方法，一种是把所有种类的 Cell 先注册了，再根据不同的 identifer 去加载 Cell，一种是在 init 时创建不同的 identifer 的 Cell。</p>
+
+<p>
+效果图如下。</p>
+
+<p><img src="https://ws2.sinaimg.cn/large/006tKfTcly1fi1aan9mt6j30l812i0ud.jpg" alt="" /></p>
+
+<h3 id="准备工作">准备工作</h3>
+
+<p>创建一个基类的 <code>CDZBaseCell</code>，基类 Cell 拥有一些共用的属性和方法，如持有 Model，解析 Model。</p>
+
+<p>创建不同的子类 Cell，以两个子类 <code>CDZTypeACell</code> 和  <code>CDZTypeBCell</code> 为例，继承自 <code>CDZBaseCell</code>，重写一些方法，如高度，显示视图等等。</p>
+
+<p>Datasource 中准备好判断 index 所在的 Cell 种类的方法（如根据 Model 的 type 属性等）</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nf">cellClassAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+    <span class="n">CDZTableviewItem</span> <span class="o">*</span><span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">itemAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
+    <span class="k">switch</span> <span class="p">(</span><span class="n">item</span><span class="p">.</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="nl">typeA</span><span class="p">:{</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">CDZTypeACell</span> <span class="k">class</span><span class="p">];</span>
+        <span class="p">}</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="nl">typeB</span><span class="p">:{</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">CDZTypeBCell</span> <span class="k">class</span><span class="p">];</span>
+        <span class="p">}</span>
+            <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="p">-</span> <span class="p">(</span><span class="n">CDZTableviewItem</span> <span class="o">*</span><span class="p">)</span><span class="nf">itemAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+    <span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">itemsArray</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="p">-</span> <span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nf">cellIdentiferAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+    <span class="k">return</span> <span class="n">NSStringFromClass</span><span class="p">([</span><span class="nb">self</span> <span class="nl">cellClassAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">]);</span>
+<span class="p">}</span></code></pre></div>
+<h3 id="方法一-先注册-根据-identifer-去加载不同的-cell">方法一：先注册，根据 identifer 去加载不同的 cell</h3>
+
+<p>先在 Tableview 创建时注册需要的不同种类，再判断 index 对应的种类，再根据 identifer 加载子类 Cell。</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">tableview</span> <span class="nl">registerClass</span><span class="p">:[</span><span class="n">CDZTypeACell</span> <span class="k">class</span><span class="p">]</span> <span class="nl">forCellReuseIdentifier</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">([</span><span class="n">CDZTypeBCell</span> <span class="k">class</span><span class="p">])];</span>
+<span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">tableView</span> <span class="nl">registerClass</span><span class="p">:[</span><span class="n">CDZTypeBCell</span> <span class="k">class</span><span class="p">]</span> <span class="nl">forCellReuseIdentifier</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">([</span><span class="n">CDZTypeBCell</span> <span class="k">class</span><span class="p">])];</span></code></pre></div>
+<p>并在 <code>- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</code> 中根据重用标识加载 Cell。</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+    <span class="n">CDZBaseCell</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">tableView</span> <span class="nl">dequeueReusableCellWithIdentifier</span><span class="p">:[</span><span class="nb">self</span> <span class="nl">cellIdentiferAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">]</span> <span class="nl">forIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
+    <span class="n">cell</span><span class="p">.</span><span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">itemAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
+    <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+<h3 id="方法二-在-init-时创建不同-identifer-的-cell">方法二:在 init 时创建不同 identifer 的 Cell</h3>
+
+<p>在 <code>- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</code> 中判断 Cell 是否为 nil，并根据 index 所在 Cell 的种类初始化 Cell 和其 identifer。</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-(</span><span class="n">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+    <span class="n">CDZBaseCell</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">tableView</span> <span class="nl">dequeueReusableCellWithIdentifier</span><span class="p">:[</span><span class="nb">self</span> <span class="nl">cellIdentiferAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">]];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">cell</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">Class</span> <span class="n">cls</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">cellClassAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
+        <span class="n">cell</span> <span class="o">=</span> <span class="p">[[</span><span class="n">cls</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithStyle</span><span class="p">:</span><span class="n">UITableViewCellStyleDefault</span> <span class="nl">reuseIdentifier</span><span class="p">:[</span><span class="nb">self</span> <span class="nl">cellIdentiferAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">]];</span>
+    <span class="p">}</span>
+    <span class="n">cell</span><span class="p">.</span><span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">itemAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
+    <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+<h3 id="总结">总结</h3>
+
+<p>个人更喜欢第二种，苹果官方文档也推荐第二种方法去重用 Cell。我觉得优点是一个是在 Tableview 划分 MVC 架构时，Tableview 创建时不需要知道 Cell 的类型，而只需要知道 Datasouce，而 Datasource 才是需要去分配 Cell 类型的。第二个是 Tableviewcell 的初始化方法并非只能用 initWithStyle（Collectionview 必须先注册的原因则在于初始化方法只有 initWithFrame）。而使用了注册，则是在复用池空时默认调用 initWithStyle的方法，如果需要用别的方法初始化就不可以了。第一种方法可以用在有一些库需要先注册后才能调用的，比如自动计算 Cell 高度的库 <code>FDTemplateLayoutCell</code>。</p>
+
+<h3 id="最后">最后</h3>
+
+<p>所有源码和 <a href="https://github.com/Nemocdz/CDZDifferenceCellDemo">Demo</a></p>
+
+<p>如果您觉得有帮助,不妨给个 star 鼓励一下,欢迎关注&amp;交流</p></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © 2018 NemocdzThis post was published <strong>644</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-nemocdz-github-io-my-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017-2018 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
+<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+
+
+
+  </body>
+</html>

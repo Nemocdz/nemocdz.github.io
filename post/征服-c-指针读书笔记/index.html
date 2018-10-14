@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>《征服 C 指针》读书笔记</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Nemocdz" />
+  <meta name="description" content="用英语来解读 C 的声明  首先着眼于识别符（变量名或者函数名）。 从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。优先顺序说明如下：
+ 用于整理声明内容的括弧 用于表示数组的 []，用于表示函数的() 用于表示指针的 *  解释完成派生型，使用 “of” 或 “to” 或 “returning” 将它们连接起来。
+ C 里面不存在多维数组。
+  
+" />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@Nemocdz" />
+    <meta name="twitter:title" content="《征服 C 指针》读书笔记" />
+    <meta name="twitter:description" content="用英语来解读 C 的声明  首先着眼于识别符（变量名或者函数名）。 从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。优先顺序说明如下：
+ 用于整理声明内容的括弧 用于表示数组的 []，用于表示函数的() 用于表示指针的 *  解释完成派生型，使用 “of” 或 “to” 或 “returning” 将它们连接起来。
+ C 里面不存在多维数组。
+  
+" />
+    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.46" />
+
+
+<link rel="canonical" href="https://nemocdz.github.io/post/%E5%BE%81%E6%9C%8D-c-%E6%8C%87%E9%92%88%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" />
+<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
+<meta name="baidu-site-verification" content="iVpH4VhHBT" />
+<meta name="sogou_site_verification" content="YPqjjJgiSh" />
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+
+<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  
+  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  
+  <p class="subtitle">iOS&amp;Android Dev</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+      
+        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+      <li class="social-item">
+        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
+      </li>
+
+      
+      <li class="social-item">
+        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
+      </li>
+
+      
+
+      <li class="social-item">
+        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">《征服 C 指针》读书笔记</h1>
+      <p class="post-meta">@Nemocdz · Aug 21, 2017 · 1 min read</p>
+    </header>
+    <article class="post-content"><h3 id="用英语来解读-c-的声明">用英语来解读 C 的声明</h3>
+
+<ol>
+<li>首先着眼于识别符（变量名或者函数名）。</li>
+
+<li><p>从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。优先顺序说明如下：</p>
+
+<ol>
+<li>用于整理声明内容的括弧</li>
+<li>用于表示数组的 []，用于表示函数的()</li>
+<li>用于表示指针的 *</li>
+</ol></li>
+
+<li><p>解释完成派生型，使用 “of” 或 “to” 或 “returning” 将它们连接起来。</p></li>
+
+<li><p>C 里面不存在多维数组。</p></li>
+</ol>
+
+<p></p>
+
+<table>
+<thead>
+<tr>
+<th>C</th>
+<th>English</th>
+<th>中文</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>int *hoge[10];</td>
+<td>hoge is array of pointer to int</td>
+<td>hoge 是指向 int 的指针的数组</td>
+</tr>
+
+<tr>
+<td>int (*hoge)[3];</td>
+<td>hoge is pointer to array of int</td>
+<td>hoge 是指向 in t的数组的指针</td>
+</tr>
+
+<tr>
+<td>int func(int a);</td>
+<td>func is function(argument is int a) returning int</td>
+<td>func 是返回 int 的函数(参数是 int a)</td>
+</tr>
+
+<tr>
+<td>int (*func)(int a)；</td>
+<td>func is pointer to function(argument is int a) returning int</td>
+<td>func_p 是指向返回 int 的函数(参数为 int a)的指针</td>
+</tr>
+
+<tr>
+<td>int hoge<code>[10][3]</code>;</td>
+<td>hoge is array(10) of array(3) of int</td>
+<td>hoge  是int 数组(元素数10)的数组(元素数3)</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="解读const修饰符">解读const修饰符</h3>
+
+<p>const代表变量只读。在指针作为参数的时候，const常用于将指针指向的对象设定为只读。</p>
+
+<ul>
+<li>const修饰解读声明时const外一层修饰符。</li>
+<li>若类型指定符左边存在const，则修饰该类型指定符。</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">char</span> <span class="k">const</span> <span class="o">*</span><span class="n">src</span><span class="p">;</span><span class="c1">//src is a pointer to read-only char
+</span><span class="c1"></span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">src</span><span class="p">;</span><span class="o">//</span><span class="n">src</span> <span class="n">is</span> <span class="n">a</span> <span class="n">pointer</span> <span class="n">to</span> <span class="n">read</span><span class="o">-</span><span class="n">only</span> <span class="kt">char</span></code></pre></div>
+<h3 id="解读数组">解读数组</h3>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="n">hoge</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span><span class="o">//</span><span class="n">hoge</span> <span class="o">==</span> <span class="o">&amp;</span><span class="n">hoge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></code></pre></div>
+<p><strong>由*声明的指针是指针变量，它可以随意修改指向的方向</strong>，包括用new建立一片空间然后让指针指向它；然而用[]声明的指针是指针常量（然而<strong>它指向的量却可以是一个变量</strong>），你不能修改指针常量，但是<strong>你可以借助这个指针常量去修改它所指向的指针变量</strong>。</p>
+
+<h4 id="数组为-sizeof-运算符的操作数">数组为 <code>sizeof</code> 运算符的操作数</h4>
+
+<p>通过“ <code>sizeof</code> 表达式”的方式使用 <code>sizeof</code> 运算符的情况下，如果操作数是“表达式”，数组会被当成指针，这时对数组使用 <code>sizeof</code>，返回的是<strong>数组全体的尺寸而不是指针长度</strong>。</p>
+
+<h4 id="数组为-运算符的操作数">数组为 <code>&amp;</code> 运算符的操作数</h4>
+
+<p>通过对数组使用 <code>&amp;</code>，可以返回指向整体数组的指针。</p>
+
+<h3 id="关于运算符">关于运算符</h3>
+
+<p>运算符和声明不可混淆，声明左侧有返回类型。</p>
+
+<p><strong>两侧表达式必须指针层级相等才可赋值。</strong></p>
+
+<ul>
+<li><p><code>*</code>在表达式中，是<strong>解引用</strong>运算符。返回指针所指向的对象或函数。表达式指针层级-1。</p></li>
+
+<li><p><code>[]</code>在表达式中，是<strong>下标</strong>运算符，是一种语法糖，所以和<code>*</code>的指针层级一样 -1。</p></li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c">  <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="c1">//等同于
+</span><span class="c1"></span>  <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">i</span><span class="p">);</span></code></pre></div>
+<ul>
+<li><p><code>-&gt;</code>在表达式中，是通过指针访问结构体成员的语法糖。</p>
+
+<ul>
+<li><code>-&gt;</code>左侧是指针</li>
+<li><code>.</code>左侧是结构体实体</li>
+</ul></li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c">  <span class="n">p</span><span class="o">-&gt;</span><span class="n">hoge</span><span class="p">;</span><span class="c1">//等同于
+</span><span class="c1"></span>  <span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">).</span><span class="n">hoge</span><span class="p">;</span></code></pre></div>
+<ul>
+<li><code>&amp;</code>在表达式中，是<strong>地址</strong>运算符，返回该值的指针。表达式指针层级 +1。</li>
+</ul>
+
+<h3 id="参考链接">参考链接</h3>
+
+<ul>
+<li><a href="http://avnpc.com/pages/c-pointer">《征服 C 指针》Web版</a></li>
+</ul></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © 2018 NemocdzThis post was published <strong>419</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-nemocdz-github-io-my-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017-2018 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
+<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+
+
+
+  </body>
+</html>

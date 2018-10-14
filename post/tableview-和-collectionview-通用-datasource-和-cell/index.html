@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>TableView 和 CollectionView 通用的 DataSource 和 Cell</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Nemocdz" />
+  <meta name="description" content="刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。
+
+" />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@Nemocdz" />
+    <meta name="twitter:title" content="TableView 和 CollectionView 通用的 DataSource 和 Cell" />
+    <meta name="twitter:description" content="刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。
+
+" />
+    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.46" />
+
+
+<link rel="canonical" href="https://nemocdz.github.io/post/tableview-%E5%92%8C-collectionview-%E9%80%9A%E7%94%A8-datasource-%E5%92%8C-cell/" />
+<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
+<meta name="baidu-site-verification" content="iVpH4VhHBT" />
+<meta name="sogou_site_verification" content="YPqjjJgiSh" />
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+
+<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  
+  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  
+  <p class="subtitle">iOS&amp;Android Dev</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+      
+        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+      <li class="social-item">
+        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
+      </li>
+
+      
+      <li class="social-item">
+        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
+      </li>
+
+      
+
+      <li class="social-item">
+        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">TableView 和 CollectionView 通用的 DataSource 和 Cell</h1>
+      <p class="post-meta">@Nemocdz · Mar 25, 2017 · 3 min read</p>
+    </header>
+    <article class="post-content"><p>刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。</p>
+
+<p></p>
+
+<p>先从 Tableview 讲起，Tableview 都很熟悉，一般就是由 datasource，delegate，cell，cellitem 这几部分组成。</p>
+
+<h3 id="打造一个通用性更强的-datasource">打造一个通用性更强的 DataSource</h3>
+
+<p>新建一个 NSObject 的子类，命名为 CDZTableDataSource，并遵循 <UITableViewDataSource> 协议。对于 datasource 来说，必须实现的方法是 <code>-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section</code>  和 <code>-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</code>。</p>
+
+<p>先看看第一个方法，返回每个 section 的 row 的数目，这个数字怎么来呢，就是 section 里的数据条数。如果不实现 optional 方法 <code>- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView</code> 的话，默认只有一个 section。所以我们首先要确定的就是 section 的数目，所以对应的，我们应该有 Section 的 Model。新建一个 NSObject 的子类，命名为 CDZSectionObject。那么这个 Section 应该有些什么属性呢？对于一个 Section 对象来说，应该持有一个 row 对应的 Model 的数组，这样就可以确定每个 section 的 row 的数量了。可能还有一些 sectionheader 是数据等等。</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">copy</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">headerTitle</span><span class="p">;</span>
+<span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">copy</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">headerReuseIdentifer</span><span class="p">;</span>
+<span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">strong</span><span class="p">)</span> <span class="n">NSMutableArray</span> <span class="o">*</span><span class="n">itemsArray</span><span class="p">;</span></code></pre></div>
+<p>回到 Datasouce，那么 Datasouce 就可以加上这些属性。</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">strong</span><span class="p">)</span> <span class="n">NSMutableArray</span><span class="o">&lt;</span><span class="n">CDZSectionObject</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">sectionsArray</span><span class="p">;</span>
+<span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">strong</span><span class="p">)</span> <span class="n">CDZSectionObject</span> <span class="o">*</span><span class="n">firstSection</span><span class="p">;</span>	</code></pre></div>
+<p>那么现在就可以实现第一个方法了，为了方便我们还可以默认有一个 firstsection，方便只有一个 section 的情况使用。</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">numberOfRowsInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">section</span><span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">sectionsArray</span><span class="p">.</span><span class="n">count</span> <span class="o">&gt;</span> <span class="n">section</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">sectionsArray</span><span class="p">[</span><span class="n">section</span><span class="p">].</span><span class="n">itemsArray</span><span class="p">.</span><span class="n">count</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="p">-</span> <span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nf">numberOfSectionsInTableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span><span class="p">{</span>
+    <span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">sectionsArray</span> <span class="o">?</span> <span class="nb">self</span><span class="p">.</span><span class="n">sectionsArray</span><span class="p">.</span><span class="nl">count</span> <span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">-</span> <span class="p">(</span><span class="n">CDZSectionObject</span> <span class="o">*</span><span class="p">)</span><span class="nf">firstSection</span><span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_firstSection</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">_firstSection</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZSectionObject</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
+        <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">sectionsArray</span> <span class="nl">addObject</span><span class="p">:</span><span class="n">_firstSection</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">_firstSection</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+<p>轮到第二个方法了，配置 cell 的时候，我们需要知道 cell 对应的 item 而去配置 cell，那么更抽象一点的话，也就是说 Datasource 是建立了cellitem 和 cell 之间的联系，也就是 Model-View 直接的联系。View 本身做的工作也就是根据 Model 配置 View 的样子。所以这时候我们我们可以定义一个接口。</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@protocol</span> <span class="nc">CDZCustomView</span>
+<span class="k">@required</span>
+<span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">setItem</span><span class="p">:(</span><span class="kt">id</span><span class="p">)</span><span class="n">item</span><span class="p">;</span>
+<span class="k">@end</span></code></pre></div>
+<p>然后让我们的 Cel l遵守这个协议，也就是所有通用的 Cell，需要在方法内实现 item 的解析。而其实对于 cell 也是一种 view，这个接口可以让一些复用的 view  都遵守，比如 headerview 等等。对于 cell 我们还可以拓展这个协议。</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@protocol</span> <span class="nc">CDZTableCell</span> <span class="o">&lt;</span><span class="n">CDZCustomView</span><span class="o">&gt;</span>
+<span class="k">@required</span>
+<span class="o">+</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nl">tableView</span><span class="p">:(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="n">tableView</span> <span class="nl">rowHeightForItem</span><span class="p">:(</span><span class="kt">id</span><span class="p">)</span><span class="n">item</span><span class="p">;</span>
+<span class="k">@end</span></code></pre></div>
+<p>这样，cell 的高度也可以由 cell 内部自己决定，适合各种各样的 cell，当然也可以让 Autolayout 决定。但是有一些老项目里的 cell 里面没有 Autolayout，所以返回高度通用性可能更强些。</p>
+
+<p>回到 Datasource，我们解决了 cell 的 Model 问题，下一个是，cell 的 class 怎么决定呢？其实对于 Datasouce 来说，cell 的类型，往往是由对应的 Model 决定的，也就是 Model 的类型，决定可以使用的 cell 的种类。那么我们在 Datasouce 里，只要给出一个接口，让使用者建立这种联系，item class - cell class 的联系，并在内部用一个类似哈希表的东西储存起来，我们便可以根据 item 找到 cell 的 class。简单的话用一个 NSMutableDictionary 就可以了。</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setCellClass:</span><span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nv">cellClass</span> <span class="nf">forItemClass:</span><span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nv">itemClass</span><span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">itemClass</span> <span class="o">||</span> <span class="o">!</span><span class="n">cellClass</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">cellDic</span> <span class="nl">setObject</span><span class="p">:</span><span class="n">cellClass</span> <span class="nl">forKey</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">(</span><span class="n">itemClass</span><span class="p">)];</span>
+<span class="p">}</span></code></pre></div>
+<p>而这样以后要更换 View 的时候，只要新建一个 cell 并重新 set 一下对应的 item 的就可以了，换 Model 也类似。</p>
+
+<p>那么现在就可以根据 index 找到对应的 Section 和对应的 row 所对应的 item 所对应的 cellclass 了。</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">itemForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">sectionsArray</span><span class="p">.</span><span class="n">count</span> <span class="o">&gt;</span> <span class="n">indexPath</span><span class="p">.</span><span class="n">section</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">sectionsArray</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">section</span><span class="p">].</span><span class="n">itemsArray</span><span class="p">.</span><span class="n">count</span> <span class="o">&gt;</span> <span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">sectionsArray</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">section</span><span class="p">].</span><span class="n">itemsArray</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">-</span> <span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellClassForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+    <span class="kt">id</span> <span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">tableView</span><span class="p">:</span><span class="n">tableView</span> <span class="nl">itemForRowAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
+    <span class="kt">Class</span> <span class="n">cellClass</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">cellDic</span> <span class="nl">objectForKey</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">([</span><span class="n">item</span> <span class="k">class</span><span class="p">])];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">cellClass</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cellClass</span> <span class="o">=</span> <span class="p">[</span><span class="n">UITableViewCell</span> <span class="k">class</span><span class="p">];</span><span class="c1">//没有对应关系的，取默认的UITalbeViewCell
+</span><span class="c1"></span>    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">cellClass</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+<p>那么 cellforrow 方法就出来了</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+    <span class="kt">Class</span> <span class="n">cellClass</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">tableView</span><span class="p">:</span><span class="n">tableView</span> <span class="nl">cellClassForRowAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
+    <span class="n">UITableViewCell</span><span class="o">&lt;</span><span class="n">CDZTableCell</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">tableView</span> <span class="nl">dequeueReusableCellWithIdentifier</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">(</span><span class="n">cellClass</span><span class="p">)];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">cell</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cell</span> <span class="o">=</span> <span class="p">[[</span><span class="n">cellClass</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithStyle</span><span class="p">:</span><span class="n">UITableViewCellStyleDefault</span> <span class="nl">reuseIdentifier</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">(</span><span class="n">cellClass</span><span class="p">)];</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">([</span><span class="n">cell</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">setItem</span><span class="p">:)])</span> <span class="p">{</span><span class="c1">//检查是否有实现setItem的方法
+</span><span class="c1"></span>        <span class="p">[</span><span class="n">cell</span> <span class="nl">setItem</span><span class="p">:[</span><span class="nb">self</span> <span class="nl">tableView</span><span class="p">:</span><span class="n">tableView</span> <span class="nl">itemForRowAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">]];</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+<p>到此 DataSource 就完成了。</p>
+
+<h3 id="如何使用呢">如何使用呢？</h3>
+
+<p>让自定义的 cell 遵守 <CDZTableCell> 协议，内部实现 setItem 方法去配置 View。一些老的 cell 也可以简单的遵守协议并把以前配置视图的方法写到 setItem 方法里就可以了。协议比继承耦合性更低些，即加即用。</p>
+
+<p>让 Tableview 的 Datasouce 指定为一个 CDZTabeDataSource，并设置 item 对应的 cell 类型就可以。更换 cell 和 item 只要重新建立关系即可，达到了 Datasource 的复用和拓展性。对于各种 Tableview，就不用重复写 Datasource 的代码了。例子如 Demo：</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">heightForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+    <span class="kt">Class</span> <span class="n">cellClass</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">tableDataSource</span> <span class="nl">tableView</span><span class="p">:</span><span class="n">tableView</span> <span class="nl">cellClassForRowAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">cellClass</span> <span class="o">==</span> <span class="p">[</span><span class="n">UITableViewCell</span> <span class="k">class</span><span class="p">])</span> <span class="o">?</span> <span class="mf">44.f</span> <span class="o">:</span> <span class="p">[</span><span class="n">cellClass</span> <span class="nl">tableView</span><span class="p">:</span><span class="n">tableView</span> <span class="nl">rowHeightForItem</span><span class="p">:[</span><span class="nb">self</span><span class="p">.</span><span class="n">tableDataSource</span> <span class="nl">tableView</span><span class="p">:</span><span class="n">tableView</span> <span class="nl">itemForRowAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">]];</span>
+<span class="p">}</span>
+
+
+<span class="p">-</span> <span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView</span><span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_tableView</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">_tableView</span> <span class="o">=</span> <span class="p">[[</span><span class="n">UITableView</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithFrame</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">frame</span> <span class="nl">style</span><span class="p">:</span><span class="n">UITableViewStylePlain</span><span class="p">];</span>
+        <span class="n">_tableView</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
+        <span class="n">_tableView</span><span class="p">.</span><span class="n">dataSource</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">tableDataSource</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">_tableView</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">-</span> <span class="p">(</span><span class="n">CDZTableDataSource</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableDataSource</span><span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_tableDataSource</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">_tableDataSource</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZTableDataSource</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
+        <span class="p">[</span><span class="n">_tableDataSource</span> <span class="nl">setCellClass</span><span class="p">:[</span><span class="n">CDZTableViewCell</span> <span class="k">class</span><span class="p">]</span> <span class="nl">forItemClass</span><span class="p">:[</span><span class="n">CDZCellItem</span> <span class="k">class</span><span class="p">]];</span>
+        <span class="n">_tableDataSource</span><span class="p">.</span><span class="n">firstSection</span><span class="p">.</span><span class="n">itemsArray</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">self</span> <span class="n">mockItems</span><span class="p">]</span> <span class="k">copy</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">_tableDataSource</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+<h3 id="collecitonviewdatasource其实也类似">CollecitonViewDatasource其实也类似</h3>
+
+<p>区别在于collecitonview的cell要注册，所以cellforrow方法有所不同</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">UICollectionViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">collectionView:</span><span class="p">(</span><span class="n">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionView</span> <span class="nf">cellForItemAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
+    <span class="kt">Class</span> <span class="n">cellClass</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">collectionView</span><span class="p">:</span><span class="n">collectionView</span> <span class="nl">cellClassForRowAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
+    <span class="n">UICollectionViewCell</span><span class="o">&lt;</span><span class="n">CDZCollectionCell</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">collectionView</span> <span class="nl">dequeueReusableCellWithReuseIdentifier</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">(</span><span class="n">cellClass</span><span class="p">)</span> <span class="nl">forIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">([</span><span class="n">cell</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">setItem</span><span class="p">:)])</span> <span class="p">{</span>
+        <span class="p">[</span><span class="n">cell</span> <span class="nl">setItem</span><span class="p">:[</span><span class="nb">self</span> <span class="nl">collectionView</span><span class="p">:</span><span class="n">collectionView</span> <span class="nl">itemForRowAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">]];</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+<p>其它基本类似，且 Collectionview 和 Tableview还可以共用一个 sectionobject。</p>
+
+<h2 id="最后">最后</h2>
+
+<p>所有源码和 <a href="https://github.com/Nemocdz/CDZDataSourceDemo">Demo</a>
+工作里，我们经常会因为赶需求而做一些复制粘贴。但也别忘了多思考如何复用，如何类比，虽然花掉现在一些时间，却会在日后的重构，修改，别人的修改上带来很多便利。</p>
+
+<p>如果您觉得有帮助,不妨给个 star 鼓励一下,欢迎关注&amp;交流</p></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © 2018 NemocdzThis post was published <strong>568</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-nemocdz-github-io-my-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017-2018 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
+<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+
+
+
+  </body>
+</html>

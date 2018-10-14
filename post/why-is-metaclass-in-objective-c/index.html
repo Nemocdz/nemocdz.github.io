@@ -15,7 +15,7 @@
 
   
   <meta name="author" content="Nemocdz" />
-  <meta name="description" content="这篇文章源于美团面试官问的我一个问题，为什么Objective-C中有Class和MetaClass这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有MetaClass而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么Objective-C中有MetaClass这个设计？
+  <meta name="description" content="这篇文章源于美团面试官问的我一个问题，为什么 Objective-C 中有 Class 和 MetaClass 这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有 MetaClass 而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么 Objective-C 中有 MetaClass 这个设计？
 
 " />
 
@@ -24,7 +24,7 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@Nemocdz" />
     <meta name="twitter:title" content="Why is MetaClass in Objective-C？" />
-    <meta name="twitter:description" content="这篇文章源于美团面试官问的我一个问题，为什么Objective-C中有Class和MetaClass这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有MetaClass而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么Objective-C中有MetaClass这个设计？
+    <meta name="twitter:description" content="这篇文章源于美团面试官问的我一个问题，为什么 Objective-C 中有 Class 和 MetaClass 这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有 MetaClass 而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么 Objective-C 中有 MetaClass 这个设计？
 
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
@@ -202,15 +202,15 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">Why is MetaClass in Objective-C？</h1>
-      <p class="post-meta">@Nemocdz · Sep 15, 2017 · 2 min read</p>
+      <p class="post-meta">@Nemocdz · Sep 15, 2017 · 3 min read</p>
     </header>
-    <article class="post-content"><p>这篇文章源于美团面试官问的我一个问题，为什么Objective-C中有Class和MetaClass这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有MetaClass而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么Objective-C中有MetaClass这个设计？</p>
+    <article class="post-content"><p>这篇文章源于美团面试官问的我一个问题，为什么 Objective-C 中有 Class 和 MetaClass 这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有 MetaClass 而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么 Objective-C 中有 MetaClass 这个设计？</p>
 
 <p></p>
 
 <h3 id="前置知识">前置知识</h3>
 
-<p>首先简单分析下在Objective-C中，对象是什么。下面源码基于<a href="https://opensource.apple.com/tarballs/objc4/">Runtime-709</a>分析。</p>
+<p>首先简单分析下在 Objective-C 中，对象是什么。下面源码基于 <a href="https://opensource.apple.com/tarballs/objc4/">Runtime-709</a> 分析。</p>
 <div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">objc_object</span> <span class="o">*</span><span class="n">id</span><span class="p">;</span><span class="c1">//id其实是一个object结构体的指针，所以id不用加*
 </span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">objc_class</span> <span class="o">*</span><span class="n">Class</span><span class="p">;</span><span class="c1">//Class是class结构体的指针
 </span><span class="c1"></span>
@@ -225,11 +225,11 @@
 </span><span class="c1"></span>  	<span class="c1">//...
 </span><span class="c1"></span><span class="p">}</span>
 </code></pre></div>
-<p>可以看到，对象最基本的就是有一个isa指针，指向他的class，而Class本身是继承自object。isa指针的理解诶就是英文is a，代表“xxx is a （class）”。那么也就是说，一个对象的isa指向哪个class，代表它是那个类的对象。那么对于class来说，它也是一个对象，它的isa指针指向什么呢？</p>
+<p>可以看到，对象最基本的就是有一个 isa 指针，指向他的 Class，而 Class 本身是继承自 object。isa 指针的理解诶就是英文 is a，代表 “xxx is a （class）”。那么也就是说，一个对象的 isa 指向哪个 Class，代表它是那个类的对象。那么对于 Class 来说，它也是一个对象，它的 isa 指针指向什么呢？</p>
 
-<p>对于Class来说，也就需要一个描述他的类，也就是“类的类”，而meta正是“关于某事自身的某事”的解释，所以MetaClass就因此而生了。</p>
+<p>对于 Class 来说，也就需要一个描述他的类，也就是“类的类”，而 meta 正是“关于某事自身的某事”的解释，所以 MetaClass 就因此而生了。</p>
 
-<p>而从runtime动态生成一个类的Api的方法中，我们也可以发现metaClass的踪迹。</p>
+<p>而从 Runtime 动态生成一个类的 API 的方法中，我们也可以发现 MetaClass 的踪迹。</p>
 <div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="n">Class</span> <span class="nf">objc_allocateClassPair</span><span class="p">(</span><span class="n">Class</span> <span class="n">superclass</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> 
                              <span class="n">size_t</span> <span class="n">extraBytes</span><span class="p">)</span>
 <span class="p">{</span>
@@ -256,15 +256,15 @@
 
 <p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fjjcy2lrq9j30zg112jvt.jpg" alt="v2-ce4b3fa6d104a632f4f34dec0d50f71f_r" /></p>
 
-<p>从这张图上，我们可以看到通过这么一层继承关系，Objective-C的对象原型继承链就完整了。</p>
+<p>从这张图上，我们可以看到通过这么一层继承关系，Objective-C 的对象原型继承链就完整了。</p>
 
-<p>同时，实例的实例方法函数存在类结构体中，类方法函数存在metaclass结构体中，而Objective-C的方法调用（消息）就会根据对象去找isa指针指向的Class对象中的方法列表找到对应的方法。</p>
+<p>同时，实例的实例方法函数存在类结构体中，类方法函数存在 MetaClass 结构体中，而 Objective-C 的方法调用（消息）就会根据对象去找 isa 指针指向的 Class 对象中的方法列表找到对应的方法。</p>
 
-<h3 id="python中的metaclass">Python中的MetaClass</h3>
+<h3 id="python-中的-metaclass">Python 中的 MetaClass</h3>
 
-<p>再讲Objective-C之前，先讲讲别的语言的设计，通过各种语言的比较，可以从更广的层面去理解语言的设计思想。而之所以先讲起Python，是因为我在搜索MetaClass时，搜索结果中大部分其实是讲Python中MetaClass的。</p>
+<p>再讲 Objective-C 之前，先讲讲别的语言的设计，通过各种语言的比较，可以从更广的层面去理解语言的设计思想。而之所以先讲起 Python，是因为我在搜索 MetaClass 时，搜索结果中大部分其实是讲 Python 中 MetaClass 的。</p>
 
-<p>先看看Python中一个对象结构是怎么样的，以下源码基于<a href="https://github.com/python/cpython">CPython 3.7.0 alpha 1</a>。</p>
+<p>先看看Python中一个对象结构是怎么样的，以下源码基于 <a href="https://github.com/python/cpython">CPython 3.7.0 alpha 1</a>。</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">//object.h
 </span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_object</span> <span class="p">{</span>
     <span class="n">_PyObject_HEAD_EXTRA</span>
@@ -288,10 +288,10 @@
     <span class="n">PyObject</span> <span class="n">ob_base</span><span class="p">;</span>  
     <span class="n">Py_ssize_t</span> <span class="n">ob_size</span><span class="p">;</span> <span class="c1">//对象长度
 </span><span class="c1"></span><span class="p">}</span> <span class="n">PyVarObject</span><span class="p">;</span></code></pre></div>
-<p>PyVarObject是一种可变长度对象，是在PyObject基础上加上了对象的长度。而开始的内存包括了ob_base这个PyObject，就代表可以用PyObject指针进行引用。所以可以说，结构体中刚开始的部分是一个PyObject对象，在Python中引用就是一个对象。那么PyTypeObject开头是一个PyVarObject，也就是一个对象。也就是说，Python里的Class，也是一个对象。</p>
+<p>PyVarObject 是一种可变长度对象，是在 PyObject 基础上加上了对象的长度。而开始的内存包括了 ob_base 这个 PyObject，就代表可以用 PyObject 指针进行引用。所以可以说，结构体中刚开始的部分是一个 PyObject 对象，在 Python 中引用就是一个对象。那么 PyTypeObject 开头是一个 PyVarObject，也就是一个对象。也就是说，Python 里的 Class，也是一个对象。</p>
 <div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="c1">#在python中生成一个Class</span>
 <span class="n">MyClass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s1">&#39;MyClass&#39;</span><span class="p">,</span> <span class="p">(),</span> <span class="p">{})</span>           </code></pre></div>
-<p>先看看Python里面的type关键字是什么。</p>
+<p>先看看 Python 里面的 type 关键字是什么。</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">//bltinmodule.c
 </span><span class="c1"></span><span class="n">SETBUILTIN</span><span class="p">(</span><span class="s">&#34;type&#34;</span><span class="p">,</span>                  <span class="o">&amp;</span><span class="n">PyType_Type</span><span class="p">);</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">//typeobject.c
 </span><span class="c1"></span><span class="n">PyTypeObject</span> <span class="n">PyType_Type</span> <span class="o">=</span> <span class="p">{</span>
@@ -303,43 +303,43 @@
 </span><span class="c1"></span>    <span class="n">type_new</span><span class="p">,</span>                                   <span class="cm">/* tp_new */</span>
 	<span class="c1">//....
 </span><span class="c1"></span><span class="p">};</span></code></pre></div>
-<p>可以发现type关键字是PyType_Type的一个引用，而PyType_Type是返回一个PyTypeObject，生成类的对象。而PyVarObject_HEAD_INIT递归引用了自己（PyType_Type）作为它的type，所以可以得知<code>type(class) == type</code> 。也就是说，Python中类的isa指针指向type，也就说type其实就是MetaClass，而同时<code>type(type) ==  type</code>，也就是type的isa指针指向type自身。那么Python的对象链就如下图。</p>
+<p>可以发现 type 关键字是 PyType_Type 的一个引用，而 PyType_Type 是返回一个 PyTypeObject，生成类的对象。而 PyVarObject_HEAD_INIT 递归引用了自己（PyType_Type）作为它的 type，所以可以得知 <code>type(class) == type</code> 。也就是说，Python 中类的 isa 指针指向 type，也就说 type 其实就是 MetaClass，而同时 <code>type(type) ==  type</code>，也就是 type 的 isa 指针指向 type 自身。那么 Python 的对象链就如下图。</p>
 
 <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fjjgbu36h1j30go0amjrz.jpg" alt="86fbc69def5f2afddd652a5d83e69456_b" /></p>
 
-<p>而Objective-C不太一样的是，并不是每一个类都有一个MetaClass，而是所有的类默认都是同一个MetaClass。当然，Python里可以自定义新的MetaClass。</p>
+<p>而 Objective-C 不太一样的是，并不是每一个类都有一个 MetaClass，而是所有的类默认都是同一个 MetaClass。当然，Python 里可以自定义新的 MetaClass。</p>
 
-<p>Python中为何要使用元类的原因可能是，Python希望让使用者对类有着最高的控制权，可以通过对元类的自定义而改变制造类的过程（例如Django里的ORM）。也就是，Python开放了面向对象中<strong>类的制造者的权限</strong>。而同时，根据StackOverFlow这个<a href="https://stackoverflow.com/questions/100003/what-is-a-metaclass-in-python">问答</a>，Python的类的设计是借鉴于Smalltalk这门语言。</p>
+<p>Python 中为何要使用元类的原因可能是，Python 希望让使用者对类有着最高的控制权，可以通过对元类的自定义而改变制造类的过程（例如 Django 里的 ORM）。也就是，Python 开放了面向对象中<strong>类的制造者的权限</strong>。而同时，根据 StackOverFlow 这个<a href="https://stackoverflow.com/questions/100003/what-is-a-metaclass-in-python">问答</a>，Python 的类的设计是借鉴于 Smalltalk 这门语言。</p>
 
-<p>Smalltalk！！Objective-C的特性基本上是照搬的Smalltalk，看来Smalltalk里可以找到一些线索。</p>
+<p>Smalltalk！！Objective-C 的特性基本上是照搬的 Smalltalk，看来 Smalltalk 里可以找到一些线索。</p>
 
 <h3 id="smalltalk-面向对象的前辈">Smalltalk-面向对象的前辈</h3>
 
 <p><strong>Smalltalk</strong>，被公认为历史上第二个面向对象的语言，其亮点是它的<strong>消息发送</strong>机制。</p>
 
-<p>Smalltalk中的MetaClass的设计是Smalltalk-80加入的。而之前的Smalltalk-76，并不是每个类有一个MetaClass，而是所有类的isa指针都指向一个特殊的类，叫做<code>Class</code>(这种设计之后也被Java借鉴了）。</p>
+<p>Smalltalk 中的 MetaClass 的设计是 Smalltalk-80 加入的。而之前的 Smalltalk-76，并不是每个类有一个 MetaClass，而是所有类的 isa 指针都指向一个特殊的类，叫做 <code>Class</code>(这种设计之后也被 Java 借鉴了）。</p>
 
-<p>而每个类都有自己MetaClass的设计，加入的原因是，因为Smalltalk里面，类是对象，而对象就可以响应消息，那么类的消息的响应的方法就应该由类的类去存储，而每个MetaClass就持有每个类的类方法。</p>
+<p>而每个类都有自己 MetaClass 的设计，加入的原因是，因为 Smalltalk 里面，类是对象，而对象就可以响应消息，那么类的消息的响应的方法就应该由类的类去存储，而每个 MetaClass 就持有每个类的类方法。</p>
 
-<p><strong>问题1：每个MetaClass的isa指针指向什么？</strong></p>
+<p><strong>问题 1：每个 MetaClass 的 isa 指针指向什么？</strong></p>
 
-<p>如果MetaClass再有MetaClass，那么这个关系将无穷无尽。Smalltalk里的解决方案是，指向同一个叫<code>MetaClass</code>的类。</p>
+<p>如果 MetaClass 再有 MetaClass，那么这个关系将无穷无尽。Smalltalk 里的解决方案是，指向同一个叫 <code>MetaClass</code> 的类。</p>
 
-<p><strong>问题2：<code>MetaClass</code>的isa指针指向什么？</strong></p>
+<p><strong>问题 2：<code>MetaClass</code> 的 isa 指针指向什么？</strong></p>
 
-<p>指向他的实例，也就是实例的isa指向<code>MetaClass</code>，同时<code>MetaClass</code>isa指向实例，相互指着。</p>
+<p>指向他的实例，也就是实例的 isa 指向 <code>MetaClass</code>，同时 <code>MetaClass</code>的 isa 指向实例，相互指着。</p>
 
-<p>那么Smalltalk的继承关系，其实和Objective-C的很像了（后面有class的是前者的MetaClass）。</p>
+<p>那么 Smalltalk 的继承关系，其实和 Objective-C的 很像了（后面有 Class 的是前者的 MetaClass）。</p>
 
 <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fjjkgtdoczj31k00v4nav.jpg" alt="屏幕快照 2017-09-15 上12.40.10" /></p>
 
-<p><strong>这时候产生了一个重要的问题，假如去掉MetaClass，把类方法放到也类里面是否可行？</strong></p>
+<p><strong>这时候产生了一个重要的问题，假如去掉 MetaClass，把类方法放到也类里面是否可行？</strong></p>
 
 <p>这个问题，我思索许久，发现其实是一个对面向对象的哲学思想问题，要对这个问题下结论，不得不重新讲讲面向对象。</p>
 
-<h3 id="从smalltalk重新认识面向对象">从Smalltalk重新认识面向对象</h3>
+<h3 id="从-smalltalk-重新认识面向对象">从 Smalltalk 重新认识面向对象</h3>
 
-<p>以前谈到面向对象，总会提到，面向对象三特征：<strong>封装、继承、多态</strong>。但其实，面向对象中也分流派，如C++这种来自Simula的设计思想的，更注重的是<strong>类的划分</strong>，因为方法调用是静态的。而如Objective-C这种借鉴Smalltalk的，更注重的是<strong>消息传递</strong>，是动态响应消息。</p>
+<p>以前谈到面向对象，总会提到，面向对象三特征：<strong>封装、继承、多态</strong>。但其实，面向对象中也分流派，如 C++ 这种来自 Simula 的设计思想的，更注重的是<strong>类的划分</strong>，因为方法调用是静态的。而如 Objective-C 这种借鉴 Smalltalk 的，更注重的是<strong>消息传递</strong>，是动态响应消息。</p>
 
 <p>而面向对象三种特征，更基于的是类的划分而提出的。</p>
 
@@ -350,19 +350,19 @@
 <li>消息传递，要求的是类的设计者以消息为起点去构建类，也就是对<strong>外界的变化进行响应</strong>，而不关心自身的类型，设计接口。尝试理解消息，无法处理则进行特殊处理。</li>
 </ul>
 
-<p>在此不讨论两种方式的优劣之分，而着重讲讲Smalltalk这种设计。</p>
+<p>在此不讨论两种方式的优劣之分，而着重讲讲 Smalltalk 这种设计。</p>
 
-<p>消息传递对于面向对象的设计，其实在于给出一种对消息的解决方案。而面向对象优点之一的复用，在这种设计里，更多在于<strong>复用解决方案</strong>，而不是单纯的类本身。这种思想就如设计组件一般，关心接口，关心组合而非类本身。其实之所以有MetaClass这种设计，我的理解并不是先有MetaClass，而是在万物都是对象的Smalltalk里，向对象发送消息的基本解决方案是统一的，希望复用的。而实例和类之间用的这一套通过isa指针指向的Class单例中存储方法列表和查询方法的解决方案的流程，是应该在类上复用的，而MetaClass就顺理成章出现罢了。</p>
+<p>消息传递对于面向对象的设计，其实在于给出一种对消息的解决方案。而面向对象优点之一的复用，在这种设计里，更多在于<strong>复用解决方案</strong>，而不是单纯的类本身。这种思想就如设计组件一般，关心接口，关心组合而非类本身。其实之所以有 MetaClass 这种设计，我的理解并不是先有 MetaClass，而是在万物都是对象的 Smalltalk 里，向对象发送消息的基本解决方案是统一的，希望复用的。而实例和类之间用的这一套通过 isa 指针指向的 Class 单例中存储方法列表和查询方法的解决方案的流程，是应该在类上复用的，而 MetaClass 就顺理成章出现罢了。</p>
 
 <h3 id="最后">最后</h3>
 
-<p>回到一开始那个问题，<strong>为什么要设计MetaClass，去掉把类方法放到类里面行不行？</strong></p>
+<p>回到一开始那个问题，<strong>为什么要设计 MetaClass，去掉把类方法放到类里面行不行？</strong></p>
 
-<p>我的理解是，可以，但不Smalltalk。这样的设计是C++那种自上而下的设计方式，类方法也是类的一种特征描述。而Smalltalk的精髓正在于消息传递，<strong>复用消息传递</strong>才是根本目的，而MetaClass只不过是因此需要的一个工具罢了。</p>
+<p>我的理解是，可以，但不 Smalltalk。这样的设计是 C++ 那种自上而下的设计方式，类方法也是类的一种特征描述。而 Smalltalk 的精髓正在于消息传递，<strong>复用消息传递</strong>才是根本目的，而 MetaClass 只不过是因此需要的一个工具罢了。</p>
 
-<p>PS：笔者这个问题从MetaClass入手去思考，是百思不得其解的。后来看了很多面向对象的东西，才发现这不过是一个产物，而并不是一个重点。</p>
+<p>PS：笔者这个问题从 MetaClass 入手去思考，是百思不得其解的。后来看了很多面向对象的东西，才发现这不过是一个产物，而并不是一个重点。</p>
 
-<p>PSS：对于类的实现，Javascript中那种使用Protocol实现的方式也很有意思，受限于篇幅，暂不展开</p>
+<p>PSS：对于类的实现，Javascript 中那种使用 Protocol 实现的方式也很有意思，受限于篇幅，暂不展开</p>
 
 <h4 id="参考链接">参考链接</h4>
 

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>从一道网易面试题浅谈 Objective-C 线程安全</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Nemocdz" />
+  <meta name="description" content="今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？
+
+" />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@Nemocdz" />
+    <meta name="twitter:title" content="从一道网易面试题浅谈 Objective-C 线程安全" />
+    <meta name="twitter:description" content="今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？
+
+" />
+    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.46" />
+
+
+<link rel="canonical" href="https://nemocdz.github.io/post/%E4%BB%8E%E4%B8%80%E9%81%93%E7%BD%91%E6%98%93%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B5%85%E8%B0%88-objective-c-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/" />
+<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
+<meta name="baidu-site-verification" content="iVpH4VhHBT" />
+<meta name="sogou_site_verification" content="YPqjjJgiSh" />
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+
+<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  
+  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  
+  <p class="subtitle">iOS&amp;Android Dev</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+      
+        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+      <li class="social-item">
+        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
+      </li>
+
+      
+      <li class="social-item">
+        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
+      </li>
+
+      
+
+      <li class="social-item">
+        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">从一道网易面试题浅谈 Objective-C 线程安全</h1>
+      <p class="post-meta">@Nemocdz · Aug 25, 2017 · 2 min read</p>
+    </header>
+    <article class="post-content"><p>今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？</p>
+
+<p></p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">strong</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">target</span><span class="p">;</span>
+<span class="c1">//....
+</span><span class="c1"></span>
+<span class="n">dispatch_queue_t</span> <span class="n">queue</span> <span class="o">=</span> <span class="n">dispatch_queue_create</span><span class="p">(</span><span class="s">&#34;parallel&#34;</span><span class="p">,</span> <span class="n">DISPATCH_QUEUE_CONCURRENT</span><span class="p">);</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">1000000</span> <span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">dispatch_async</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
+     	<span class="nb">self</span><span class="p">.</span><span class="n">target</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSString</span> <span class="nl">stringWithFormat</span><span class="p">:</span><span class="s">@&#34;ksddkjalkjd%d&#34;</span><span class="p">,</span><span class="n">i</span><span class="p">];</span>
+	<span class="p">});</span>
+<span class="p">}</span></code></pre></div>
+<p>当时我把自定义的队列看成了串行队列，然后回答：“没错呀”。后来一运行崩溃了……</p>
+
+<p>面试后，我就仔细回想，敲了 Demo，看看崩溃原因是啥。</p>
+
+<p>正好试试小伙伴给我介绍的调试野指针的方法，XCode7 以上才有的<a href="http://www.jianshu.com/p/6b504428e16e">Address Sanitizer</a>。</p>
+
+<p>打开后发现是经典的 EXC_BAD_ACCESS 错误，以我浅薄的经验来看，这种一般是对一个已释放的内存的对象再次发送消息出现的。</p>
+
+<p><img src="https://ws2.sinaimg.cn/large/006tKfTcly1fivdrg9q8pj31fe022wfi.jpg" alt="屏幕快照 2017-08-25 上午1.55.50" /></p>
+
+<p>再看看崩溃堆栈</p>
+
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79ly1fivdrdngbdj30gw0asaba.jpg" alt="屏幕快照 2017-08-25 上午1.53.22" /></p>
+
+<p>噢，看来是对已释放的对象再次发送了 release 信息。</p>
+
+<p>我又留意到，这个对象是 Strong 修饰的，或许可以从 Strong 和 Setter 方法的源码入手看看。</p>
+
+<p>下面源码基于 <a href="https://opensource.apple.com/tarballs/objc4/">Runtime-709</a> 分析，首先找到属性设置方法。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="c1">//objc_class.mm
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">object_setIvar</span><span class="p">(</span><span class="n">id</span> <span class="n">obj</span><span class="p">,</span> <span class="n">Ivar</span> <span class="n">ivar</span><span class="p">,</span> <span class="n">id</span> <span class="n">value</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">_object_setIvar</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ivar</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="nb">false</span> <span class="cm">/*not strong default*/</span><span class="p">);</span>
+<span class="p">}</span>
+
+
+<span class="k">static</span> <span class="n">ALWAYS_INLINE</span> 
+<span class="kt">void</span> <span class="nf">_object_setIvar</span><span class="p">(</span><span class="n">id</span> <span class="n">obj</span><span class="p">,</span> <span class="n">Ivar</span> <span class="n">ivar</span><span class="p">,</span> <span class="n">id</span> <span class="n">value</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">assumeStrong</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//判断是否是 TaggedPointer
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">obj</span>  <span class="o">||</span>  <span class="o">!</span><span class="n">ivar</span>  <span class="o">||</span>  <span class="n">obj</span><span class="o">-&gt;</span><span class="n">isTaggedPointer</span><span class="p">())</span> <span class="k">return</span><span class="p">;</span>
+
+    <span class="n">ptrdiff_t</span> <span class="n">offset</span><span class="p">;</span>
+    <span class="n">objc_ivar_memory_management_t</span> <span class="n">memoryManagement</span><span class="p">;</span>
+    <span class="c1">//找对应的内存管理语义和属性偏移值
+</span><span class="c1"></span>    <span class="n">_class_lookUpIvar</span><span class="p">(</span><span class="n">obj</span><span class="o">-&gt;</span><span class="n">ISA</span><span class="p">(),</span> <span class="n">ivar</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">memoryManagement</span><span class="p">);</span>
+
+    <span class="c1">//如果找不到默认是否为 Strong，不然为 unsafe_unretained
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">memoryManagement</span> <span class="o">==</span> <span class="n">objc_ivar_memoryUnknown</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">assumeStrong</span><span class="p">)</span> <span class="n">memoryManagement</span> <span class="o">=</span> <span class="n">objc_ivar_memoryStrong</span><span class="p">;</span>
+        <span class="k">else</span> <span class="n">memoryManagement</span> <span class="o">=</span> <span class="n">objc_ivar_memoryUnretained</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">//根据偏移值找到属性对应位置
+</span><span class="c1"></span>    <span class="n">id</span> <span class="o">*</span><span class="n">location</span> <span class="o">=</span> <span class="p">(</span><span class="n">id</span> <span class="o">*</span><span class="p">)((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="n">obj</span> <span class="o">+</span> <span class="n">offset</span><span class="p">);</span>
+    
+    <span class="c1">//判断不同的内存管理语义，调用方法
+</span><span class="c1"></span>    <span class="k">switch</span> <span class="p">(</span><span class="n">memoryManagement</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="nl">objc_ivar_memoryWeak</span><span class="p">:</span>       <span class="n">objc_storeWeak</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="nl">objc_ivar_memoryStrong</span><span class="p">:</span>     <span class="n">objc_storeStrong</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="nl">objc_ivar_memoryUnretained</span><span class="p">:</span> <span class="o">*</span><span class="n">location</span> <span class="o">=</span> <span class="n">value</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="nl">objc_ivar_memoryUnknown</span><span class="p">:</span>    <span class="n">_objc_fatal</span><span class="p">(</span><span class="s">&#34;impossible&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="c1">//NSObject.mm
+</span><span class="c1"></span><span class="kt">void</span>
+<span class="nf">objc_storeStrong</span><span class="p">(</span><span class="n">id</span> <span class="o">*</span><span class="n">location</span><span class="p">,</span> <span class="n">id</span> <span class="n">obj</span><span class="p">)</span>
+<span class="p">{</span>   
+    <span class="c1">//如果新值指针和旧值一样，则不更新，直接 return
+</span><span class="c1"></span>    <span class="n">id</span> <span class="n">prev</span> <span class="o">=</span> <span class="o">*</span><span class="n">location</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">obj</span> <span class="o">==</span> <span class="n">prev</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//先对新值 retain
+</span><span class="c1"></span>    <span class="n">objc_retain</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span>
+    <span class="c1">//再赋值
+</span><span class="c1"></span>    <span class="o">*</span><span class="n">location</span> <span class="o">=</span> <span class="n">obj</span><span class="p">;</span>
+    <span class="c1">//最后对旧值 release
+</span><span class="c1"></span>    <span class="n">objc_release</span><span class="p">(</span><span class="n">prev</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>那么他的 Setter 方法在 MRC 上就相当于</p>
+<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setTarget:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">target</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">target</span> <span class="o">==</span> <span class="n">_target</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+    <span class="kt">id</span> <span class="n">pre</span> <span class="o">=</span> <span class="n">_target</span><span class="p">;</span>
+    <span class="c1">//1.先保留新值
+</span><span class="c1"></span>    <span class="p">[</span><span class="n">target</span> <span class="k">retain</span><span class="p">];</span>
+    <span class="c1">//2.再进行赋值
+</span><span class="c1"></span>    <span class="n">_target</span> <span class="o">=</span> <span class="n">target</span><span class="p">;</span>
+    <span class="c1">//3.释放旧值
+</span><span class="c1"></span>    <span class="p">[</span><span class="n">pre</span> <span class="k">release</span><span class="p">];</span>
+<span class="p">}</span></code></pre></div>
+<p>什么时候会导致过多调用 release 呢？注意这是个并发队列+异步。</p>
+
+<p>那么假如并发队列里调度的线程 A 执行到步骤 1，还没到步骤 2 时，线程 B 执行到步骤3，那么当线程 A 再执行步骤 3 时，旧值就会被过度释放，导致向已释放内存对象发送消息而崩溃。</p>
+
+<p>后来我想怎么可以修改这段代码变为不崩溃的呢？</p>
+
+<h5 id="1-使用串行队列">1.使用串行队列</h5>
+
+<p>将 set 方法改成在串行队列中执行就行，这样即使异步，但所有 block 操作追加在队列最后依次执行。</p>
+
+<h5 id="2-使用-atomic">2. 使用 atomic</h5>
+
+<p>atomic 关键字相当于在 setter 方法加锁，这样每次执行 setter 都是线程安全的，但这只是单独针对 setter 方法而言的狭义的线程安全。</p>
+
+<h5 id="3-使用-weak-关键字">3.使用 weak 关键字</h5>
+
+<p>weak 的 setter 没有保留新值或者保留旧值的操作，所以不会引发重复释放。当然这个时候要看具体情况能否使用 weak，可能值并不是所需要的值。</p>
+
+<h5 id="4-使用-tagged-pointer">4.使用 Tagged Pointer</h5>
+
+<p>Tagged Pointer 是苹果在 64 位系统引入的内存技术。简单来说就是对于 NSString（内存小于60位的字符串）或 NSNumber（小于2^31），64 位的指针有 8 个字节，完全可以直接用这个空间来直接表示值，这样的话其实会将 NSString 和 NSNumber 对象由一个指针转换成一个值类型，而值类型的 setter 和 getter 又是原子的，从而线程安全。</p>
+
+<p>比如上述代码的字符串改短一些，就不会崩溃了。</p>
+
+<p>从而我们可以总结到，线程安全有以下几种方法：</p>
+
+<ul>
+<li>单线程串行访问</li>
+<li>访问加锁</li>
+<li>使用不进行额外操作的关键字（weak）</li>
+<li>使用值类型</li>
+</ul>
+
+<p>然而这只是保证了基本的线程安全（不崩溃），若是需要保证访问出符合预期的数据，则需要采用 GCD 的 barrier 或者自己在合适的时机加锁。</p>
+
+<h5 id="参考链接">参考链接</h5>
+
+<ul>
+<li><a href="http://www.jianshu.com/p/fd81fec31fe7">iOS 多线程到底不安全在哪里？</a></li>
+<li><a href="http://www.infoq.com/cn/articles/deep-understanding-of-tagged-pointer/">深入理解 Tagged Pointer</a></li>
+<li><a href="http://www.cocoachina.com/ios/20150918/13449.html">【译】采用 Tagged Pointer 的字符串</a></li>
+</ul></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © 2018 NemocdzThis post was published <strong>415</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-nemocdz-github-io-my-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017-2018 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
+<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+
+
+
+  </body>
+</html>
