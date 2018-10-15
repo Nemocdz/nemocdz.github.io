@@ -204,7 +204,7 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">iOS 设置代理（Proxy）方案总结</h1>
-      <p class="post-meta">@Nemocdz · Sep 26, 2018 · 6 min read</p>
+      <p class="post-meta">@Nemocdz · Sep 26, 2018 · 7 min read</p>
     </header>
     <article class="post-content"><p>最近因为项目需要，需要在打开某个网址时设置 HTTP 代理。所以做了相关的技术方案调研，并总结下来。</p>
 
@@ -251,7 +251,7 @@
           <span class="k">return</span> <span class="kc">false</span>
     <span class="p">}</span>
         
-    <span class="k">if</span> <span class="kd">let</span> <span class="nv">_</span> <span class="p">=</span> <span class="n">URLProtocol</span><span class="p">.</span><span class="n">property</span><span class="p">(</span><span class="n">forKey</span><span class="p">:</span><span class="n">customKey</span><span class="p">,</span> <span class="k">in</span><span class="p">:</span> <span class="n">request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="kd">let</span> <span class="nv">_</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="n">property</span><span class="p">(</span><span class="n">forKey</span><span class="p">:</span><span class="n">customKey</span><span class="p">,</span> <span class="k">in</span><span class="p">:</span> <span class="n">request</span><span class="p">)</span> <span class="p">{</span>
          <span class="k">return</span> <span class="kc">false</span>
     <span class="p">}</span>
         
@@ -264,7 +264,7 @@
 <span class="kr">override</span> <span class="kd">func</span> <span class="nf">startLoading</span><span class="p">()</span> <span class="p">{</span>
     <span class="c1">// 1. 为请求打上标记</span>
     <span class="kd">let</span> <span class="nv">newRequest</span> <span class="p">=</span> <span class="n">request</span> <span class="k">as</span><span class="o">!</span> <span class="n">NSMutableURLRequest</span>
-    <span class="n">URLProtocol</span><span class="p">.</span><span class="n">setProperty</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="n">forKey</span><span class="p">:</span> <span class="n">type</span><span class="p">(</span><span class="n">of</span><span class="p">:</span> <span class="kc">self</span><span class="p">).</span><span class="n">customKey</span><span class="p">,</span> <span class="k">in</span><span class="p">:</span> <span class="n">newRequest</span><span class="p">)</span>
+    <span class="n">type</span><span class="p">(</span><span class="n">of</span><span class="p">:</span><span class="kc">self</span><span class="p">).</span><span class="n">setProperty</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="n">forKey</span><span class="p">:</span> <span class="n">type</span><span class="p">(</span><span class="n">of</span><span class="p">:</span> <span class="kc">self</span><span class="p">).</span><span class="n">customKey</span><span class="p">,</span> <span class="k">in</span><span class="p">:</span> <span class="n">newRequest</span><span class="p">)</span>
         
     <span class="c1">// 2. 设置 Proxy 配置</span>
     <span class="kd">let</span> <span class="nv">proxy_server</span> <span class="p">=</span> <span class="s">&#34;YourProxyServer&#34;</span> <span class="c1">// proxy server</span>
@@ -272,8 +272,9 @@
     <span class="kd">let</span> <span class="nv">hostKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPProxy</span> <span class="k">as</span> <span class="nb">String</span>
     <span class="kd">let</span> <span class="nv">portKey</span> <span class="p">=</span> <span class="n">kCFNetworkProxiesHTTPPort</span> <span class="k">as</span> <span class="nb">String</span>
     <span class="kd">let</span> <span class="nv">proxyDict</span><span class="p">:[</span><span class="nb">String</span><span class="p">:</span><span class="nb">Any</span><span class="p">]</span> <span class="p">=</span> <span class="p">[</span><span class="n">kCFNetworkProxiesHTTPEnable</span> <span class="k">as</span> <span class="nb">String</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="n">hostKey</span><span class="p">:</span><span class="n">proxy_server</span><span class="p">,</span> <span class="n">portKey</span><span class="p">:</span> <span class="n">proxy_port</span><span class="p">]</span>
-    <span class="kd">let</span> <span class="nv">config</span> <span class="p">=</span> <span class="n">URLSessionConfiguration</span><span class="p">.</span><span class="n">ephemeral</span>
+    <span class="kd">let</span> <span class="nv">config</span> <span class="p">=</span> <span class="n">URLSessionConfiguration</span><span class="p">.</span><span class="k">default</span>
     <span class="n">config</span><span class="p">.</span><span class="n">connectionProxyDictionary</span> <span class="p">=</span> <span class="n">proxyDict</span>
+    <span class="n">config</span><span class="p">.</span><span class="n">protocolClasses</span> <span class="p">=</span> <span class="p">[</span><span class="n">type</span><span class="p">(</span><span class="n">of</span><span class="p">:</span><span class="kc">self</span><span class="p">)]</span>
      
    	 <span class="c1">// 3. 用配置生成 URLSession</span>
      <span class="kd">let</span> <span class="nv">defaultSession</span> <span class="p">=</span> <span class="n">URLSession</span><span class="p">(</span><span class="n">configuration</span><span class="p">:</span> <span class="n">config</span><span class="p">,</span> <span class="n">delegate</span><span class="p">:</span> <span class="kc">self</span><span class="p">,</span> <span class="n">delegateQueue</span><span class="p">:</span> <span class="kc">nil</span><span class="p">)</span>
@@ -311,6 +312,15 @@
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
+<p><strong>需要特别注意的是</strong>，在 UIWebView 中使用会出现 JS、CSS、Image 重定向后无法访问的问题。解决方法是在重定向方法中添加如下代码：</p>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="kc">_</span> <span class="n">session</span><span class="p">:</span> <span class="n">URLSession</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">URLSessionTask</span><span class="p">,</span> <span class="n">willPerformHTTPRedirection</span> <span class="n">response</span><span class="p">:</span> <span class="n">HTTPURLResponse</span><span class="p">,</span> <span class="n">newRequest</span> <span class="n">request</span><span class="p">:</span> <span class="n">URLRequest</span><span class="p">,</span> <span class="n">completionHandler</span><span class="p">:</span> <span class="p">@</span><span class="n">escaping</span> <span class="p">(</span><span class="n">URLRequest</span><span class="p">?)</span> <span class="p">-&gt;</span> <span class="nb">Void</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nv">newRequest</span> <span class="p">=</span> <span class="n">request</span> <span class="k">as</span><span class="o">!</span> <span class="n">NSMutableURLRequest</span>
+        <span class="n">type</span><span class="p">(</span><span class="n">of</span><span class="p">:</span> <span class="kc">self</span><span class="p">).</span><span class="n">removeProperty</span><span class="p">(</span><span class="n">forKey</span><span class="p">:</span> <span class="n">type</span><span class="p">(</span><span class="n">of</span><span class="p">:</span> <span class="kc">self</span><span class="p">).</span><span class="n">customKey</span><span class="p">,</span> <span class="k">in</span><span class="p">:</span> <span class="n">newRequest</span><span class="p">)</span>
+        <span class="n">client</span><span class="p">?.</span><span class="n">urlProtocol</span><span class="p">(</span><span class="kc">self</span><span class="p">,</span> <span class="n">wasRedirectedTo</span><span class="p">:</span> <span class="n">newRequest</span> <span class="k">as</span> <span class="n">URLRequest</span><span class="p">,</span> <span class="n">redirectResponse</span><span class="p">:</span> <span class="n">response</span><span class="p">)</span>
+        <span class="n">dataTask</span><span class="p">?.</span><span class="n">cancel</span><span class="p">()</span>
+        <span class="kd">let</span> <span class="nv">error</span> <span class="p">=</span> <span class="n">NSError</span><span class="p">(</span><span class="n">domain</span><span class="p">:</span> <span class="n">NSCocoaErrorDomain</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="n">NSUserCancelledError</span><span class="p">,</span> <span class="n">userInfo</span><span class="p">:</span> <span class="kc">nil</span><span class="p">)</span>
+        <span class="n">client</span><span class="p">?.</span><span class="n">urlProtocol</span><span class="p">(</span><span class="kc">self</span><span class="p">,</span> <span class="n">didFailWithError</span><span class="p">:</span> <span class="n">error</span><span class="p">)</span>
+    <span class="p">}</span></code></pre></div>
 <p>到此完整的 URLProtocol 定义完了。但是里面有一点不好的地方是，每次发送一个请求时就会新建一个 URLSession，非常低效。苹果也不推荐这种做法，而且某些情况下由于请求未完全发送完还有可能造成内存泄露等问题。因此，我们需要共享一个 Session，并仅在代理的 Host 或者 Port 发生改变时，才重新生成新的实例。笔者模仿 iOS 上网络框架<a href="https://github.com/Alamofire/Alamofire/">Alamofire</a>的做法，简单写了一个 SessionManager 进行管理。</p>
 
 <h4 id="2-自定义-urlsessionmanager">2. 自定义 URLSessionManager</h4>
@@ -518,6 +528,12 @@
 <span class="p">}</span>
 
 <span class="kd">extension</span> <span class="nc">ProxySessionDelegate</span><span class="p">:</span> <span class="n">URLSessionTaskDelegate</span><span class="p">{</span>
+    <span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="kc">_</span> <span class="n">session</span><span class="p">:</span> <span class="n">URLSession</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">URLSessionTask</span><span class="p">,</span> <span class="n">willPerformHTTPRedirection</span> <span class="n">response</span><span class="p">:</span> <span class="n">HTTPURLResponse</span><span class="p">,</span> <span class="n">newRequest</span> <span class="n">request</span><span class="p">:</span> <span class="n">URLRequest</span><span class="p">,</span> <span class="n">completionHandler</span><span class="p">:</span> <span class="p">@</span><span class="n">escaping</span> <span class="p">(</span><span class="n">URLRequest</span><span class="p">?)</span> <span class="p">-&gt;</span> <span class="nb">Void</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="kd">let</span> <span class="nv">delegate</span> <span class="p">=</span> <span class="kc">self</span><span class="p">[</span><span class="n">task</span><span class="p">]</span> <span class="k">as</span><span class="p">?</span> <span class="n">URLSessionTaskDelegate</span><span class="p">{</span>
+            <span class="n">delegate</span><span class="p">.</span><span class="n">urlSession</span><span class="p">?(</span><span class="n">session</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">task</span><span class="p">,</span> <span class="n">willPerformHTTPRedirection</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span> <span class="n">newRequest</span><span class="p">:</span> <span class="n">request</span><span class="p">,</span> <span class="n">completionHandler</span><span class="p">:</span> <span class="n">completionHandler</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    
     <span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="kc">_</span> <span class="n">session</span><span class="p">:</span> <span class="n">URLSession</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">URLSessionTask</span><span class="p">,</span> <span class="n">didCompleteWithError</span> <span class="n">error</span><span class="p">:</span> <span class="n">Error</span><span class="p">?)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="kd">let</span> <span class="nv">delegate</span> <span class="p">=</span> <span class="kc">self</span><span class="p">[</span><span class="n">task</span><span class="p">]</span> <span class="k">as</span><span class="p">?</span> <span class="n">URLSessionTaskDelegate</span><span class="p">{</span>
             <span class="n">delegate</span><span class="p">.</span><span class="n">urlSession</span><span class="o">!</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">task</span><span class="p">,</span> <span class="n">didCompleteWithError</span><span class="p">:</span> <span class="n">error</span><span class="p">)</span>
@@ -569,7 +585,7 @@
 
 <li><p>iOS 8.0-8.3 需要额外开发量（私有类型&amp;方法的混淆）</p></li>
 
-<li><p>Post 请求 body 数据被清空</p></li>
+<li><p>Post 请求 Body 数据被清空 （可以使用苹果 SampleProjcet 中的 CanonicalRequest 类来解决）</p></li>
 
 <li><p>对 ATS 支持不足</p></li>
 </ul></li>
