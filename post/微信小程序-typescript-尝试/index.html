@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>微信小程序 TypeScript 尝试</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Nemocdz" />
+  <meta name="description" content="自从去年开始在项目里写了一段时间 Javascript 后，感觉没有类型检查的语言还是不太适合我，所以一直想尝试下 TypeScript，然而由于项目庞大，人员协作问题，一时半会没办法切成 TypeScript。正好最近有小程序的需求和小程序去年 11 月开始官方支持了 TypeScript，所以拿来练练手。
+
+" />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@Nemocdz" />
+    <meta name="twitter:title" content="微信小程序 TypeScript 尝试" />
+    <meta name="twitter:description" content="自从去年开始在项目里写了一段时间 Javascript 后，感觉没有类型检查的语言还是不太适合我，所以一直想尝试下 TypeScript，然而由于项目庞大，人员协作问题，一时半会没办法切成 TypeScript。正好最近有小程序的需求和小程序去年 11 月开始官方支持了 TypeScript，所以拿来练练手。
+
+" />
+    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.46" />
+
+
+<link rel="canonical" href="https://nemocdz.github.io/post/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F-typescript-%E5%B0%9D%E8%AF%95/" />
+<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
+<meta name="baidu-site-verification" content="iVpH4VhHBT" />
+<meta name="sogou_site_verification" content="YPqjjJgiSh" />
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+
+<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  
+  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  
+  <p class="subtitle">iOS&amp;Android Dev</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+      
+        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+      <li class="social-item">
+        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
+      </li>
+
+      
+      <li class="social-item">
+        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
+      </li>
+
+      
+
+      <li class="social-item">
+        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">微信小程序 TypeScript 尝试</h1>
+      <p class="post-meta">@Nemocdz · Jan 30, 2019 · 2 min read</p>
+    </header>
+    <article class="post-content"><p>自从去年开始在项目里写了一段时间 Javascript 后，感觉没有类型检查的语言还是不太适合我，所以一直想尝试下 TypeScript，然而由于项目庞大，人员协作问题，一时半会没办法切成 TypeScript。正好最近有小程序的需求和小程序去年 11 月开始官方支持了 TypeScript，所以拿来练练手。</p>
+
+<p></p>
+
+<h3 id="why-typescript">Why TypeScript？</h3>
+
+<p>大概是我这半年写的 Swift 比较多，而 Swift 中的静态类型和协议是我很喜欢的特性。正好 TypeScript 为 JavaScript 带来了<strong>静态类型</strong>和<strong>接口</strong>。</p>
+
+<h4 id="可选的静态类型">可选的静态类型</h4>
+
+<p>“动态类型一时爽，代码重构火葬场“，对于我这种极度喜欢重（xia）构（gai）代码的人来说，JavaScript 毫无类型提示，类型全靠命名猜测是极度不友好的。而 TypeScript 加上了灵活的类型系统，不仅可以编码期检查，还能增强代码的可读性，并提供了 any 类型进行缓冲。</p>
+
+<h4 id="接口">接口</h4>
+
+<p>接口和协议，只是不一样的叫法而已，Java、C#、TypeScript 叫 Interface，Swift、Kotlin 叫 Protocol，就是一种规则声明。项目中，和后端接口数据交互，页面传递数据，数据持有，方法代理的地方，有了接口就会更加方便，易重构。TypeScript 的 Interface + JavaScript 简单的对象就让数据构建变得简单又不容易出错。</p>
+
+<h3 id="小程序对-typescript-的支持">小程序对 TypeScript 的支持</h3>
+
+<p>TypeScript 有一个很重要的东西，就是 d.ts 文件。d.ts 文件其实相当于 C 系语言里面的 .h 头文件，声明了对外暴露的方法和属性。而小程序官方对 TypeScript 的支持，意味着官方会维护小程序本身 API 的 d.ts 文件，也就是 typing 库，这样当 API 发生变动时，就可以即时变更。</p>
+
+<p>使用也很简单，更新微信开发者工具到最新版，在创建新项目时选择 TypeScript 模板。<img src="https://nemocdz.github.io/Users/nemocdz/Library/Application Support/typora-user-images/image-20190130194414297.png" alt="image-20190130194414297" /></p>
+
+<p>创建后，我们可以看到项目里带上了 typings 库，以及 TypeScript 的配置文件 tsconifg。之后，保存时就不会自动编译了，要点击小程序工具栏的编译按钮才可以。</p>
+
+<p>这里有一个坑，笔者电脑安装的 TypeScript 版本是 3.2.2 版本。编译时会被找不到全局类型 CallableFunction 和 NewableFunction。</p>
+
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fzousqff02j30su06wq3r.jpg" alt="image-20190130195121996" /></p>
+
+<p>解决方法也很简单，到 node_modules 路径下的 TypeScript 包的 bin 目录下，lib.es5.d.ts 文件里面把这两个类型的 Interface 拷贝到，小程序 typing 目录下的 lib.wa.es6.d.ts 里面就可以了。小程序模板里这个文件应该是拷贝 TypeScript 官方的，但没有随着官方升级而改变。</p>
+
+<h4 id="事件">事件</h4>
+
+<p>视图的事件，对应的类型笔者在 typings 中并没有看到有 Interface 定义，所以只能暂时用 any，然后自己再用</p>
+
+<p>as 转一下 event 携带的数据的类型。</p>
+
+<h4 id="page-data">Page&amp;Data</h4>
+
+<p>每个 Page 对象，在 typing 里是这么定义的。</p>
+<div class="highlight"><pre class="chroma"><code class="language-typescript" data-lang="typescript"><span class="kr">declare</span> <span class="kr">const</span> <span class="nx">Page</span>: <span class="kt">Page.PageConstructor</span>
+
+<span class="kr">interface</span> <span class="nx">PageConstructor</span> <span class="p">{</span>
+    <span class="o">&lt;</span><span class="nx">D</span> <span class="kr">extends</span> <span class="nx">IAnyObject</span><span class="p">,</span> <span class="nx">T</span> <span class="kr">extends</span> <span class="nx">IAnyObject</span> <span class="o">&amp;</span> <span class="nx">PageInstance</span><span class="o">&gt;</span><span class="p">(</span>
+      <span class="nx">options</span>: <span class="kt">PageInstance</span><span class="o">&lt;</span><span class="nx">D</span><span class="p">,</span> <span class="nx">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="nx">T</span>
+    <span class="p">)</span><span class="o">:</span> <span class="k">void</span>
+  <span class="p">}</span></code></pre></div>
+<p>也就是说，它支持 D 和 T 两个范型。这两个范型是什么呢？小程序里，Page 是这么写的。</p>
+<div class="highlight"><pre class="chroma"><code class="language-typescript" data-lang="typescript"><span class="nx">Page</span><span class="p">({});</span></code></pre></div>
+<p>也就是说，options 参数就是一个 PageInstance，范型也被传入了。</p>
+<div class="highlight"><pre class="chroma"><code class="language-typescript" data-lang="typescript"><span class="kr">interface</span> <span class="nx">PageInstance</span><span class="o">&lt;</span><span class="nx">D</span> <span class="kr">extends</span> <span class="nx">IAnyObject</span> <span class="o">=</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">T</span> <span class="kr">extends</span> <span class="nx">IAnyObject</span> <span class="o">=</span> <span class="nx">any</span><span class="o">&gt;</span> <span class="kr">extends</span> <span class="nx">PageInstanceBaseProps</span><span class="o">&lt;</span><span class="nx">D</span><span class="o">&gt;</span></code></pre></div>
+<p>PageInstance 里面定义了 Page 声明周期的方法，而且继承自 PageInstanceBaseProps，并将范型 D 传入。</p>
+<div class="highlight"><pre class="chroma"><code class="language-typescript" data-lang="typescript"><span class="kr">interface</span> <span class="nx">PageInstanceBaseProps</span><span class="o">&lt;</span><span class="nx">D</span> <span class="kr">extends</span> <span class="nx">IAnyObject</span> <span class="o">=</span> <span class="nx">any</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="nx">data?</span>: <span class="kt">D</span>
+    <span class="c1">//...
+</span><span class="c1"></span><span class="p">}</span></code></pre></div>
+<p>所以这个 D 范型，其实就是 data 的类型接口。因为 data 不是必须实现的，所以这里是可选型 ？。</p>
+
+<p>那么 T 是什么呢？</p>
+<div class="highlight"><pre class="chroma"><code class="language-typescript" data-lang="typescript"><span class="nx">T</span> <span class="kr">extends</span> <span class="nx">IAnyObject</span> <span class="o">&amp;</span> <span class="nx">PageInstance</span></code></pre></div>
+<p>T 其实就是对 PageInstance 的拓展，PageInstance 是 Page 的实例接口，那么 T 其实就是在 Page 里面 this 的类型接口了，也就是说，需要在 Page 里新增的方法和属性，都在 T 里定义。</p>
+
+<p>所以，对于一个普通页面我们可以声明两个接口，一个代表 data， 一个代表 page，举个例子。</p>
+<div class="highlight"><pre class="chroma"><code class="language-typescript" data-lang="typescript"><span class="kr">interface</span> <span class="nx">IIntroPage</span> <span class="p">{</span>
+	<span class="nx">nextButtonTap</span><span class="p">(</span><span class="nx">event</span>: <span class="kt">any</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+    <span class="nx">isLoading</span>: <span class="kt">boolean</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kr">interface</span> <span class="nx">IIntroData</span> <span class="p">{</span>
+    <span class="nx">test</span>: <span class="kt">string</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">Page</span><span class="o">&lt;</span><span class="nx">IIntroData</span><span class="p">,</span> <span class="nx">IIntroPage</span><span class="o">&gt;</span><span class="p">({</span>
+    <span class="nx">isLoading</span>: <span class="kt">false</span><span class="p">,</span>
+	<span class="nx">nextButtonTap</span><span class="p">(</span><span class="nx">event</span>: <span class="kt">any</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">isLoading</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">});</span></code></pre></div>
+<p>如果这个页面不需要 data 或者不需要扩展 page，用 IAnyObject 代替 D 或者 T 即可。</p>
+<div class="highlight"><pre class="chroma"><code class="language-typescript" data-lang="typescript"><span class="kr">interface</span> <span class="nx">PageInstanceBaseProps</span><span class="o">&lt;</span><span class="nx">D</span> <span class="kr">extends</span> <span class="nx">IAnyObject</span> <span class="o">=</span> <span class="nx">any</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="nx">data?</span>: <span class="kt">D</span>
+    <span class="nx">setData</span><span class="o">?&lt;</span><span class="nx">K</span> <span class="kr">extends</span> <span class="nx">keyof</span> <span class="nx">D</span><span class="o">&gt;</span><span class="p">(</span>
+      <span class="nx">data</span>: <span class="kt">D</span> <span class="o">|</span> <span class="nx">Pick</span><span class="o">&lt;</span><span class="nx">D</span><span class="p">,</span> <span class="nx">K</span><span class="o">&gt;</span> <span class="o">|</span> <span class="nx">IAnyObject</span><span class="p">,</span>
+      <span class="nx">callback</span><span class="o">?:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="k">void</span>
+    <span class="p">)</span><span class="o">:</span> <span class="k">void</span>
+<span class="p">}</span></code></pre></div>
+<p>同时，由于 setData 和 data 都被声明为可选项，使用时需要加上！，<code>this.setData!({})</code> 和 <code>this.data!</code>。</p>
+
+<p>其他就没什么了，用上 TypeScript 之后，官方的 API 都可以直接看参数和返回值的类型，再也不用去查文档猜测类型了。</p>
+
+<h4 id="调用-javascript">调用 JavaScript</h4>
+
+<p>为 JavaScript 编写一个简单的 .d.ts 文件，将需要调用的类和方法暴露出来。详情见<a href="https://segmentfault.com/a/1190000009247663">如何编写一个d.ts文件</a>。</p>
+
+<h3 id="最后">最后</h3>
+
+<p>虽然笔者用了 TypeScript 不久，但严格的检查的确让我在增删改接口字段能快速全局重构，而且方法调用联想，API 查看也方便了不少。小程序对 TypeScript 的支持日常使用开发是没有什么问题了，就是官方的文档指引比较少。</p></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © 2018 Nemocdz
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-nemocdz-github-io-my-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017-2019 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
+<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+
+
+
+  </body>
+</html>

@@ -26,6 +26,17 @@
     </item>
     
     <item>
+      <title>微信小程序 TypeScript 尝试</title>
+      <link>https://nemocdz.github.io/post/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F-typescript-%E5%B0%9D%E8%AF%95/</link>
+      <pubDate>Wed, 30 Jan 2019 20:47:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/post/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F-typescript-%E5%B0%9D%E8%AF%95/</guid>
+      <description>&lt;p&gt;自从去年开始在项目里写了一段时间 Javascript 后，感觉没有类型检查的语言还是不太适合我，所以一直想尝试下 TypeScript，然而由于项目庞大，人员协作问题，一时半会没办法切成 TypeScript。正好最近有小程序的需求和小程序去年 11 月开始官方支持了 TypeScript，所以拿来练练手。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>浅谈移动端图片压缩(iOS &amp; Android)</title>
       <link>https://nemocdz.github.io/post/%E6%B5%85%E8%B0%88%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/</link>
       <pubDate>Sun, 20 Jan 2019 20:32:13 +0800</pubDate>
