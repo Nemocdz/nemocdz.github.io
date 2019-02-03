@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
 
   
-  <title>《iOS Core Animation》读书笔记</title>
+  <title>浅析 SSH</title>
 
   
   
@@ -15,17 +15,17 @@
 
   
   <meta name="author" content="Nemocdz" />
-  <meta name="description" content="CALayer UIView = 绘制 &#43; 响应触摸事件
- 负责屏幕和显示，不负责触摸事件响应链 UIView 是其高级封装 和 UIView 层级一一对应  
+  <meta name="description" content="SSH（Secure Shell）是一种通用的基于软件的网络安全性协议。通过SSH客户端和服务器来进行加密的网络通信。通常在用于安全远程登录、文件传输、执行远程命令、访问控制、端口转发等操作。
+
 " />
 
   
   
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@Nemocdz" />
-    <meta name="twitter:title" content="《iOS Core Animation》读书笔记" />
-    <meta name="twitter:description" content="CALayer UIView = 绘制 &#43; 响应触摸事件
- 负责屏幕和显示，不负责触摸事件响应链 UIView 是其高级封装 和 UIView 层级一一对应  
+    <meta name="twitter:title" content="浅析 SSH" />
+    <meta name="twitter:description" content="SSH（Secure Shell）是一种通用的基于软件的网络安全性协议。通过SSH客户端和服务器来进行加密的网络通信。通常在用于安全远程登录、文件传输、执行远程命令、访问控制、端口转发等操作。
+
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -36,7 +36,7 @@
 <meta name="generator" content="Hugo 0.46" />
 
 
-<link rel="canonical" href="https://nemocdz.github.io/post/ios-core-animation%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" />
+<link rel="canonical" href="https://nemocdz.github.io/post/%E6%B5%85%E6%9E%90-ssh/" />
 <link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
 
 
@@ -201,159 +201,161 @@
 
   <section class="main post-detail">
     <header class="post-header">
-      <h1 class="post-title">《iOS Core Animation》读书笔记</h1>
-      <p class="post-meta">@Nemocdz · Jul 13, 2017 · 1 min read</p>
+      <h1 class="post-title">浅析 SSH</h1>
+      <p class="post-meta">@Nemocdz · Feb 4, 2019 · 1 min read</p>
     </header>
-    <article class="post-content"><h4 id="calayer">CALayer</h4>
-
-<p>UIView = 绘制 + 响应触摸事件</p>
-
-<ul>
-<li>负责屏幕和显示，不负责触摸事件响应链</li>
-<li>UIView 是其高级封装</li>
-<li>和 UIView 层级一一对应</li>
-</ul>
+    <article class="post-content"><p>SSH（Secure Shell）是一种通用的基于软件的网络安全性协议。通过SSH客户端和服务器来进行加密的网络通信。通常在用于安全远程登录、文件传输、执行远程命令、访问控制、端口转发等操作。</p>
 
 <p></p>
 
-<p>UIView 未暴露 CALayer 的接口</p>
+<p>SSH有以下特性</p>
 
 <ul>
-<li>阴影，圆角，带颜色的边框</li>
-<li>3D 变换</li>
-<li>非矩形范围</li>
-<li>透明遮罩</li>
-<li>多级非线性动画</li>
+<li>强加密来保证数据的私密性</li>
+<li>通信的完整性</li>
+<li>认证发送和接受者的身份</li>
+<li>授权账号的访问控制</li>
+<li>转发或隧道对其他基于TCP/IP的会话进行加密</li>
 </ul>
 
-<h4 id="图形和几何">图形和几何</h4>
-
-<p>frame：外部坐标，父图层坐标，大小为边与 xy 轴平行能完全容纳图层的最小矩形</p>
-
-<p>bounds：内部坐标，自身坐标，大小为图层大小的矩形</p>
-
-<p>anchorPoint：锚点，旋转基点，左上角{0，0}，右下角{1，1}</p>
-
-<p>center（CALayer的position）:anchorPoint 在父图层的坐标</p>
-
-<h4 id="视觉效果">视觉效果</h4>
-
-<h5 id="拉伸过滤">拉伸过滤</h5>
-
-<p>以正确比例和 1：1 像素显示图片在屏幕上的好处</p>
+<p>SSH主要分为三个协议</p>
 
 <ul>
-<li>画质好，像素无压缩拉伸</li>
-<li>更好使用内存</li>
-<li>性能好，无需额外计算</li>
+<li>SSH传输协议（SSH-TRANS）</li>
+<li>SSH认证协议（SSH-AUTH）</li>
+<li>SSH连接协议（SSH-CONN）</li>
 </ul>
 
-<h4 id="cashapelayer">CAShapeLayer</h4>
+<h3 id="传输协议">传输协议</h3>
 
-<p>矢量图像而不是 bitmap 绘制图层子类</p>
+<h4 id="算法协商">算法协商</h4>
 
-<p>优点：</p>
+<p>主机密钥、消息认证、Hash函数、服务器密钥交换、数据压缩这些过程所使用的算法均可以进行协商，并在默认支持一种方法的基础上定义了几种推荐方法和可选方法。</p>
 
-<ul>
-<li>渲染快速，硬件加速</li>
-<li>高效使用内存，占用小</li>
-<li>不受边界裁剪，可在边界外绘制</li>
-<li>不会出现像素化</li>
-</ul>
+<h4 id="会话密钥交换">会话密钥交换</h4>
 
-<h4 id="catextlayer">CATextLayer</h4>
+<p>可以协商使用的密钥交换方法，该方法生成一段共享密文，用于生成会话密钥的过程。</p>
 
-<p>CALayer 的子类，几乎拥有 UILabel 所有绘制特性</p>
+<p>默认定义了diffie-hellman-group1-sha1这种方法。</p>
 
-<p>渲染快于 UILabel，运用 Core text</p>
+<h4 id="完整性">完整性</h4>
 
-<h4 id="性能调优">性能调优</h4>
+<p>使用强加密的消息认证算法（MAC，Message Authentication Code）来保证完整性。MAC算法和普通Hash算法不同的地方在于，其Hash函数和双方都知道的一个密钥来控制。</p>
 
-<p>动画和图层被单独的渲染服务进程处理</p>
+<h4 id="服务器认证">服务器认证</h4>
 
-<h5 id="动画发生过程">动画发生过程</h5>
+<p>分为以下几个步骤</p>
 
 <ol>
-<li>布局</li>
-<li>显示</li>
-<li>准备-发送动画数据到渲染服务</li>
-<li>提交-打包图层和动画属性发送到渲染服务</li>
-<li>对所有图层属性计算中间值，设置 OpenGL 几何形状（纹理化三角形）进行渲染</li>
-<li>在屏幕上渲染可见三角形（GPU 执行，前面都在 CPU）</li>
+<li><p>客户端向服务器的TCP端口（约定是22）发送连接请求</p></li>
+
+<li><p>客户端和服务器交换自己支持的SSH协议的版本号</p></li>
+
+<li><p>客户端和服务器切换到基于报文的协议</p></li>
+
+<li><p>服务器向客户端发送</p>
+
+<ul>
+<li>主机密钥（证明服务器主机身份，客户端第一次收到可选择信任与否，信任的话存入已知名主机数据库中）</li>
+<li>服务器密钥（帮助建立安全的连接，临时生成的，周期性更新，不保存在本地）</li>
+<li>检测字节（防止某些IP伪装攻击）</li>
+<li>支持的加密、压缩和认证方法</li>
+</ul></li>
 </ol>
 
-<h5 id="可能影响gpu绘制的情况">可能影响GPU绘制的情况</h5>
+<p>之后将所有信息一起应用消息认证生成的值进行表示此会话</p>
+
+<ol>
+<li><p>客户端和服务端进行会话密钥交换</p></li>
+
+<li><p>发送一个用用会话密钥加密的确认消息给客户端，完成服务器认证</p></li>
+</ol>
+
+<p>####压缩</p>
+
+<p>使用gzip工具的“deflate”算法堆会话数据进行压缩，又名zlib算法。</p>
+
+<h3 id="认证协议">认证协议</h3>
+
+<p>SSH服务端可以在交换过程的任意时机都通知客户端可用的认证方法，主要支持以下三种。</p>
+
+<h4 id="公钥认证">公钥认证</h4>
+
+<p>客户端持有私钥，服务端持有公钥。常用的非对称加密算法（RSA、DSA、OpenPGP）</p>
+
+<p>分为以下步骤</p>
+
+<ol>
+<li>客户端向服务端发送一个请求，请求使用一个特定的密钥进行公钥认证</li>
+<li>服务器读取目标文件中的认证文件，搜索一个可以匹配该密钥的项，有则下一步</li>
+<li>服务器检验该密钥的限制</li>
+<li>服务器产生随机数，使用公钥对其加密发送给客户端</li>
+<li>客户端用私钥解密并和会话标识符合并并使用MD5，结果返回给服务端</li>
+<li>服务器检验该MD5是否符合，符合则认证成功</li>
+</ol>
+
+<h4 id="基于主机的认证">基于主机的认证</h4>
+
+<p>SSH服务端通过一些主机的标识符来执行基于主机的认证。</p>
+
+<p>分为以下步骤</p>
+
+<ol>
+<li>查找客户端主机密钥：客户端将主机名和公钥提供给服务端，服务端维护了一个已知主机和公钥的列表，查找列表中判断是否为可信主机</li>
+<li>在通过的控制文件时进行认证时匹配客户端主机：服务器上为可信主机认证提供访问控制的文件</li>
+</ol>
+
+<h4 id="密码认证">密码认证</h4>
+
+<p>用户输入一个密码给SSH客户端，客户端通过加密的连接发送给服务器，服务器检查密码是否可接受。</p>
+
+<h3 id="连接协议">连接协议</h3>
+
+<h4 id="远程程序执行">远程程序执行</h4>
+
+<p>最简单的应用，建立SSH连接后，对远程Shell执行命令</p>
+
+<h4 id="tcp端口转发和x转发">TCP端口转发和X转发</h4>
+
+<h5 id="tcp端口转发">TCP端口转发</h5>
+
+<p>在应用程序客户端所使用的TCP端口截获连接，通过SSH连接传输请求，传输到应用程序服务器主机上上的SSH服务端，再返回给应用程序服务器。</p>
 
 <ul>
-<li>过多几何结构</li>
-<li>重绘-重叠半透明图层</li>
-<li>离屏渲染-为屏幕外渲染的图片分配额外内存，切换屏幕内外的绘制上下文</li>
-<li>过大的图片</li>
+<li>本地转发：应用程序客户端发起，设置一个端口，监听该端口的外出流量并进行SSH连接转发</li>
+<li>远程转发：应用程序服务器发起，设置一个端口，监听该端口的进入流量并进行SSH连接转发</li>
 </ul>
 
-<h5 id="可能影响cpu计算的情况">可能影响CPU计算的情况</h5>
+<p>应用程序客户端位于SSH客户端所在的主机时，使用本地连接，反之用远程连接。</p>
+
+<h5 id="x转发">X转发</h5>
+
+<p>X：X Window系统，是Unix机器上应用最广泛的图形显示系统。拥有客户端和服务端，X客户端是窗口化的应用程序，X服务器是后台运行的显示引擎，负责处理处理客户端请求，用X协议进行网络通信。</p>
+
+<p>将X协议的连接导入SSH连接来保证其安全性和增强认证被称为X转发。</p>
+
+<h4 id="认证代理转发">认证代理转发</h4>
+
+<h5 id="代理">代理</h5>
+
+<p>SSH代理是一个管理私钥缓存区，并对SSH客户端发出的认证请求作出响应的程序。</p>
 
 <ul>
-<li>布局计算：自动布局</li>
-<li>视图懒加载：涉及 IO 的图片显示</li>
-<li>Core Graphics 绘制：drawRect（为支持图层任意绘制需要在内存中创建一个等大小的寄宿图）</li>
-<li>解压图片</li>
+<li>在内存中存储私钥</li>
+<li>回答SSH客户端提出和密钥有关的问题</li>
 </ul>
 
-<h5 id="图像io">图像IO</h5>
+<h5 id="代理转发">代理转发</h5>
 
-<ul>
-<li>线程加载：合适的后台线程</li>
-<li>分辨率交换：移动时低分辨率，静态时加载高分辨率</li>
-<li>缓存：考虑因素（合适缓存键、缓存时机、失效、回收）</li>
-<li>图像格式</li>
-</ul>
+<p>若两主机之间无法直接建立SSH连接，需要通过中间主机。</p>
 
-<h5 id="文本">文本</h5>
+<p>那么在中间主机中运行SSH代理，并拆分成主机A到中间主机的SSH连接和中间主机到主机B的SSH连接。</p>
 
-<p>尽可能避免改变文本的 frame，因为需要重绘</p>
-
-<h5 id="光栅化">光栅化</h5>
-
-<p>将图层及其所有效果绘制成一个屏幕外的图像并缓存，避免运用在内容不断变动的图层上</p>
-
-<h5 id="离屏渲染">离屏渲染</h5>
-
-<p>在混合复杂效果无法直接渲染时，会通过分步渲染，会把分布渲染的结果临时储存在屏幕外的内存中等待组合渲染</p>
-
-<p>影响性能在于</p>
-
-<ul>
-<li>为临时储存部分渲染结果分配内存</li>
-<li>进行将渲染结果从屏幕内-外的上下文切换</li>
-</ul>
-
-<p>图层的属性触发离屏渲染</p>
-
-<ul>
-<li>圆角 + maskToBounds</li>
-<li>图层蒙版</li>
-<li>阴影</li>
-</ul>
-
-<h5 id="图层混合">图层混合</h5>
-
-<ul>
-<li>设定固定不透明的背景颜色</li>
-<li>设置 layer 的 opaue 属性默认为 YES（非 view 的）</li>
-</ul>
-
-<h5 id="颜色格式">颜色格式</h5>
-
-<p>苹果的 GPU 只解析<strong>32bit</strong>的颜色格式，其余的格式 CPU 会先进行颜色格式转换，再让 GPU 渲染。</p>
-
-<h5 id="图像大小缩放">图像大小缩放</h5>
-
-<p>image 和 imageView 的大小尽量保持一致，避免在改变 view 大小时重复计算缩放</p></article>
+<p>通过中间主机的代理进行转发SSH连接。</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>570</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 Nemocdz
       </p>
     </footer>
     
