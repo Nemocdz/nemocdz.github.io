@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title></title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Nemocdz" />
+  <meta name="description" content="给 Cocoa 的系统 Protocol 提供默认实现 使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。
+但为 Protocol 提供默认实现在某些时候是很实用的。比如 iOS 开发中，Cocoa 框架里常用的 TableView 使用时一般需要实现 UITableViewDataSouce 和 UITableViewDelegate。而 UITableViewDelegate 和 UITableViewDataSource 里面的一部分方法，又是可以抽离的，但剩下的一部分方法，使用得很少，且一般用起来都是有自定义的需要。那么有没有一种方法可以为一部分方法提供默认通用的实现，而又不影响其余的方法呢？
+这篇文章，笔者想分享一种通过消息转发的方式来实现差不多功能的方法。
+Objective-C 的消息转发 本文假设读者已经了解 Runtime 基础，如不了解可自行阅读 Objective-C Runtime 1小时入门教程。
+引用网上这张经典的图，可以知道在消息处理无法处理之前，有三个环节能进行抢救。第一步判断是否有动态添加方法，第二步可以对消息处理者重定向，第三步可以在返回方法签名的情况下，对封装消息的相关信息的 NSInvocation 进行处理。
+实现 ProtocolProxy 通过上面的消息转发的步骤，笔者的思路是，利用重定向，将 Protocol 里所有的实现进行转发，Protocol 如果有自定义实现者则交给它，否则交给默认实现者，如果都没有则不处理。
+用 Swift 简单的实现如下：
+class ProtocolProxy: NSObject { weak var customImp: AnyObject? weak var defaultImp: AnyObject? override func responds(to aSelector: Selector!" />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@Nemocdz" />
+    <meta name="twitter:title" content="" />
+    <meta name="twitter:description" content="给 Cocoa 的系统 Protocol 提供默认实现 使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。
+但为 Protocol 提供默认实现在某些时候是很实用的。比如 iOS 开发中，Cocoa 框架里常用的 TableView 使用时一般需要实现 UITableViewDataSouce 和 UITableViewDelegate。而 UITableViewDelegate 和 UITableViewDataSource 里面的一部分方法，又是可以抽离的，但剩下的一部分方法，使用得很少，且一般用起来都是有自定义的需要。那么有没有一种方法可以为一部分方法提供默认通用的实现，而又不影响其余的方法呢？
+这篇文章，笔者想分享一种通过消息转发的方式来实现差不多功能的方法。
+Objective-C 的消息转发 本文假设读者已经了解 Runtime 基础，如不了解可自行阅读 Objective-C Runtime 1小时入门教程。
+引用网上这张经典的图，可以知道在消息处理无法处理之前，有三个环节能进行抢救。第一步判断是否有动态添加方法，第二步可以对消息处理者重定向，第三步可以在返回方法签名的情况下，对封装消息的相关信息的 NSInvocation 进行处理。
+实现 ProtocolProxy 通过上面的消息转发的步骤，笔者的思路是，利用重定向，将 Protocol 里所有的实现进行转发，Protocol 如果有自定义实现者则交给它，否则交给默认实现者，如果都没有则不处理。
+用 Swift 简单的实现如下：
+class ProtocolProxy: NSObject { weak var customImp: AnyObject? weak var defaultImp: AnyObject? override func responds(to aSelector: Selector!" />
+    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.46" />
+
+
+<link rel="canonical" href="https://nemocdz.github.io/post/%E7%BB%99-cocoa-%E7%9A%84%E7%B3%BB%E7%BB%9F-protocol-%E6%8F%90%E4%BE%9B%E9%BB%98%E8%AE%A4%E5%AE%9E%E7%8E%B0/" />
+<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
+<meta name="baidu-site-verification" content="iVpH4VhHBT" />
+<meta name="sogou_site_verification" content="YPqjjJgiSh" />
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+
+<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  
+  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  
+  <p class="subtitle">iOS&amp;Android Dev</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+      
+        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+      <li class="social-item">
+        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
+      </li>
+
+      
+      <li class="social-item">
+        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
+      </li>
+
+      
+
+      <li class="social-item">
+        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title"></h1>
+      <p class="post-meta">@Nemocdz · Jan 1, 0001 · 2 min read</p>
+    </header>
+    <article class="post-content">
+
+<h1 id="给-cocoa-的系统-protocol-提供默认实现">给 Cocoa 的系统 Protocol 提供默认实现</h1>
+
+<p>使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。</p>
+
+<p>但为 Protocol 提供默认实现在某些时候是很实用的。比如 iOS 开发中，Cocoa 框架里常用的 TableView 使用时一般需要实现 UITableViewDataSouce 和 UITableViewDelegate。而 UITableViewDelegate 和 UITableViewDataSource 里面的一部分方法，又是可以抽离的，但剩下的一部分方法，使用得很少，且一般用起来都是有自定义的需要。那么有没有一种方法可以为一部分方法提供默认通用的实现，而又不影响其余的方法呢？</p>
+
+<p>这篇文章，笔者想分享一种通过消息转发的方式来实现差不多功能的方法。</p>
+
+<h3 id="objective-c-的消息转发">Objective-C 的消息转发</h3>
+
+<p>本文假设读者已经了解 Runtime 基础，如不了解可自行阅读 <a href="https://www.ianisme.com/ios/2019.html">Objective-C Runtime 1小时入门教程</a>。</p>
+
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fzvtz3lspsj30gc09j0tt.jpg" alt="691078-9049faadbcbbeac9" /></p>
+
+<p>引用网上这张经典的图，可以知道在消息处理无法处理之前，有三个环节能进行抢救。第一步判断是否有动态添加方法，第二步可以对消息处理者重定向，第三步可以在返回方法签名的情况下，对封装消息的相关信息的 NSInvocation 进行处理。</p>
+
+<h3 id="实现-protocolproxy">实现 ProtocolProxy</h3>
+
+<p>通过上面的消息转发的步骤，笔者的思路是，利用重定向，将 Protocol 里所有的实现进行转发，Protocol 如果有自定义实现者则交给它，否则交给默认实现者，如果都没有则不处理。</p>
+
+<p>用 Swift 简单的实现如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">class</span> <span class="nc">ProtocolProxy</span><span class="p">:</span> <span class="n">NSObject</span> <span class="p">{</span>
+    <span class="kr">weak</span> <span class="kd">var</span> <span class="nv">customImp</span><span class="p">:</span> <span class="nb">AnyObject</span><span class="p">?</span>
+    <span class="kr">weak</span> <span class="kd">var</span> <span class="nv">defaultImp</span><span class="p">:</span> <span class="nb">AnyObject</span><span class="p">?</span>
+    
+    <span class="kr">override</span> <span class="kd">func</span> <span class="nf">responds</span><span class="p">(</span><span class="n">to</span> <span class="n">aSelector</span><span class="p">:</span> <span class="nb">Selector</span><span class="o">!</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nb">Bool</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">defaultImp</span><span class="p">?.</span><span class="n">responds</span><span class="p">(</span><span class="n">to</span><span class="p">:</span> <span class="n">aSelector</span><span class="p">)</span> <span class="p">==</span> <span class="kc">true</span> <span class="o">||</span> <span class="n">customImp</span><span class="p">?.</span><span class="n">responds</span><span class="p">(</span><span class="n">to</span><span class="p">:</span><span class="n">aSelector</span><span class="p">)</span> <span class="p">==</span> <span class="kc">true</span>
+    <span class="p">}</span>
+    
+    <span class="kr">override</span> <span class="kd">func</span> <span class="nf">forwardingTarget</span><span class="p">(</span><span class="k">for</span> <span class="n">aSelector</span><span class="p">:</span> <span class="nb">Selector</span><span class="o">!</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nb">Any</span><span class="p">?</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="kd">let</span> <span class="nv">rawObject</span> <span class="p">=</span> <span class="n">customImp</span><span class="p">,</span> <span class="n">rawObject</span><span class="p">.</span><span class="n">responds</span><span class="p">(</span><span class="n">to</span><span class="p">:</span> <span class="n">aSelector</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">rawObject</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="kd">let</span> <span class="nv">defualtObject</span> <span class="p">=</span> <span class="n">defaultImp</span><span class="p">,</span> <span class="n">defualtObject</span><span class="p">.</span><span class="n">responds</span><span class="p">(</span><span class="n">to</span><span class="p">:</span> <span class="n">aSelector</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">defaultImp</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">super</span><span class="p">.</span><span class="n">forwardingTarget</span><span class="p">(</span><span class="k">for</span><span class="p">:</span> <span class="n">aSelector</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>其中 respondsToSelector 方法用于判断方法是否有被实现者实现，有的话通过 forwardingTarget 方法进行消息处理者的重定向。</p>
+
+<h3 id="tableview-的实际使用">TableView 的实际使用</h3>
+
+<p>实现了 ProtocolProxy 之后，在设置 Protocol 时，就可以设置成 ProtocolProxy，然后将默认实现和自定义实现都设置给 ProtocolProxy。举个 TableView 的例子：</p>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">private</span> <span class="kd">let</span> <span class="nv">delegateKey</span> <span class="p">=</span> <span class="s">&#34;delegate&#34;</span>
+<span class="kd">private</span> <span class="kd">let</span> <span class="nv">dataSourceKey</span> <span class="p">=</span> <span class="s">&#34;dataSource&#34;</span>
+<span class="kd">class</span> <span class="nc">ProxyTableView</span><span class="p">:</span> <span class="n">UITableView</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nv">delegateProxy</span> <span class="p">=</span> <span class="n">ProtocolProxy</span><span class="p">()</span>
+    <span class="kd">let</span> <span class="nv">dataSourceProxy</span> <span class="p">=</span> <span class="n">ProtocolProxy</span><span class="p">()</span>
+    
+    <span class="kd">var</span> <span class="nv">defaultDelgate</span><span class="p">:</span> <span class="n">UITableViewDelegate</span><span class="p">?</span> <span class="p">{</span>
+        <span class="kr">didSet</span><span class="p">{</span>
+            <span class="n">delegateProxy</span><span class="p">.</span><span class="n">defaultImp</span> <span class="p">=</span> <span class="n">defaultDelgate</span>
+            <span class="n">setValue</span><span class="p">(</span><span class="n">delegateProxy</span><span class="p">,</span> <span class="n">forKey</span><span class="p">:</span> <span class="n">delegateKey</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="kd">var</span> <span class="nv">defaultDataSource</span><span class="p">:</span> <span class="n">UITableViewDataSource</span><span class="p">?</span> <span class="p">{</span>
+        <span class="kr">didSet</span><span class="p">{</span>
+            <span class="n">dataSourceProxy</span><span class="p">.</span><span class="n">defaultImp</span> <span class="p">=</span> <span class="n">defaultDataSource</span>
+            <span class="n">setValue</span><span class="p">(</span><span class="n">dataSourceProxy</span><span class="p">,</span> <span class="n">forKey</span><span class="p">:</span> <span class="n">dataSourceKey</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    
+    <span class="kr">override</span> <span class="kd">public</span> <span class="kd">var</span> <span class="nv">dataSource</span><span class="p">:</span> <span class="n">UITableViewDataSource</span><span class="p">?{</span>
+        <span class="kr">didSet</span><span class="p">{</span>
+            <span class="k">if</span> <span class="o">!</span><span class="p">(</span><span class="n">dataSource</span> <span class="k">is</span> <span class="n">ProtocolProxy</span><span class="p">){</span>
+                <span class="n">dataSourceProxy</span><span class="p">.</span><span class="n">customImp</span> <span class="p">=</span> <span class="n">dataSource</span>
+                <span class="n">setValue</span><span class="p">(</span><span class="n">dataSourceProxy</span><span class="p">,</span> <span class="n">forKey</span><span class="p">:</span> <span class="n">dataSourceKey</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    
+    <span class="kr">override</span> <span class="kd">public</span> <span class="kd">var</span> <span class="nv">delegate</span><span class="p">:</span> <span class="n">UITableViewDelegate</span><span class="p">?{</span>
+        <span class="kr">didSet</span><span class="p">{</span>
+            <span class="k">if</span> <span class="o">!</span><span class="p">(</span><span class="n">delegate</span> <span class="k">is</span> <span class="n">ProtocolProxy</span><span class="p">){</span>
+                <span class="n">delegateProxy</span><span class="p">.</span><span class="n">customImp</span> <span class="p">=</span> <span class="n">delegate</span>
+                <span class="n">setValue</span><span class="p">(</span><span class="n">delegateProxy</span><span class="p">,</span> <span class="n">forKey</span><span class="p">:</span> <span class="n">delegateKey</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>ProxyTableView 持有 delegate 和 dataSource 的 ProtocolProxy，通过重写 delegate 和 dataSource 的 didSet 属性观察方法，将 Protocol 的自定义实现设置给对应 ProtocolProxy，再将 ProtocolProxy 设置为 TableView 的 Delegate 和 DataSource，这里需要注意的是，要使用 KVC 进行设置，因为 ProtocolProxy 本身并不实现 UITableViewDelegate 和 UITableViewDataSource，而且需要判断是不是 ProtocolProxy 避免循环设置。再加上 defaultDataSouce 和 defaultDelegate 来让外界设置默认实现者，设置完需要重新用 KVC 设置到 TableView 里。</p>
+
+<p>这样的话，就可以将一部分默认实现抽离到基类中，而对于使用者来说，仅需要实现部分自定义的方法。</p>
+
+<p>比如想让 <code>didSelectRowAtIndexPath</code> 的实现自定义化，可以像例子中这样</p>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">class</span> <span class="nc">ViewController</span><span class="p">:</span> <span class="n">UIViewController</span> <span class="p">{</span>
+    <span class="kr">override</span> <span class="kd">func</span> <span class="nf">viewDidLoad</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kc">super</span><span class="p">.</span><span class="n">viewDidLoad</span><span class="p">()</span>
+        <span class="kd">let</span> <span class="nv">tableView</span> <span class="p">=</span> <span class="n">ProxyTableView</span><span class="p">(</span><span class="n">frame</span><span class="p">:</span> <span class="n">view</span><span class="p">.</span><span class="n">frame</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="p">.</span><span class="n">plain</span><span class="p">)</span>
+        <span class="c1">//...</span>
+        <span class="n">tableView</span><span class="p">.</span><span class="n">defaultDelgate</span> <span class="p">=</span> <span class="n">BaseTableViewDelegate</span><span class="p">()</span>
+        <span class="n">tableView</span><span class="p">.</span><span class="n">delegate</span> <span class="p">=</span> <span class="kc">self</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">extension</span> <span class="nc">ViewController</span><span class="p">:</span> <span class="n">UITableViewDelegate</span> <span class="p">{</span>
+    <span class="kd">func</span> <span class="nf">tableView</span><span class="p">(</span><span class="kc">_</span> <span class="n">tableView</span><span class="p">:</span> <span class="n">UITableView</span><span class="p">,</span> <span class="n">didSelectRowAt</span> <span class="n">indexPath</span><span class="p">:</span> <span class="n">IndexPath</span><span class="p">)</span> <span class="p">{</span>
+        <span class="bp">print</span><span class="p">(</span><span class="s">&#34;CustomTableViewDelegate&#34;</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">BaseTableViewDelegate</span><span class="p">:</span> <span class="n">NSObject</span><span class="p">,</span> <span class="n">UITableViewDelegate</span><span class="p">{</span>
+    <span class="kd">func</span> <span class="nf">tableView</span><span class="p">(</span><span class="kc">_</span> <span class="n">tableView</span><span class="p">:</span> <span class="n">UITableView</span><span class="p">,</span> <span class="n">didSelectRowAt</span> <span class="n">indexPath</span><span class="p">:</span> <span class="n">IndexPath</span><span class="p">)</span> <span class="p">{</span>
+        <span class="bp">print</span><span class="p">(</span><span class="s">&#34;BaseTableViewDelegate&#34;</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<h3 id="最后">最后</h3>
+
+<p>完整的 <a href="https://github.com/Nemocdz/ProxyTableView">Demo</a>，别的系统 Protocol 也可以用同样的方式进行扩展，提供一部分方法的默认实现。</p>
+</article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © 2018 NemocdzThis post was published <strong>737095</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-nemocdz-github-io-my-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017-2019 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
+<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+
+
+
+  </body>
+</html>
