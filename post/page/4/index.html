@@ -203,6 +203,21 @@
       
         <article class="post-entry">
   <header class="post-header">
+    <h3 class="post-title"><a href="https://nemocdz.github.io/post/objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/" class="post-link">Objective-C 弱引用容器实现方案总结</a></h3>
+    <p class="post-meta">@Nemocdz · Jul 23, 2017 · 3 min read</p>
+  </header>
+  
+  <p class="post-summary">在 OC 中 Foundation 框架中的常用容器类（NSSet，NSDictionary，NSArray）及其可变子类在加入元素时，均会对元素进行强引用。有的时候（比如持有多个 Delegate 对象时），希望有对应的弱引用容器使用。
+
+</p>
+  <footer class="post-footer">
+    <a class="read-more" href="https://nemocdz.github.io/post/objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
     <h3 class="post-title"><a href="https://nemocdz.github.io/post/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" class="post-link">《程序员的自我修养》读书笔记</a></h3>
     <p class="post-meta">@Nemocdz · Jul 20, 2017 · 2 min read</p>
   </header>
@@ -273,21 +288,6 @@
 </p>
   <footer class="post-footer">
     <a class="read-more" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81%E5%B0%8F%E6%95%B0%E7%9A%84%E6%98%9F%E6%98%9F%E8%AF%84%E5%88%86%E7%BB%84%E4%BB%B6/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81-cell-%E9%80%9A%E7%94%A8%E7%9A%84-tableviewmanager/" class="post-link">iOS 中实现静态 Cell 通用的 TableViewManager</a></h3>
-    <p class="post-meta">@Nemocdz · May 14, 2017 · 3 min read</p>
-  </header>
-  
-  <p class="post-summary">在 App 中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态 Cell 构成的 TableView，这些界面的特点是，Cell 种类繁多，Model 种类繁多，点击事件处理分散但单调（页面跳转，编辑 textFiled），重复写 tableViewDelegate 和 datasource 的相关方法，但不会用到一些奇怪的 datasource 和 delegate 方法，而且显示内容一般是固定的，每个页面 Cell 的数量不会很多。像笔者所在的项目里的侧边栏模块，里面有很多 tableView，由于没有使用 StoryBoard 且很久之前写的，充斥着各种if…else if 用model的某个key值进行判断的逻辑去让 cell 去显示和隐藏某些视图，已经进行点击跳转逻辑，更有甚者，有 if (indexPath == 0) 之类的通过行数判断去处理的逻辑。增加新的cell时，便要在各种地方再加上 else if 的新判断，而做新界面时，也没有很好的方法进行复用。笔者结合之前文章进行进一步思考，抽象出一个适合这种特点tableView 的管理类，记录一下思路供参考。
-
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81-cell-%E9%80%9A%E7%94%A8%E7%9A%84-tableviewmanager/">Read More →</a>
   </footer>
 </article>
 

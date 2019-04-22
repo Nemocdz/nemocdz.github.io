@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>[译] Swift 5 字符串插值-简介</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Nemocdz" />
+  <meta name="description" content=" 作者：Olivier Halligon
+原文链接：StringInterpolation in Swift 5 — Introduction
+原文日期：2018-12-15
+ StringInterpolation 协议最初的设计效率低下又不易扩展，为了在后续的版本中能够将其彻底重构，Swift 4 中将该协议标记为废弃。即将在 Swift 5 中亮相的 SE-0228 提案介绍了一种新的 StringInterpolation 设计，使得 String 有了更大的潜能。
+
+" />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@Nemocdz" />
+    <meta name="twitter:title" content="[译] Swift 5 字符串插值-简介" />
+    <meta name="twitter:description" content=" 作者：Olivier Halligon
+原文链接：StringInterpolation in Swift 5 — Introduction
+原文日期：2018-12-15
+ StringInterpolation 协议最初的设计效率低下又不易扩展，为了在后续的版本中能够将其彻底重构，Swift 4 中将该协议标记为废弃。即将在 Swift 5 中亮相的 SE-0228 提案介绍了一种新的 StringInterpolation 设计，使得 String 有了更大的潜能。
+
+" />
+    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.46" />
+
+
+<link rel="canonical" href="https://nemocdz.github.io/post/%E8%AF%91-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC-%E7%AE%80%E4%BB%8B/" />
+<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
+<meta name="baidu-site-verification" content="iVpH4VhHBT" />
+<meta name="sogou_site_verification" content="YPqjjJgiSh" />
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+
+<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  
+  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  
+  <p class="subtitle">iOS&amp;Android Dev</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+      
+        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+      <li class="social-item">
+        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
+      </li>
+
+      
+      <li class="social-item">
+        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
+      </li>
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
+      </li>
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
+      </li>
+
+      
+
+      <li class="social-item">
+        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
+      </li>
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">[译] Swift 5 字符串插值-简介</h1>
+      <p class="post-meta">@Nemocdz · Apr 22, 2019 · 2 min read</p>
+    </header>
+    <article class="post-content"><blockquote>
+<p>作者：Olivier Halligon</p>
+
+<p>原文链接：<a href="http://alisoftware.github.io/swift/2018/12/15/swift5-stringinterpolation-part1/">StringInterpolation in Swift 5 — Introduction</a></p>
+
+<p>原文日期：2018-12-15</p>
+</blockquote>
+
+<p><code>StringInterpolation</code> 协议最初的设计效率低下又不易扩展，为了在后续的版本中能够将其彻底重构，Swift 4 中将该协议标记为废弃。即将在 Swift 5 中亮相的 <a href="https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md">SE-0228</a> 提案介绍了一种新的 <code>StringInterpolation</code> 设计，使得 String 有了更大的潜能。</p>
+
+<p></p>
+
+<p>在 Swift 的 <code>master</code> 分支里实现之后，就可以下载一个 <a href="https://swift.org/download/#snapshots">快照</a> 来安装最新的 Swift 5 工具链到 Xcode 中，来尝试全新的 <code>StringInterpolation</code>。让我们来把玩一下。</p>
+
+<h2 id="全新的-stringinterpolation-设计">全新的 StringInterpolation 设计</h2>
+
+<p>我强烈建议本篇文章的读者阅读一下 <a href="https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md">SE-0228</a> 提案，感受一下新 API 的背后的设计思路和动机。</p>
+
+<p>要让一个类型遵循 <code>ExpressibleByStringInterpolation</code>，最基本的你需要：</p>
+
+<ul>
+<li>让这个类型拥有一个类型为 <code>StringInterpolation</code> 的子类型，这个子类型遵循 <code>StringInterpolationProtocol</code> 并将负责解释插值</li>
+<li>这个子类型仅需要实现 <code>appendLiteral(_ literal: String)</code> 方法，再选择一个或多个你自己想要支持的 <code>appendInterpolation(...)</code> 签名的方法</li>
+<li>这个 <code>StringInterpolation</code> 子类型会作为“构造器”服务于你的主类型，然后编译器会调用那些 <code>append…</code> 方法一步一步地构造对象</li>
+<li>然后你的主类型需要实现 <code>init(stringInterpolation: StringInterpolation)</code> ，它会用上一步的结果来实例化它自己。</li>
+</ul>
+
+<p>你可以实现任何你喜欢的 <code>appenInterpolation(...)</code> 方法，这意味着你可以任意选择支持什么插值。这是一个带来巨大的可能性的超强功能。</p>
+
+<p>举个例子，如果你实现了 <code>func appendInterpolation(_ string: String, pad: Int)</code>，那么意味着你将可以用类似这样的插值：<code>&quot;Hello \(name, pad: 10), how are you?&quot;</code> 来构造你的类型。插值只需要匹配你的 <code>StringInterpolation</code> 子类型其中一个支持的 <code>appendInterpolation</code> 方法签名。</p>
+
+<h2 id="一个简单的例子">一个简单的例子</h2>
+
+<p>让我用一个简单的例子来演示一下插值是如何运作的。一起来构造一个允许引用 issue 编号和用户的 <code>GitHubComment</code> 类型吧。</p>
+
+<p>这个例子的目标是做到类似下面的写法：</p>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">let</span> <span class="nv">comment</span><span class="p">:</span> <span class="n">GitHubComment</span> <span class="p">=</span> <span class="s">&#34;&#34;&#34;
+</span><span class="s">  See </span><span class="si">\(</span><span class="n">issue</span><span class="p">:</span> <span class="mi">123</span><span class="si">)</span><span class="s"> where </span><span class="si">\(</span><span class="n">user</span><span class="p">:</span> <span class="s">&#34;alisoftware&#34;</span><span class="si">)</span><span class="s"> explains the steps to reproduce.
+</span><span class="s">  &#34;&#34;&#34;</span></code></pre></div>
+<p>所以我们该怎么实现它呢？</p>
+
+<p>首先，让我们声明基本的结构体 <code>struct GitHubComment</code> 并让它遵循 <code>ExpressibleByStringLiteral</code>（因为 <code>ExpressibleByStringInterpolation</code> 继承自这个协议所以我们将它的实现抽离）和 <code>CustomStringConvertible</code>（为了 debug 时友好地在控制台中打印）。</p>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">struct</span> <span class="nc">GitHubComment</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nv">markdown</span><span class="p">:</span> <span class="nb">String</span>
+<span class="p">}</span>
+<span class="kd">extension</span> <span class="nc">GitHubComment</span><span class="p">:</span> <span class="n">ExpressibleByStringLiteral</span> <span class="p">{</span>
+  <span class="kd">init</span><span class="p">(</span><span class="n">stringLiteral</span> <span class="n">value</span><span class="p">:</span> <span class="nb">String</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kc">self</span><span class="p">.</span><span class="n">markdown</span> <span class="p">=</span> <span class="n">value</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">extension</span> <span class="nc">GitHubComment</span><span class="p">:</span> <span class="n">CustomStringConvertible</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nv">description</span><span class="p">:</span> <span class="nb">String</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">self</span><span class="p">.</span><span class="n">markdown</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>然后，我们让 <code>GitHubComment</code> 遵循 <code>ExpressibleByStringInterpolation</code>。这意味着在剩下需要实现的功能，将由一个 <code>StringInterpolation</code> 子类型来完成：</p>
+
+<ul>
+<li><p>首先初始化它自己：<code>init(literalCapacity: Int, interpolationCount: Int)</code> 提供给你保留一部分数据到缓冲区的能力，在一步步构造类型时就会用到这个能力。在这个例子中，我们可以在构造实例的时候，简单用一个 <code>String</code> 并往它上面追加片段，不过这里我采用一个 <code>parts: [String]</code> 来代替，之后再将它组合起来</p></li>
+
+<li><p>实现 <code>appendLiteral(_ string: String)</code> 逐个追加文本到 <code>parts</code> 里</p></li>
+
+<li><p>实现 <code>appendInterpolation(user: String)</code> 在遇到 <code>\(user: xxx)</code> 时逐个追加 markdown 表示的用户配置链接</p></li>
+
+<li><p>实现 <code>appendInterpolation(issue: Int)</code> 逐个追加用 markdown 表示的 issue 链接</p></li>
+
+<li><p>然后在 <code>GitHubComment</code> 上实现 <code>init(stringInterpolation: StringInterpolation)</code> 将 <code>parts</code> 构造成一个评论</p></li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">extension</span> <span class="nc">GitHubComment</span><span class="p">:</span> <span class="n">ExpressibleByStringInterpolation</span> <span class="p">{</span>
+  <span class="kd">struct</span> <span class="nc">StringInterpolation</span><span class="p">:</span> <span class="n">StringInterpolationProtocol</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nv">parts</span><span class="p">:</span> <span class="p">[</span><span class="nb">String</span><span class="p">]</span>
+      <span class="kd">init</span><span class="p">(</span><span class="n">literalCapacity</span><span class="p">:</span> <span class="nb">Int</span><span class="p">,</span> <span class="n">interpolationCount</span><span class="p">:</span> <span class="nb">Int</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kc">self</span><span class="p">.</span><span class="n">parts</span> <span class="p">=</span> <span class="p">[]</span>
+      <span class="c1">// - literalCapacity 文本片段的字符数 (L)</span>
+      <span class="c1">// - interpolationCount 插值片段数 (I)</span>
+      <span class="c1">// 我们预计通常结构会是像 &#34;LILILIL&#34;</span>
+      <span class="c1">// — e.g. &#34;Hello \(world, .color(.blue))!&#34; — 因此是 2n+1</span>
+      <span class="kc">self</span><span class="p">.</span><span class="n">parts</span><span class="p">.</span><span class="n">reserveCapacity</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">interpolationCount</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">}</span>
+      <span class="kr">mutating</span> <span class="kd">func</span> <span class="nf">appendLiteral</span><span class="p">(</span><span class="kc">_</span> <span class="n">literal</span><span class="p">:</span> <span class="nb">String</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kc">self</span><span class="p">.</span><span class="n">parts</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">literal</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="kr">mutating</span> <span class="kd">func</span> <span class="nf">appendInterpolation</span><span class="p">(</span><span class="n">user</span> <span class="n">name</span><span class="p">:</span> <span class="nb">String</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kc">self</span><span class="p">.</span><span class="n">parts</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#34;[</span><span class="si">\(</span><span class="n">name</span><span class="si">)</span><span class="s">](https://github.com/</span><span class="si">\(</span><span class="n">name</span><span class="si">)</span><span class="s">)&#34;</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="kr">mutating</span> <span class="kd">func</span> <span class="nf">appendInterpolation</span><span class="p">(</span><span class="n">issue</span> <span class="n">number</span><span class="p">:</span> <span class="nb">Int</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kc">self</span><span class="p">.</span><span class="n">parts</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#34;[#</span><span class="si">\(</span><span class="n">number</span><span class="si">)</span><span class="s">](issues/</span><span class="si">\(</span><span class="n">number</span><span class="si">)</span><span class="s">)&#34;</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="kd">init</span><span class="p">(</span><span class="n">stringInterpolation</span><span class="p">:</span> <span class="n">StringInterpolation</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kc">self</span><span class="p">.</span><span class="n">markdown</span> <span class="p">=</span> <span class="n">stringInterpolation</span><span class="p">.</span><span class="n">parts</span><span class="p">.</span><span class="n">joined</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>这就完事了！我们成功了！</p>
+
+<p>注意，因为那些我们实现了的 <code>appendInterpolation</code> 方法签名，我们允许使用 <code>Hello \(user: &quot;alisoftware&quot;)</code> 但不能使用 <code>Hello \(user: 123)</code>，因为 <code>appendInterpolation(user:)</code> 期望一个 <code>String</code> 作为形参。类似的是，在你的字符串中 <code>\(issue: 123)</code> 只能允许一个 <code>Int</code> 因为 <code>appendInterpolation(issue:)</code> 采用一个 <code>Int</code> 作为形参。</p>
+
+<p>实际上，如果你尝试在你的 <code>StringInterpolation</code> 子类中用不支持的插值，编译器会给你提示报错：</p>
+<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">let</span> <span class="nv">comment</span><span class="p">:</span> <span class="n">GitHubComment</span> <span class="p">=</span> <span class="s">&#34;&#34;&#34;
+</span><span class="s">See </span><span class="si">\(</span><span class="n">issue</span><span class="p">:</span> <span class="s">&#34;bob&#34;</span><span class="si">)</span><span class="s"> where </span><span class="si">\(</span><span class="n">username</span><span class="p">:</span> <span class="s">&#34;alisoftware&#34;</span><span class="si">)</span><span class="s"> explains the steps to reproduce.
+</span><span class="s">&#34;&#34;&#34;</span>
+<span class="c1">//             ^~~~~         ^~~~~~~~~</span>
+<span class="c1">// 错误: 无法转换 ‘String’ 类型的值到期望的形参类型 ‘Int’</span>
+<span class="c1">// 错误: 调用 (have &#39;username:&#39;, expected &#39;user:&#39;)实参标签不正确</span></code></pre></div>
+<h2 id="这仅仅只是个开始">这仅仅只是个开始</h2>
+
+<p>这个新的设计打开了一大串脑洞让你去实现自己的 <code>ExpressibleByStringInterpolation</code> 类型。这些想法包括：</p>
+
+<ul>
+<li>创建一个 <code>HTML</code> 类型并遵循，你就可以用插值写 HTML</li>
+<li>创建一个 <code>SQLStatement</code> 类型并遵循，你就可以写更简单的 SQL 语句</li>
+<li>用字符串插值支持更多自定义格式，比如在你的插值字符串中用格式化 <code>Double</code> 或者 <code>Date</code> 值</li>
+<li>创建一个 <code>RegEX</code> 类型并遵循，你就可以用花里胡哨的语法写正则表达式</li>
+<li>创建一个 <code>AttributedString</code> 类型并遵循，就可以用字符串插值构建 <code>NSAttributedString</code></li>
+</ul>
+
+<p>带来新的字符串插值设计的 <a href="https://github.com/brentdax">Brent Royal-Gordon</a> 和 <a href="https://github.com/milseman">Michael Ilseman</a>，提供了更多例子在这个 <a href="https://gist.github.com/brentdax/0b46ce25b7da1049e61b4669352094b6">要点列表</a> 中。</p>
+
+<p>我个人尝试了一下支持 <code>NSAttributedString</code> 的实现，并想 <a href="http://alisoftware.github.io/swift/2018/12/16/swift5-stringinterpolation-part2/">在专门的一篇文章里分享它的初步实现</a>，因为我发现它非常优雅。我们下一篇文章再见！</p></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © 2018 Nemocdz
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-nemocdz-github-io-my-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017-2019 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
+<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+
+
+
+  </body>
+</html>
