@@ -329,17 +329,17 @@
     <span class="kd">var</span> <span class="nv">strategy</span><span class="p">:</span> <span class="n">ListPrefetcherStrategy</span>
     
     <span class="kd">public</span> <span class="kd">func</span> <span class="nf">start</span><span class="p">()</span> <span class="p">{</span>
-        <span class="n">contentSizeObserver</span> <span class="p">=</span> <span class="n">observe</span><span class="p">(</span><span class="err">\</span><span class="p">.</span><span class="n">scrollView</span><span class="p">.</span><span class="n">contentSize</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="kc">_</span><span class="p">,</span> <span class="kc">_</span><span class="p">)</span> <span class="k">in</span>
-            <span class="k">guard</span> <span class="kd">let</span> <span class="nv">delegate</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="n">delegate</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
-            <span class="kc">self</span><span class="p">.</span><span class="n">strategy</span><span class="p">.</span><span class="n">totalRowsCount</span> <span class="p">=</span> <span class="n">delegate</span><span class="p">.</span><span class="n">totalRowsCount</span>
+        <span class="n">contentSizeObserver</span> <span class="p">=</span> <span class="n">observe</span><span class="p">(</span><span class="err">\</span><span class="p">.</span><span class="n">scrollView</span><span class="p">.</span><span class="n">contentSize</span><span class="p">)</span> <span class="p">{</span> <span class="n">object</span><span class="p">,</span> <span class="kc">_</span> <span class="k">in</span>
+            <span class="k">guard</span> <span class="kd">let</span> <span class="nv">delegate</span> <span class="p">=</span> <span class="n">object</span><span class="p">.</span><span class="n">delegate</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
+            <span class="n">object</span><span class="p">.</span><span class="n">strategy</span><span class="p">.</span><span class="n">totalRowsCount</span> <span class="p">=</span> <span class="n">delegate</span><span class="p">.</span><span class="n">totalRowsCount</span>
         <span class="p">}</span>
         
-        <span class="n">contentOffsetObserver</span> <span class="p">=</span> <span class="n">observe</span><span class="p">(</span><span class="err">\</span><span class="p">.</span><span class="n">scrollView</span><span class="p">.</span><span class="n">contentOffset</span><span class="p">){</span> <span class="p">(</span><span class="kc">_</span><span class="p">,</span> <span class="kc">_</span><span class="p">)</span> <span class="k">in</span>
-            <span class="kd">let</span> <span class="nv">offsetY</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="n">scrollView</span><span class="p">.</span><span class="n">contentOffset</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="kc">self</span><span class="p">.</span><span class="n">scrollView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">height</span>
-            <span class="kd">let</span> <span class="nv">totalHeight</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="n">scrollView</span><span class="p">.</span><span class="n">contentSize</span><span class="p">.</span><span class="n">height</span>
+        <span class="n">contentOffsetObserver</span> <span class="p">=</span> <span class="n">observe</span><span class="p">(</span><span class="err">\</span><span class="p">.</span><span class="n">scrollView</span><span class="p">.</span><span class="n">contentOffset</span><span class="p">){</span> <span class="n">object</span><span class="p">,</span> <span class="kc">_</span> <span class="k">in</span>
+            <span class="kd">let</span> <span class="nv">offsetY</span> <span class="p">=</span> <span class="n">object</span><span class="p">.</span><span class="n">scrollView</span><span class="p">.</span><span class="n">contentOffset</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">object</span><span class="p">.</span><span class="n">scrollView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">height</span>
+            <span class="kd">let</span> <span class="nv">totalHeight</span> <span class="p">=</span> <span class="n">object</span><span class="p">.</span><span class="n">scrollView</span><span class="p">.</span><span class="n">contentSize</span><span class="p">.</span><span class="n">height</span>
             <span class="k">guard</span> <span class="n">offsetY</span> <span class="o">&lt;</span> <span class="n">totalHeight</span>  <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
-            <span class="k">if</span> <span class="kc">self</span><span class="p">.</span><span class="n">strategy</span><span class="p">.</span><span class="n">shouldFetch</span><span class="p">(</span><span class="n">totalHeight</span><span class="p">,</span> <span class="n">offsetY</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kc">self</span><span class="p">.</span><span class="n">delegate</span><span class="p">?.</span><span class="n">startFetch</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">object</span><span class="p">.</span><span class="n">strategy</span><span class="p">.</span><span class="n">shouldFetch</span><span class="p">(</span><span class="n">totalHeight</span><span class="p">,</span> <span class="n">offsetY</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">object</span><span class="p">.</span><span class="n">delegate</span><span class="p">?.</span><span class="n">startFetch</span><span class="p">()</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -352,9 +352,10 @@
     <span class="kd">public</span> <span class="kd">init</span><span class="p">(</span><span class="n">strategy</span><span class="p">:</span><span class="n">ListPrefetcherStrategy</span><span class="p">,</span> <span class="n">scrollView</span><span class="p">:</span><span class="n">UIScrollView</span><span class="p">)</span> <span class="p">{</span>
         <span class="kc">self</span><span class="p">.</span><span class="n">strategy</span> <span class="p">=</span> <span class="n">strategy</span>
         <span class="kc">self</span><span class="p">.</span><span class="n">scrollView</span> <span class="p">=</span> <span class="n">scrollView</span>
+      	<span class="kc">super</span><span class="p">.</span><span class="kd">init</span><span class="p">()</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
-<p>这样外界使用起来只需要提供策略和 scrollView，实现 delegate 的方法，然后在需要的时候 start 和 stop，就可以自动完成预加载的工作了。</p>
+<p>这样外界使用起来只需要提供策略和 scrollView，实现 delegate 的方法，然后在需要的时候(比如 <code>viewDidAppear</code> &amp; <code>viewDidDisAppear</code>) start 和 stop，就可以自动完成预加载的工作了。</p>
 
 <h3 id="最后">最后</h3>
 
