@@ -207,13 +207,13 @@
 <p>
 样子如下：</p>
 
-<p><img src="https://ww4.sinaimg.cn/large/006tNc79ly1fe330ca1zjg30ca0m8wil.gif" alt="" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fe330ca1zjg30ca0m8wil.gif" alt="" /></p>
 
 <h3 id="类比而来的实现思路">类比而来的实现思路</h3>
 
 <p>首先对于数据联动，也就是，前面一列的所选择数据决定后面一列拥有的所有数据。这个模型马上让我联想到了生活中一个例子-文件管理器。列之间数据之间的关系，其实就像一颗文件目录结构树。后面列的数据是前面数据的叶子节点。</p>
 
-<p><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1fi1a6r35ztj30m60e6wgr.jpg" alt="" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tKfTcgy1fi1a6r35ztj30m60e6wgr.jpg" alt="" /></p>
 
 <p>而对于文件的目录结构的获取，由于之前在公司开发过日志模块的相关组件，还残存着记忆。主要思路就是遍历+递归。那么构建数据结构时，就很清晰了。新建一个 NSObject 的子类 CDZPickerComponetObject，那么这个 Model 需要有些啥呢，就如文件夹一般，需要名字，用于显示在 Picker 上。还需要一个可以存放自身的数组，存放自己“文件夹”里的“文件夹”。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">strong</span><span class="p">)</span> <span class="n">NSMutableArray</span><span class="o">&lt;</span><span class="n">CDZPickerComponentObject</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">subArray</span><span class="p">;</span>
@@ -373,7 +373,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>680</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>767</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

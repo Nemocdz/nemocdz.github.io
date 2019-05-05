@@ -254,7 +254,7 @@
 </code></pre></div>
 <p>通过这个方法生成后，就成了大家熟悉的那张图。</p>
 
-<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fjjcy2lrq9j30zg112jvt.jpg" alt="v2-ce4b3fa6d104a632f4f34dec0d50f71f_r" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fjjcy2lrq9j30zg112jvt.jpg" alt="v2-ce4b3fa6d104a632f4f34dec0d50f71f_r" /></p>
 
 <p>从这张图上，我们可以看到通过这么一层继承关系，Objective-C 的对象原型继承链就完整了。</p>
 
@@ -305,7 +305,7 @@
 </span><span class="c1"></span><span class="p">};</span></code></pre></div>
 <p>可以发现 type 关键字是 PyType_Type 的一个引用，而 PyType_Type 是返回一个 PyTypeObject，生成类的对象。而 PyVarObject_HEAD_INIT 递归引用了自己（PyType_Type）作为它的 type，所以可以得知 <code>type(class) == type</code> 。也就是说，Python 中类的 isa 指针指向 type，也就说 type 其实就是 MetaClass，而同时 <code>type(type) ==  type</code>，也就是 type 的 isa 指针指向 type 自身。那么 Python 的对象链就如下图。</p>
 
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fjjgbu36h1j30go0amjrz.jpg" alt="86fbc69def5f2afddd652a5d83e69456_b" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fjjgbu36h1j30go0amjrz.jpg" alt="86fbc69def5f2afddd652a5d83e69456_b" /></p>
 
 <p>而 Objective-C 不太一样的是，并不是每一个类都有一个 MetaClass，而是所有的类默认都是同一个 MetaClass。当然，Python 里可以自定义新的 MetaClass。</p>
 
@@ -331,7 +331,7 @@
 
 <p>那么 Smalltalk 的继承关系，其实和 Objective-C的 很像了（后面有 Class 的是前者的 MetaClass）。</p>
 
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fjjkgtdoczj31k00v4nav.jpg" alt="屏幕快照 2017-09-15 上12.40.10" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fjjkgtdoczj31k00v4nav.jpg" alt="屏幕快照 2017-09-15 上12.40.10" /></p>
 
 <p><strong>这时候产生了一个重要的问题，假如去掉 MetaClass，把类方法放到也类里面是否可行？</strong></p>
 
@@ -377,7 +377,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>510</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>597</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

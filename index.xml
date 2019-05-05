@@ -27,6 +27,25 @@
     </item>
     
     <item>
+      <title>[译] Swift 5 字符串插值-简介</title>
+      <link>https://nemocdz.github.io/post/%E8%AF%91-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC-%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Mon, 22 Apr 2019 19:17:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/post/%E8%AF%91-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC-%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;作者：Olivier Halligon&lt;/p&gt;
+
+&lt;p&gt;原文链接：&lt;a href=&#34;http://alisoftware.github.io/swift/2018/12/15/swift5-stringinterpolation-part1/&#34;&gt;StringInterpolation in Swift 5 — Introduction&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;原文日期：2018-12-15&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;code&gt;StringInterpolation&lt;/code&gt; 协议最初的设计效率低下又不易扩展，为了在后续的版本中能够将其彻底重构，Swift 4 中将该协议标记为废弃。即将在 Swift 5 中亮相的 &lt;a href=&#34;https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md&#34;&gt;SE-0228&lt;/a&gt; 提案介绍了一种新的 &lt;code&gt;StringInterpolation&lt;/code&gt; 设计，使得 String 有了更大的潜能。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>iOS 实现简单的列表预加载</title>
       <link>https://nemocdz.github.io/post/ios-%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84%E5%88%97%E8%A1%A8%E9%A2%84%E5%8A%A0%E8%BD%BD/</link>
       <pubDate>Thu, 07 Feb 2019 17:17:13 +0800</pubDate>

@@ -221,7 +221,7 @@
 </span><span class="c1"></span>    <span class="n">PHAuthorizationStatusDenied</span><span class="p">,</span>            <span class="c1">// User has explicitly denied this application access to photos data. 用户拒绝 
 </span><span class="c1"></span>    <span class="n">PHAuthorizationStatusAuthorized</span>         <span class="c1">// User has authorized this application to access photos data. 用户允许
 </span><span class="c1"></span><span class="p">}</span> <span class="n">PHOTOS_AVAILABLE_IOS_TVOS</span><span class="p">(</span><span class="mi">8</span><span class="n">_0</span><span class="p">,</span> <span class="mi">10</span><span class="n">_0</span><span class="p">);</span></code></pre></div>
-<p>其中，我们不希望用户去拒绝，达到 <code>PHAuthorizationStatusDenied</code> 这个状态，这样的话用户再要获取权限就要到设置里的隐私里找到我们的应用再手动打开，而没办法在 App 内去请求权限更改。那么我们希望暂时拒绝后的状态应该是 <code>PHAuthorizationStatusNotDetermined</code> 的，思路就是提示一个 Alertviewcontroller 去询问，用户取消则不去调用真正的询问权限（相当于忽略），以便下次提醒在询问。用户同意则调用系统询问权限，这时一般用户也会再允许了。流程示意图如下。<img src="http://ww1.sinaimg.cn/large/006tNc79gw1faqpzkg83ej31kw0uv769.jpg" alt="屏幕快照 2016-12-14 22.15.02" /></p>
+<p>其中，我们不希望用户去拒绝，达到 <code>PHAuthorizationStatusDenied</code> 这个状态，这样的话用户再要获取权限就要到设置里的隐私里找到我们的应用再手动打开，而没办法在 App 内去请求权限更改。那么我们希望暂时拒绝后的状态应该是 <code>PHAuthorizationStatusNotDetermined</code> 的，思路就是提示一个 Alertviewcontroller 去询问，用户取消则不去调用真正的询问权限（相当于忽略），以便下次提醒在询问。用户同意则调用系统询问权限，这时一般用户也会再允许了。流程示意图如下。<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gw1faqpzkg83ej31kw0uv769.jpg" alt="屏幕快照 2016-12-14 22.15.02" /></p>
 
 <p>代码很简单，直接贴上来</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">showPermissionAlertInController</span><span class="p">{</span>
@@ -286,7 +286,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>784</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>871</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

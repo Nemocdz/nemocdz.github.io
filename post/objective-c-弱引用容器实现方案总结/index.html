@@ -256,13 +256,13 @@
 <li>猜测和 1 有关，addPointer 方法（相当于 NSMuteableArray 的 addObject 方法）参数类型是 void* 指针，所以需要(__bridge void *）转换</li>
 </ol>
 
-<p>这个方案应该是最简单的了，毕竟是苹果 Foundation 框架里封装的高级对象。但是其缺点是性能相比对应强引用容器在性能上有所欠缺，根据 Objc.io 文章中的测试结果，<strong>NSHashTable的addObject 和 NSPointerArray的addPointer</strong> 性能差距尤其严重，使用时需要注意。</p>
+<p>这个方案应该是最简单的了，毕竟是苹果 Foundation 框架里封装的高级对象。但是其缺点是性能相比对应强引用容器在性能上有所欠缺，根据 Objc.io <a href="https://objccn.io/issue-7-1/">文章</a>中的测试结果，<strong>NSHashTable的addObject 和 NSPointerArray的addPointer</strong> 性能差距尤其严重，使用时需要注意。</p>
 
-<p><img src="https://ws1.sinaimg.cn/large/006tKfTcly1fht96ofpjqj30ig0cqwfz.jpg" alt="屏幕快照 2017-07-23 上午3.04.13" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tKfTcly1fht96ofpjqj30ig0cqwfz.jpg" alt="屏幕快照 2017-07-23 上午3.04.13" /></p>
 
-<p><img src="https://ws1.sinaimg.cn/large/006tKfTcly1fht96ud6zxj30h1084mxy.jpg" alt="屏幕快照 2017-07-23 上午3.04.21" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tKfTcly1fht96ud6zxj30h1084mxy.jpg" alt="屏幕快照 2017-07-23 上午3.04.21" /></p>
 
-<p><img src="https://ws4.sinaimg.cn/large/006tKfTcly1fht970xifdj30er06bgm6.jpg" alt="屏幕快照 2017-07-23 上午3.04.29" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tKfTcly1fht970xifdj30er06bgm6.jpg" alt="屏幕快照 2017-07-23 上午3.04.29" /></p>
 
 <h4 id="2-用-cffoundation-框架里对应容器类自定义内存管理选项">2.用 CFFoundation 框架里对应容器类自定义内存管理选项</h4>
 
@@ -300,7 +300,7 @@
 
 <h5 id="3-在对象销毁时移除出容器或置-nil">3.在对象销毁时移除出容器或置 nil</h5>
 
-<p>如果不这么做，在对象销毁后容器里的元素会变成野指针引发 Crash。详见<a href="https://nemocdz.github.io/My-blog/post/%E5%86%8D%E8%B0%88objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/">再谈 Objective-C 弱引用容器的实现-关联对象实现weak</a>补充说明。</p>
+<p>如果不这么做，在对象销毁后容器里的元素会变成野指针引发 Crash。详见《<a href="https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88-objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/">再谈 Objective-C 弱引用容器的实现-关联对象实现weak</a>》补充说明。</p>
 
 <h3 id="加入容器时不引用">加入容器时不引用</h3>
 
@@ -328,7 +328,7 @@
 
 <p>可以在 Xcode 开启 NSZombie（释放时转变为 NSZombie 并记录收到的消息）或  Address Sanitizer（XCode 7 以上）调试选项进行追踪过渡释放。</p>
 
-<p>同时，同 CoreFoundation 方法一样，需要在对象摧毁时移除出容器或置 nil。详见<a href="https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/">再谈 Objective-C 弱引用容器的实现-关联对象实现 weak</a>补充说明。</p>
+<p>同时，同 CoreFoundation 方法一样，需要在对象摧毁时移除出容器或置 nil。详见《<a href="https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88-objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/">再谈 Objective-C 弱引用容器的实现-关联对象实现 weak</a>》补充说明。</p>
 
 <p><strong>笔者不推荐这种方式实现，因为在使用时必须十分小心，而团队维护也容易不小心和系统 API 混合使用。</strong></p>
 
@@ -413,7 +413,7 @@
 
 <h3 id="最后">最后</h3>
 
-<p>所有方案的代码可在 <a href="https://github.com/Nemocdz/OCWeakContainer">Demo</a>中找到</p>
+<p>所有方案的代码可在 <a href="https://github.com/Nemocdz/OCWeakContainer">Demo</a> 中找到</p>
 
 <p>如果您觉得有帮助,不妨给个 star 鼓励一下,欢迎关注&amp;交流</p>
 
@@ -430,7 +430,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>564</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>651</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

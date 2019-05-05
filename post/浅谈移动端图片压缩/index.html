@@ -339,7 +339,7 @@
 
 <p>根据我的了解，画了一下 iOS&amp;Android 图片处理架构。iOS 这边，也是可以直接调用底层一点的框架的。</p>
 
-<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fz5abubavwj31pg0u0gsk.jpg" alt="屏幕快照 2019-01-13 下午9.37.00" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fz5abubavwj31pg0u0gsk.jpg" alt="屏幕快照 2019-01-13 下午9.37.00" /></p>
 
 <h3 id="ios-的-imageio">iOS 的 ImageIO</h3>
 
@@ -353,7 +353,7 @@
 
 <p>CGImageSource 相当于 ImageIO 数据来源的抽象类。通用的使用方式 <code>CGImageSourceCreateWithDataProvider:</code> 需要提供一个 DataProvider，可以指定文件、URL、Data 等输入。也有通过传入 CFData 来进行创建的便捷方法 <code>CGImageSourceCreateWithData:</code>。方法的第二个参数 options 传入一个字典进行配置。根据 Apple 在 WWDC 2018 上的 <a href="https://developer.apple.com/videos/play/wwdc2018/219/">Image and Graphics Best Practices</a> 上的例子，当不需要解码仅需要创建 CGImageSource 的时候，应该将 kCGImageSourceShouldCache 设为 false。</p>
 
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fz7jhd3o50j30yg0fnwlf.jpg" alt="11994763-6f25c32bd4d3b427" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fz7jhd3o50j30yg0fnwlf.jpg" alt="11994763-6f25c32bd4d3b427" /></p>
 
 <h5 id="2-解码得到-cgimage">2. 解码得到 CGImage</h5>
 
@@ -497,7 +497,7 @@
 
 <p>那么对于常用的色彩深度，就可以用这些参数的组合来完成。同时笔者在查看更底层的 vImage 框架的 vImage_CGImageFormat 结构体时（CGImage 底层也是使用 vImage，具体可查看 Accelerate 框架 vImage 库的 vImage_Utilities 文件），发现了 Apple 的注释，里面也包含了常用的色彩深度用的参数。</p>
 
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fz7kziqcaij32q40t6n94.jpg" alt="屏幕快照 2019-01-15 下午9.16.40" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fz7kziqcaij32q40t6n94.jpg" alt="屏幕快照 2019-01-15 下午9.16.40" /></p>
 
 <p>这一块为了和 Android 保持一致，笔者封装了 Android 常用的色彩深度参数对应的枚举值。</p>
 <div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">public</span> <span class="kd">enum</span> <span class="nc">ColorConfig</span><span class="p">{</span>
@@ -718,29 +718,29 @@
 <li><p>对于颜色较少的 GIF，将调色盘大小减少，比如从 256 种减少到 128 种等。</p></li>
 </ol>
 
-<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fzdbp21oqag305k05ggqc.gif" alt="1490353055438_2367_1490353055781" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbp21oqag305k05ggqc.gif" alt="1490353055438_2367_1490353055781" /></p>
 
-<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fzdbp9om1dg305k05gjum.gif" alt="1490353098026_7360_1490353098210" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbp9om1dg305k05gjum.gif" alt="1490353098026_7360_1490353098210" /></p>
 
 <ol>
 <li>对于背景一致，画面中有一部分元素在变化的 GIF，可以将多个元素和背景分开存储，然后加上如何还原的信息</li>
 </ol>
 
-<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fzdbmaoit6g302s02swe9.gif" alt="b522ac7896b320b4a9ee1eed1034e4fe_articlex" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbmaoit6g302s02swe9.gif" alt="b522ac7896b320b4a9ee1eed1034e4fe_articlex" /></p>
 
-<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fzdbmqdaz2g30fk042jrb.gif" alt="9e9fe93459fe7117909eb27771bdc182_articlex" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbmqdaz2g30fk042jrb.gif" alt="9e9fe93459fe7117909eb27771bdc182_articlex" /></p>
 
-<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fzdbn0nrthg30fk042747.gif" alt="433b41c29c6a70e64631a3d4c363e468_articlex" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbn0nrthg30fk042747.gif" alt="433b41c29c6a70e64631a3d4c363e468_articlex" /></p>
 
 <ol>
 <li>对于背景一致，画面中有一部分元素在动的 GIF，可以和前面一帧比较，将不动的部分透明化</li>
 </ol>
 
-<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fzdbnox1heg303c0283ys.gif" alt="d3c7444d59eed11d98abbb7c4e1da7ec_articlex" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbnox1heg303c0283ys.gif" alt="d3c7444d59eed11d98abbb7c4e1da7ec_articlex" /></p>
 
-<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fzdbnycn68g30eo03e3yu.gif" alt="e50b7f75feebb9bd056bb8dca9964873_articlex" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbnycn68g30eo03e3yu.gif" alt="e50b7f75feebb9bd056bb8dca9964873_articlex" /></p>
 
-<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fzdbo6podqg30eo03imxc.gif" alt="704d70c65d22fb240cb5f6f7be5bbf86_articlex" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbo6podqg30eo03imxc.gif" alt="704d70c65d22fb240cb5f6f7be5bbf86_articlex" /></p>
 
 <ol>
 <li><p>对于帧数很多的 GIF，可以抽取中间部分的帧，减少帧数</p></li>
@@ -1278,7 +1278,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 Nemocdz
+        © 2018 NemocdzThis post was published <strong>105</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

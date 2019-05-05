@@ -203,6 +203,21 @@
       
         <article class="post-entry">
   <header class="post-header">
+    <h3 class="post-title"><a href="https://nemocdz.github.io/post/2018/" class="post-link">2018</a></h3>
+    <p class="post-meta">@Nemocdz · Jan 1, 2019 · 2 min read</p>
+  </header>
+  
+  <p class="post-summary">今年对我来说是特别的一年，22 岁，从大学顺利毕业，开始工作。
+
+</p>
+  <footer class="post-footer">
+    <a class="read-more" href="https://nemocdz.github.io/post/2018/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
     <h3 class="post-title"><a href="https://nemocdz.github.io/post/%E8%AF%91-hacking-hit-tests/" class="post-link">[译] Hacking Hit Tests</a></h3>
     <p class="post-meta">@Nemocdz · Dec 27, 2018 · 2 min read</p>
   </header>
@@ -279,20 +294,6 @@
 </p>
   <footer class="post-footer">
     <a class="read-more" href="https://nemocdz.github.io/post/why-is-metaclass-in-objective-c/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88-objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/" class="post-link">再谈 Objective-C 弱引用容器的实现-关联对象实现 weak</a></h3>
-    <p class="post-meta">@Nemocdz · Sep 2, 2017 · 3 min read</p>
-  </header>
-  
-  <p class="post-summary">之前写了一篇文章总结了 OC 中弱引用容器实现，在小米面试中提到其中 CFFoundation 的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现Weak特质，也就是没有在销毁后置nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。
-所以看了 Runtime 源码和文章后，订正弱引用容器的一些实现方法。 </p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88-objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/">Read More →</a>
   </footer>
 </article>
 

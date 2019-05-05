@@ -226,13 +226,13 @@
 
 <p>使用也很简单，更新微信开发者工具到最新版，在创建新项目时选择 TypeScript 模板。</p>
 
-<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fzowjzfqyyj30u0109twj.jpg" alt="屏幕快照 2019-01-30 下午8.51.40" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzowjzfqyyj30u0109twj.jpg" alt="屏幕快照 2019-01-30 下午8.51.40" /></p>
 
 <p>创建后，我们可以看到项目里带上了 typings 库，以及 TypeScript 的配置文件 tsconifg。之后，保存时就不会自动编译了，要点击小程序工具栏的编译按钮才可以。</p>
 
 <p>这里有一个坑，笔者电脑安装的 TypeScript 版本是 3.2.2 版本。编译时会被找不到全局类型 CallableFunction 和 NewableFunction。</p>
 
-<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fzousqff02j30su06wq3r.jpg" alt="image-20190130195121996" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzousqff02j30su06wq3r.jpg" alt="image-20190130195121996" /></p>
 
 <p>解决方法也很简单，到 node_modules 路径下的 TypeScript 包的 bin 目录下，lib.es5.d.ts 文件里面把这两个类型的 Interface 拷贝到，小程序 typing 目录下的 lib.wa.es6.d.ts 里面就可以了。小程序模板里这个文件应该是拷贝 TypeScript 官方的，但没有随着官方升级而改变。</p>
 

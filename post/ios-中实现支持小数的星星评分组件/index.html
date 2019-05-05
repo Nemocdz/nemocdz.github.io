@@ -208,13 +208,13 @@
 
 <p></p>
 
-<p><img src="https://ws2.sinaimg.cn/large/006tNc79ly1fft73ku93og30da0n0tfa.gif" alt="2017-05-21 19_12_04" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fft73ku93og30da0n0tfa.gif" alt="2017-05-21 19_12_04" /></p>
 
 <h3 id="单个星星的实现">单个星星的实现</h3>
 
 <p>对于单个星星的实现，先考虑星星有三个状态，完全置灰状态，完全高亮状态，根据百分比半高亮状态。而我这边用的是 UIButton 来实现，因为 UIButton 本身已经有普通，高亮，选择的状态。主要实现的就是百分比高亮状态。我们可以根据百分比将图像进行裁剪，让新图像的宽度只有百分比所占的整个图像的宽度。但是这时候调用 setImage，会发现图片处于整个 button 中间。这是因为 UIButton 的 ImageView 的 contentMode 默认是 AspectFit 的，而 AspectFit 是默认居中的。Contentmode 中的 UIViewContentModeLeft，是不会把长边缩放到 ImageView 的边长的。况且，直接改变 UIButton 里的 ImageView 的 ContentMode 是没有效果的。要通过 UIControl 的 contentVerticalAlignment 属性（垂直）和 contentHorizontalAlignment 属性（水平）来达到类似 ImageView 的 contentMode 的效果。但是这两个属性都没有带 Fit 后缀的选项，也就是说并不会根据边长等比缩放。所以需要先把图片缩放到和 Button 大小一致。</p>
 
-<p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fft5yrflcoj30dl06c3za.jpg" alt="屏幕快照 2017-05-21 下午6.32.58" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fft5yrflcoj30dl06c3za.jpg" alt="屏幕快照 2017-05-21 下午6.32.58" /></p>
 
 <p>之后，我们就可以按百分比裁剪图片</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">+</span> <span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="nf">croppedImage:</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="nv">image</span> <span class="nf">fraction:</span><span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nv">fractonPart</span><span class="p">{</span>
@@ -344,7 +344,7 @@
 <span class="p">}</span></code></pre></div>
 <p>主要用到 UIControl 的四个方法</p>
 
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79ly1fft5y5gq92j30vt02475g.jpg" alt="屏幕快照 2017-05-21 下午6.31.56" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fft5y5gq92j30vt02475g.jpg" alt="屏幕快照 2017-05-21 下午6.31.56" /></p>
 
 <p>第一个是开始点击的时候的事件处理，第二个是手指未抬起在屏幕上继续移动的事件处理，第三个是离开屏幕，第四个是因为别的特殊情况事件被结束的处理。</p>
 
@@ -449,7 +449,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>626</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>714</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

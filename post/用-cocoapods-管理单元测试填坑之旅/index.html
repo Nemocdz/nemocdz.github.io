@@ -222,7 +222,7 @@
 <span class="k">end</span></code></pre></div>
 <p>经过一番 pod install 后，打开了 xcworkspace。</p>
 
-<p><img src="http://ww2.sinaimg.cn/large/006tNc79ly1fekhgrb3ocj308g08cwes.jpg" alt="屏幕快照 2017-04-12 23.38.20" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgrb3ocj308g08cwes.jpg" alt="屏幕快照 2017-04-12 23.38.20" /></p>
 
 <p>？？？这个 Target 的 icon，有点不对劲啊…原来 Cocoapods 默认生成的 Pod 是作为一个 Target 集成进 Pods 这个 XcodeProject 里的，而且 Target 的默认类型是 Static Libaray，也就是一个静态库。咋办呢？我要的是 XCTest 的 Target 类型。好吧，那看看 Cocoapods 的<a href="https://github.com/CocoaPods/CocoaPods">源码</a>吧。怎么找呢，有点 Ruby 基础的人知道，Podfile 里面写东西实际上都是用 Ruby 语法实现的 DSL（Domain Specific Language 领域特定语言）。也就是相当于实现了一套语法规则，比如 target do，比如 pod，比如 :path=&gt; 这些，在 Cocoapods 都有对应的语法实现。在执行 pod install 的过程中，podfile 中的信息被解析，然后把 pod 的信息进行处理，并生成 target 并生成集成后的 project 文件。那对 target 的类型的写入，也肯定也在生成 Pods.xcodeproj 的过程中。查看 Cocoapods 的 installer.rb，发现里面有个 instal l方法如下：</p>
 <div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">install!</span>
@@ -285,7 +285,7 @@
 <li><p>在哪里插入这个改变类型的操作</p></li>
 </ul>
 
-<p>看 Cocoapods 源码里发现，实际上对于 Xcodeprojcet 相关文件的写入和修改，是通过 Cocoapods 另一个单独的库 Xcodeproj 实现的，再看看它的源码。搜索 Unit Test，在 constants.rb 里发现这里定义了所有 ProductType 的别名。<img src="http://ww3.sinaimg.cn/large/006tNc79ly1fekhgv0x7uj311o0o8gsp.jpg" alt="屏幕快照 2017-04-13 00.53.09" /></p>
+<p>看 Cocoapods 源码里发现，实际上对于 Xcodeprojcet 相关文件的写入和修改，是通过 Cocoapods 另一个单独的库 Xcodeproj 实现的，再看看它的源码。搜索 Unit Test，在 constants.rb 里发现这里定义了所有 ProductType 的别名。<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgv0x7uj311o0o8gsp.jpg" alt="屏幕快照 2017-04-13 00.53.09" /></p>
 
 <p>也就是说，product_type 属性其实是个 String 类型，而 XCTest 的类型，就是 <code>'com.apple.product-type.bundle.unit-test'</code> 那么第一个问题就解决了。</p>
 
@@ -316,7 +316,7 @@
 <span class="k">end</span></code></pre></div>
 <p>就是对 installer 的 pod_project 这个 project 对象的 targerts 数组每一个执行一个循环，当找到我们需要的 target 时，改变 target 的类型。puts 是 ruby 里的 log，相当于 NSLog，printf。</p>
 
-<p>好了，重新 pod install，可以发现，target 已经变成了 test 的 type 了，而 Xcode 里的 test 栏也有了库里的 Test 了。<img src="http://ww3.sinaimg.cn/large/006tNc79ly1fekhgt6s3rj30ea070mxj.jpg" alt="屏幕快照 2017-04-13 01.18.45" /></p>
+<p>好了，重新 pod install，可以发现，target 已经变成了 test 的 type 了，而 Xcode 里的 test 栏也有了库里的 Test 了。<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgt6s3rj30ea070mxj.jpg" alt="屏幕快照 2017-04-13 01.18.45" /></p>
 
 <p>但这个时候，我们是无法引入并识别其它第三方库的方法的，也找不到其它第三方库的符号表。</p>
 
@@ -324,13 +324,13 @@
 
 <p>这个时候，我们其它普通静态库的方法，在 podspec 里写上 <code>s.dependency 'CDZPicker'</code> 某个库，再次 pod install。这次，IDE 识别了，再次运行 test，发现编译报错了，找不到符号表。如下图：</p>
 
-<p><img src="http://ww4.sinaimg.cn/large/006tNc79ly1fekhgnopmsj30uo05q769.jpg" alt="屏幕快照 2017-04-13 01.26.59" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgnopmsj30uo05q769.jpg" alt="屏幕快照 2017-04-13 01.26.59" /></p>
 
 <p>同时可以发现，实际上运行 test 的时候，把依赖的库编译了一遍。也就是说，现在这个 test 的 target 没办法找到编译的产物（.o）。而在 Cocoapods 里生成的主工程的 target 里，为啥就能找到第三方库的编译后产物呢？先讲讲正常引用静态库的因素，一个是告诉 Xcode 去哪里找，也就是 Target 里 Building Setting 里的 Library SearchPaths，里面指定了找编译产物的路径，另一个是告诉 Xcode，要链接的静态库的名字，也就是 Building Setting 里的 Other Linker Flags 里用 -l &ldquo;静态库编译产物名（去掉前面 lib）&rdquo;标识。查看其 BuildingSetting，发现其两个决定的因素，都被 Cocoapods 配置好了，也就是 target xxx do 里做的。</p>
 
-<p><img src="http://ww3.sinaimg.cn/large/006tNc79ly1fekhgsapsbj30vu044js1.jpg" alt="屏幕快照 2017-04-13 01.31.41" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgsapsbj30vu044js1.jpg" alt="屏幕快照 2017-04-13 01.31.41" /></p>
 
-<p><img src="http://ww1.sinaimg.cn/large/006tNc79ly1fekhgqec57j315404q75f.jpg" alt="屏幕快照 2017-04-13 01.32.05" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgqec57j315404q75f.jpg" alt="屏幕快照 2017-04-13 01.32.05" /></p>
 
 <p>而默认导入的 Pod 的 target，这两个参数都是&rdquo;&ldquo;，也就是空的。这个时候，我们看看把这两个设置设成默认值会怎么样呢？在 post_install 的 hook 方法里加入下面的代码</p>
 <div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="n">target</span><span class="o">.</span><span class="n">build_configurations</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
@@ -339,15 +339,15 @@
 <span class="k">end</span></code></pre></div>
 <p>怎么知道这些设置对应的键值是这些呢？Cocoapods 实际上是通过生成 XCConfig 文件还配置这些的，在项目里搜索后缀名是 xcconifg 的文件，发现了 Cocoapods 写的那些部分。</p>
 
-<p><img src="http://ww4.sinaimg.cn/large/006tNc79ly1fekhgplxufj31kw07vagu.jpg" alt="屏幕快照 2017-04-13 01.45.19" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgplxufj31kw07vagu.jpg" alt="屏幕快照 2017-04-13 01.45.19" /></p>
 
 <p>完整的 XCConfig 编写可以参考 Github 上这个<a href="https://github.com/jspahrsummers/xcconfigs">仓库</a>。而为啥设成默认就可以了呢？在 Building Setting 里点击 Level 模式查看，发现对于每一项设置，都有 5 个地方可以设置，层级从左到右，如果在左边的层级设置了，就取最左边的设置覆盖右边的，而绿色的框代表每行的设置正在应用的来源是来自哪里，也就是绿色框的代表的是最终的设置。</p>
 
-<p><img src="http://ww4.sinaimg.cn/large/006tNc79ly1fekhgwwu54j31kw09ste8.jpg" alt="屏幕快照 2017-04-13 01.51.44" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgwwu54j31kw09ste8.jpg" alt="屏幕快照 2017-04-13 01.51.44" /></p>
 
 <p>而加上 &lsquo;$(inherited)&rsquo; 的作用，就是让值从下往上透上来，也就是，会把右边的一栏的设置也加进来，右边的如果也有 &lsquo;$(inherited)&lsquo;，那么依次类推。上面五栏里分别 Resolve，Target，ConfigFile，Project，Default。第一层 Resolve 我不太清楚，可能是编译最终修复之类的，第二层就是 target 里修改的，第三层就是读取对应的 xcconfig 后缀文件里的配置，第四层是 Project 里修改的，最后是系统默认的。而这也是为什么一个 Project 可以对应多个 Target 的原因，Target 只是覆盖了设置而已。而 Cocoapods 是把 xcconfig 写好，并让上层设置为 &lsquo;$(inherited)&lsquo;，从而达到把配置写进 Xcode。而在 hook 方法里，把 target 的 config 更改，相当于把上层设置好，取下层 XCConfig 里的值。而我们看到 Cocoapods 默认帮我们生成的 Pod 的 XCConfig 里，里面已经写好了正确的 Library Search Path。</p>
 
-<p><img src="http://ww2.sinaimg.cn/large/006tNc79ly1fekhgom01ij31kw073tg2.jpg" alt="屏幕快照 2017-04-13 01.59.08" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgom01ij31kw073tg2.jpg" alt="屏幕快照 2017-04-13 01.59.08" /></p>
 
 <p>剩下就是 Other Link Flag 了，这个也很好解决，在 podspec 里写上</p>
 <div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="n">s</span><span class="o">.</span><span class="n">pod_target_xcconfig</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;OTHER_LDFLAGS&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;$(inherited) -l&#34;CDZPicker&#34;&#39;</span><span class="p">}</span></code></pre></div>
@@ -355,7 +355,7 @@
 
 <p>等等，点击主工程的 Run，好像跑不起来了……</p>
 
-<p><img src="http://ww4.sinaimg.cn/large/006tNc79ly1fekhgu5x1nj30xq03eab6.jpg" alt="屏幕快照 2017-04-13 02.05.31" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgu5x1nj30xq03eab6.jpg" alt="屏幕快照 2017-04-13 02.05.31" /></p>
 
 <h3 id="曲线救国解决-test-库编译问题">曲线救国解决 Test 库编译问题</h3>
 
@@ -365,7 +365,7 @@
 
 <p>这时我想起 Podfile 里一个参数 configurations，一般我们会指定例如 <code>:configurations =&gt; ['Debug']</code> 这样来说明这个库在 Debug 下才被编译并链接进主工程。既然这样 Release 模式下就不会被链接，我们就可以利用这个特性，新建一个没用的 Configuration,让 Podfile 指定就可以了。在 Project 的 Info 里新建一个 Test 的 Configuration，并在 Podfile 里的 Pod 指定 <code>:configurations =&gt; ['Test']</code>。</p>
 
-<p><img src="http://ww1.sinaimg.cn/large/006tNc79ly1fekhgvz3jgj31ac0dcdhs.jpg" alt="屏幕快照 2017-04-13 02.23.54" /></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgvz3jgj31ac0dcdhs.jpg" alt="屏幕快照 2017-04-13 02.23.54" /></p>
 
 <p>重新 Pod install，可以看到 Debug 的 Other Linker Flag 里已经没有 &ldquo;-l&rsquo;UnitTestPod&rsquo;&rdquo; 来指定链接 Pod 了。编译自然也就成功了。</p>
 
@@ -387,7 +387,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>665</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>752</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
