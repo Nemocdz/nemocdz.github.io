@@ -17,7 +17,6 @@
   <meta name="author" content="Nemocdz" />
   <meta name="description" content="最近因为项目需要，需要在打开某个网址时设置 HTTP 代理。所以做了相关的技术方案调研，并总结下来。
 在 WebView 设置 Proxy 的方式，就是对请求进行拦截并重新处理。还有一种全局的实现方案，使用 iOS 9 以后才有的 NetworkExtension，但是这种方案会在用户看来像是个微皮恩的 App，不友好且太重了。
-
 " />
 
   
@@ -27,7 +26,6 @@
     <meta name="twitter:title" content="iOS 设置代理（Proxy）方案总结" />
     <meta name="twitter:description" content="最近因为项目需要，需要在打开某个网址时设置 HTTP 代理。所以做了相关的技术方案调研，并总结下来。
 在 WebView 设置 Proxy 的方式，就是对请求进行拦截并重新处理。还有一种全局的实现方案，使用 iOS 9 以后才有的 NetworkExtension，但是这种方案会在用户看来像是个微皮恩的 App，不友好且太重了。
-
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -35,7 +33,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.46" />
+<meta name="generator" content="Hugo 0.55.6" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86proxy%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/" />
@@ -209,8 +207,6 @@
     <article class="post-content"><p>最近因为项目需要，需要在打开某个网址时设置 HTTP 代理。所以做了相关的技术方案调研，并总结下来。</p>
 
 <p>在 WebView 设置 Proxy 的方式，就是对请求进行拦截并重新处理。还有一种全局的实现方案，使用 iOS 9 以后才有的 NetworkExtension，但是这种方案会在用户看来像是个微皮恩的 App，不友好且太重了。</p>
-
-<p></p>
 
 <h3 id="使用-urlprotocol">使用 URLProtocol</h3>
 
@@ -591,7 +587,7 @@
 </ul></li>
 </ul>
 
-<h3 id="使用-wkweburlschemehandler">使用 WKWebURLSchemeHandler</h3>
+<h3 id="使用-wkweburlschemehandler-ios-12-2-该方法已失效">使用 WKWebURLSchemeHandler（iOS 12.2 该方法已失效）</h3>
 
 <p>iOS 11 以上，苹果为 WKWebView 增加了 WKURLSchemeHandler 协议，可以为自定义的 Scheme 增加遵循 WKURLSchemeHandler 协议的处理。其中可以在 start 和 stop的时机增加自己的处理。</p>
 
@@ -633,7 +629,7 @@
 <p>然后生成 WKWebviewConfiguration，并使用官方 API 将 handler 设置进去。</p>
 <div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">let</span> <span class="nv">config</span> <span class="p">=</span> <span class="n">WKWebViewConfiguration</span><span class="p">()</span>
 <span class="n">config</span><span class="p">.</span><span class="n">setURLSchemeHandler</span><span class="p">(</span><span class="n">HttpProxyHandler</span><span class="p">(),</span> <span class="n">forURLScheme</span><span class="p">:</span> <span class="s">&#34;http&#34;</span><span class="p">)</span><span class="c1">//抛出异常</span></code></pre></div>
-<p>但因为苹果的 setURLSchemeHandler 只能对自定义的 Scheme 进行设置，所以像 http 和 https 这种 Scheme，已经默认处理了，不能调用这个 API，需要用 KVC 取值进行设置。</p>
+<p>但因为苹果的 setURLSchemeHandler 只能对自定义的 Scheme 进行设置，所以像 http 和 https 这种 Scheme，已经默认处理了，不能调用这个 API，需要用 KVC 取值进行设置（iOS 12.2 上该方法已经失效，不存在此属性）。</p>
 <div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">extension</span> <span class="nc">WKWebViewConfiguration</span><span class="p">{</span>
     <span class="kd">class</span> <span class="nc">func</span> <span class="n">proxyConifg</span><span class="p">()</span> <span class="p">-&gt;</span> <span class="n">WKWebViewConfiguration</span><span class="p">{</span>
         <span class="kd">let</span> <span class="nv">config</span> <span class="p">=</span> <span class="n">WKWebViewConfiguration</span><span class="p">()</span>
@@ -713,12 +709,12 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>221</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>274</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     

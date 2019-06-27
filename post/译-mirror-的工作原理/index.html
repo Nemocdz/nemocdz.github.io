@@ -19,7 +19,6 @@
 原文链接：How Mirror Works
 原文日期：2018-09-26
  尽管 Swift 重心在强调静态类型上，但它同时支持丰富的元数据类型。元数据类型允许代码在运行时检查和操作任意值。这个功能通过 Mirror API 暴露给 Swift 开发者。大家可能会感到困惑，在 Swift 这种如此强调静态类型的语言里，Mirror 这样的特性是怎么工作的？让我们一起来通过这篇文章了解一下。
-
 " />
 
   
@@ -31,7 +30,6 @@
 原文链接：How Mirror Works
 原文日期：2018-09-26
  尽管 Swift 重心在强调静态类型上，但它同时支持丰富的元数据类型。元数据类型允许代码在运行时检查和操作任意值。这个功能通过 Mirror API 暴露给 Swift 开发者。大家可能会感到困惑，在 Swift 这种如此强调静态类型的语言里，Mirror 这样的特性是怎么工作的？让我们一起来通过这篇文章了解一下。
-
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -39,7 +37,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.46" />
+<meta name="generator" content="Hugo 0.55.6" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E8%AF%91-mirror-%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" />
@@ -219,8 +217,6 @@
 </blockquote>
 
 <p>尽管 Swift 重心在强调静态类型上，但它同时支持丰富的元数据类型。元数据类型允许代码在运行时检查和操作任意值。这个功能通过 <code>Mirror</code> API 暴露给 Swift 开发者。大家可能会感到困惑，在 Swift 这种如此强调静态类型的语言里，<code>Mirror</code> 这样的特性是怎么工作的？让我们一起来通过这篇文章了解一下。</p>
-
-<p></p>
 
 <h2 id="事先声明">事先声明</h2>
 
@@ -630,7 +626,7 @@
   <span class="k">return</span> <span class="n">object</span><span class="p">;</span>
 <span class="p">}</span>
 <span class="cp">#endif
-</span><span class="cp"></span></code></pre></div>
+</span></code></pre></div>
 <p>另一个是如果该类的父类是 Objective-C 的类，字段的偏移值需要在 Objective-C 运行时获得：</p>
 <div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++">  <span class="n">uintptr_t</span> <span class="n">fieldOffset</span><span class="p">;</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">usesNativeSwiftReferenceCounting</span><span class="p">(</span><span class="n">Clas</span><span class="p">))</span> <span class="p">{</span>
@@ -796,12 +792,12 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>203</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>256</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     

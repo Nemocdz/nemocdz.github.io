@@ -16,7 +16,8 @@
   
   <meta name="author" content="Nemocdz" />
   <meta name="description" content="之前写了一篇文章总结了 OC 中弱引用容器实现，在小米面试中提到其中 CFFoundation 的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现Weak特质，也就是没有在销毁后置nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。
-所以看了 Runtime 源码和文章后，订正弱引用容器的一些实现方法。 " />
+所以看了 Runtime 源码和文章后，订正弱引用容器的一些实现方法。
+" />
 
   
   
@@ -24,14 +25,15 @@
     <meta name="twitter:site" content="@Nemocdz" />
     <meta name="twitter:title" content="再谈 Objective-C 弱引用容器的实现-关联对象实现 weak" />
     <meta name="twitter:description" content="之前写了一篇文章总结了 OC 中弱引用容器实现，在小米面试中提到其中 CFFoundation 的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现Weak特质，也就是没有在销毁后置nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。
-所以看了 Runtime 源码和文章后，订正弱引用容器的一些实现方法。 " />
+所以看了 Runtime 源码和文章后，订正弱引用容器的一些实现方法。
+" />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
 
 
 
 
-<meta name="generator" content="Hugo 0.46" />
+<meta name="generator" content="Hugo 0.55.6" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88-objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/" />
@@ -204,8 +206,7 @@
     </header>
     <article class="post-content"><p>之前写了一篇<a href="https://nemocdz.github.io/post/objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">文章</a>总结了 OC 中弱引用容器实现，在小米面试中提到其中 CFFoundation 的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现Weak特质，也就是没有在销毁后置nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。</p>
 
-<p>所以看了 Runtime 源码和文章后，订正弱引用容器的一些实现方法。
-</p>
+<p>所以看了 Runtime 源码和文章后，订正弱引用容器的一些实现方法。</p>
 
 <h3 id="runtime-源码的-weak-关键字实现">Runtime 源码的 weak 关键字实现</h3>
 
@@ -379,12 +380,12 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>610</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>663</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     

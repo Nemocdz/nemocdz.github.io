@@ -16,7 +16,6 @@
   
   <meta name="author" content="Nemocdz" />
   <meta name="description" content="写在开头 最近重读了 AFNetworking 源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被 AFNetworking 作者的对细节，舒服，整洁的追求所折服。把一些个人觉得写的漂亮的用法总结下来，本文不在于探讨 AFNetworking 源码的具体业余实现，尽量从代码本身和设计角度进行总结（源码解析推荐 AFNetworking 到底做了什么？这篇文章）。
-
 " />
 
   
@@ -25,7 +24,6 @@
     <meta name="twitter:site" content="@Nemocdz" />
     <meta name="twitter:title" content="AFNetworking 的漂亮细节" />
     <meta name="twitter:description" content="写在开头 最近重读了 AFNetworking 源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被 AFNetworking 作者的对细节，舒服，整洁的追求所折服。把一些个人觉得写的漂亮的用法总结下来，本文不在于探讨 AFNetworking 源码的具体业余实现，尽量从代码本身和设计角度进行总结（源码解析推荐 AFNetworking 到底做了什么？这篇文章）。
-
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -33,7 +31,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.46" />
+<meta name="generator" content="Hugo 0.55.6" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/afnetworking-%E7%9A%84%E6%BC%82%E4%BA%AE%E7%BB%86%E8%8A%82/" />
@@ -207,8 +205,6 @@
     <article class="post-content"><h3 id="写在开头">写在开头</h3>
 
 <p>最近重读了 AFNetworking 源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被 AFNetworking 作者的对细节，舒服，整洁的追求所折服。把一些个人觉得写的漂亮的用法总结下来，本文不在于探讨 AFNetworking 源码的具体业余实现，尽量从代码本身和设计角度进行总结（源码解析推荐 <a href="http://www.jianshu.com/p/856f0e26279d">AFNetworking 到底做了什么？</a>这篇文章）。</p>
-
-<p></p>
 
 <h4 id="1-dispatch-once-方法声明-c-语言变量方法">1.Dispatch_once 方法声明 C 语言变量方法</h4>
 
@@ -434,12 +430,12 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>627</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>680</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     

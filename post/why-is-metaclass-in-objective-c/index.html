@@ -16,7 +16,6 @@
   
   <meta name="author" content="Nemocdz" />
   <meta name="description" content="这篇文章源于美团面试官问的我一个问题，为什么 Objective-C 中有 Class 和 MetaClass 这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有 MetaClass 而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么 Objective-C 中有 MetaClass 这个设计？
-
 " />
 
   
@@ -25,7 +24,6 @@
     <meta name="twitter:site" content="@Nemocdz" />
     <meta name="twitter:title" content="Why is MetaClass in Objective-C？" />
     <meta name="twitter:description" content="这篇文章源于美团面试官问的我一个问题，为什么 Objective-C 中有 Class 和 MetaClass 这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有 MetaClass 而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么 Objective-C 中有 MetaClass 这个设计？
-
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -33,7 +31,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.46" />
+<meta name="generator" content="Hugo 0.55.6" />
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/why-is-metaclass-in-objective-c/" />
@@ -206,8 +204,6 @@
     </header>
     <article class="post-content"><p>这篇文章源于美团面试官问的我一个问题，为什么 Objective-C 中有 Class 和 MetaClass 这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有 MetaClass 而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么 Objective-C 中有 MetaClass 这个设计？</p>
 
-<p></p>
-
 <h3 id="前置知识">前置知识</h3>
 
 <p>首先简单分析下在 Objective-C 中，对象是什么。下面源码基于 <a href="https://opensource.apple.com/tarballs/objc4/">Runtime-709</a> 分析。</p>
@@ -377,12 +373,12 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>597</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>650</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
