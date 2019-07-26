@@ -587,7 +587,7 @@
 </ul></li>
 </ul>
 
-<h3 id="使用-wkweburlschemehandler-ios-12-2-该方法已失效">使用 WKWebURLSchemeHandler（iOS 12.2 该方法已失效）</h3>
+<h3 id="使用-wkweburlschemehandler">使用 WKWebURLSchemeHandler</h3>
 
 <p>iOS 11 以上，苹果为 WKWebView 增加了 WKURLSchemeHandler 协议，可以为自定义的 Scheme 增加遵循 WKURLSchemeHandler 协议的处理。其中可以在 start 和 stop的时机增加自己的处理。</p>
 
@@ -629,7 +629,7 @@
 <p>然后生成 WKWebviewConfiguration，并使用官方 API 将 handler 设置进去。</p>
 <div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">let</span> <span class="nv">config</span> <span class="p">=</span> <span class="n">WKWebViewConfiguration</span><span class="p">()</span>
 <span class="n">config</span><span class="p">.</span><span class="n">setURLSchemeHandler</span><span class="p">(</span><span class="n">HttpProxyHandler</span><span class="p">(),</span> <span class="n">forURLScheme</span><span class="p">:</span> <span class="s">&#34;http&#34;</span><span class="p">)</span><span class="c1">//抛出异常</span></code></pre></div>
-<p>但因为苹果的 setURLSchemeHandler 只能对自定义的 Scheme 进行设置，所以像 http 和 https 这种 Scheme，已经默认处理了，不能调用这个 API，需要用 KVC 取值进行设置（iOS 12.2 上该方法已经失效，不存在此属性）。</p>
+<p>但因为苹果的 setURLSchemeHandler 只能对自定义的 Scheme 进行设置，所以像 http 和 https 这种 Scheme，已经默认处理了，不能调用这个 API，需要用 KVC 取值进行设置。</p>
 <div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">extension</span> <span class="nc">WKWebViewConfiguration</span><span class="p">{</span>
     <span class="kd">class</span> <span class="nc">func</span> <span class="n">proxyConifg</span><span class="p">()</span> <span class="p">-&gt;</span> <span class="n">WKWebViewConfiguration</span><span class="p">{</span>
         <span class="kd">let</span> <span class="nv">config</span> <span class="p">=</span> <span class="n">WKWebViewConfiguration</span><span class="p">()</span>
@@ -709,7 +709,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>274</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>303</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
