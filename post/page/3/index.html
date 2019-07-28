@@ -207,7 +207,8 @@
     <p class="post-meta">@Nemocdz · Sep 2, 2017 · 3 min read</p>
   </header>
   
-  <p class="post-summary">之前写了一篇文章总结了 OC 中弱引用容器实现，在小米面试中提到其中 CFFoundation 的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现Weak特质，也就是没有在销毁后置nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。
+  <p class="post-summary">[TOC]
+之前写了一篇 文章 总结了 OC 中弱引用容器实现，在小米面试中提到其中 CFFoundation 的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现 Weak 特质，也就是没有在销毁后置 nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。
 所以看了 Runtime 源码和文章后，订正弱引用容器的一些实现方法。
 </p>
   <footer class="post-footer">
@@ -222,7 +223,8 @@
     <p class="post-meta">@Nemocdz · Aug 25, 2017 · 2 min read</p>
   </header>
   
-  <p class="post-summary">今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？
+  <p class="post-summary">[TOC]
+今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？
 </p>
   <footer class="post-footer">
     <a class="read-more" href="https://nemocdz.github.io/post/%E4%BB%8E%E4%B8%80%E9%81%93%E7%BD%91%E6%98%93%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B5%85%E8%B0%88-objective-c-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/">Read More →</a>
@@ -236,7 +238,8 @@
     <p class="post-meta">@Nemocdz · Aug 22, 2017 · 3 min read</p>
   </header>
   
-  <p class="post-summary">写在前面 最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。
+  <p class="post-summary">[TOC]
+最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。
 </p>
   <footer class="post-footer">
     <a class="read-more" href="https://nemocdz.github.io/post/tcpip-%E5%8D%8F%E8%AE%AE%E6%97%8F%E8%BE%B9%E5%AD%A6%E8%BE%B9%E6%83%B3/">Read More →</a>
@@ -250,8 +253,9 @@
     <p class="post-meta">@Nemocdz · Aug 21, 2017 · 1 min read</p>
   </header>
   
-  <p class="post-summary">用英语来解读 C 的声明  首先着眼于识别符（变量名或者函数名）。 从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。优先顺序说明如下：
- 用于整理声明内容的括弧 用于表示数组的 []，用于表示函数的() 用于表示指针的 *  解释完成派生型，使用 “of” 或 “to” 或 “returning” 将它们连接起来。
+  <p class="post-summary">[TOC]
+用英语来解读 C 的声明  首先着眼于识别符（变量名或者函数名）。 从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。优先顺序说明如下：
+ 用于整理声明内容的括弧 用于表示数组的 []，用于表示函数的 () 用于表示指针的 *  解释完成派生型，使用“of”或“to”或“returning”将它们连接起来。
  C 里面不存在多维数组。
  </p>
   <footer class="post-footer">
@@ -266,7 +270,8 @@
     <p class="post-meta">@Nemocdz · Aug 16, 2017 · 4 min read</p>
   </header>
   
-  <p class="post-summary">写在开头 最近重读了 AFNetworking 源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被 AFNetworking 作者的对细节，舒服，整洁的追求所折服。把一些个人觉得写的漂亮的用法总结下来，本文不在于探讨 AFNetworking 源码的具体业余实现，尽量从代码本身和设计角度进行总结（源码解析推荐 AFNetworking 到底做了什么？这篇文章）。
+  <p class="post-summary">[TOC]
+最近重读了 AFNetworking 源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被 AFNetworking 作者的对细节，舒服，整洁的追求所折服。把一些个人觉得写的漂亮的用法总结下来，本文不在于探讨 AFNetworking 源码的具体业余实现，尽量从代码本身和设计角度进行总结（源码解析推荐 AFNetworking 到底做了什么？ 这篇文章）。
 </p>
   <footer class="post-footer">
     <a class="read-more" href="https://nemocdz.github.io/post/afnetworking-%E7%9A%84%E6%BC%82%E4%BA%AE%E7%BB%86%E8%8A%82/">Read More →</a>
@@ -280,7 +285,8 @@
     <p class="post-meta">@Nemocdz · Jul 28, 2017 · 5 min read</p>
   </header>
   
-  <p class="post-summary">在 iOS 10 上，苹果将原来散落在UIKit中各处的用户通知相关的代码进行重构，剥离，打造了一个全新的通知框架-UserNotifications。笔者最近在开发公司通知相关的需求，跟着 WWDC2016 的视频和官方文档，学习了一下新框架。同时，在学习过程中，和老框架对应 API 进行对比，有了个人的感受和看法。
+  <p class="post-summary">[TOC]
+在 iOS 10 上，苹果将原来散落在 UIKit 中各处的用户通知相关的代码进行重构，剥离，打造了一个全新的通知框架 UserNotifications。笔者最近在开发公司通知相关的需求，跟着 WWDC 2016 的视频和官方文档，学习了一下新框架。同时，在学习过程中，和老框架对应 API 进行对比，有了个人的感受和看法。
 </p>
   <footer class="post-footer">
     <a class="read-more" href="https://nemocdz.github.io/post/ios-10-%E9%80%9A%E7%9F%A5%E6%A1%86%E6%9E%B6-usernotifications-%E5%AD%A6%E4%B9%A0%E5%8F%8A%E5%85%BC%E5%AE%B9%E7%AC%94%E8%AE%B0/">Read More →</a>

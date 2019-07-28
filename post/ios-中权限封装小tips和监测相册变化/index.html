@@ -15,8 +15,9 @@
 
   
   <meta name="author" content="Nemocdz" />
-  <meta name="description" content="之前写了一个仿 Snapseed 的 ImagePicker，见 Demo 和之前的文章。
-之后发现有人说第一次未授权时 Collectionview 会加载不出照片，发现没有在合适时候调用权限管理。iOS 10 的这个权限管理是 info.plist 的一个键值，没有回调方法。查询 PhotosKit 方法里，发现有一个权限回调方法，就想封装一个方法来友好的询问用户权限。
+  <meta name="description" content="[TOC]
+之前写了一个仿 Snapseed 的 ImagePicker，见 Demo 和之前的 文章。
+之后发现有人说第一次未授权时 UICCollectionview 会加载不出照片，发现没有在合适时候调用权限管理。iOS 10 的这个权限管理是 info.plist 的一个键值，没有回调方法。查询 PhotosKit 方法里，发现有一个权限回调方法，就想封装一个方法来友好的询问用户权限。
 " />
 
   
@@ -24,8 +25,9 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@Nemocdz" />
     <meta name="twitter:title" content="iOS 中权限小 Tips 和监测相册变化" />
-    <meta name="twitter:description" content="之前写了一个仿 Snapseed 的 ImagePicker，见 Demo 和之前的文章。
-之后发现有人说第一次未授权时 Collectionview 会加载不出照片，发现没有在合适时候调用权限管理。iOS 10 的这个权限管理是 info.plist 的一个键值，没有回调方法。查询 PhotosKit 方法里，发现有一个权限回调方法，就想封装一个方法来友好的询问用户权限。
+    <meta name="twitter:description" content="[TOC]
+之前写了一个仿 Snapseed 的 ImagePicker，见 Demo 和之前的 文章。
+之后发现有人说第一次未授权时 UICCollectionview 会加载不出照片，发现没有在合适时候调用权限管理。iOS 10 的这个权限管理是 info.plist 的一个键值，没有回调方法。查询 PhotosKit 方法里，发现有一个权限回调方法，就想封装一个方法来友好的询问用户权限。
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -204,11 +206,15 @@
       <h1 class="post-title">iOS 中权限小 Tips 和监测相册变化</h1>
       <p class="post-meta">@Nemocdz · Dec 14, 2016 · 2 min read</p>
     </header>
-    <article class="post-content"><p>之前写了一个仿 Snapseed 的 ImagePicker，见 <a href="https://github.com/Nemocdz/CDZImagePickerDemo">Demo</a> 和之前的<a href="https://nemocdz.github.io/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BFsnapseed%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/">文章</a>。</p>
+    <article class="post-content"><p>[TOC]</p>
 
-<p>之后发现有人说第一次未授权时 Collectionview 会加载不出照片，发现没有在合适时候调用权限管理。iOS 10 的这个权限管理是 info.plist 的一个键值，没有回调方法。查询 PhotosKit 方法里，发现有一个权限回调方法，就想封装一个方法来友好的询问用户权限。</p>
+<p>之前写了一个仿 Snapseed 的 ImagePicker，见 <a href="https://github.com/Nemocdz/CDZImagePickerDemo">Demo</a> 和之前的 <a href="https://nemocdz.github.io/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BFsnapseed%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/">文章</a>。</p>
 
-<p>查询文档，相册权限 PHAuthorizationStatus 枚举类型有这么几种。</p>
+<p>之后发现有人说第一次未授权时 <code>UICCollectionview</code> 会加载不出照片，发现没有在合适时候调用权限管理。iOS 10 的这个权限管理是 info.plist 的一个键值，没有回调方法。查询 PhotosKit 方法里，发现有一个权限回调方法，就想封装一个方法来友好的询问用户权限。</p>
+
+<h2 id="权限-tips">权限 Tips</h2>
+
+<p>查询文档，相册权限<code>PHAuthorizationStatus</code> 枚举类型有这么几种。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">typedef</span> <span class="nf">NS_ENUM</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">,</span> <span class="n">PHAuthorizationStatus</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">PHAuthorizationStatusNotDetermined</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="c1">// User has not yet made a choice with regards to this application 用户未决定
 </span><span class="c1"></span>    <span class="n">PHAuthorizationStatusRestricted</span><span class="p">,</span>        <span class="c1">// This application is not authorized to access photo data.  一般是家长权限之类的拒绝
@@ -217,7 +223,7 @@
 </span><span class="c1"></span>    <span class="n">PHAuthorizationStatusDenied</span><span class="p">,</span>            <span class="c1">// User has explicitly denied this application access to photos data. 用户拒绝 
 </span><span class="c1"></span>    <span class="n">PHAuthorizationStatusAuthorized</span>         <span class="c1">// User has authorized this application to access photos data. 用户允许
 </span><span class="c1"></span><span class="p">}</span> <span class="n">PHOTOS_AVAILABLE_IOS_TVOS</span><span class="p">(</span><span class="mi">8</span><span class="n">_0</span><span class="p">,</span> <span class="mi">10</span><span class="n">_0</span><span class="p">);</span></code></pre></div>
-<p>其中，我们不希望用户去拒绝，达到 <code>PHAuthorizationStatusDenied</code> 这个状态，这样的话用户再要获取权限就要到设置里的隐私里找到我们的应用再手动打开，而没办法在 App 内去请求权限更改。那么我们希望暂时拒绝后的状态应该是 <code>PHAuthorizationStatusNotDetermined</code> 的，思路就是提示一个 Alertviewcontroller 去询问，用户取消则不去调用真正的询问权限（相当于忽略），以便下次提醒在询问。用户同意则调用系统询问权限，这时一般用户也会再允许了。流程示意图如下。<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gw1faqpzkg83ej31kw0uv769.jpg" alt="屏幕快照 2016-12-14 22.15.02" /></p>
+<p>其中，我们不希望用户去拒绝，达到 <code>PHAuthorizationStatusDenied</code> 这个状态，这样的话用户再要获取权限就要到设置里的隐私里找到我们的应用再手动打开，而没办法在 App 内去请求权限更改。那么我们希望暂时拒绝后的状态应该是 <code>PHAuthorizationStatusNotDetermined</code> 的，思路就是提示一个 <code>UIAlertViewController</code> 去询问，用户取消则不去调用真正的询问权限（相当于忽略），以便下次提醒在询问。用户同意则调用系统询问权限，这时一般用户也会再允许了。流程示意图如下。<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gw1faqpzkg83ej31kw0uv769.jpg" alt="屏幕快照 2016-12-14 22.15.02" /></p>
 
 <p>代码很简单，直接贴上来</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">showPermissionAlertInController</span><span class="p">{</span>
@@ -250,6 +256,8 @@
 
 <hr />
 
+<h2 id="相册变化">相册变化</h2>
+
 <p>后来发现如果调用选择器时在外部改变了照片（增加，删除）后 Collectionview 不会改变，就研究了一下 PhotosKit，发现有个 <code>- (void)photoLibraryDidChange:(PHChange *)changeInfo</code> 检测相册变动，但之前需要注册为观察者并实现协议</p>
 
 <p><code>PHPhotoLibraryChangeObserver</code></p>
@@ -270,9 +278,9 @@
         <span class="p">}</span>
     <span class="p">});</span>
 <span class="p">}</span></code></pre></div>
-<p>这个方法默认所有相册的变更都会通知，但是有些变动是我们不需要的，比如用户新建了一个新空相册，删除了一个旧相册等，这时我们可以用 PHChange 里的 ChangeDetails 去区分，比如 <code>changeDetailsForFetchResult:(PHFetchResult *)object;</code> 就是传入一组 FetchResult，如果这组 Result 有变化，比如这组 Result 是 Asset 的集合，Asset 增加减少，那么就会返回一个 ChangeDetails，可以用此区分，但是如果是 Asset 内部的变化，就不会返回一个 ChangeDetails。同样的如果这组 Result 是 Collection 的集合，那么 Collection 内部的变化，比如 Collection 里的 Asset 对象增加减少，就不会有返回。</p>
+<p>这个方法默认所有相册的变更都会通知，但是有些变动是我们不需要的，比如用户新建了一个新空相册，删除了一个旧相册等，这时我们可以用 <code>PHChange</code> 里的 ChangeDetails 去区分，比如 <code>changeDetailsForFetchResult:(PHFetchResult *)object;</code> 就是传入一组 FetchResult，如果这组 Result 有变化，比如这组 Result 是 Asset 的集合，Asset 增加减少，那么就会返回一个 ChangeDetails，可以用此区分，但是如果是 Asset 内部的变化，就不会返回一个 ChangeDetails。同样的如果这组 Result 是 Collection 的集合，那么 Collection 内部的变化，比如 Collection 里的 Asset 对象增加减少，就不会有返回。</p>
 
-<p>具体可以见苹果官方的<a href="https://developer.apple.com/reference/photos/phphotolibrarychangeobserver?language=objc">例子</a></p>
+<p>具体可以见苹果官方的 <a href="https://developer.apple.com/reference/photos/phphotolibrarychangeobserver?language=objc">例子</a>。</p>
 
 <hr />
 
@@ -282,7 +290,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>925</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>955</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

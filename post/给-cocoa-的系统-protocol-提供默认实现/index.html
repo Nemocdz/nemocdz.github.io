@@ -15,7 +15,8 @@
 
   
   <meta name="author" content="Nemocdz" />
-  <meta name="description" content="使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。
+  <meta name="description" content="[TOC]
+使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。
 " />
 
   
@@ -23,7 +24,8 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@Nemocdz" />
     <meta name="twitter:title" content="给 Cocoa 的系统 Protocol 提供默认实现" />
-    <meta name="twitter:description" content="使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。
+    <meta name="twitter:description" content="[TOC]
+使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -202,21 +204,23 @@
       <h1 class="post-title">给 Cocoa 的系统 Protocol 提供默认实现</h1>
       <p class="post-meta">@Nemocdz · Feb 6, 2019 · 2 min read</p>
     </header>
-    <article class="post-content"><p>使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。</p>
+    <article class="post-content"><p>[TOC]</p>
 
-<p>但为 Protocol 提供默认实现在某些时候是很实用的。比如 iOS 开发中，Cocoa 框架里常用的 TableView 使用时一般需要实现 UITableViewDataSouce 和 UITableViewDelegate。而 UITableViewDelegate 和 UITableViewDataSource 里面的一部分方法，又是可以抽离的，但剩下的一部分方法，使用得很少，且一般用起来都是有自定义的需要。那么有没有一种方法可以为一部分方法提供默认通用的实现，而又不影响其余的方法呢？</p>
+<p>使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。</p>
+
+<p>但为 Protocol 提供默认实现在某些时候是很实用的。比如 iOS 开发中，Cocoa 框架里常用的 <code>UITableView</code> 使用时一般需要实现 <code>UITableViewDataSouce</code> 和 <code>UITableViewDelegate</code>。而 <code>UITableViewDelegate</code> 和 <code>UITableViewDataSource</code> 里面的一部分方法，又是可以抽离的，但剩下的一部分方法，使用得很少，且一般用起来都是有自定义的需要。那么有没有一种方法可以为一部分方法提供默认通用的实现，而又不影响其余的方法呢？</p>
 
 <p>这篇文章，笔者想分享一种通过消息转发的方式来实现差不多功能的方法。</p>
 
-<h3 id="objective-c-的消息转发">Objective-C 的消息转发</h3>
+<h2 id="objective-c-的消息转发">Objective-C 的消息转发</h2>
 
 <p>本文假设读者已经了解 Runtime 基础，如不了解可自行阅读 <a href="https://www.ianisme.com/ios/2019.html">Objective-C Runtime 1小时入门教程</a>。</p>
 
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzvtz3lspsj30gc09j0tt.jpg" alt="691078-9049faadbcbbeac9" /></p>
 
-<p>引用网上这张经典的图，可以知道在消息处理无法处理之前，有三个环节能进行抢救。第一步判断是否有动态添加方法，第二步可以对消息处理者重定向，第三步可以在返回方法签名的情况下，对封装消息的相关信息的 NSInvocation 进行处理。</p>
+<p>引用网上这张经典的图，可以知道在消息处理无法处理之前，有三个环节能进行抢救。第一步判断是否有动态添加方法，第二步可以对消息处理者重定向，第三步可以在返回方法签名的情况下，对封装消息的相关信息的 <code>NSInvocation</code> 进行处理。</p>
 
-<h3 id="实现-protocolproxy">实现 ProtocolProxy</h3>
+<h2 id="实现-protocolproxy">实现 ProtocolProxy</h2>
 
 <p>通过上面的消息转发的步骤，笔者的思路是，利用重定向，将 Protocol 里所有的实现进行转发，Protocol 如果有自定义实现者则交给它，否则交给默认实现者，如果都没有则不处理。</p>
 
@@ -239,11 +243,11 @@
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
-<p>其中 respondsToSelector 方法用于判断方法是否有被实现者实现，有的话通过 forwardingTarget 方法进行消息处理者的重定向。</p>
+<p>其中 <code>respondsToSelector</code> 方法用于判断方法是否有被实现者实现，有的话通过 <code>forwardingTarget</code> 方法进行消息处理者的重定向。</p>
 
-<h3 id="tableview-的实际使用">TableView 的实际使用</h3>
+<h2 id="tableview-的实际使用">TableView 的实际使用</h2>
 
-<p>实现了 ProtocolProxy 之后，在设置 Protocol 时，就可以设置成 ProtocolProxy，然后将默认实现和自定义实现都设置给 ProtocolProxy。举个 TableView 的例子：</p>
+<p>实现了 ProtocolProxy 之后，在设置 Protocol 时，就可以设置成 ProtocolProxy，然后将默认实现和自定义实现都设置给 ProtocolProxy。举个 <code>UITableView</code> 的例子：</p>
 <div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">private</span> <span class="kd">let</span> <span class="nv">delegateKey</span> <span class="p">=</span> <span class="s">&#34;delegate&#34;</span>
 <span class="kd">private</span> <span class="kd">let</span> <span class="nv">dataSourceKey</span> <span class="p">=</span> <span class="s">&#34;dataSource&#34;</span>
 <span class="kd">class</span> <span class="nc">ProxyTableView</span><span class="p">:</span> <span class="n">UITableView</span> <span class="p">{</span>
@@ -281,7 +285,7 @@
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
-<p>ProxyTableView 持有 delegate 和 dataSource 的 ProtocolProxy，通过重写 delegate 和 dataSource 的 didSet 属性观察方法，将 Protocol 的自定义实现设置给对应 ProtocolProxy，再将 ProtocolProxy 设置为 TableView 的 Delegate 和 DataSource，这里需要注意的是，要使用 KVC 进行设置，因为 ProtocolProxy 本身并不实现 UITableViewDelegate 和 UITableViewDataSource，而且需要判断是不是 ProtocolProxy 避免循环设置。再加上 defaultDataSouce 和 defaultDelegate 来让外界设置默认实现者，设置完需要重新用 KVC 设置到 TableView 里。</p>
+<p>ProxyTableView 持有 delegate 和 dataSource 的 ProtocolProxy，通过重写 delegate 和 dataSource 的 <code>didSet</code> 属性观察方法，将 Protocol 的自定义实现设置给对应 ProtocolProxy，再将 ProtocolProxy 设置为 TableView 的 Delegate 和 DataSource，这里需要注意的是，要使用 KVC 进行设置，因为 ProtocolProxy 本身并不实现 <code>UITableViewDelegate</code> 和 <code>UITableViewDataSource</code>，而且需要判断是不是 ProtocolProxy 避免循环设置。再加上 defaultDataSouce 和 defaultDelegate 来让外界设置默认实现者，设置完需要重新用 KVC 设置到 TableView 里。</p>
 
 <p>这样的话，就可以将一部分默认实现抽离到基类中，而对于使用者来说，仅需要实现部分自定义的方法。</p>
 
@@ -307,13 +311,13 @@
         <span class="bp">print</span><span class="p">(</span><span class="s">&#34;BaseTableViewDelegate&#34;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
-<h3 id="最后">最后</h3>
+<h2 id="最后">最后</h2>
 
 <p>完整的 <a href="https://github.com/Nemocdz/ProxyTableView">Demo</a>，别的系统 Protocol 也可以用同样的方式进行扩展，提供一部分方法的默认实现。</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>141</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>171</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

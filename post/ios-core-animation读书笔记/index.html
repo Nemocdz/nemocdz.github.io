@@ -15,7 +15,8 @@
 
   
   <meta name="author" content="Nemocdz" />
-  <meta name="description" content="CALayer UIView = 绘制 &#43; 响应触摸事件
+  <meta name="description" content="[TOC]
+CALayer UIView = 绘制 &#43; 响应触摸事件
  负责屏幕和显示，不负责触摸事件响应链 UIView 是其高级封装 和 UIView 层级一一对应 " />
 
   
@@ -23,7 +24,8 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@Nemocdz" />
     <meta name="twitter:title" content="《iOS Core Animation》读书笔记" />
-    <meta name="twitter:description" content="CALayer UIView = 绘制 &#43; 响应触摸事件
+    <meta name="twitter:description" content="[TOC]
+CALayer UIView = 绘制 &#43; 响应触摸事件
  负责屏幕和显示，不负责触摸事件响应链 UIView 是其高级封装 和 UIView 层级一一对应 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -202,17 +204,19 @@
       <h1 class="post-title">《iOS Core Animation》读书笔记</h1>
       <p class="post-meta">@Nemocdz · Jul 13, 2017 · 1 min read</p>
     </header>
-    <article class="post-content"><h4 id="calayer">CALayer</h4>
+    <article class="post-content"><p>[TOC]</p>
 
-<p>UIView = 绘制 + 响应触摸事件</p>
+<h2 id="calayer">CALayer</h2>
+
+<p><code>UIView</code> = 绘制 + 响应触摸事件</p>
 
 <ul>
 <li>负责屏幕和显示，不负责触摸事件响应链</li>
-<li>UIView 是其高级封装</li>
-<li>和 UIView 层级一一对应</li>
+<li><code>UIView</code> 是其高级封装</li>
+<li>和 <code>UIView</code> 层级一一对应</li>
 </ul>
 
-<p>UIView 未暴露 CALayer 的接口</p>
+<p><code>UIView</code> 未暴露 <code>CALayer</code> 的接口</p>
 
 <ul>
 <li>阴影，圆角，带颜色的边框</li>
@@ -222,7 +226,7 @@
 <li>多级非线性动画</li>
 </ul>
 
-<h4 id="图形和几何">图形和几何</h4>
+<h2 id="图形和几何">图形和几何</h2>
 
 <p>frame：外部坐标，父图层坐标，大小为边与 xy 轴平行能完全容纳图层的最小矩形</p>
 
@@ -230,11 +234,11 @@
 
 <p>anchorPoint：锚点，旋转基点，左上角{0，0}，右下角{1，1}</p>
 
-<p>center（CALayer的position）:anchorPoint 在父图层的坐标</p>
+<p>center（<code>CALayer</code> 的 position）:anchorPoint 在父图层的坐标</p>
 
-<h4 id="视觉效果">视觉效果</h4>
+<h2 id="视觉效果">视觉效果</h2>
 
-<h5 id="拉伸过滤">拉伸过滤</h5>
+<h3 id="拉伸过滤">拉伸过滤</h3>
 
 <p>以正确比例和 1：1 像素显示图片在屏幕上的好处</p>
 
@@ -244,7 +248,7 @@
 <li>性能好，无需额外计算</li>
 </ul>
 
-<h4 id="cashapelayer">CAShapeLayer</h4>
+<h2 id="cashapelayer">CAShapeLayer</h2>
 
 <p>矢量图像而不是 bitmap 绘制图层子类</p>
 
@@ -257,17 +261,17 @@
 <li>不会出现像素化</li>
 </ul>
 
-<h4 id="catextlayer">CATextLayer</h4>
+<h2 id="catextlayer">CATextLayer</h2>
 
-<p>CALayer 的子类，几乎拥有 UILabel 所有绘制特性</p>
+<p><code>CALayer</code> 的子类，几乎拥有 <code>UILabel</code> 所有绘制特性</p>
 
-<p>渲染快于 UILabel，运用 Core text</p>
+<p>渲染快于 <code>UILabel</code>，运用 Core text</p>
 
-<h4 id="性能调优">性能调优</h4>
+<h2 id="性能调优">性能调优</h2>
 
 <p>动画和图层被单独的渲染服务进程处理</p>
 
-<h5 id="动画发生过程">动画发生过程</h5>
+<h3 id="动画发生过程">动画发生过程</h3>
 
 <ol>
 <li>布局</li>
@@ -278,7 +282,7 @@
 <li>在屏幕上渲染可见三角形（GPU 执行，前面都在 CPU）</li>
 </ol>
 
-<h5 id="可能影响gpu绘制的情况">可能影响GPU绘制的情况</h5>
+<h3 id="可能影响gpu绘制的情况">可能影响GPU绘制的情况</h3>
 
 <ul>
 <li>过多几何结构</li>
@@ -287,16 +291,16 @@
 <li>过大的图片</li>
 </ul>
 
-<h5 id="可能影响cpu计算的情况">可能影响CPU计算的情况</h5>
+<h3 id="可能影响cpu计算的情况">可能影响CPU计算的情况</h3>
 
 <ul>
 <li>布局计算：自动布局</li>
 <li>视图懒加载：涉及 IO 的图片显示</li>
-<li>Core Graphics 绘制：drawRect（为支持图层任意绘制需要在内存中创建一个等大小的寄宿图）</li>
+<li>Core Graphics 绘制：<code>drawRect</code>（为支持图层任意绘制需要在内存中创建一个等大小的寄宿图）</li>
 <li>解压图片</li>
 </ul>
 
-<h5 id="图像io">图像IO</h5>
+<h3 id="图像io">图像IO</h3>
 
 <ul>
 <li>线程加载：合适的后台线程</li>
@@ -305,15 +309,15 @@
 <li>图像格式</li>
 </ul>
 
-<h5 id="文本">文本</h5>
+<h3 id="文本">文本</h3>
 
 <p>尽可能避免改变文本的 frame，因为需要重绘</p>
 
-<h5 id="光栅化">光栅化</h5>
+<h3 id="光栅化">光栅化</h3>
 
 <p>将图层及其所有效果绘制成一个屏幕外的图像并缓存，避免运用在内容不断变动的图层上</p>
 
-<h5 id="离屏渲染">离屏渲染</h5>
+<h3 id="离屏渲染">离屏渲染</h3>
 
 <p>在混合复杂效果无法直接渲染时，会通过分步渲染，会把分布渲染的结果临时储存在屏幕外的内存中等待组合渲染</p>
 
@@ -332,24 +336,24 @@
 <li>阴影</li>
 </ul>
 
-<h5 id="图层混合">图层混合</h5>
+<h3 id="图层混合">图层混合</h3>
 
 <ul>
 <li>设定固定不透明的背景颜色</li>
 <li>设置 layer 的 opaue 属性默认为 YES（非 view 的）</li>
 </ul>
 
-<h5 id="颜色格式">颜色格式</h5>
+<h3 id="颜色格式">颜色格式</h3>
 
-<p>苹果的 GPU 只解析<strong>32bit</strong>的颜色格式，其余的格式 CPU 会先进行颜色格式转换，再让 GPU 渲染。</p>
+<p>苹果的 GPU 只解析 <strong>32bit</strong> 的颜色格式，其余的格式 CPU 会先进行颜色格式转换，再让 GPU 渲染。</p>
 
-<h5 id="图像大小缩放">图像大小缩放</h5>
+<h3 id="图像大小缩放">图像大小缩放</h3>
 
 <p>image 和 imageView 的大小尽量保持一致，避免在改变 view 大小时重复计算缩放</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>714</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>745</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

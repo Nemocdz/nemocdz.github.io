@@ -15,7 +15,8 @@
 
   
   <meta name="author" content="Nemocdz" />
-  <meta name="description" content="ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI 控件。作为摄影爱好者，而 Google 出品的摄影后期 App，Snapseed 中那个图片选择器，好看又实用，便尝试着仿写了一个。
+  <meta name="description" content="[TOC]
+ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI 控件。作为摄影爱好者，而 Google 出品的摄影后期 App，Snapseed 中那个图片选择器，好看又实用，便尝试着仿写了一个。
 " />
 
   
@@ -23,7 +24,8 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@Nemocdz" />
     <meta name="twitter:title" content="iOS 中实现仿 Snapseed 的照片选择器" />
-    <meta name="twitter:description" content="ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI 控件。作为摄影爱好者，而 Google 出品的摄影后期 App，Snapseed 中那个图片选择器，好看又实用，便尝试着仿写了一个。
+    <meta name="twitter:description" content="[TOC]
+ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI 控件。作为摄影爱好者，而 Google 出品的摄影后期 App，Snapseed 中那个图片选择器，好看又实用，便尝试着仿写了一个。
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -202,22 +204,25 @@
       <h1 class="post-title">iOS 中实现仿 Snapseed 的照片选择器</h1>
       <p class="post-meta">@Nemocdz · Dec 4, 2016 · 6 min read</p>
     </header>
-    <article class="post-content"><p>ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI 控件。作为摄影爱好者，而 Google 出品的摄影后期 App，Snapseed 中那个图片选择器，好看又实用，便尝试着仿写了一个。</p>
+    <article class="post-content"><p>[TOC]</p>
+
+<p>ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI 控件。作为摄影爱好者，而 Google 出品的摄影后期 App，Snapseed 中那个图片选择器，好看又实用，便尝试着仿写了一个。</p>
 
 <p>集成后一行代码即可实现下图效果。
 <img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006y8mN6gw1fae4wlsm89g30ku1121gx.gif" alt="" />
 实现原理从界面说起。
 界面可以分解为一个背景图层用于点击关闭（空白处点击消失），一个横向可滚动的 Collectionview 用于显示图库里的图片，一个 Tableview 用于存放功能按钮。</p>
 
-<p>##1. 功能按钮的 Tableview
-先从简单的 Tableview说起，从小模块到大模块应该是以下方面。</p>
+<h2 id="1-功能按钮的-tableview">1.功能按钮的 Tableview</h2>
+
+<p>先从简单的 Tableview说起，从小模块到大模块应该是以下方面。</p>
 
 <ul>
 <li>自定义数组数据对象 item 方便调整按钮的文字图片数量功能</li>
 <li>自定义 Tableview 的 cell 方便样式调整，cell 中属性根据对应 item 设置</li>
 <li>自定义 Tableview 的 datasourece 在之中设置 cell 和 item 的对应关系</li>
 <li>Tableview 的 deleagte，设置点击事件</li>
-<li>点击功能实现，设置 UIImagePickerController</li>
+<li>点击功能实现，设置 <code>UIImagePickerController</code></li>
 <li>Tableview 的 View 初始化，设置 datasource，view 绘制</li>
 </ul>
 
@@ -242,14 +247,12 @@
     <span class="p">}</span>
     <span class="k">return</span> <span class="nb">self</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
-<hr />
-
 <p>自定义 cell 对象，封装一个方法来对应 item 和 cell 的关系</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setCellFromItem:</span><span class="p">(</span><span class="n">CDZImagePickerActionsItem</span> <span class="o">*</span><span class="p">)</span><span class="nv">item</span><span class="p">{</span>
     <span class="nb">self</span><span class="p">.</span><span class="n">textLabel</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">item</span><span class="p">.</span><span class="n">actionTitle</span><span class="p">;</span>
     <span class="nb">self</span><span class="p">.</span><span class="n">imageView</span><span class="p">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">item</span><span class="p">.</span><span class="n">actionImage</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
-<p>可以重写 layoutSubviews 方法达到 cell 中文字，图片样式自定义的效果，比如可以写有图片和无图片的样式布局</p>
+<p>可以重写 <code>layoutSubviews</code> 方法达到 cell 中文字，图片样式自定义的效果，比如可以写有图片和无图片的样式布局</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">layoutSubviews</span><span class="p">{</span>
     <span class="p">[</span><span class="nb">super</span> <span class="n">layoutSubviews</span><span class="p">];</span>
     <span class="nb">self</span><span class="p">.</span><span class="n">selectionStyle</span> <span class="o">=</span> <span class="n">UITableViewCellSelectionStyleNone</span><span class="p">;</span><span class="c1">//点击不变色
@@ -265,12 +268,9 @@
         <span class="nb">self</span><span class="p">.</span><span class="n">textLabel</span><span class="p">.</span><span class="n">textAlignment</span> <span class="o">=</span> <span class="n">NSTextAlignmentCenter</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
-<hr />
+<p>自定义 datasource，这一步可以根据个人选择，个人习惯是把 datasource 从 Viewcontroller 里抽离，可以让 Controller更少代码，datasource 有数组对象用于存放 item <code>@property (nonatomic, strong) NSMutableArray *itemArray;</code></p>
 
-<p>自定义 datasource，这一步可以根据个人选择，个人习惯是把 datasource 从 Viewcontroller 里抽离，可以让 Controller更少代码，datasource 有数组对象用于存放 item</p>
-
-<p><code>@property (nonatomic, strong) NSMutableArray *itemArray;</code>
-实现 datasource 方法。</p>
+<p>实现 datasource 方法。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="cp">#pragma mark - tableViewDataSourceRequried
 </span><span class="cp"></span><span class="p">-</span> <span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">numberOfRowsInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">section</span><span class="p">{</span>
     <span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">itemArray</span><span class="p">.</span><span class="n">count</span><span class="p">;</span>
@@ -286,8 +286,6 @@
     <span class="p">[</span><span class="n">cell</span> <span class="nl">setCellFromItem</span><span class="p">:</span><span class="n">item</span><span class="p">];</span><span class="c1">//将 cell 和 item 对应起来
 </span><span class="c1"></span>    <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
-<hr />
-
 <p>实现 delegate 和点击事件</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="cp">#pragma mark - tableViewDelegate
 </span><span class="cp"></span>
@@ -362,11 +360,9 @@
     <span class="p">[</span><span class="nb">self</span> <span class="nl">dismissViewControllerAnimated</span><span class="p">:</span><span class="nb">YES</span> <span class="nl">completion</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
     <span class="n">NSLog</span><span class="p">(</span><span class="s">@&#34;从相机或图库获取图片&#34;</span><span class="p">);</span>
 <span class="p">}</span></code></pre></div>
-<p>iOS 10 还要检查一下相机和图库的权限，记得在 info.plist 中添加两行，不然会崩溃</p>
-
-<h2 id="https-image-1252104468-cos-ap-guangzhou-myqcloud-com-blog-006y8mn6gw1fadyvsos06j30r4024754-jpg"><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006y8mN6gw1fadyvsos06j30r4024754.jpg" alt="" /></h2>
-
-<p>最后在是 Tableview 初始化与绘制，在 datasource 初始化自己需要的按钮 item 数组（acctionArray）</p>
+<p>iOS 10 还要检查一下相机和图库的权限，记得在 info.plist 中添加两行，不然会崩溃
+<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006y8mN6gw1fadyvsos06j30r4024754.jpg" alt="" />
+最后在是 Tableview 初始化与绘制，在 datasource 初始化自己需要的按钮 item 数组（acctionArray）</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">CDZImagePickerActionsDataSource</span> <span class="o">*</span><span class="p">)</span><span class="nf">actionsDataSource</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_actionsDataSource</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">_actionsDataSource</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZImagePickerActionsDataSource</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
@@ -384,12 +380,9 @@
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">_actionView</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
-<hr />
+<h2 id="2-展示照片的-collecionview">2.展示照片的 Collecionview</h2>
 
-<hr />
-
-<p>##2.展示照片的 Collecionview
-Collecionview 的实现思路和 Tableview 类似</p>
+<p>Collecionview 的实现思路和 Tableview 类似</p>
 
 <ul>
 <li>自定义 Collectionview 的 cell 实现样式调整</li>
@@ -400,9 +393,9 @@ Collecionview 的实现思路和 Tableview 类似</p>
 <li>实现 Collectionview 的初始化和视图绘制</li>
 </ul>
 
-<p>cell 的自定义主要是重写其 initWithFrame 方法添加 imageview（<strong>注意 Collectionviewcell 只用 initWithFrame 方式初始化，Tableviewcell 初始化方法有多种</strong>），并在 layoutSubviews 里改变 Imageview 的大小,和 Tableview 类似写一个 setCellFromItem 的方法解析 item 数据。而 Photoskit 获取的图片对象为 PHAsset，用PHImageManage 的方法根据将其解析为 size 为 cell 的大小 UIImage，加快加载速度，按需加载（关于 PhotosKit 的优点不再赘述，iOS 8 以后苹果只保留了 PhotosKit 用于获取系统图片）</p>
+<p>cell 的自定义主要是重写其 <code>initWithFrame</code> 方法添加 imageview（<strong>注意 Collectionviewcell 只用 initWithFrame 方式初始化，Tableviewcell 初始化方法有多种</strong>），并在 <code>layoutSubviews</code> 里改变 Imageview 的大小,和 Tableview 类似写一个 setCellFromItem 的方法解析 item 数据。而 PhotosKit 获取的图片对象为 <code>PHAsset</code>，用 <code>PHImageManage</code> 的方法根据将其解析为 size 为 cell 的大小 <code>UIImage</code>，加快加载速度，按需加载（关于 PhotosKit 的优点不再赘述，iOS 8 以后苹果只保留了 PhotosKit 用于获取系统图片）</p>
 
-<p>PhotoKits 获取时，注意两个地方，targetSize 传入的是 pixel，而不是平时用的 size，且 option 里的 resizeMode 默认为 None（不缩放），不重写 resizeMode 属性那么只会抓取不缩放的图，在意质量可以设置 resizeMode 为 Exact（精确），追求速度可以设置为 Fast(这样不会完全按照设置的 targetSize 去获取图片)</p>
+<p>PhotosKit 获取时，注意两个地方，targetSize 传入的是 pixel，而不是平时用的 size，且 option 里的 resizeMode 默认为 None（不缩放），不重写 resizeMode 属性那么只会抓取不缩放的图，在意质量可以设置 resizeMode 为 Exact（精确），追求速度可以设置为 Fast(这样不会完全按照设置的 targetSize 去获取图片)</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">initWithFrame:</span><span class="p">(</span><span class="n">CGRect</span><span class="p">)</span><span class="nv">frame</span><span class="p">{</span>
     <span class="nb">self</span> <span class="o">=</span> <span class="p">[</span><span class="nb">super</span> <span class="nl">initWithFrame</span><span class="p">:</span><span class="n">frame</span><span class="p">];</span>
     <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="p">{</span>
@@ -433,7 +426,7 @@ Collecionview 的实现思路和 Tableview 类似</p>
 <span class="p">}</span></code></pre></div>
 <hr />
 
-<p>Datasource 也类似，定义一个 itemArray 用于存放图片对象 PHAsset
+<p>Datasource 也类似，定义一个 itemArray 用于存放图片对象 <code>PHAsset</code>
  <code>@property (nonatomic, strong) NSMutableArray *itemArray;</code>
 实现 Datasource 方法，和 Tableview 类似（<strong>不用判断 cell 是 nil 是因为 Collectionviewcell 的初始化只有一种</strong>）</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="cp">#pragma mark - collectionViewDataSourceRequried
@@ -462,7 +455,7 @@ Collecionview 的实现思路和 Tableview 类似</p>
 <span class="p">}</span></code></pre></div>
 <hr />
 
-<p>Collectionview 的布局，cell 的大小排列和间距等，都是由 CollectionviewLayout 决定的，布局是线性的话，推荐用官方的子类 Collectionviewflowlayout，其 Deleagate 是CollectionviewDeleagateFlowLayout，是 CollectionviewDelegate 的子 Delegate。</p>
+<p>Collectionview 的布局，cell 的大小排列和间距等，都是由 <code>UICollectionViewLayout</code> 决定的，布局是线性的话，推荐用官方的子类 <code>UICollectionViewFlowLayout</code>，其 Deleagate 是 <code>UICollectionviewDeleagateFlowLayout</code>，是 <code>UICollectionViewDelegate</code> 的子 Delegate。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">UICollectionViewFlowLayout</span> <span class="o">*</span><span class="p">)</span><span class="nf">photosFlowLayout</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_photosFlowLayout</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">_photosFlowLayout</span> <span class="o">=</span> <span class="p">[</span><span class="n">UICollectionViewFlowLayout</span> <span class="n">new</span><span class="p">];</span>
@@ -524,8 +517,9 @@ Collecionview 的实现思路和 Tableview 类似</p>
 <span class="p">}</span></code></pre></div>
 <hr />
 
-<p>##3.透明图层（用于实现空白处点击消失）
-比较简单，增加一个 tap 手势即可，直接上代码（记得实现 UIGestureRecognizerDelegate）</p>
+<h2 id="3-透明图层-用于实现空白处点击消失">3.透明图层（用于实现空白处点击消失）</h2>
+
+<p>比较简单，增加一个 tap 手势即可，直接上代码（记得实现 <code>UIGestureRecognizerDelegate</code>）</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">UIView</span> <span class="o">*</span><span class="p">)</span><span class="nf">backgroundView</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_backgroundView</span><span class="p">){</span>
         <span class="n">CGFloat</span> <span class="n">actionsViewHeight</span> <span class="o">=</span> <span class="n">actionsViewCellHeight</span> <span class="o">*</span> <span class="nb">self</span><span class="p">.</span><span class="n">actionArray</span><span class="p">.</span><span class="n">count</span><span class="p">;</span>
@@ -537,8 +531,9 @@ Collecionview 的实现思路和 Tableview 类似</p>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">_backgroundView</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
-<p>##4.收尾&amp;封装
-定义一个 block 用于回调传照片
+<h2 id="4-收尾-封装">4.收尾&amp;封装</h2>
+
+<p>定义一个 block 用于回调传照片
 <code>typedef void (^CDZImageResultBlock) (UIImage *image);</code>
 一个内部block属性
 <code>@property (nonatomic ,copy) CDZImageResultBlock block;</code>
@@ -548,12 +543,12 @@ Collecionview 的实现思路和 Tableview 类似</p>
 </span><span class="c1"></span>    <span class="nb">self</span><span class="p">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">imageBlock</span><span class="p">;</span>
     <span class="p">[</span><span class="n">controller</span> <span class="nl">presentViewController</span><span class="p">:</span><span class="nb">self</span> <span class="nl">animated</span><span class="p">:</span><span class="nb">YES</span> <span class="nl">completion</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
 <span class="p">}</span></code></pre></div>
-<p>在 Dealloc 方法里调用 block 回调</p>
+<p>在 <code>dealloc</code> 方法里调用 block 回调</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">dealloc</span><span class="p">{</span>
     <span class="nb">self</span><span class="p">.</span><span class="n">block</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">resultImage</span><span class="p">);</span>
     <span class="n">NSLog</span><span class="p">(</span><span class="s">@&#34;ImagePicker已销毁&#34;</span><span class="p">);</span>
 <span class="p">}</span></code></pre></div>
-<p>##5.使用方法</p>
+<h2 id="5-使用方法">5.使用方法</h2>
 
 <p>将 CDZImagePicker 文件夹拖入项目</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="n">CDZImagePickerViewController</span> <span class="o">*</span><span class="n">imagePickerController</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZImagePickerViewController</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
@@ -577,13 +572,13 @@ Collecionview 的实现思路和 Tableview 类似</p>
 <p>所有源码和 <a href="https://github.com/Nemocdz/CDZImagePickerDemo">Demo</a>
 虽然不是什么很难的轮子，但希望能分享给有需要的人。</p>
 
-<p>关于后续的处理照片变更和获取相册权限另写了一篇<a href="https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E6%9D%83%E9%99%90%E5%B0%81%E8%A3%85%E5%B0%8Ftips%E5%92%8C%E7%9B%91%E6%B5%8B%E7%9B%B8%E5%86%8C%E5%8F%98%E5%8C%96/">文章</a>，欢迎阅读。</p>
+<p>关于后续的处理照片变更和获取相册权限另写了一篇 <a href="https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E6%9D%83%E9%99%90%E5%B0%81%E8%A3%85%E5%B0%8Ftips%E5%92%8C%E7%9B%91%E6%B5%8B%E7%9B%B8%E5%86%8C%E5%8F%98%E5%8C%96/">文章</a>，欢迎阅读。</p>
 
 <p>如果您觉得有帮助,不妨给个 star 鼓励一下,欢迎关注&amp;交流</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>935</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>966</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

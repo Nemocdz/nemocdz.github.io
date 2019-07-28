@@ -15,7 +15,8 @@
 
   
   <meta name="author" content="Nemocdz" />
-  <meta name="description" content="二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是 Google 出品的 ZXing，其的 OC 的移植版本是 ZXingObjc。但是从 iOS 7 开始，苹果就加入了原生 API 的相机二维码扫描功能，而在 iOS 8 中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。
+  <meta name="description" content="[TOC]
+二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是 Google 出品的 ZXing，其的 OC 的移植版本是 ZXingObjc。但是从 iOS 7 开始，苹果就加入了原生 API 的相机二维码扫描功能，而在 iOS 8 中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。
 " />
 
   
@@ -23,7 +24,8 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@Nemocdz" />
     <meta name="twitter:title" content="iOS 中实现原生的二维码扫描界面" />
-    <meta name="twitter:description" content="二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是 Google 出品的 ZXing，其的 OC 的移植版本是 ZXingObjc。但是从 iOS 7 开始，苹果就加入了原生 API 的相机二维码扫描功能，而在 iOS 8 中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。
+    <meta name="twitter:description" content="[TOC]
+二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是 Google 出品的 ZXing，其的 OC 的移植版本是 ZXingObjc。但是从 iOS 7 开始，苹果就加入了原生 API 的相机二维码扫描功能，而在 iOS 8 中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -202,22 +204,24 @@
       <h1 class="post-title">iOS 中实现原生的二维码扫描界面</h1>
       <p class="post-meta">@Nemocdz · Apr 21, 2017 · 4 min read</p>
     </header>
-    <article class="post-content"><p>二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是 Google 出品的 <a href="https://github.com/zxing/zxing">ZXing</a>，其的 OC 的移植版本是 <a href="https://github.com/TheLevelUp/ZXingObjC">ZXingObjc</a>。但是从 iOS 7 开始，苹果就加入了原生 API 的相机二维码扫描功能，而在 iOS 8 中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。</p>
+    <article class="post-content"><p>[TOC]</p>
+
+<p>二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是 Google 出品的 <a href="https://github.com/zxing/zxing">ZXing</a>，其的 OC 的移植版本是 <a href="https://github.com/TheLevelUp/ZXingObjC">ZXingObjc</a>。但是从 iOS 7 开始，苹果就加入了原生 API 的相机二维码扫描功能，而在 iOS 8 中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。</p>
 
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1feuhsfjbrsj30ku112q66.jpg" alt="IMG_0811" /></p>
 
-<h3 id="相机扫描二维码部分">相机扫描二维码部分</h3>
+<h2 id="相机扫描二维码部分">相机扫描二维码部分</h2>
 
-<p>要调用系统的摄像头识别二维码，首先需要导入系统的 AVFoundation 库。其中我们用到最关键到类是 AVCaptureSession。流程如下：</p>
+<p>要调用系统的摄像头识别二维码，首先需要导入系统的 AVFoundation 库。其中我们用到最关键到类是 <code>AVCaptureSession</code>。流程如下：</p>
 
 <ul>
-<li>初始化一个 AVCaptureSession</li>
+<li>初始化一个 <code>AVCaptureSession</code></li>
 <li>设置其输入对象（从哪去捕获），设为设备输入</li>
 <li>设置其输出对象（捕获哪些类型输出），设置输出类型的代理</li>
 <li>设置相机图像层</li>
-<li>调用 Session 的 StartRuning 方法开始捕获</li>
+<li>调用 Session 的 <code>startRuning</code> 方法开始捕获</li>
 <li>在输出对象的代理方法里处理捕获的数据</li>
-<li>调用 Session 的 StopRuning 方法停止捕获</li>
+<li>调用 Session 的 <code>stopRuning</code> 方法停止捕获</li>
 </ul>
 
 <p>所以，新建一个 ViewController，并加入以下属性。</p>
@@ -237,7 +241,7 @@
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">_deviceInput</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
-<p>输出方面，遵守 AVCaptureMetadataOutputObjectsDelegate，并 Delegate 设置自己，回调线程设置为主线程就好。关于这个 <code>-(void)setMetadataObjectsDelegate(id&lt;AVCaptureMetadataOutputObjectsDelegate&gt;)objectsDelegate queue:(dispatch_queue_t)objectsCallbackQueue;</code> 方法，苹果的文档是这么解释的“客户端需要减少输出的元数据落下的可能性所以需要一个具体的队列来执行少量的加工和接收元数据的过程”，所以给一个串行队列就好了了，比如主队列。</p>
+<p>输出方面，遵守 <code>AVCaptureMetadataOutputObjectsDelegate</code>，并 Delegate 设置自己，回调线程设置为主线程就好。关于这个 <code>-(void)setMetadataObjectsDelegate(id&lt;AVCaptureMetadataOutputObjectsDelegate&gt;)objectsDelegate queue:(dispatch_queue_t)objectsCallbackQueue;</code> 方法，苹果的文档是这么解释的“客户端需要减少输出的元数据落下的可能性所以需要一个具体的队列来执行少量的加工和接收元数据的过程”，所以给一个串行队列就好了了，比如主队列。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">AVCaptureMetadataOutput</span> <span class="o">*</span><span class="p">)</span><span class="nf">dataOutput</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_dataOutput</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">_dataOutput</span> <span class="o">=</span> <span class="p">[[</span><span class="n">AVCaptureMetadataOutput</span> <span class="n">alloc</span><span class="p">]</span><span class="n">init</span><span class="p">];</span>
@@ -246,7 +250,7 @@
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">_dataOutput</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
-<p>rectOfInterest 属性是指扫描到区域。它是一个 CGRect，但他是相对于相机的画面的大小的比例，有两个特殊之处：</p>
+<p>rectOfInterest 属性是指扫描到区域。它是一个 <code>CGRect</code>，但他是相对于相机的画面的大小的比例，有两个特殊之处：</p>
 
 <ol>
 <li>他的结构体 4 个值的范围都为 0~1，也就是按照实际需要的 x/相机画面宽度，y/相机画面高度，width/相机画面宽度，height/相机画面高度去赋值</li>
@@ -256,24 +260,24 @@
 <p>相机画面的大小由谁决定呢，由 Session 的 SessionPreset 决定和 previewLayer 的 videoGravity 共同决定，sessionPreset 值有很多种，高中低，还有下面这些等等</p>
 
 <ul>
-<li>AVCaptureSessionPreset320x240</li>
-<li>AVCaptureSessionPreset352x288</li>
-<li>AVCaptureSessionPreset640x480</li>
-<li>AVCaptureSessionPreset960x540</li>
-<li>AVCaptureSessionPreset1280x720</li>
-<li>AVCaptureSessionPreset1920x1080</li>
+<li><code>AVCaptureSessionPreset320x240</code></li>
+<li><code>AVCaptureSessionPreset352x288</code></li>
+<li><code>AVCaptureSessionPreset640x480</code></li>
+<li><code>AVCaptureSessionPreset960x540</code></li>
+<li><code>AVCaptureSessionPreset1280x720</code></li>
+<li><code>AVCaptureSessionPreset1920x1080</code></li>
 </ul>
 
 <p>这个就类似于 Image 的大小，而 videoGravity 有这么几种</p>
 
 <ul>
-<li>AVCoreAnimationBeginTimeAtZero</li>
-<li>AVLayerVideoGravityResizeAspect</li>
-<li>AVLayerVideoGravityResizeAspectFill</li>
-<li>AVLayerVideoGravityResize</li>
+<li><code>AVCoreAnimationBeginTimeAtZero</code></li>
+<li><code>AVLayerVideoGravityResizeAspect</code></li>
+<li><code>AVLayerVideoGravityResizeAspectFill</code></li>
+<li><code>AVLayerVideoGravityResize</code></li>
 </ul>
 
-<p>这个就类似于 ImageView 的拉伸方式，而对于相机，我们当然不希望画面被拉伸压缩，也不希望上下有黑边，那么我们一般选 AspectFill，也就是布满短边，而长边多的部分则取决于图片的长宽比。而相机画面大小就好比 ImageView 的大小，那为了让这个可扫描的区域的 Rect 和屏幕正常的 Rect 联系起来（方便对区域进行高亮之类的），我们当然希望这个 Image 的长宽比和屏幕的长宽比一致咯，所以，对于 4s 一下的机型，因为屏幕是 4:3 的，我们采用 AVCaptureSessionPreset640x480，而之后的，采用 AVCaptureSessionPreset1920x1080。这样，既让画面没有拉伸，又把insertedRect和屏幕长宽正常的 Rect 对应了起来。</p>
+<p>这个就类似于 ImageView 的拉伸方式，而对于相机，我们当然不希望画面被拉伸压缩，也不希望上下有黑边，那么我们一般选 AspectFill，也就是布满短边，而长边多的部分则取决于图片的长宽比。而相机画面大小就好比 ImageView 的大小，那为了让这个可扫描的区域的 Rect 和屏幕正常的 Rect 联系起来（方便对区域进行高亮之类的），我们当然希望这个 Image 的长宽比和屏幕的长宽比一致咯，所以，对于 4s 一下的机型，因为屏幕是 4:3 的，我们采用 <code>AVCaptureSessionPreset640x480</code>，而之后的，采用 <code>AVCaptureSessionPreset1920x1080</code>。这样，既让画面没有拉伸，又把 insertedRect 和屏幕长宽正常的 Rect 对应了起来。</p>
 
 <p>所以他的值时这样的</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">CGRect</span><span class="p">)</span><span class="nf">scanRectOfInterest</span><span class="p">{</span>
@@ -318,9 +322,9 @@
  	<span class="n">NSString</span> <span class="o">*</span><span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">metadataObjects</span><span class="p">.</span><span class="n">firstObject</span> <span class="n">stringValue</span><span class="p">];</span>
 	<span class="c1">//信息处理
 </span><span class="c1"></span><span class="p">}</span></code></pre></div>
-<h3 id="识别相册图片中二维码">识别相册图片中二维码</h3>
+<h2 id="识别相册图片中二维码">识别相册图片中二维码</h2>
 
-<p>识别图片中的二维码就调用打开相册的接口，然后调用 Core Image 框架里的 CIDetector 类进行识别。CIDetector 只能处理 CIImage 类，所以我们要对 UIImage 进行转换。</p>
+<p>识别图片中的二维码就调用打开相册的接口，然后调用 Core Image 框架里的 <code>CIDetector</code> 类进行识别。<code>CIDetector</code> 只能处理 <code>CIImage</code> 类，所以我们要对 <code>UIImage</code> 进行转换。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nf">messageFromQRCodeImage:</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="nv">image</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">image</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
@@ -359,7 +363,7 @@
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="n">UIBarButtonItem</span> <span class="o">*</span><span class="n">libaryItem</span> <span class="o">=</span> <span class="p">[[</span><span class="n">UIBarButtonItem</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithTitle</span><span class="p">:</span><span class="s">@&#34;相册&#34;</span> <span class="nl">style</span><span class="p">:</span><span class="n">UIBarButtonItemStylePlain</span> <span class="nl">target</span><span class="p">:</span><span class="nb">self</span> <span class="nl">action</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">openLibary</span><span class="p">)];</span>
 <span class="nb">self</span><span class="p">.</span><span class="n">navigationItem</span><span class="p">.</span><span class="n">rightBarButtonItem</span> <span class="o">=</span> <span class="n">libaryItem</span><span class="p">;</span>
 <span class="nb">self</span><span class="p">.</span><span class="n">navigationItem</span><span class="p">.</span><span class="n">title</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">navigationTitle</span><span class="p">;</span></code></pre></div>
-<h3 id="增加非相机识别区域的压暗层">增加非相机识别区域的压暗层</h3>
+<h2 id="增加非相机识别区域的压暗层">增加非相机识别区域的压暗层</h2>
 
 <p>像微信一样，很多应用的二维码视图都有把除了扫描区域的外部区域的压暗层。这个压暗层就像一个镂空的图层一样，中间区域是没有的。我们可以用贝塞尔曲线绘制两个矩形路径，大矩形就是视图大小的矩形路径，小的就是扫描区域的路径。然后大路径去掉小路径，剩下部分就是一个镂空的视图区域的路径。并创建对应的 Layer。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">UIView</span> <span class="o">*</span><span class="p">)</span><span class="nf">maskView</span><span class="p">{</span>
@@ -375,7 +379,7 @@
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">_maskView</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
-<h3 id="权限检查管理">权限检查管理</h3>
+<h2 id="权限检查管理">权限检查管理</h2>
 
 <p>基本功能实现后，可以考虑一下整个 ViewController 有没有会崩溃或者需要弹窗提示的地方。大概有以下这些情况</p>
 
@@ -473,7 +477,7 @@
     <span class="p">}</span>
     <span class="p">[</span><span class="nb">self</span> <span class="nl">presentViewController</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">imagePicker</span> <span class="nl">animated</span><span class="p">:</span><span class="nb">YES</span> <span class="nl">completion</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
 <span class="p">}</span></code></pre></div>
-<h3 id="封装接口">封装接口</h3>
+<h2 id="封装接口">封装接口</h2>
 
 <p>最后一步了，对于这个 ViewController 我们需要开放什么接口对外呢，怎么把值传出去呢？外界可以改变的是扫描区域，标题，以及亚暗层的 View（往上面加字等等），外界得到的结果应该是一个字符串。这里可以用 Deleagte，头文件代码如下。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@protocol</span> <span class="nc">CDZQRCodeDelegate</span><span class="o">&lt;</span><span class="n">NSObject</span><span class="o">&gt;</span>
@@ -515,7 +519,7 @@
 <span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">pickUpMessage:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">message</span><span class="p">{</span>
     <span class="nb">self</span><span class="p">.</span><span class="n">resultLabel</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">message</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
-<h3 id="最后">最后</h3>
+<h2 id="最后">最后</h2>
 
 <p>所有源码和 <a href="https://github.com/Nemocdz/CDZQRScanView">Demo</a></p>
 
@@ -525,7 +529,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>797</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>827</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

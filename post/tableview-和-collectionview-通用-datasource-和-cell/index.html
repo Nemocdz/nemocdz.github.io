@@ -15,7 +15,8 @@
 
   
   <meta name="author" content="Nemocdz" />
-  <meta name="description" content="刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。
+  <meta name="description" content="[TOC]
+刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。
 " />
 
   
@@ -23,7 +24,8 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@Nemocdz" />
     <meta name="twitter:title" content="TableView 和 CollectionView 通用的 DataSource 和 Cell" />
-    <meta name="twitter:description" content="刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。
+    <meta name="twitter:description" content="[TOC]
+刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -202,22 +204,24 @@
       <h1 class="post-title">TableView 和 CollectionView 通用的 DataSource 和 Cell</h1>
       <p class="post-meta">@Nemocdz · Mar 25, 2017 · 3 min read</p>
     </header>
-    <article class="post-content"><p>刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。</p>
+    <article class="post-content"><p>[TOC]</p>
+
+<p>刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。</p>
 
 <p>先从 Tableview 讲起，Tableview 都很熟悉，一般就是由 datasource，delegate，cell，cellitem 这几部分组成。</p>
 
-<h3 id="打造一个通用性更强的-datasource">打造一个通用性更强的 DataSource</h3>
+<h2 id="打造一个通用性更强的-datasource">打造一个通用性更强的 DataSource</h2>
 
-<p>新建一个 NSObject 的子类，命名为 CDZTableDataSource，并遵循 <UITableViewDataSource> 协议。对于 datasource 来说，必须实现的方法是 <code>-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section</code>  和 <code>-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</code>。</p>
+<p>新建一个 <code>NSObject</code> 的子类，命名为 CDZTableDataSource，并遵循  <code>UITableViewDataSource</code>  协议。对于 datasource 来说，必须实现的方法是 <code>-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section</code>  和 <code>-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</code>。</p>
 
-<p>先看看第一个方法，返回每个 section 的 row 的数目，这个数字怎么来呢，就是 section 里的数据条数。如果不实现 optional 方法 <code>- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView</code> 的话，默认只有一个 section。所以我们首先要确定的就是 section 的数目，所以对应的，我们应该有 Section 的 Model。新建一个 NSObject 的子类，命名为 CDZSectionObject。那么这个 Section 应该有些什么属性呢？对于一个 Section 对象来说，应该持有一个 row 对应的 Model 的数组，这样就可以确定每个 section 的 row 的数量了。可能还有一些 sectionheader 是数据等等。</p>
+<p>先看看第一个方法，返回每个 section 的 row 的数目，这个数字怎么来呢，就是 section 里的数据条数。如果不实现 optional 方法 <code>- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView</code> 的话，默认只有一个 section。所以我们首先要确定的就是 section 的数目，所以对应的，我们应该有 Section 的 Model。新建一个 <code>NSObject</code> 的子类，命名为 CDZSectionObject。那么这个 Section 应该有些什么属性呢？对于一个 Section 对象来说，应该持有一个 row 对应的 Model 的数组，这样就可以确定每个 section 的 row 的数量了。可能还有一些 sectionHeader 是数据等等。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">copy</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">headerTitle</span><span class="p">;</span>
 <span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">copy</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">headerReuseIdentifer</span><span class="p">;</span>
 <span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">strong</span><span class="p">)</span> <span class="n">NSMutableArray</span> <span class="o">*</span><span class="n">itemsArray</span><span class="p">;</span></code></pre></div>
 <p>回到 Datasouce，那么 Datasouce 就可以加上这些属性。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">strong</span><span class="p">)</span> <span class="n">NSMutableArray</span><span class="o">&lt;</span><span class="n">CDZSectionObject</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">sectionsArray</span><span class="p">;</span>
 <span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">strong</span><span class="p">)</span> <span class="n">CDZSectionObject</span> <span class="o">*</span><span class="n">firstSection</span><span class="p">;</span>	</code></pre></div>
-<p>那么现在就可以实现第一个方法了，为了方便我们还可以默认有一个 firstsection，方便只有一个 section 的情况使用。</p>
+<p>那么现在就可以实现第一个方法了，为了方便我们还可以默认有一个 firstSection，方便只有一个 section 的情况使用。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">numberOfRowsInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">section</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">sectionsArray</span><span class="p">.</span><span class="n">count</span> <span class="o">&gt;</span> <span class="n">section</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">sectionsArray</span><span class="p">[</span><span class="n">section</span><span class="p">].</span><span class="n">itemsArray</span><span class="p">.</span><span class="n">count</span><span class="p">;</span>
@@ -242,14 +246,14 @@
 <span class="k">@required</span>
 <span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">setItem</span><span class="p">:(</span><span class="kt">id</span><span class="p">)</span><span class="n">item</span><span class="p">;</span>
 <span class="k">@end</span></code></pre></div>
-<p>然后让我们的 Cel l遵守这个协议，也就是所有通用的 Cell，需要在方法内实现 item 的解析。而其实对于 cell 也是一种 view，这个接口可以让一些复用的 view  都遵守，比如 headerview 等等。对于 cell 我们还可以拓展这个协议。</p>
+<p>然后让我们的 Cel l遵守这个协议，也就是所有通用的 Cell，需要在方法内实现 item 的解析。而其实对于 cell 也是一种 view，这个接口可以让一些复用的 view  都遵守，比如 headerView 等等。对于 cell 我们还可以拓展这个协议。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@protocol</span> <span class="nc">CDZTableCell</span> <span class="o">&lt;</span><span class="n">CDZCustomView</span><span class="o">&gt;</span>
 <span class="k">@required</span>
 <span class="o">+</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nl">tableView</span><span class="p">:(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="n">tableView</span> <span class="nl">rowHeightForItem</span><span class="p">:(</span><span class="kt">id</span><span class="p">)</span><span class="n">item</span><span class="p">;</span>
 <span class="k">@end</span></code></pre></div>
 <p>这样，cell 的高度也可以由 cell 内部自己决定，适合各种各样的 cell，当然也可以让 Autolayout 决定。但是有一些老项目里的 cell 里面没有 Autolayout，所以返回高度通用性可能更强些。</p>
 
-<p>回到 Datasource，我们解决了 cell 的 Model 问题，下一个是，cell 的 class 怎么决定呢？其实对于 Datasouce 来说，cell 的类型，往往是由对应的 Model 决定的，也就是 Model 的类型，决定可以使用的 cell 的种类。那么我们在 Datasouce 里，只要给出一个接口，让使用者建立这种联系，item class - cell class 的联系，并在内部用一个类似哈希表的东西储存起来，我们便可以根据 item 找到 cell 的 class。简单的话用一个 NSMutableDictionary 就可以了。</p>
+<p>回到 Datasource，我们解决了 cell 的 Model 问题，下一个是，cell 的 class 怎么决定呢？其实对于 Datasouce 来说，cell 的类型，往往是由对应的 Model 决定的，也就是 Model 的类型，决定可以使用的 cell 的种类。那么我们在 Datasouce 里，只要给出一个接口，让使用者建立这种联系，item class - cell class 的联系，并在内部用一个类似哈希表的东西储存起来，我们便可以根据 item 找到 cell 的 class。简单的话用一个 <code>NSMutableDictionary</code> 就可以了。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setCellClass:</span><span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nv">cellClass</span> <span class="nf">forItemClass:</span><span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nv">itemClass</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">itemClass</span> <span class="o">||</span> <span class="o">!</span><span class="n">cellClass</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span><span class="p">;</span>
@@ -290,9 +294,9 @@
 <span class="p">}</span></code></pre></div>
 <p>到此 DataSource 就完成了。</p>
 
-<h3 id="如何使用呢">如何使用呢？</h3>
+<h2 id="使用方法">使用方法</h2>
 
-<p>让自定义的 cell 遵守 <CDZTableCell> 协议，内部实现 setItem 方法去配置 View。一些老的 cell 也可以简单的遵守协议并把以前配置视图的方法写到 setItem 方法里就可以了。协议比继承耦合性更低些，即加即用。</p>
+<p>让自定义的 cell 遵守 CDZTableCell 协议，内部实现 setItem 方法去配置 View。一些老的 cell 也可以简单的遵守协议并把以前配置视图的方法写到 setItem 方法里就可以了。协议比继承耦合性更低些，即加即用。</p>
 
 <p>让 Tableview 的 Datasouce 指定为一个 CDZTabeDataSource，并设置 item 对应的 cell 类型就可以。更换 cell 和 item 只要重新建立关系即可，达到了 Datasource 的复用和拓展性。对于各种 Tableview，就不用重复写 Datasource 的代码了。例子如 Demo：</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">heightForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
@@ -318,9 +322,9 @@
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">_tableDataSource</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
-<h3 id="collecitonviewdatasource其实也类似">CollecitonViewDatasource其实也类似</h3>
+<h2 id="collecitonviewdatasource-其实也类似">CollecitonViewDatasource 其实也类似</h2>
 
-<p>区别在于collecitonview的cell要注册，所以cellforrow方法有所不同</p>
+<p>区别在于 collecitonview 的 cell 要注册，所以 cellForRow 方法有所不同</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">UICollectionViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">collectionView:</span><span class="p">(</span><span class="n">UICollectionView</span> <span class="o">*</span><span class="p">)</span><span class="nv">collectionView</span> <span class="nf">cellForItemAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
     <span class="kt">Class</span> <span class="n">cellClass</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">collectionView</span><span class="p">:</span><span class="n">collectionView</span> <span class="nl">cellClassForRowAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
     <span class="n">UICollectionViewCell</span><span class="o">&lt;</span><span class="n">CDZCollectionCell</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">collectionView</span> <span class="nl">dequeueReusableCellWithReuseIdentifier</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">(</span><span class="n">cellClass</span><span class="p">)</span> <span class="nl">forIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
@@ -329,7 +333,7 @@
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
-<p>其它基本类似，且 Collectionview 和 Tableview还可以共用一个 sectionobject。</p>
+<p>其它基本类似，且 Collectionview 和 Tableview 还可以共用一个 sectionobject。</p>
 
 <h2 id="最后">最后</h2>
 
@@ -340,7 +344,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>824</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>855</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

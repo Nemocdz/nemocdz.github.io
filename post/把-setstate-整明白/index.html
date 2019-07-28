@@ -15,7 +15,8 @@
 
   
   <meta name="author" content="Nemocdz" />
-  <meta name="description" content="加入新团队后，团队项目使用了 React Native。刚开始接触 React Native，除了学习React Native 的使用，更要了解 React.js 这个框架，才能更好的使用。而 React 框架中，笔者一开始就感觉奇妙的，就是这个看似同步，表现却不一定是同步的 setState 方法。看了网上一些文章，结论似乎都是从某几篇博客相互借鉴的结论，但里面笔者还是觉得有一些不太明白的地方，幸亏 React.js 源码是开源的。顺着源码看下去，一些困惑的问题终于有些眉目。
+  <meta name="description" content="[TOC]
+加入新团队后，团队项目使用了 React Native。刚开始接触 React Native，除了学习React Native 的使用，更要了解 React.js 这个框架，才能更好的使用。而 React 框架中，笔者一开始就感觉奇妙的，就是这个看似同步，表现却不一定是同步的 setState 方法。看了网上一些文章，结论似乎都是从某几篇博客相互借鉴的结论，但里面笔者还是觉得有一些不太明白的地方，幸亏 React.js 源码 是开源的。顺着源码看下去，一些困惑的问题终于有些眉目。
 " />
 
   
@@ -23,7 +24,8 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@Nemocdz" />
     <meta name="twitter:title" content="把 setState 整明白" />
-    <meta name="twitter:description" content="加入新团队后，团队项目使用了 React Native。刚开始接触 React Native，除了学习React Native 的使用，更要了解 React.js 这个框架，才能更好的使用。而 React 框架中，笔者一开始就感觉奇妙的，就是这个看似同步，表现却不一定是同步的 setState 方法。看了网上一些文章，结论似乎都是从某几篇博客相互借鉴的结论，但里面笔者还是觉得有一些不太明白的地方，幸亏 React.js 源码是开源的。顺着源码看下去，一些困惑的问题终于有些眉目。
+    <meta name="twitter:description" content="[TOC]
+加入新团队后，团队项目使用了 React Native。刚开始接触 React Native，除了学习React Native 的使用，更要了解 React.js 这个框架，才能更好的使用。而 React 框架中，笔者一开始就感觉奇妙的，就是这个看似同步，表现却不一定是同步的 setState 方法。看了网上一些文章，结论似乎都是从某几篇博客相互借鉴的结论，但里面笔者还是觉得有一些不太明白的地方，幸亏 React.js 源码 是开源的。顺着源码看下去，一些困惑的问题终于有些眉目。
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -202,23 +204,25 @@
       <h1 class="post-title">把 setState 整明白</h1>
       <p class="post-meta">@Nemocdz · Aug 6, 2018 · 6 min read</p>
     </header>
-    <article class="post-content"><p>加入新团队后，团队项目使用了 React Native。刚开始接触 React Native，除了学习React Native 的使用，更要了解 React.js 这个框架，才能更好的使用。而 React 框架中，笔者一开始就感觉奇妙的，就是这个看似同步，表现却不一定是同步的 setState 方法。看了网上一些文章，结论似乎都是从某几篇博客相互借鉴的结论，但里面笔者还是觉得有一些不太明白的地方，幸亏 <a href="https://github.com/facebook/react">React.js 源码</a>是开源的。顺着源码看下去，一些困惑的问题终于有些眉目。</p>
+    <article class="post-content"><p>[TOC]</p>
+
+<p>加入新团队后，团队项目使用了 React Native。刚开始接触 React Native，除了学习React Native 的使用，更要了解 React.js 这个框架，才能更好的使用。而 React 框架中，笔者一开始就感觉奇妙的，就是这个看似同步，表现却不一定是同步的 <code>setState</code> 方法。看了网上一些文章，结论似乎都是从某几篇博客相互借鉴的结论，但里面笔者还是觉得有一些不太明白的地方，幸亏 <a href="https://github.com/facebook/react">React.js 源码</a> 是开源的。顺着源码看下去，一些困惑的问题终于有些眉目。</p>
 
 <p>开始之前，读者可思考以下几个问题：</p>
 
 <ul>
-<li>setState 是异步还是同步的</li>
-<li>在 setTimeout 方法中调用setState的值为何马上就能更新</li>
-<li>setState 中传入一个 Function 为何值马上就能更新</li>
-<li>setState 为何要如此设计</li>
-<li>setState 的最佳实践是什么</li>
+<li><code>setState</code> 是异步还是同步的</li>
+<li>在 <code>setTimeout</code> 方法中调用 <code>setState</code> 的值为何马上就能更新</li>
+<li><code>setState</code> 中传入一个 Function 为何值马上就能更新</li>
+<li><code>setState</code> 为何要如此设计</li>
+<li><code>setState</code> 的最佳实践是什么</li>
 </ul>
 
 <p>以下源码基于我们团队在用的 React 16.0.0 版本，目前最新的 React 16.4.0 版本的类名和文件结构均有很大变化，但设计思想应该还是差不多的，可供参考。</p>
 
-<h3 id="setstate-的入口">setState 的入口</h3>
+<h2 id="setstate-的入口">setState 的入口</h2>
 
-<p>setState 的最上层自然在 ReactBaseClasses 中。</p>
+<p><code>setState</code> 的最上层自然在 <code>ReactBaseClasses</code> 中。</p>
 <div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">//ReactBaseClasses.js
 </span><span class="c1"></span><span class="nx">ReactComponent</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setState</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">partialState</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">// ...
@@ -256,7 +260,7 @@
     <span class="k">return</span> <span class="nx">ReactUpdateQueue</span><span class="p">;</span>
 <span class="p">},</span>
 </code></pre></div>
-<p>终于看到了具体 enqueSetState 方法的内容。</p>
+<p>终于看到了具体 <code>enqueSetState</code> 方法的内容。</p>
 <div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">//ReactUpdateQueue.js
 </span><span class="c1"></span><span class="nx">enqueueSetState</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span>
     <span class="nx">publicInstance</span><span class="p">,</span>
@@ -291,7 +295,7 @@
   <span class="nx">ReactUpdates</span><span class="p">.</span><span class="nx">enqueueUpdate</span><span class="p">(</span><span class="nx">internalInstance</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>而更新操作由 ReactUpdates 这个类负责。</p>
+<p>而更新操作由 <code>ReactUpdates</code> 这个类负责。</p>
 <div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">//ReactUpdates.js
 </span><span class="c1"></span><span class="kd">function</span> <span class="nx">enqueueUpdate</span><span class="p">(</span><span class="nx">component</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">//...
@@ -305,11 +309,11 @@
   <span class="c1">//...
 </span><span class="c1"></span><span class="p">}</span>
 </code></pre></div>
-<p>而这个 isBatchingUpdates 的判断，就是代表是否在批量更新中。如果正在更新中，则整个组件放入 dirtyComponents 数组中，后面会讲到。这里这个 batchingStrategy，其实就是 ReactDefaultBatchingStrategy（外部注入的）。</p>
+<p>而这个 <code>isBatchingUpdates</code> 的判断，就是代表是否在批量更新中。如果正在更新中，则整个组件放入 dirtyComponents 数组中，后面会讲到。这里这个 batchingStrategy，其实就是 <code>ReactDefaultBatchingStrategy</code>（外部注入的）。</p>
 <div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">//ReactDOMStackInjection.js
 </span><span class="c1"></span><span class="nx">ReactUpdates</span><span class="p">.</span><span class="nx">injection</span><span class="p">.</span><span class="nx">injectBatchingStrategy</span><span class="p">(</span><span class="nx">ReactDefaultBatchingStrategy</span><span class="p">);</span>
 </code></pre></div>
-<p>而这个类里的，则会让挂起更新状态，并调用 transaction 的 perform。</p>
+<p>而这个类里的，则会让挂起更新状态，并调用 transaction 的 <code>perform</code>。</p>
 <div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">//ReactDefaultBatchingStrategy.js
 </span><span class="c1"></span><span class="kd">var</span> <span class="nx">ReactDefaultBatchingStrategy</span> <span class="o">=</span> <span class="p">{</span>
   <span class="nx">isBatchingUpdates</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
@@ -327,9 +331,9 @@
   <span class="p">},</span>
 <span class="p">};</span>
 </code></pre></div>
-<h3 id="transaction">Transaction</h3>
+<h2 id="transaction">Transaction</h2>
 
-<p>这里简单解释下事务（Transaction）的概念，先看源码中对事务的一张解释图。</p>
+<p>这里简单解释下事务（<code>Transaction</code>）的概念，先看源码中对事务的一张解释图。</p>
 <div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"> <span class="c1">//Transaction.js
 </span><span class="c1"></span> <span class="o">*</span> <span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;</span>
  <span class="o">*</span>                       <span class="nx">wrappers</span> <span class="p">(</span><span class="nx">injected</span> <span class="nx">at</span> <span class="nx">creation</span> <span class="nx">time</span><span class="p">)</span>
@@ -360,11 +364,11 @@
 
 <p>可以方便的在某个方法前后分别做一些事情，而且可以分 Wrapper 定义，一个 Wrapper 一对钩子。</p>
 
-<p>具体来说，可以在 Wrapper  里定义 initialize 和 close 方法，initialize 会在 anyMethod 执行前执行，close 会在执行后执行。</p>
+<p>具体来说，可以在 Wrapper  里定义 <code>initialize</code> 和 <code>close</code> 方法，<code>initialize</code> 会在 anyMethod 执行前执行，<code>close</code> 会在执行后执行。</p>
 
-<h3 id="更新策略里的-transaction">更新策略里的 Transaction</h3>
+<h2 id="更新策略里的-transaction">更新策略里的 Transaction</h2>
 
-<p>回到刚刚的 batchedUpdates 方法，里面那个 transaction 其实执行前都是空方法，而 callback 是外界传入的 enqueueUpdate 方法本身，也就是说，执行时会被 isBatchingUpdates 卡住进入加入 dirtyCompoments 中。之后就会执行 close 方法里面去改变 isBatchingUpdates 的值和执行 flushBatchedUpdates 方法。</p>
+<p>回到刚刚的 <code>batchedUpdates</code> 方法，里面那个 transaction 其实执行前都是空方法，而 callback 是外界传入的 <code>enqueueUpdate</code> 方法本身，也就是说，执行时会被 <code>isBatchingUpdates</code> 卡住进入加入 dirtyCompoments 中。之后就会执行 <code>close</code> 方法里面去改变 <code>isBatchingUpdates</code> 的值和执行 <code>flushBatchedUpdates</code> 方法。</p>
 <div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">//ReactDefaultBatchingStrategy.js
 </span><span class="c1"></span>
 <span class="c1">// 更新状态 isBatchingUpdates 的 wrapper
@@ -393,7 +397,7 @@
 
 <span class="kd">var</span> <span class="nx">transaction</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ReactDefaultBatchingStrategyTransaction</span><span class="p">();</span>
 </code></pre></div>
-<p>而这个 flushBatchedUpdates 方法，按照 dirtyComonents 里的数量，每次执行了一个 transaction。</p>
+<p>而这个 <code>flushBatchedUpdates</code> 方法，按照 dirtyComonents 里的数量，每次执行了一个 transaction。</p>
 <div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">//ReactUpdates.js
 </span><span class="c1"></span><span class="kd">var</span> <span class="nx">flushBatchedUpdates</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">while</span> <span class="p">(</span><span class="nx">dirtyComponents</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
@@ -430,7 +434,7 @@
   <span class="p">},</span>
 <span class="p">});</span>
 </code></pre></div>
-<p>所以真正更新方法应该在 runBatchedUpdates 中。</p>
+<p>所以真正更新方法应该在 <code>runBatchedUpdates</code> 中。</p>
 <div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">//ReactUpdates.js
 </span><span class="c1"></span><span class="kd">function</span> <span class="nx">runBatchedUpdates</span><span class="p">(</span><span class="nx">transaction</span><span class="p">)</span> <span class="p">{</span>
   
@@ -451,7 +455,7 @@
   <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>而 ReactReconciler 中的 performUpateIfNecessary 方法只是一个壳。</p>
+<p>而 ReactReconciler 中的 <code>performUpateIfNecessary</code> 方法只是一个壳。</p>
 <div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">performUpdateIfNecessary</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span>
     <span class="nx">internalInstance</span><span class="p">,</span>
     <span class="nx">transaction</span><span class="p">,</span>
@@ -462,7 +466,7 @@
     <span class="c1">// ...
 </span><span class="c1"></span> <span class="p">},</span>
 </code></pre></div>
-<p>而真正的方法在 ReactCompositeComponent 中，如果等待队列中有该更新的 state，那么就调用 updateComponent。</p>
+<p>而真正的方法在 <code>ReactCompositeComponent</code> 中，如果等待队列中有该更新的 state，那么就调用 <code>updateComponent</code>。</p>
 <div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">//ReactCompositeComponent.js
 </span><span class="c1"></span><span class="nx">performUpdateIfNecessary</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">transaction</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_pendingElement</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
@@ -480,7 +484,7 @@
 </span><span class="c1"></span>    <span class="p">}</span>
 <span class="p">},</span>
 </code></pre></div>
-<p>这个方法判断了做了一些判断，而我们也看到了 nextState 的值才是最后被更新给state的值。</p>
+<p>这个方法判断了做了一些判断，而我们也看到了 nextState 的值才是最后被更新给 state 的值。</p>
 <div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">//ReactCompositeComponent.js
 </span><span class="c1"></span><span class="nx">updateComponent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span>
     <span class="nx">transaction</span><span class="p">,</span>
@@ -571,11 +575,11 @@
     <span class="k">return</span> <span class="nx">nextState</span><span class="p">;</span>
 <span class="p">},</span>
 </code></pre></div>
-<h3 id="好像-setstate-是同步的耶">好像 setState 是同步的耶</h3>
+<h2 id="好像-setstate-是同步的耶">好像 setState 是同步的耶</h2>
 
-<p>而如果按照这个流程看完，setState 应该是同步的呀？是哪里出了问题呢。</p>
+<p>而如果按照这个流程看完，<code>setState</code> 应该是同步的呀？是哪里出了问题呢。</p>
 
-<p>别急，还记得更新策略里面那个 Transaction 么。那里中间调用的 callback 是外层传入的，也就说有可能还有其它调用了 batchedUpdates 呢。那么也就是说，中间的 callback，并不止 setState 会引起。在代码里搜索后发现，果真还有几处调用了 batchedUpdates 方法。</p>
+<p>别急，还记得更新策略里面那个 <code>Transaction</code> 么。那里中间调用的 callback 是外层传入的，也就说有可能还有其它调用了 <code>batchedUpdates</code> 呢。那么也就是说，中间的 callback，并不止 <code>setState</code> 会引起。在代码里搜索后发现，果真还有几处调用了 <code>batchedUpdates</code> 方法。</p>
 
 <p>比如 ReactMount 的这两个方法</p>
 <div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">//ReactMount.js
@@ -632,37 +636,37 @@
   <span class="nx">ReactUpdates</span><span class="p">.</span><span class="nx">batchedUpdates</span><span class="p">,</span>
 <span class="p">);</span>
 </code></pre></div>
-<p>所以比如在 componentDidMount 中直接调用时，ReactMount.js  中的 <strong>_renderNewRootComponent</strong>   方法已经调用了，也就是说，整个将 React 组件渲染到 DOM 中的过程就处于一个大的 Transaction 中，而其中的 callback 没有马上被执行，那么自然 state 没有被马上更新。</p>
+<p>所以比如在 <code>componentDidMount</code> 中直接调用时，ReactMount.js  中的 <strong><code>_renderNewRootComponent</code></strong>   方法已经调用了，也就是说，整个将 React 组件渲染到 DOM 中的过程就处于一个大的 <code>Transaction</code> 中，而其中的 callback 没有马上被执行，那么自然 state 没有被马上更新。</p>
 
-<h3 id="setstate-为什么这么设计">setState 为什么这么设计</h3>
+<h2 id="setstate-为什么这么设计">setState 为什么这么设计</h2>
 
-<p>在 React 中，state 代表 UI 的状态，也就是 UI 由 state 改变而改变，也就是UI=function（state）。笔者觉得，这体现了一种响应式的思想，而响应式与命令式的不同，在于命令式着重看如何命令的过程，而响应式看中数据变化如何输出。而 React 中对 Rerender 做出的努力，对渲染的优化，响应式的 setState 设计，其实也是其中搭配而不可少的一环。</p>
+<p>在 React 中，state 代表 UI 的状态，也就是 UI 由 state 改变而改变，也就是 UI=function（state）。笔者觉得，这体现了一种响应式的思想，而响应式与命令式的不同，在于命令式着重看如何命令的过程，而响应式看中数据变化如何输出。而 React 中对 Rerender 做出的努力，对渲染的优化，响应式的 <code>setState</code> 设计，其实也是其中搭配而不可少的一环。</p>
 
-<h3 id="最后">最后</h3>
+<h2 id="最后">最后</h2>
 
 <p>最前面的问题，相信每个人都有自己的答案，我这里给出我自己的理解。</p>
 
-<p>Q：setState 是异步还是同步的？</p>
+<p>Q：<code>setState</code> 是异步还是同步的？</p>
 
 <p>A：同步的，但有时候是异步的表现。</p>
 
-<p>Q：在 setTimeout 方法中调用 setState 的值为何马上就能更新？</p>
+<p>Q：在 <code>setTimeout</code> 方法中调用 <code>setState</code> 的值为何马上就能更新？</p>
 
 <p>A：因为本身就是同步的，也没有别的因素阻塞。</p>
 
-<p>Q：setState 中传入一个 Function 为何值马上就能更新？</p>
+<p>Q：<code>setState</code> 中传入一个 Function 为何值马上就能更新？</p>
 
 <p>A：源码中的策略。</p>
 
-<p>Q：setState 为何要如此设计？</p>
+<p>Q：<code>setState</code> 为何要如此设计？</p>
 
 <p>A：为了以响应式的方式改变 UI。</p>
 
-<p>Q：setState 的最佳实践是什么？</p>
+<p>Q：<code>setState</code> 的最佳实践是什么？</p>
 
 <p>A：以响应式的思路使用。</p>
 
-<h4 id="参考链接">参考链接</h4>
+<h2 id="参考链接">参考链接</h2>
 
 <p><a href="https://zhuanlan.zhihu.com/p/20328570">React 源码剖析系列 － 解密 setState</a></p>
 
@@ -672,7 +676,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>325</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>356</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

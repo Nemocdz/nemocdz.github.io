@@ -15,7 +15,8 @@
 
   
   <meta name="author" content="Nemocdz" />
-  <meta name="description" content="在很多电商，外卖，餐饮型应用里，都会在商品结束后评价中有一个星星组件。核心思路就是用 UIControl 并自定义实现其中的 trackTouch 的几个方法。而显示不到一个的星星，比如半个星星的思路是根据分数切割星星的图像并显示其中一部分。实现后效果如下。
+  <meta name="description" content="[TOC]
+在很多电商，外卖，餐饮型应用里，都会在商品结束后评价中有一个星星组件。核心思路就是用 UIControl 并自定义实现其中的 trackTouch 的几个方法。而显示不到一个的星星，比如半个星星的思路是根据分数切割星星的图像并显示其中一部分。实现后效果如下。
 " />
 
   
@@ -23,7 +24,8 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@Nemocdz" />
     <meta name="twitter:title" content="iOS 中实现支持小数的星星评分组件" />
-    <meta name="twitter:description" content="在很多电商，外卖，餐饮型应用里，都会在商品结束后评价中有一个星星组件。核心思路就是用 UIControl 并自定义实现其中的 trackTouch 的几个方法。而显示不到一个的星星，比如半个星星的思路是根据分数切割星星的图像并显示其中一部分。实现后效果如下。
+    <meta name="twitter:description" content="[TOC]
+在很多电商，外卖，餐饮型应用里，都会在商品结束后评价中有一个星星组件。核心思路就是用 UIControl 并自定义实现其中的 trackTouch 的几个方法。而显示不到一个的星星，比如半个星星的思路是根据分数切割星星的图像并显示其中一部分。实现后效果如下。
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -202,13 +204,15 @@
       <h1 class="post-title">iOS 中实现支持小数的星星评分组件</h1>
       <p class="post-meta">@Nemocdz · May 21, 2017 · 4 min read</p>
     </header>
-    <article class="post-content"><p>在很多电商，外卖，餐饮型应用里，都会在商品结束后评价中有一个星星组件。核心思路就是用 UIControl 并自定义实现其中的 trackTouch 的几个方法。而显示不到一个的星星，比如半个星星的思路是根据分数切割星星的图像并显示其中一部分。实现后效果如下。</p>
+    <article class="post-content"><p>[TOC]</p>
+
+<p>在很多电商，外卖，餐饮型应用里，都会在商品结束后评价中有一个星星组件。核心思路就是用 <code>UIControl</code> 并自定义实现其中的 trackTouch 的几个方法。而显示不到一个的星星，比如半个星星的思路是根据分数切割星星的图像并显示其中一部分。实现后效果如下。</p>
 
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fft73ku93og30da0n0tfa.gif" alt="2017-05-21 19_12_04" /></p>
 
-<h3 id="单个星星的实现">单个星星的实现</h3>
+<h2 id="单个星星的实现">单个星星的实现</h2>
 
-<p>对于单个星星的实现，先考虑星星有三个状态，完全置灰状态，完全高亮状态，根据百分比半高亮状态。而我这边用的是 UIButton 来实现，因为 UIButton 本身已经有普通，高亮，选择的状态。主要实现的就是百分比高亮状态。我们可以根据百分比将图像进行裁剪，让新图像的宽度只有百分比所占的整个图像的宽度。但是这时候调用 setImage，会发现图片处于整个 button 中间。这是因为 UIButton 的 ImageView 的 contentMode 默认是 AspectFit 的，而 AspectFit 是默认居中的。Contentmode 中的 UIViewContentModeLeft，是不会把长边缩放到 ImageView 的边长的。况且，直接改变 UIButton 里的 ImageView 的 ContentMode 是没有效果的。要通过 UIControl 的 contentVerticalAlignment 属性（垂直）和 contentHorizontalAlignment 属性（水平）来达到类似 ImageView 的 contentMode 的效果。但是这两个属性都没有带 Fit 后缀的选项，也就是说并不会根据边长等比缩放。所以需要先把图片缩放到和 Button 大小一致。</p>
+<p>对于单个星星的实现，先考虑星星有三个状态，完全置灰状态，完全高亮状态，根据百分比半高亮状态。而我这边用的是 <code>UIButton</code> 来实现，因为 <code>UIButton</code> 本身已经有普通，高亮，选择的状态。主要实现的就是百分比高亮状态。我们可以根据百分比将图像进行裁剪，让新图像的宽度只有百分比所占的整个图像的宽度。但是这时候调用 setImage，会发现图片处于整个 button 中间。这是因为 <code>UIButton</code> 的 ImageView 的 contentMode 默认是 AspectFit 的，而 AspectFit 是默认居中的。ContentMode 中的 <code>UIViewContentModeLeft</code>，是不会把长边缩放到 ImageView 的边长的。况且，直接改变 UIButton 里的 ImageView 的 ContentMode 是没有效果的。要通过 <code>UIControl</code> 的 contentVerticalAlignment 属性（垂直）和 contentHorizontalAlignment 属性（水平）来达到类似 ImageView 的 contentMode 的效果。但是这两个属性都没有带 Fit 后缀的选项，也就是说并不会根据边长等比缩放。所以需要先把图片缩放到和 Button 大小一致。</p>
 
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fft5yrflcoj30dl06c3za.jpg" alt="屏幕快照 2017-05-21 下午6.32.58" /></p>
 
@@ -235,27 +239,27 @@
     <span class="nb">self</span><span class="p">.</span><span class="n">selected</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span>
     <span class="nb">self</span><span class="p">.</span><span class="n">highlighted</span> <span class="o">=</span> <span class="nb">YES</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
-<p>而全高亮的状态可以设置为 UIButton 的点击态</p>
+<p>而全高亮的状态可以设置为 <code>UIButton</code> 的点击态</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setHighlightedImage:</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="nv">highlightedImage</span><span class="p">{</span>
     <span class="n">_highlightedImage</span> <span class="o">=</span> <span class="p">[</span><span class="n">CDZStarButton</span> <span class="nl">reSizeImage</span><span class="p">:</span><span class="n">highlightedImage</span> <span class="nl">toSize</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">];</span>
     <span class="p">[</span><span class="nb">self</span> <span class="nl">setImage</span><span class="p">:</span><span class="n">_highlightedImage</span> <span class="nl">forState</span><span class="p">:</span><span class="n">UIControlStateSelected</span><span class="p">];</span>
 <span class="p">}</span></code></pre></div>
-<p>而点击事件交由给上层的 UIControl 去处理，因为点击的时候，除了点击的星星本身，之前的星星也应该处于完全高亮状态。在上层初始化按钮的时候把其 userInteractionEnabled 属性设置为 NO 即可，这样触摸事件就会忽略传递到 Button 去做事件处理，从而从响应者链传递上去交由父视图的 UIControl 处理。</p>
+<p>而点击事件交由给上层的 <code>UIControl</code> 去处理，因为点击的时候，除了点击的星星本身，之前的星星也应该处于完全高亮状态。在上层初始化按钮的时候把其 userInteractionEnabled 属性设置为 NO 即可，这样触摸事件就会忽略传递到 Button 去做事件处理，从而从响应者链传递上去交由父视图的 <code>UIControl</code> 处理。</p>
 
-<p>如果点击到星星的一半，我们应该把点击点转换成小数部分给上层。C 语言的 round 函数可以四舍五入，这里的 10 代表保留一位小数，可以根据实际情况保留位数，一般评分很少需要更高精度的。</p>
+<p>如果点击到星星的一半，我们应该把点击点转换成小数部分给上层。C 语言的 <code>round</code> 函数可以四舍五入，这里的 10 代表保留一位小数，可以根据实际情况保留位数，一般评分很少需要更高精度的。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nf">fractionPartOfPoint:</span><span class="p">(</span><span class="n">CGPoint</span><span class="p">)</span><span class="nv">point</span><span class="p">{</span>
     <span class="n">CGFloat</span> <span class="n">fractionPart</span> <span class="o">=</span>  <span class="p">(</span><span class="n">point</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="p">;</span>
     <span class="k">return</span> <span class="n">round</span><span class="p">(</span><span class="n">fractionPart</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
-<p>到这里一个可以显示分数的星星按钮就完成了，接下来就是在上层的 UIControl 去处理触摸事件的响应。</p>
+<p>到这里一个可以显示分数的星星按钮就完成了，接下来就是在上层的 <code>UIControl</code> 去处理触摸事件的响应。</p>
 
-<h3 id="uicontrol部分的实现">UIControl部分的实现</h3>
+<h2 id="uicontrol-部分的实现">UIControl 部分的实现</h2>
 
 <p>主要分两块，星星按钮的布局，触摸事件响应。</p>
 
-<h4 id="布局">布局</h4>
+<h3 id="布局">布局</h3>
 
-<p>首先根据星星的数量一个个添加上视图，用 UIView 的 tag 来表示对应第几个星星按钮。</p>
+<p>首先根据星星的数量一个个添加上视图，用 <code>UIView</code> 的 tag 来表示对应第几个星星按钮。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setupView</span> <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="n">NSInteger</span> <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">self</span><span class="p">.</span><span class="n">numberOfStars</span><span class="p">;</span> <span class="n">index</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">CDZStarButton</span> <span class="o">*</span><span class="n">starButton</span> <span class="o">=</span> <span class="p">[</span><span class="n">CDZStarButton</span><span class="p">.</span><span class="n">alloc</span> <span class="nl">initWithSize</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">starSize</span><span class="p">];</span>
@@ -279,7 +283,7 @@
         <span class="n">starButton</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">((</span><span class="nb">self</span><span class="p">.</span><span class="n">starSize</span><span class="p">.</span><span class="n">width</span> <span class="o">+</span> <span class="n">margin</span><span class="p">)</span> <span class="o">*</span> <span class="n">index</span><span class="p">,</span> <span class="n">newY</span><span class="p">,</span> <span class="nb">self</span><span class="p">.</span><span class="n">starSize</span><span class="p">.</span><span class="n">width</span><span class="p">,</span> <span class="nb">self</span><span class="p">.</span><span class="n">starSize</span><span class="p">.</span><span class="n">height</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
-<p>这时，我们可以加上两个方法去找到对应的星星 Button，根据 tag 和根据点击的 CGPoint</p>
+<p>这时，我们可以加上两个方法去找到对应的星星 Button，根据 tag 和根据点击的 <code>CGPoint</code></p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">CDZStarButton</span> <span class="o">*</span><span class="p">)</span><span class="nf">starForPoint:</span><span class="p">(</span><span class="n">CGPoint</span><span class="p">)</span><span class="nv">point</span> <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="n">NSInteger</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">self</span><span class="p">.</span><span class="n">numberOfStars</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">CDZStarButton</span> <span class="o">*</span><span class="n">starButton</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">starForTag</span><span class="p">:</span><span class="n">i</span><span class="p">];</span>
@@ -300,7 +304,7 @@
     <span class="p">}];</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">CDZStarButton</span> <span class="o">*</span><span class="p">)</span><span class="n">target</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
-<h4 id="处理触摸事件">处理触摸事件</h4>
+<h3 id="处理触摸事件">处理触摸事件</h3>
 
 <p>我们先加上两个方法。一个是从第一个到某个星星开始从左到右依次点亮，一个是从最后一个星星到某个星星从右到左依次熄灭。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">starsDownToIndex:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">index</span> <span class="p">{</span>
@@ -318,7 +322,7 @@
         <span class="n">starButton</span><span class="p">.</span><span class="n">highlighted</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
-<p>然后设置一个评分的属性，重写其 setter 方法。allowFraction，用来判断组件是否需要分数表示，floor 函数是取最大整数，相当于直接去除小数点后面的数字。判断评分的整数部分是否已经亮着，亮着那么说明从左到右最后一个亮着的右边，反之在左边，分别调用从右到左依次熄灭，或从左到右依次点亮的方法，最后再设置分数部分。</p>
+<p>然后设置一个评分的属性，重写其 setter 方法。allowFraction，用来判断组件是否需要分数表示，<code>floor</code> 函数是取最大整数，相当于直接去除小数点后面的数字。判断评分的整数部分是否已经亮着，亮着那么说明从左到右最后一个亮着的右边，反之在左边，分别调用从右到左依次熄灭，或从左到右依次点亮的方法，最后再设置分数部分。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setScore:</span><span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nv">score</span><span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">_score</span> <span class="o">==</span> <span class="n">score</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span><span class="p">;</span>
@@ -338,7 +342,7 @@
     <span class="p">}</span>
     <span class="n">starButton</span><span class="p">.</span><span class="n">fractionPart</span> <span class="o">=</span> <span class="n">fractionPart</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
-<p>主要用到 UIControl 的四个方法</p>
+<p>主要用到 <code>UIControl</code> 的四个方法</p>
 
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fft5y5gq92j30vt02475g.jpg" alt="屏幕快照 2017-05-21 下午6.31.56" /></p>
 
@@ -409,7 +413,7 @@
         <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">delegate</span> <span class="nl">starsControl</span><span class="p">:</span><span class="nb">self</span> <span class="nl">didChangeScore</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">score</span><span class="p">];</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
-<h4 id="封装">封装</h4>
+<h2 id="封装">封装</h2>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">initWithFrame:</span><span class="p">(</span><span class="n">CGRect</span><span class="p">)</span><span class="nv">frame</span>
                         <span class="nf">stars:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">number</span>
                      <span class="nf">starSize:</span><span class="p">(</span><span class="n">CGSize</span><span class="p">)</span><span class="nv">size</span>
@@ -435,7 +439,7 @@
     <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">view</span> <span class="nl">addSubview</span><span class="p">:</span><span class="n">starsControl</span><span class="p">];</span></code></pre></div>
 <p>然后在 Delegate 里处理分数改变后的操作即可。</p>
 
-<h3 id="最后">最后</h3>
+<h2 id="最后">最后</h2>
 
 <p>所有源码和 <a href="https://github.com/Nemocdz/CDZStarsControl">Demo</a>
 可以直接拿文件去使用或修改，也支持 Cocoapods.</p>
@@ -445,7 +449,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>767</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>797</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

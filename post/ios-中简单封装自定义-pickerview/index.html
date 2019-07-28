@@ -15,7 +15,8 @@
 
   
   <meta name="author" content="Nemocdz" />
-  <meta name="description" content="UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。
+  <meta name="description" content="[TOC]
+UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。
 " />
 
   
@@ -23,7 +24,8 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@Nemocdz" />
     <meta name="twitter:title" content="iOS 中简单封装自定义 PickerView" />
-    <meta name="twitter:description" content="UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。
+    <meta name="twitter:description" content="[TOC]
+UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -202,7 +204,9 @@
       <h1 class="post-title">iOS 中简单封装自定义 PickerView</h1>
       <p class="post-meta">@Nemocdz · Nov 19, 2016 · 3 min read</p>
     </header>
-    <article class="post-content"><p>UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。</p>
+    <article class="post-content"><p>[TOC]</p>
+
+<p><code>UIPickerView</code> 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。</p>
 
 <p>点击 Button 弹出 Picker，并改变指定 Label 的值，效果如下图所示。
 <img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gw1f9wp3v4z00g30ku112agf.gif" alt="" />
@@ -213,13 +217,14 @@
         <span class="nb">self</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">string</span><span class="p">;</span>
     <span class="p">}];</span>
     <span class="p">}</span></code></pre></div>
-<p>实现思路从数据，视图，按钮处理三个方面说
-###1. 数据</p>
+<p>实现思路从数据，视图，按钮处理三个方面说</p>
+
+<h2 id="1-数据">1.数据</h2>
 
 <ul>
 <li>传入数据（上层 View 对象，数组 Array，最后的值）</li>
 <li>改变的值（利用 block 传值回调）</li>
-<li>UIPickerView 的 Delegate 和 DataSource 方法的实现</li>
+<li><code>UIPickerView</code> 的 Delegate 和 DataSource 方法的实现</li>
 </ul>
 
 <p>上层 View 对象和数组 Array 没啥可说的，关于取消按钮的实现，个人想法是把弹出 picker 改变前最后的值传进 View 的内部并存储起来，等待按钮的动作响应判断是否取出。（但个人感觉把这个值传进去实现不太优雅，但水平不够没想到其它实现方法，希望交流）
@@ -285,7 +290,7 @@
  <code>- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component</code>
 这个方法优先级高，也就是说会覆盖后面那个方法里的设置，后面的方法只能确定每行返回的方法的值，没办法对字体大小，颜色，分割线等进行自定义，需要自定义就使用第一个方法。</p>
 
-<h3 id="2-视图">2. 视图</h3>
+<h2 id="2-视图">2.视图</h2>
 
 <p>视图上，由一个压黑背景的 View 上面加上一个包含确定和取消两个按钮和 pickerview 的 containview 组成。
 先在最开始进行一些颜色，屏幕大小的宏定义和全局静态变量定义，方便使用</p>
@@ -328,7 +333,7 @@ static const int toolBarHeight = 44;
 }
 </code></pre>
 
-<h3 id="3-响应按钮点击事件">3.响应按钮点击事件</h3>
+<h2 id="3-响应按钮点击事件">3.响应按钮点击事件</h2>
 
 <p>很简单，见代码即可。取消的话把传进来的 lastString 传回去即可。</p>
 
@@ -343,7 +348,7 @@ static const int toolBarHeight = 44;
 }
 </code></pre>
 
-<h3 id="4-封装成工厂方法">4.封装成工厂方法</h3>
+<h2 id="4-封装成工厂方法">4.封装成工厂方法</h2>
 
 <pre><code>+ (void)showPickerInView:(UIView *)view
         withObjectsArray:(NSArray *)array
@@ -359,7 +364,7 @@ static const int toolBarHeight = 44;
 }
 </code></pre>
 
-<h3 id="最后">最后</h3>
+<h2 id="最后">最后</h2>
 
 <p>所有源码和 <a href="https://github.com/Nemocdz/CDZPickerViewDemo">Demo</a>
 这是我第一次写技术类文章，虽然不是什么很深入的问题，但希望能分享给有需要的人。</p>
@@ -368,7 +373,7 @@ static const int toolBarHeight = 44;
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>950</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>981</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

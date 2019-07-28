@@ -15,7 +15,8 @@
 
   
   <meta name="author" content="Nemocdz" />
-  <meta name="description" content="在项目中，偶尔需要让 TableView 里支持不同种类的 Cell，比如微博的原创微博和别人转发的微博，就是两种 Cell。又或是类似支付宝的的 timeline 也有各种类型的 Cell。在同一个 Tableview 里实现不同种类的 Cell，一般有两种方法，一种是把所有种类的 Cell 先注册了，再根据不同的 identifer 去加载 Cell，一种是在 init 时创建不同的 identifer 的 Cell。
+  <meta name="description" content="[TOC]
+在项目中，偶尔需要让 TableView 里支持不同种类的 Cell，比如微博的原创微博和别人转发的微博，就是两种 Cell。又或是类似支付宝的的 timeline 也有各种类型的 Cell。在同一个 TableView 里实现不同种类的 Cell，一般有两种方法，一种是把所有种类的 Cell 先注册了，再根据不同的 identifer 去加载 Cell，一种是在 init 时创建不同的 identifer 的 Cell。
 " />
 
   
@@ -23,7 +24,8 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@Nemocdz" />
     <meta name="twitter:title" content="TableView 支持不同种类的 Cell" />
-    <meta name="twitter:description" content="在项目中，偶尔需要让 TableView 里支持不同种类的 Cell，比如微博的原创微博和别人转发的微博，就是两种 Cell。又或是类似支付宝的的 timeline 也有各种类型的 Cell。在同一个 Tableview 里实现不同种类的 Cell，一般有两种方法，一种是把所有种类的 Cell 先注册了，再根据不同的 identifer 去加载 Cell，一种是在 init 时创建不同的 identifer 的 Cell。
+    <meta name="twitter:description" content="[TOC]
+在项目中，偶尔需要让 TableView 里支持不同种类的 Cell，比如微博的原创微博和别人转发的微博，就是两种 Cell。又或是类似支付宝的的 timeline 也有各种类型的 Cell。在同一个 TableView 里实现不同种类的 Cell，一般有两种方法，一种是把所有种类的 Cell 先注册了，再根据不同的 identifer 去加载 Cell，一种是在 init 时创建不同的 identifer 的 Cell。
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -202,19 +204,21 @@
       <h1 class="post-title">TableView 支持不同种类的 Cell</h1>
       <p class="post-meta">@Nemocdz · Jan 8, 2017 · 2 min read</p>
     </header>
-    <article class="post-content"><p>在项目中，偶尔需要让 TableView 里支持不同种类的 Cell，比如微博的原创微博和别人转发的微博，就是两种 Cell。又或是类似支付宝的的 timeline 也有各种类型的 Cell。在同一个 Tableview 里实现不同种类的 Cell，一般有两种方法，一种是把所有种类的 Cell 先注册了，再根据不同的 identifer 去加载 Cell，一种是在 init 时创建不同的 identifer 的 Cell。</p>
+    <article class="post-content"><p>[TOC]</p>
+
+<p>在项目中，偶尔需要让 TableView 里支持不同种类的 Cell，比如微博的原创微博和别人转发的微博，就是两种 Cell。又或是类似支付宝的的 timeline 也有各种类型的 Cell。在同一个 TableView 里实现不同种类的 Cell，一般有两种方法，一种是把所有种类的 Cell 先注册了，再根据不同的 identifer 去加载 Cell，一种是在 init 时创建不同的 identifer 的 Cell。</p>
 
 <p>效果图如下。</p>
 
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tKfTcly1fi1aan9mt6j30l812i0ud.jpg" alt="" /></p>
 
-<h3 id="准备工作">准备工作</h3>
+<h2 id="准备工作">准备工作</h2>
 
 <p>创建一个基类的 <code>CDZBaseCell</code>，基类 Cell 拥有一些共用的属性和方法，如持有 Model，解析 Model。</p>
 
 <p>创建不同的子类 Cell，以两个子类 <code>CDZTypeACell</code> 和  <code>CDZTypeBCell</code> 为例，继承自 <code>CDZBaseCell</code>，重写一些方法，如高度，显示视图等等。</p>
 
-<p>Datasource 中准备好判断 index 所在的 Cell 种类的方法（如根据 Model 的 type 属性等）</p>
+<p>DataSource 中准备好判断 index 所在的 Cell 种类的方法（如根据 Model 的 type 属性等）</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nf">cellClassAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
     <span class="n">CDZTableviewItem</span> <span class="o">*</span><span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">itemAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
     <span class="k">switch</span> <span class="p">(</span><span class="n">item</span><span class="p">.</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
@@ -236,9 +240,9 @@
 <span class="p">-</span> <span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nf">cellIdentiferAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
     <span class="k">return</span> <span class="n">NSStringFromClass</span><span class="p">([</span><span class="nb">self</span> <span class="nl">cellClassAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">]);</span>
 <span class="p">}</span></code></pre></div>
-<h3 id="方法一-先注册-根据-identifer-去加载不同的-cell">方法一：先注册，根据 identifer 去加载不同的 cell</h3>
+<h2 id="方法一-先注册-根据-identifer-去加载不同的-cell">方法一：先注册，根据 identifer 去加载不同的 cell</h2>
 
-<p>先在 Tableview 创建时注册需要的不同种类，再判断 index 对应的种类，再根据 identifer 加载子类 Cell。</p>
+<p>先在 TableView 创建时注册需要的不同种类，再判断 index 对应的种类，再根据 identifer 加载子类 Cell。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">tableview</span> <span class="nl">registerClass</span><span class="p">:[</span><span class="n">CDZTypeACell</span> <span class="k">class</span><span class="p">]</span> <span class="nl">forCellReuseIdentifier</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">([</span><span class="n">CDZTypeBCell</span> <span class="k">class</span><span class="p">])];</span>
 <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">tableView</span> <span class="nl">registerClass</span><span class="p">:[</span><span class="n">CDZTypeBCell</span> <span class="k">class</span><span class="p">]</span> <span class="nl">forCellReuseIdentifier</span><span class="p">:</span><span class="n">NSStringFromClass</span><span class="p">([</span><span class="n">CDZTypeBCell</span> <span class="k">class</span><span class="p">])];</span></code></pre></div>
 <p>并在 <code>- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</code> 中根据重用标识加载 Cell。</p>
@@ -247,7 +251,7 @@
     <span class="n">cell</span><span class="p">.</span><span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">itemAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
     <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
-<h3 id="方法二-在-init-时创建不同-identifer-的-cell">方法二:在 init 时创建不同 identifer 的 Cell</h3>
+<h2 id="方法二-在-init-时创建不同-identifer-的-cell">方法二：在 init 时创建不同 identifer 的 Cell</h2>
 
 <p>在 <code>- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</code> 中判断 Cell 是否为 nil，并根据 index 所在 Cell 的种类初始化 Cell 和其 identifer。</p>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-(</span><span class="n">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span><span class="p">{</span>
@@ -259,11 +263,11 @@
     <span class="n">cell</span><span class="p">.</span><span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">itemAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
     <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
-<h3 id="总结">总结</h3>
+<h2 id="总结">总结</h2>
 
-<p>个人更喜欢第二种，苹果官方文档也推荐第二种方法去重用 Cell。我觉得优点是一个是在 Tableview 划分 MVC 架构时，Tableview 创建时不需要知道 Cell 的类型，而只需要知道 Datasouce，而 Datasource 才是需要去分配 Cell 类型的。第二个是 Tableviewcell 的初始化方法并非只能用 initWithStyle（Collectionview 必须先注册的原因则在于初始化方法只有 initWithFrame）。而使用了注册，则是在复用池空时默认调用 initWithStyle的方法，如果需要用别的方法初始化就不可以了。第一种方法可以用在有一些库需要先注册后才能调用的，比如自动计算 Cell 高度的库 <code>FDTemplateLayoutCell</code>。</p>
+<p>个人更喜欢第二种，苹果官方文档也推荐第二种方法去重用 Cell。我觉得优点是一个是在 TableView 划分 MVC 架构时，TableView 创建时不需要知道 Cell 的类型，而只需要知道 DataSource，而 DataSource 才是需要去分配 Cell 类型的。第二个是 TableViewCell 的初始化方法并非只能用 <code>initWithStyle</code>（Collectionview 必须先注册的原因则在于初始化方法只有 <code>initWithFrame</code>）。而使用了注册，则是在复用池空时默认调用 <code>initWithStyle</code> 的方法，如果需要用别的方法初始化就不可以了。第一种方法可以用在有一些库需要先注册后才能调用的，比如自动计算 Cell 高度的库 <code>FDTemplateLayoutCell</code>。</p>
 
-<h3 id="最后">最后</h3>
+<h2 id="最后">最后</h2>
 
 <p>所有源码和 <a href="https://github.com/Nemocdz/CDZDifferenceCellDemo">Demo</a></p>
 
@@ -271,7 +275,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>900</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>931</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

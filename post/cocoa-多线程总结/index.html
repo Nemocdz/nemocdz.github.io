@@ -15,8 +15,8 @@
 
   
   <meta name="author" content="Nemocdz" />
-  <meta name="description" content="个人学习总结笔记
-前置知识 线程 程序执行流的最小单元
+  <meta name="description" content="[TOC]
+个人学习总结笔记。
 " />
 
   
@@ -24,8 +24,8 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@Nemocdz" />
     <meta name="twitter:title" content="Cocoa 多线程总结" />
-    <meta name="twitter:description" content="个人学习总结笔记
-前置知识 线程 程序执行流的最小单元
+    <meta name="twitter:description" content="[TOC]
+个人学习总结笔记。
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -204,11 +204,13 @@
       <h1 class="post-title">Cocoa 多线程总结</h1>
       <p class="post-meta">@Nemocdz · Jun 28, 2017 · 2 min read</p>
     </header>
-    <article class="post-content"><p>个人学习总结笔记</p>
+    <article class="post-content"><p>[TOC]</p>
 
-<h4 id="前置知识">前置知识</h4>
+<p>个人学习总结笔记。</p>
 
-<h5 id="线程">线程</h5>
+<h2 id="前置知识">前置知识</h2>
+
+<h3 id="线程">线程</h3>
 
 <p>程序执行流的最小单元</p>
 
@@ -216,14 +218,21 @@
 <li>线程拥有自己的空间：栈，线程局部储存（Thread Local Storage），寄存器</li>
 <li>线程之间共享：全局变量，堆上的数据，函数的静态变量，代码，文件</li>
 <li>线程调度中状态：运行，就绪，等待</li>
-<li>线程优先级改变方式：1.用户指定 2.等待状态频繁程度 3.长时间不执行 4.抢占和不可抢占</li>
+<li>线程优先级改变方式：
+
+<ol>
+<li>用户指定</li>
+<li>等待状态频繁程度</li>
+<li>长时间不执行</li>
+<li>抢占和不可抢占</li>
+</ol></li>
 </ul>
 
-<h5 id="多元信号量">多元信号量</h5>
+<h3 id="多元信号量">多元信号量</h3>
 
 <p>锁的一种，计数 N，访问减 1，小于 0 等待</p>
 
-<h5 id="死锁">死锁</h5>
+<h3 id="死锁">死锁</h3>
 
 <p>两个或更多线程阻塞着等待其它处于死锁状态的线程所持有的锁。</p>
 
@@ -236,23 +245,23 @@
 <li>环路等待，等待关系形成环</li>
 </ol>
 
-<h5 id="并发">并发</h5>
+<h3 id="并发">并发</h3>
 
 <p>多个任务同时发生，需要被处理</p>
 
-<h5 id="串行与并行">串行与并行</h5>
+<h3 id="串行与并行">串行与并行</h3>
 
 <p>串行：多个任务依次执行</p>
 
 <p>并行：多个任务同时执行</p>
 
-<h5 id="同步与异步">同步与异步</h5>
+<h3 id="同步与异步">同步与异步</h3>
 
 <p>同步：调用者主动等待调用的返回结果</p>
 
 <p>异步：调用者不等待调用的返回结果，调用直接返回，之后被调用者在获得结果后返回结果给调用者</p>
 
-<h5 id="多线程技术">多线程技术</h5>
+<h3 id="多线程技术">多线程技术</h3>
 
 <p>多线程技术使多个 CPU 可以同时工作，同时处理不同线程的指令。给多核处理器带来并行能力。</p>
 
@@ -273,9 +282,9 @@
 <li>需注意线程安全，资源竞争</li>
 </ol>
 
-<h3 id="ios-开发中的多线程技术">iOS 开发中的多线程技术</h3>
+<h2 id="ios-开发中的多线程技术">iOS 开发中的多线程技术</h2>
 
-<h4 id="基础">基础</h4>
+<h3 id="基础">基础</h3>
 
 <ul>
 <li>iOS 启动时运行的线程是主线程</li>
@@ -284,9 +293,9 @@
 <li>需要主线程操作 UIKit，因为 UIKit 操作不是全都是线程安全的</li>
 </ul>
 
-<h4 id="方案">方案</h4>
+<h3 id="方案">方案</h3>
 
-<h5 id="pthread-posix-threads">pthread（POSIX threads）</h5>
+<h4 id="pthread-posix-threads">pthread（POSIX threads）</h4>
 
 <p>类 Unix 系统中作为操作系统的通用多线程 API</p>
 
@@ -296,14 +305,14 @@
 <li>使用难</li>
 </ol>
 
-<h5 id="nsthread">NSThread</h5>
+<h4 id="nsthread">NSThread</h4>
 
 <ol>
 <li>面向对象的线程</li>
 <li>需要手动管理生命周期，同步，加锁</li>
 </ol>
 
-<h5 id="gcd-grand-central-dispatch">GCD（Grand Central Dispatch）</h5>
+<h4 id="gcd-grand-central-dispatch">GCD（Grand Central Dispatch）</h4>
 
 <ol>
 <li>block 定义任务，面向过程</li>
@@ -311,7 +320,7 @@
 <li>使用方便</li>
 </ol>
 
-<h5 id="nsoperation-nsoperationqueue">NSOperation+NSOperationQueue</h5>
+<h4 id="nsoperation-nsoperationqueue">NSOperation+NSOperationQueue</h4>
 
 <ol>
 <li>面向对象</li>
@@ -319,11 +328,11 @@
 <li>对 GCD 的封装</li>
 </ol>
 
-<h4 id="gcd">GCD</h4>
+<h3 id="gcd">GCD</h3>
 
 <p>CGD=block 块执行任务+队列+执行方式</p>
 
-<h5 id="队列">队列</h5>
+<h4 id="队列">队列</h4>
 
 <p>先进先出（FIFO），先追加的任务先执行</p>
 
@@ -333,7 +342,7 @@
 <li>主队列（主线程中的串行队列）</li>
 </ul>
 
-<h5 id="执行方式">执行方式</h5>
+<h4 id="执行方式">执行方式</h4>
 
 <ul>
 <li>同步</li>
@@ -348,57 +357,31 @@
 
 <h5 id="常用">常用</h5>
 
-<p>Dispatch_async/sync</p>
+<p><code>Dispatch_async/sync</code>：派发同步和异步事件，最常用</p>
 
-<p>派发同步和异步事件，最常用</p>
+<p><code>Dispatch_after</code>：用于延迟执行，简单定时</p>
 
-<p>Dispatch_after</p>
+<p><code>Dispatch_get_main_queue/get_global_queue</code>：获取主队列或系统默认的并行队列</p>
 
-<p>用于延迟执行，简单定时</p>
+<p><code>Dispatch_queue_create</code> ：新建一个队列</p>
 
-<p>Dispatch_get_main_queue/get_global_queue</p>
-
-<p>获取主队列或系统默认的并行队列</p>
-
-<p>Dispatch_queue_create</p>
-
-<p>新建一个队列</p>
-
-<p>Dispatch_once</p>
-
-<p>只被执行一次+线程安全，常用于实现单例</p>
+<p><code>Dispatch_once</code>：只被执行一次+线程安全，常用于实现单例</p>
 
 <h5 id="非常用">非常用</h5>
 
-<p>Dispatch_queue_set_target_queue</p>
+<p><code>Dispatch_queue_set_target_queue</code>：主要用于通过设定目标队列为自建的队列改变为目标队列的优先级，也可指定队列之间的层次，达到自上而下控制队列</p>
 
-<p>主要用于通过设定目标队列为自建的队列改变为目标队列的优先级，也可指定队列之间的层次，达到自上而下控制队列</p>
+<p><code>Dispatch_group</code>：管理多个队列里事件的执行情况。将队列加入组中，全部结束后追加处理或增加指定时间的任务处理完成情况检测（超时处理）</p>
 
-<p>Dispatch_group</p>
+<p><code>Dispatch_barrier_async</code>：承上启下，队列里在他之前的执行完成才开始执行他 block 的，在 block 执行之后再开始执行队列里后面的。他执行时只有他自己执行，像一个栅栏一样。分隔开之前完成和之后开始的。</p>
 
-<p>管理多个队列里事件的执行情况。将队列加入组中，全部结束后追加处理或增加指定时间的任务处理完成情况检测（超时处理）</p>
+<p><code>Dispatch_apply</code>：按指定次数追加 block 到对应的队列中</p>
 
-<p>Dispatch_barrier_async</p>
+<p><code>Dispatch_suspen/resume</code>：暂停与恢复</p>
 
-<p>承上启下，队列里在他之前的执行完成才开始执行他 block 的，在 block 执行之后再开始执行队列里后面的。他执行时只有他自己执行，像一个栅栏一样。分隔开之前完成和之后开始的。</p>
+<p><code>Dispatch I/O</code>：通过 GCD 分割文件读写，提高速度</p>
 
-<p>Dispatch_apply</p>
-
-<p>按指定次数追加 block 到对应的队列中</p>
-
-<p>Dispatch_suspen/resume</p>
-
-<p>暂停与恢复</p>
-
-<p>Dispatch I/O</p>
-
-<p>通过 GCD 分割文件读写，提高速度</p>
-
-<p>Dispatch_semaphore</p>
-
-<p>可设置类似多元信号量中的 “0” 为 x，进行排他性控制。</p>
-
-<p>在操作前后进行信号计数判断，小于 x 则等待，大于等于则减 a 并开始执行事件，事件执行完毕后加 b（这里的 a，b 相当于任务对信号量的影响）</p>
+<p><code>Dispatch_semaphore</code>：可设置类似多元信号量中的 “0” 为 x，进行排他性控制。在操作前后进行信号计数判断，小于 x 则等待，大于等于则减 a 并开始执行事件，事件执行完毕后加 b（这里的 a，b 相当于任务对信号量的影响）</p>
 
 <h4 id="gcd-中的死锁">GCD 中的死锁</h4>
 <div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="c1">//主队列中执行以下代码
@@ -427,11 +410,11 @@
 
 <p><a href="https://apple.github.io/swift-corelibs-libdispatch/">GCD 源码</a></p>
 
-<h4 id="nsoperation">NSOperation</h4>
+<h3 id="nsoperation">NSOperation</h3>
 
 <p>GCD 中 Block 的面向对象封装</p>
 
-<h5 id="标识状态-只读属性">标识状态（只读属性）</h5>
+<h4 id="标识状态-只读属性">标识状态（只读属性）</h4>
 
 <ul>
 <li>执行（isExecuted）</li>
@@ -439,9 +422,9 @@
 <li>取消（isCancelled）</li>
 </ul>
 
-<h5 id="系统子类">系统子类</h5>
+<h4 id="系统子类">系统子类</h4>
 
-<p>NSBlockOperation 和 NSInvocationOperation</p>
+<p><code>NSBlockOperation</code> 和 <code>NSInvocationOperation</code></p>
 
 <p>默认 start 是同步执行的方式</p>
 
@@ -451,30 +434,30 @@
 
 <p>有 Current 和 Main 两个属性可获取当前队列或者主队列</p>
 
-<p>自己生成 NSOperationQueue 是并发队列，会尽可能为每一个 NSOperation 创建线程</p>
+<p>自己生成 <code>NSOperationQueue</code> 是并发队列，会尽可能为每一个 <code>NSOperation</code> 创建线程</p>
 
-<h5 id="maxconcureentoperationcount">MaxConcureentOperationCount</h5>
+<h4 id="maxconcureentoperationcount">MaxConcureentOperationCount</h4>
 
-<p>表示最大并发执行 NSOperation 的数量</p>
+<p>表示最大并发执行 <code>NSOperation</code> 的数量</p>
 
 <ul>
 <li>设为 1 时相当于串行队列</li>
 <li>大于 1 为并发队列</li>
 </ul>
 
-<p>NSOpertaionQueue 调用 addOperation 方法放入 NSOperation 对象后相当于<strong>异步执行</strong></p>
+<p><code>NSOpertaionQueue</code> 调用 <code>addOperation</code> 方法放入 <code>NSOperation</code> 对象后相当于<strong>异步执行</strong></p>
 
-<h5 id="与-gcd-比较">与 GCD 比较</h5>
+<h4 id="与-gcd-比较">与 GCD 比较</h4>
 
 <ol>
-<li>方便取消，执行前任意取消（GCD 在 iOS 8 后有 dispatch_block_cancel）</li>
+<li>方便取消，执行前任意取消（GCD 在 iOS 8 后有 <code>dispatch_block_cancel</code>）</li>
 <li>设置 Operation 间依赖关系</li>
 <li>KVC 观测属性状态</li>
 <li>指定优先级</li>
-<li>重用 NSOperation 对象</li>
+<li>重用 <code>NSOperation</code> 对象</li>
 </ol>
 
-<h5 id="参考链接">参考链接</h5>
+<h2 id="参考链接">参考链接</h2>
 
 <ul>
 <li><a href="https://hit-alibaba.github.io/interview/iOS/Cocoa-Touch/Multithreading.html">Cocoa 并发编程</a></li>
@@ -487,7 +470,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>729</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>760</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

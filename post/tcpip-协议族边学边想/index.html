@@ -15,7 +15,8 @@
 
   
   <meta name="author" content="Nemocdz" />
-  <meta name="description" content="写在前面 最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。
+  <meta name="description" content="[TOC]
+最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。
 " />
 
   
@@ -23,7 +24,8 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@Nemocdz" />
     <meta name="twitter:title" content="TCP/IP 协议族边学边想" />
-    <meta name="twitter:description" content="写在前面 最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。
+    <meta name="twitter:description" content="[TOC]
+最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。
 " />
     <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
   
@@ -202,37 +204,37 @@
       <h1 class="post-title">TCP/IP 协议族边学边想</h1>
       <p class="post-meta">@Nemocdz · Aug 22, 2017 · 3 min read</p>
     </header>
-    <article class="post-content"><h3 id="写在前面">写在前面</h3>
+    <article class="post-content"><p>[TOC]</p>
 
 <p>最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。</p>
 
-<h3 id="网络基础">网络基础</h3>
+<h2 id="网络基础">网络基础</h2>
 
 <p>OSI 七层模型</p>
 
 <ul>
-<li>物理层-0 和 1 代表高低电压，物理网络设备规格</li>
-<li>数据链路层-数据帧和比特流转换</li>
-<li>网络层-地址管理和路由选择</li>
-<li>传输层-连接节点之间的数据传输</li>
-<li>会话层-通信管理</li>
-<li>表示层-数据格式转换</li>
-<li>应用层-针对应用定制</li>
+<li>物理层：0 和 1 代表高低电压，物理网络设备规格</li>
+<li>数据链路层：数据帧和比特流转换</li>
+<li>网络层：地址管理和路由选择</li>
+<li>传输层：连接节点之间的数据传输</li>
+<li>会话层：通信管理</li>
+<li>表示层：数据格式转换</li>
+<li>应用层：针对应用定制</li>
 </ul>
 
 <p>TCP/IP：定义了数据链路层以上的协议，包括网络层、传输层、应用层（会话层以上都包括）</p>
 
-<h3 id="网络层">网络层</h3>
+<h2 id="网络层">网络层</h2>
 
 <p>网络层只关心起终点的整体传输，数据链路层关心每一个设备间的传输。</p>
 
-<h4 id="ip-internet-protocol">IP（Internet Protocol）</h4>
+<h3 id="ip-internet-protocol">IP（Internet Protocol）</h3>
 
 <p>Q：IP 为何面向无连接？</p>
 
 <p>A：1.简化 2.提速 3.为上层提供自定义</p>
 
-<h5 id="ip-寻址">IP 寻址</h5>
+<h4 id="ip-寻址">IP 寻址</h4>
 
 <p>IP 地址=网络标识+主机标识</p>
 
@@ -240,7 +242,7 @@
 
 <p>A：IP 分类（传统 ABCD）或子网掩码来划分</p>
 
-<h5 id="路由控制">路由控制</h5>
+<h4 id="路由控制">路由控制</h4>
 
 <p>指明 IP 包的下一跳路由，用路由控制表保存信息。</p>
 
@@ -262,7 +264,7 @@
 3. 代表环回地址，同一计算机内的网络通信的本地默认地址，数据不会被流向网络。
 </code></pre>
 
-<h5 id="ip-包的分割和重组">IP 包的分割和重组</h5>
+<h4 id="ip-包的分割和重组">IP 包的分割和重组</h4>
 
 <p>在发送端和路由根据每段链路的 MTU 进行分片，接收端进行重组。</p>
 
@@ -286,7 +288,7 @@
 <li>丢失某一分片整个 IP 包报废</li>
 </ul>
 
-<h6 id="路径-mtu-发现">路径 MTU 发现</h6>
+<h5 id="路径-mtu-发现">路径 MTU 发现</h5>
 
 <p>先获取整个路径中数据链路的最小 MTU，发送端按照这个 MTU 分片</p>
 
@@ -297,7 +299,7 @@
 3. 设置包 MTU 为 ICMP 返回的 MTU 并重新循环上述步奏，直到无 ICMP 返回
 </code></pre>
 
-<h5 id="ipv6">IPv6</h5>
+<h4 id="ipv6">IPv6</h4>
 
 <p>特点：</p>
 
@@ -309,7 +311,7 @@
 <li>多播和 Mobile IP</li>
 </ul>
 
-<h4 id="dns-domain-name-system">DNS（Domain Name System）</h4>
+<h3 id="dns-domain-name-system">DNS（Domain Name System）</h3>
 
 <p>将域名解析成 IP。</p>
 
@@ -323,11 +325,11 @@
 4. A 向 B 查询域名的 IP 地址并返回。
 </code></pre>
 
-<h4 id="arp-address-resolution-protocol">ARP（Address Resolution Protocol）</h4>
+<h3 id="arp-address-resolution-protocol">ARP（Address Resolution Protocol）</h3>
 
 <p>通过目标 IP 地址定位下一个接收的网络设备 MAC 地址。分为请求和响应两部分。一般获取到 Mac 地址后会缓存一段时间。</p>
 
-<h4 id="icmp-internet-control-message-protocol">ICMP（Internet Control Message Protocol）</h4>
+<h3 id="icmp-internet-control-message-protocol">ICMP（Internet Control Message Protocol）</h3>
 
 <p>主要功能</p>
 
@@ -338,7 +340,7 @@
 
 <p>主要类型包括：目标不可达、重定向、超时、回送（Ping 命令）</p>
 
-<h4 id="dhcp-dynamic-host-configuratin-protocol">DHCP（Dynamic Host Configuratin Protocol）</h4>
+<h3 id="dhcp-dynamic-host-configuratin-protocol">DHCP（Dynamic Host Configuratin Protocol）</h3>
 
 <p>为主机自动设置 IP 地址和统一管理 IP 地址分配。</p>
 
@@ -358,7 +360,7 @@
 
 <p>A：确认无返回应答从而检查 IP 地址是否可用，DHCP 服务器发送 ICMP 是因为服务器少于客户端，ICMP 速度更快，也不需要关心 Mac 地址</p>
 
-<h4 id="nat-network-address-translator">NAT（Network Address Translator）</h4>
+<h3 id="nat-network-address-translator">NAT（Network Address Translator）</h3>
 
 <p>用于将局域网中私有地址转换为全局 IP 地址的技术。</p>
 
@@ -378,17 +380,17 @@
 
 <p>解决方式：IPv6 或 NAT 穿透</p>
 
-<h4 id="ip-隧道">IP 隧道</h4>
+<h3 id="ip-隧道">IP 隧道</h3>
 
 <p>在网络层首部后面继续追加网络层首部的通信方式</p>
 
-<h3 id="传输层">传输层</h3>
+<h2 id="传输层">传输层</h2>
 
 <p>传输层通过端口号标识请求发送给哪一个应用程序的守护进程（对消息进行监听）。</p>
 
 <p>标识唯一的通信的要素：源 IP、目标 IP、源端口号、目标端口号、协议号</p>
 
-<h4 id="udp-user-datagram-protocol">UDP（User Datagram Protocol）</h4>
+<h3 id="udp-user-datagram-protocol">UDP（User Datagram Protocol）</h3>
 
 <p>面向无连接的通信，不保证通信可靠，不负责丢包重发等。</p>
 
@@ -401,7 +403,7 @@
 <li>广播、多播通信</li>
 </ul>
 
-<h4 id="tcp-transmission-control-protocol">TCP（Transmission Control Protocol）</h4>
+<h3 id="tcp-transmission-control-protocol">TCP（Transmission Control Protocol）</h3>
 
 <p>面向连接的通信，对传输、发送、通信进行控制，尽量保证通信可靠。</p>
 
@@ -419,7 +421,7 @@
 
 <p>A：操作系统对 TCP 协议族封装开放的一组操作 API，如 Listen，Accept，Send，Write，Read，Connect，Create 等。</p>
 
-<h5 id="tcp-连接建立和断开">TCP 连接建立和断开</h5>
+<h4 id="tcp-连接建立和断开">TCP 连接建立和断开</h4>
 
 <p>设计思想我个人总结是：一次请求对应一次应答，<strong>客户端和服务端都需要进行请求</strong>。</p>
 
@@ -455,7 +457,7 @@
 
 <p>A：最后一个 ACK 发送后，主动请求一方会进入 TIME_WAIT 状态，等待 2MSL（Maximum Segment Lifetime）后才进入 CLOSE 状态。被动方可在此时间内重发 ACK，来尽可能确保最后一个 ACK 送达。</p>
 
-<h4 id="tcp-窗口">TCP 窗口</h4>
+<h3 id="tcp-窗口">TCP 窗口</h3>
 
 <p>每个请求包对应一个应答会随着数量增大和往返时间增长性能降低。</p>
 
@@ -476,9 +478,9 @@
 
 <p>Q：为何需要快速重传？</p>
 
-<p>A：快速重传是指连续收到三次序号一致的之前序号应答后直接重传。因为丢失某个包后，后面的包也在窗口内所以也发送出去，此时会收到多次之前丢失包序号的应答，而不需要超时等待。之所以是三次参见<a href="https://www.zhihu.com/question/21789252">链接</a>。</p>
+<p>A：快速重传是指连续收到三次序号一致的之前序号应答后直接重传。因为丢失某个包后，后面的包也在窗口内所以也发送出去，此时会收到多次之前丢失包序号的应答，而不需要超时等待。之所以是三次参见 <a href="https://www.zhihu.com/question/21789252">链接</a>。</p>
 
-<h5 id="窗口大小控制">窗口大小控制</h5>
+<h4 id="窗口大小控制">窗口大小控制</h4>
 
 <p>过大容易造成接收方缓存区数据溢出，丢弃后造成无意义重传。</p>
 
@@ -496,7 +498,7 @@
 
 <p>接收方原因：先缓存再读取，若读取速度小于接受速度</p>
 
-<h5 id="拥塞控制">拥塞控制</h5>
+<h4 id="拥塞控制">拥塞控制</h4>
 
 <p>连接建立初期，突然发送大量数据容易造成网络瘫痪。</p>
 
@@ -513,13 +515,13 @@
 5. 一旦发生重复确认应答则将慢启动阀值设置成当时拥塞窗口的一半，之后将拥塞窗口设置为慢启动阀值大小 +3MSS，并重新步骤 3
 </code></pre>
 
-<h3 id="应用层">应用层</h3>
+<h2 id="应用层">应用层</h2>
 
-<h4 id="www基本概念">WWW基本概念</h4>
+<h3 id="www基本概念">WWW基本概念</h3>
 
 <p>WWW=信息手段和位置-URI（Uniform Resource Identifer）+信息表现形式-HTML（HyperText Markup Language）+ 信息转发-HTTP（HyperText Transfer Protocol）</p>
 
-<h4 id="http">HTTP</h4>
+<h3 id="http">HTTP</h3>
 
 <p>主要有八种方法，常用的是 GET 和 POST</p>
 
@@ -539,7 +541,7 @@
 <li>GET 参数长度受到 url 长度的限制（取决于浏览器和服务器限制而非本身）</li>
 </ul>
 
-<h5 id="cookie-session">Cookie &amp; Session</h5>
+<h4 id="cookie-session">Cookie &amp; Session</h4>
 
 <p>HTTP 是一种无状态的连接，客户端每次读取时，服务器都会认为这是一次新的会话。有时候需要持久保持某些信息，这些信息就由 Cookie 和 Session 保存。</p>
 
@@ -547,7 +549,7 @@
 
 <p>当服务端接收到 Cookie 后，根据 SessionID 来查找。如果没有，则会生成一个新的 SessionID 发送给客户端。</p>
 
-<h4 id="https">HTTPS</h4>
+<h3 id="https">HTTPS</h3>
 
 <p>HTTP 协议在安全上存在三个风险：</p>
 
@@ -565,13 +567,13 @@
 <li>伪装-证书校验（证书验证链）</li>
 </ul>
 
-<h3 id="最后">最后</h3>
+<h2 id="最后">最后</h2>
 
 <p>TCP/IP 每层都设计得巧妙，实用。了解了 TCP/IP 之后，对网络问题的思考会更加透彻。</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>674</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © 2018 NemocdzThis post was published <strong>705</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
