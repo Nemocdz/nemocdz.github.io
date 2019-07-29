@@ -9,113 +9,150 @@
 
   
   
-
-
-
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
 
   
-  <meta name="author" content="Nemocdz" />
+
+  
+  
   <meta name="description" content="[TOC]
 个人学习总结笔记。
-" />
+">
 
   
   
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@Nemocdz" />
-    <meta name="twitter:title" content="Cocoa 多线程总结" />
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="Cocoa 多线程总结">
     <meta name="twitter:description" content="[TOC]
 个人学习总结笔记。
-" />
-    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+">
+    <meta name="twitter:image" content="/images/avatar.png">
   
 
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Cocoa 多线程总结">
+  <meta property="og:description" content="[TOC]
+个人学习总结笔记。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/cocoa-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%80%BB%E7%BB%93/">
+  <meta property="og:image" content="/images/avatar.png">
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+
+<meta name="generator" content="Hugo 0.55.6">
 
 
-<link rel="canonical" href="https://nemocdz.github.io/post/cocoa-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%80%BB%E7%BB%93/" />
-<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+<link rel="canonical" href="https://nemocdz.github.io/post/cocoa-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%80%BB%E7%BB%93/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
 
 
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
-<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
-<meta name="baidu-site-verification" content="iVpH4VhHBT" />
-<meta name="sogou_site_verification" content="YPqjjJgiSh" />
-<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
 
 
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
-<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
 
 
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
 
-<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
 
 
   
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
 
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
-  <![endif]-->
-
-
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
-
-
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
 
 
 </head>
   <body>
-    
     <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
       
         
-        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
         
       
     </div>
     
     
   <header class="site-header">
-  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
   
-  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
   
-  <p class="subtitle">iOS&amp;Android Dev</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
   </button>
+
   <nav class="site-menu collapsed">
     <h2 class="offscreen">Main Menu</h2>
     <ul class="menu-list">
@@ -123,79 +160,53 @@
       
       
       
-        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/">首页</a>
+        </li>
       
-        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
       
     </ul>
   </nav>
   <nav class="social-menu collapsed">
     <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-      <li class="social-item">
-        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
-      </li>
-
-      
-      <li class="social-item">
-        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
-      </li>
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
-      </li>
-
-      
-
-      <li class="social-item">
-        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
   </nav>
 </header>
 
@@ -384,20 +395,20 @@
 <p><code>Dispatch_semaphore</code>：可设置类似多元信号量中的 “0” 为 x，进行排他性控制。在操作前后进行信号计数判断，小于 x 则等待，大于等于则减 a 并开始执行事件，事件执行完毕后加 b（这里的 a，b 相当于任务对信号量的影响）</p>
 
 <h4 id="gcd-中的死锁">GCD 中的死锁</h4>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="c1">//主队列中执行以下代码
-</span><span class="c1"></span><span class="n">dispatch_sync</span><span class="p">(</span><span class="n">dispatch_get_main_queue</span><span class="p">(),</span> <span class="o">^</span><span class="p">{</span><span class="c1">//操作 B
-</span><span class="c1"></span>    <span class="err">…</span><span class="c1">//事件 A
-</span><span class="c1"></span><span class="p">});</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#6272a4">//主队列中执行以下代码
+</span><span style="color:#6272a4"></span>dispatch_sync(dispatch_get_main_queue(), <span style="color:#ff79c6">^</span>{<span style="color:#6272a4">//操作 B
+</span><span style="color:#6272a4"></span>    …<span style="color:#6272a4">//事件 A
+</span><span style="color:#6272a4"></span>});</code></pre></div>
 <p>这是在一个串行队列（主队列）中执行（往该串行队列派发同步事件 A）的操作 B，会造成死锁（*反之不必然不死锁*）。</p>
 
 <p>队列先进先出，而串行队列同时执行的任务只有一个。操作 B 需要等待其派发的 block 执行完才算完成，派发的同步事件 A 被追加在队列最后（后进），同步执行需要等待前面执行完才可以执行，而前面的因为操作 B 没执行完，造成相互等待。</p>
 
 <p>举个例子：面试时要排队（队列），一次只能一个人进面试房间（串行队列），前面的面试完出来后面的人才可以进去面试（同步任务）。A 进去房间，面试官说，你的面试内容是叫 B 来面试，并等他面试完成（派发同步任务 Block 在串行队列中）。A 把 B 叫来了，B 来了就排在了队伍最后面，排队等待轮到他，而 A 则在房间里等待 B 面试完。结果就是 A 等待 B 面试完等不到，而 B 则等待前面的人面试完（包括 A 面试完出来）然后轮到他。两人相互等待，过程就进行不下去了。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="n">dispatch_sync</span><span class="p">(</span><span class="n">queueA</span><span class="p">,</span><span class="o">^</span><span class="p">{</span><span class="c1">//操作 C
-</span><span class="c1"></span>    <span class="n">dispatch_sync</span><span class="p">(</span><span class="n">queueB</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span><span class="c1">//操作 B
-</span><span class="c1"></span>            <span class="n">dispatch_sync</span><span class="p">(</span><span class="n">queueA</span><span class="p">,</span><span class="o">^</span><span class="p">{...});</span><span class="c1">//事件 A
-</span><span class="c1"></span>    <span class="p">})</span>
-<span class="p">});</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">dispatch_sync(queueA,<span style="color:#ff79c6">^</span>{<span style="color:#6272a4">//操作 C
+</span><span style="color:#6272a4"></span>    dispatch_sync(queueB, <span style="color:#ff79c6">^</span>{<span style="color:#6272a4">//操作 B
+</span><span style="color:#6272a4"></span>            dispatch_sync(queueA,<span style="color:#ff79c6">^</span>{...});<span style="color:#6272a4">//事件 A
+</span><span style="color:#6272a4"></span>    })
+});</code></pre></div>
 <p>在一个串行队列中执行需要等待((往该串行队列派发同步事件 A)的操作 B)的操作 C，会造成死锁。</p>
 
 <p>操作 C 需要等待操作 B，操作 B 需要等待事件 A，事件 A 需要等待操作 C，相互等待。</p>
@@ -470,7 +481,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>760</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>761</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -497,18 +508,61 @@
       
     
   </section>
-  <footer class="site-footer">
+  
+<footer class="site-footer">
   <p>© 2017-2019 Nemocdz&#39;s Blog</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>
 
 
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
 
-<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
-<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
 
 
 

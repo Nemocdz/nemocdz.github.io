@@ -9,113 +9,150 @@
 
   
   
-
-
-
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
 
   
-  <meta name="author" content="Nemocdz" />
+
+  
+  
   <meta name="description" content="[TOC]
 在 App 中，如果分享、发布、上传功能涉及到图片，必不可少会对图片进行一定程度的压缩。笔者最近在公司项目中恰好重构了双端（iOS&amp;amp;Android）的图片压缩模块。本文会非常基础的讲解一些图片压缩的方式和思路。
-" />
+">
 
   
   
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@Nemocdz" />
-    <meta name="twitter:title" content="浅谈移动端图片压缩(iOS &amp; Android)" />
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="浅谈移动端图片压缩(iOS &amp; Android)">
     <meta name="twitter:description" content="[TOC]
 在 App 中，如果分享、发布、上传功能涉及到图片，必不可少会对图片进行一定程度的压缩。笔者最近在公司项目中恰好重构了双端（iOS&amp;amp;Android）的图片压缩模块。本文会非常基础的讲解一些图片压缩的方式和思路。
-" />
-    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+">
+    <meta name="twitter:image" content="/images/avatar.png">
   
 
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="浅谈移动端图片压缩(iOS &amp; Android)">
+  <meta property="og:description" content="[TOC]
+在 App 中，如果分享、发布、上传功能涉及到图片，必不可少会对图片进行一定程度的压缩。笔者最近在公司项目中恰好重构了双端（iOS&amp;amp;Android）的图片压缩模块。本文会非常基础的讲解一些图片压缩的方式和思路。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/%E6%B5%85%E8%B0%88%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/">
+  <meta property="og:image" content="/images/avatar.png">
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+
+<meta name="generator" content="Hugo 0.55.6">
 
 
-<link rel="canonical" href="https://nemocdz.github.io/post/%E6%B5%85%E8%B0%88%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/" />
-<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+<link rel="canonical" href="https://nemocdz.github.io/post/%E6%B5%85%E8%B0%88%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
 
 
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
-<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
-<meta name="baidu-site-verification" content="iVpH4VhHBT" />
-<meta name="sogou_site_verification" content="YPqjjJgiSh" />
-<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
 
 
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
-<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
 
 
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
 
-<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
 
 
   
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
 
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
-  <![endif]-->
-
-
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
-
-
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
 
 
 </head>
   <body>
-    
     <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
       
         
-        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
         
       
     </div>
     
     
   <header class="site-header">
-  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
   
-  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
   
-  <p class="subtitle">iOS&amp;Android Dev</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
   </button>
+
   <nav class="site-menu collapsed">
     <h2 class="offscreen">Main Menu</h2>
     <ul class="menu-list">
@@ -123,79 +160,53 @@
       
       
       
-        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/">首页</a>
+        </li>
       
-        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
       
     </ul>
   </nav>
   <nav class="social-menu collapsed">
     <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-      <li class="social-item">
-        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
-      </li>
-
-      
-      <li class="social-item">
-        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
-      </li>
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
-      </li>
-
-      
-
-      <li class="social-item">
-        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
   </nav>
 </header>
 
@@ -410,25 +421,25 @@
 <p>简单判断用前三个字节来判断</p>
 
 <h4 id="ios">iOS</h4>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">extension</span> <span class="nc">Data</span><span class="p">{</span>   
-    <span class="kd">enum</span> <span class="nc">ImageFormat</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="n">jpg</span><span class="p">,</span> <span class="n">png</span><span class="p">,</span> <span class="n">gif</span><span class="p">,</span> <span class="n">unknown</span>
-    <span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Data</span>{   
+    <span style="color:#8be9fd;font-style:italic">enum</span> <span style="color:#50fa7b">ImageFormat</span> {
+        <span style="color:#ff79c6">case</span> jpg, png, gif, unknown
+    }
     
-    <span class="kd">var</span> <span class="nv">imageFormat</span><span class="p">:</span><span class="n">ImageFormat</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nv">headerData</span> <span class="p">=</span> <span class="p">[</span><span class="nb">UInt8</span><span class="p">](</span><span class="n">repeating</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">count</span><span class="p">:</span> <span class="mi">3</span><span class="p">)</span>
-        <span class="kc">self</span><span class="p">.</span><span class="n">copyBytes</span><span class="p">(</span><span class="n">to</span><span class="p">:</span> <span class="p">&amp;</span><span class="n">headerData</span><span class="p">,</span> <span class="n">from</span><span class="p">:(</span><span class="mf">0.</span><span class="p">.&lt;</span><span class="mi">3</span><span class="p">))</span>
-        <span class="kd">let</span> <span class="nv">hexString</span> <span class="p">=</span> <span class="n">headerData</span><span class="p">.</span><span class="bp">reduce</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">)</span> <span class="p">{</span> <span class="nv">$0</span> <span class="o">+</span> <span class="nb">String</span><span class="p">((</span><span class="nv">$1</span><span class="p">&amp;</span><span class="mh">0xFF</span><span class="p">),</span> <span class="n">radix</span><span class="p">:</span><span class="mi">16</span><span class="p">)</span> <span class="p">}.</span><span class="n">uppercased</span><span class="p">()</span>
-        <span class="kd">var</span> <span class="nv">imageFormat</span> <span class="p">=</span> <span class="n">ImageFormat</span><span class="p">.</span><span class="n">unknown</span>
-        <span class="k">switch</span> <span class="n">hexString</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="s">&#34;FFD8FF&#34;</span><span class="p">:</span> <span class="n">imageFormat</span> <span class="p">=</span> <span class="p">.</span><span class="n">jpg</span>
-        <span class="k">case</span> <span class="s">&#34;89504E&#34;</span><span class="p">:</span> <span class="n">imageFormat</span> <span class="p">=</span> <span class="p">.</span><span class="n">png</span>
-        <span class="k">case</span> <span class="s">&#34;474946&#34;</span><span class="p">:</span> <span class="n">imageFormat</span> <span class="p">=</span> <span class="p">.</span><span class="n">gif</span>
-        <span class="k">default</span><span class="p">:</span><span class="k">break</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="n">imageFormat</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">imageFormat</span>:ImageFormat {
+        <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">headerData</span> = [<span style="color:#8be9fd;font-style:italic">UInt8</span>](repeating: <span style="color:#bd93f9">0</span>, count: <span style="color:#bd93f9">3</span>)
+        <span style="color:#ff79c6">self</span>.copyBytes(to: &amp;headerData, from:(<span style="color:#bd93f9">0.</span>.&lt;<span style="color:#bd93f9">3</span>))
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">hexString</span> = headerData.reduce(<span style="color:#f1fa8c">&#34;&#34;</span>) { <span style="color:#8be9fd;font-style:italic">$0</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">String</span>((<span style="color:#8be9fd;font-style:italic">$1</span>&amp;<span style="color:#bd93f9">0xFF</span>), radix:<span style="color:#bd93f9">16</span>) }.uppercased()
+        <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">imageFormat</span> = ImageFormat.unknown
+        <span style="color:#ff79c6">switch</span> hexString {
+        <span style="color:#ff79c6">case</span> <span style="color:#f1fa8c">&#34;FFD8FF&#34;</span>: imageFormat = .jpg
+        <span style="color:#ff79c6">case</span> <span style="color:#f1fa8c">&#34;89504E&#34;</span>: imageFormat = .png
+        <span style="color:#ff79c6">case</span> <span style="color:#f1fa8c">&#34;474946&#34;</span>: imageFormat = .gif
+        <span style="color:#ff79c6">default</span>:<span style="color:#ff79c6">break</span>
+        }
+        <span style="color:#ff79c6">return</span> imageFormat
+    }
+}</code></pre></div>
 <p>iOS 中除了可以用文件头信息以外，还可以将 Data 转成 <code>CGImageSource</code>，然后用 <code>CGImageSourceGetType</code> 这个 API，这样会获取到 ImageIO 框架支持的图片格式的的 UTI 标识的字符串。对应的标识符常量定义在 MobileCoreServices 框架下的 <code>UTCoreTypes</code> 中。</p>
 
 <table>
@@ -458,27 +469,27 @@
 </table>
 
 <h4 id="andorid">Andorid</h4>
-<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">enum</span> <span class="k">class</span> <span class="nc">ImageFormat</span><span class="p">{</span>
-    <span class="n">JPG</span><span class="p">,</span> <span class="n">PNG</span><span class="p">,</span> <span class="n">GIF</span><span class="p">,</span> <span class="n">UNKNOWN</span>
-<span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#ff79c6">enum</span> <span style="color:#ff79c6">class</span> <span style="color:#50fa7b">ImageFormat</span>{
+    JPG, PNG, GIF, UNKNOWN
+}
 
-<span class="k">fun</span> <span class="nf">ByteArray</span><span class="p">.</span><span class="n">imageFormat</span><span class="p">():</span> <span class="n">ImageFormat</span> <span class="p">{</span>
-    <span class="k">val</span> <span class="py">headerData</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="n">slice</span><span class="p">(</span><span class="m">0.</span><span class="p">.</span><span class="m">2</span><span class="p">)</span>
-    <span class="k">val</span> <span class="py">hexString</span> <span class="p">=</span> <span class="n">headerData</span><span class="p">.</span><span class="n">fold</span><span class="p">(</span><span class="n">StringBuilder</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">))</span> <span class="p">{</span> <span class="n">result</span><span class="p">,</span> <span class="n">byte</span> <span class="p">-&gt;</span> <span class="n">result</span><span class="p">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">byte</span><span class="p">.</span><span class="n">toInt</span><span class="p">()</span> <span class="n">and</span> <span class="m">0xFF</span><span class="p">).</span><span class="n">toString</span><span class="p">(</span><span class="m">16</span><span class="p">)</span> <span class="p">)</span> <span class="p">}.</span><span class="n">toString</span><span class="p">().</span><span class="n">toUpperCase</span><span class="p">()</span>
-    <span class="k">var</span> <span class="py">imageFormat</span> <span class="p">=</span> <span class="n">ImageFormat</span><span class="p">.</span><span class="n">UNKNOWN</span>
-    <span class="k">when</span> <span class="p">(</span><span class="n">hexString</span><span class="p">)</span> <span class="p">{</span>
-        <span class="s">&#34;FFD8FF&#34;</span> <span class="p">-&gt;</span> <span class="p">{</span>
-            <span class="n">imageFormat</span> <span class="p">=</span> <span class="n">ImageFormat</span><span class="p">.</span><span class="n">JPG</span>
-        <span class="p">}</span>
-        <span class="s">&#34;89504E&#34;</span> <span class="p">-&gt;</span> <span class="p">{</span>
-            <span class="n">imageFormat</span> <span class="p">=</span> <span class="n">ImageFormat</span><span class="p">.</span><span class="n">PNG</span>
-        <span class="p">}</span>
-        <span class="s">&#34;474946&#34;</span> <span class="p">-&gt;</span> <span class="p">{</span>
-            <span class="n">imageFormat</span> <span class="p">=</span> <span class="n">ImageFormat</span><span class="p">.</span><span class="n">GIF</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">imageFormat</span>
-<span class="p">}</span></code></pre></div>
+<span style="color:#ff79c6">fun</span> <span style="color:#50fa7b">ByteArray</span>.imageFormat(): ImageFormat {
+    <span style="color:#ff79c6">val</span> headerData = <span style="color:#ff79c6">this</span>.slice(<span style="color:#bd93f9">0.</span>.<span style="color:#bd93f9">2</span>)
+    <span style="color:#ff79c6">val</span> hexString = headerData.fold(StringBuilder(<span style="color:#f1fa8c">&#34;&#34;</span>)) { result, byte -&gt; result.append( (byte.toInt() and <span style="color:#bd93f9">0xFF</span>).toString(<span style="color:#bd93f9">16</span>) ) }.toString().toUpperCase()
+    <span style="color:#ff79c6">var</span> imageFormat = ImageFormat.UNKNOWN
+    <span style="color:#ff79c6">when</span> (hexString) {
+        <span style="color:#f1fa8c">&#34;FFD8FF&#34;</span> -&gt; {
+            imageFormat = ImageFormat.JPG
+        }
+        <span style="color:#f1fa8c">&#34;89504E&#34;</span> -&gt; {
+            imageFormat = ImageFormat.PNG
+        }
+        <span style="color:#f1fa8c">&#34;474946&#34;</span> -&gt; {
+            imageFormat = ImageFormat.GIF
+        }
+    }
+    <span style="color:#ff79c6">return</span> imageFormat
+}</code></pre></div>
 <h3 id="色彩深度改变">色彩深度改变</h3>
 
 <p>实际上，减少深度一般也就是从 32 位减少至 16 位，但颜色的改变并一定能让产品、用户、设计接受，所以笔者在压缩过程并没有实际使用改变色彩深度的方法，仅仅研究了做法。</p>
@@ -486,7 +497,7 @@
 <h4 id="ios-1">iOS</h4>
 
 <p>在 iOS 中，改变色彩深度，原生的 <code>CGImage</code> 库中，没有简单的方法。需要自己设置参数，重新生成 <code>CGImage</code>。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">public</span> <span class="kd">init</span><span class="p">?(</span><span class="n">width</span><span class="p">:</span> <span class="nb">Int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">Int</span><span class="p">,</span> <span class="n">bitsPerComponent</span><span class="p">:</span> <span class="nb">Int</span><span class="p">,</span> <span class="n">bitsPerPixel</span><span class="p">:</span> <span class="nb">Int</span><span class="p">,</span> <span class="n">bytesPerRow</span><span class="p">:</span> <span class="nb">Int</span><span class="p">,</span> <span class="n">space</span><span class="p">:</span> <span class="n">CGColorSpace</span><span class="p">,</span> <span class="n">bitmapInfo</span><span class="p">:</span> <span class="n">CGBitmapInfo</span><span class="p">,</span> <span class="n">provider</span><span class="p">:</span> <span class="n">CGDataProvider</span><span class="p">,</span> <span class="n">decode</span><span class="p">:</span> <span class="nb">UnsafePointer</span><span class="p">&lt;</span><span class="n">CGFloat</span><span class="o">&gt;?</span><span class="p">,</span> <span class="n">shouldInterpolate</span><span class="p">:</span> <span class="nb">Bool</span><span class="p">,</span> <span class="n">intent</span><span class="p">:</span> <span class="n">CGColorRenderingIntent</span><span class="p">)</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>?(width: <span style="color:#8be9fd;font-style:italic">Int</span>, height: <span style="color:#8be9fd;font-style:italic">Int</span>, bitsPerComponent: <span style="color:#8be9fd;font-style:italic">Int</span>, bitsPerPixel: <span style="color:#8be9fd;font-style:italic">Int</span>, bytesPerRow: <span style="color:#8be9fd;font-style:italic">Int</span>, space: CGColorSpace, bitmapInfo: CGBitmapInfo, provider: CGDataProvider, decode: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;CGFloat<span style="color:#ff79c6">&gt;?</span>, shouldInterpolate: <span style="color:#8be9fd;font-style:italic">Bool</span>, intent: CGColorRenderingIntent)</code></pre></div>
 <ul>
 <li>bitsPerComponent 每个通道占用位数</li>
 <li>bitsPerPixel 每个像素占用位数，相当于所有通道加起来的位数，也就是色彩深度</li>
@@ -500,147 +511,147 @@
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fz7kziqcaij32q40t6n94.jpg" alt="屏幕快照 2019-01-15 下午9.16.40" /></p>
 
 <p>这一块为了和 Android 保持一致，笔者封装了 Android 常用的色彩深度参数对应的枚举值。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">public</span> <span class="kd">enum</span> <span class="nc">ColorConfig</span><span class="p">{</span>
-    <span class="k">case</span> <span class="n">alpha8</span>
-    <span class="k">case</span> <span class="n">rgb565</span>
-    <span class="k">case</span> <span class="n">argb8888</span>
-    <span class="k">case</span> <span class="n">rgbaF16</span>
-    <span class="k">case</span> <span class="n">unknown</span> <span class="c1">// 其余色彩配置</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">enum</span> <span style="color:#50fa7b">ColorConfig</span>{
+    <span style="color:#ff79c6">case</span> alpha8
+    <span style="color:#ff79c6">case</span> rgb565
+    <span style="color:#ff79c6">case</span> argb8888
+    <span style="color:#ff79c6">case</span> rgbaF16
+    <span style="color:#ff79c6">case</span> unknown <span style="color:#6272a4">// 其余色彩配置</span>
+}</code></pre></div>
 <p><code>CGBitmapInfo</code> 由于是 Optional Set，可以封装用到的属性的便捷方法。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">extension</span> <span class="nc">CGBitmapInfo</span> <span class="p">{</span>
-    <span class="kd">init</span><span class="p">(</span><span class="kc">_</span> <span class="n">alphaInfo</span><span class="p">:</span><span class="n">CGImageAlphaInfo</span><span class="p">,</span> <span class="kc">_</span> <span class="n">isFloatComponents</span><span class="p">:</span><span class="nb">Bool</span> <span class="p">=</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nv">array</span> <span class="p">=</span> <span class="p">[</span>
-            <span class="n">CGBitmapInfo</span><span class="p">(</span><span class="n">rawValue</span><span class="p">:</span> <span class="n">alphaInfo</span><span class="p">.</span><span class="n">rawValue</span><span class="p">),</span>
-            <span class="n">CGBitmapInfo</span><span class="p">(</span><span class="n">rawValue</span><span class="p">:</span> <span class="n">CGImageByteOrderInfo</span><span class="p">.</span><span class="n">orderDefault</span><span class="p">.</span><span class="n">rawValue</span><span class="p">)</span>
-        <span class="p">]</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">CGBitmapInfo</span> {
+    <span style="color:#8be9fd;font-style:italic">init</span>(<span style="color:#ff79c6">_</span> alphaInfo:CGImageAlphaInfo, <span style="color:#ff79c6">_</span> isFloatComponents:<span style="color:#8be9fd;font-style:italic">Bool</span> = <span style="color:#ff79c6">false</span>) {
+        <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">array</span> = [
+            CGBitmapInfo(rawValue: alphaInfo.rawValue),
+            CGBitmapInfo(rawValue: CGImageByteOrderInfo.orderDefault.rawValue)
+        ]
         
-        <span class="k">if</span> <span class="n">isFloatComponents</span> <span class="p">{</span>
-            <span class="n">array</span><span class="p">.</span><span class="n">append</span><span class="p">(.</span><span class="n">floatComponents</span><span class="p">)</span>
-        <span class="p">}</span>
+        <span style="color:#ff79c6">if</span> isFloatComponents {
+            array.append(.floatComponents)
+        }
         
-        <span class="kc">self</span><span class="p">.</span><span class="kd">init</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+        <span style="color:#ff79c6">self</span>.<span style="color:#8be9fd;font-style:italic">init</span>(array)
+    }
+}</code></pre></div>
 <p>那么 ColorConfig 对应的 <code>CGImage</code> 参数也可以对应起来了。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">extension</span> <span class="nc">ColorConfig</span><span class="p">{</span>
-    <span class="kd">struct</span> <span class="nc">CGImageConfig</span><span class="p">{</span>
-        <span class="kd">let</span> <span class="nv">bitsPerComponent</span><span class="p">:</span><span class="nb">Int</span>
-        <span class="kd">let</span> <span class="nv">bitsPerPixel</span><span class="p">:</span><span class="nb">Int</span>
-        <span class="kd">let</span> <span class="nv">bitmapInfo</span><span class="p">:</span> <span class="n">CGBitmapInfo</span>
-    <span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">ColorConfig</span>{
+    <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">CGImageConfig</span>{
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">bitsPerComponent</span>:<span style="color:#8be9fd;font-style:italic">Int</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">bitsPerPixel</span>:<span style="color:#8be9fd;font-style:italic">Int</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">bitmapInfo</span>: CGBitmapInfo
+    }
     
-    <span class="kd">var</span> <span class="nv">imageConfig</span><span class="p">:</span><span class="n">CGImageConfig</span><span class="p">?{</span>
-        <span class="k">switch</span> <span class="kc">self</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="p">.</span><span class="n">alpha8</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">CGImageConfig</span><span class="p">(</span><span class="n">bitsPerComponent</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="n">bitsPerPixel</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="n">bitmapInfo</span><span class="p">:</span> <span class="n">CGBitmapInfo</span><span class="p">(.</span><span class="n">alphaOnly</span><span class="p">))</span>
-        <span class="k">case</span> <span class="p">.</span><span class="n">rgb565</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">CGImageConfig</span><span class="p">(</span><span class="n">bitsPerComponent</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="n">bitsPerPixel</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="n">bitmapInfo</span><span class="p">:</span> <span class="n">CGBitmapInfo</span><span class="p">(.</span><span class="n">noneSkipFirst</span><span class="p">))</span>
-        <span class="k">case</span> <span class="p">.</span><span class="n">argb8888</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">CGImageConfig</span><span class="p">(</span><span class="n">bitsPerComponent</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="n">bitsPerPixel</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span> <span class="n">bitmapInfo</span><span class="p">:</span> <span class="n">CGBitmapInfo</span><span class="p">(.</span><span class="n">premultipliedFirst</span><span class="p">))</span>
-        <span class="k">case</span> <span class="p">.</span><span class="n">rgbaF16</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">CGImageConfig</span><span class="p">(</span><span class="n">bitsPerComponent</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="n">bitsPerPixel</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span> <span class="n">bitmapInfo</span><span class="p">:</span> <span class="n">CGBitmapInfo</span><span class="p">(.</span><span class="n">premultipliedLast</span><span class="p">,</span> <span class="kc">true</span><span class="p">))</span>
-        <span class="k">case</span> <span class="p">.</span><span class="n">unknown</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">nil</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">imageConfig</span>:CGImageConfig?{
+        <span style="color:#ff79c6">switch</span> <span style="color:#ff79c6">self</span> {
+        <span style="color:#ff79c6">case</span> .alpha8:
+            <span style="color:#ff79c6">return</span> CGImageConfig(bitsPerComponent: <span style="color:#bd93f9">8</span>, bitsPerPixel: <span style="color:#bd93f9">8</span>, bitmapInfo: CGBitmapInfo(.alphaOnly))
+        <span style="color:#ff79c6">case</span> .rgb565:
+            <span style="color:#ff79c6">return</span> CGImageConfig(bitsPerComponent: <span style="color:#bd93f9">5</span>, bitsPerPixel: <span style="color:#bd93f9">16</span>, bitmapInfo: CGBitmapInfo(.noneSkipFirst))
+        <span style="color:#ff79c6">case</span> .argb8888:
+            <span style="color:#ff79c6">return</span> CGImageConfig(bitsPerComponent: <span style="color:#bd93f9">8</span>, bitsPerPixel: <span style="color:#bd93f9">32</span>, bitmapInfo: CGBitmapInfo(.premultipliedFirst))
+        <span style="color:#ff79c6">case</span> .rgbaF16:
+            <span style="color:#ff79c6">return</span> CGImageConfig(bitsPerComponent: <span style="color:#bd93f9">16</span>, bitsPerPixel: <span style="color:#bd93f9">64</span>, bitmapInfo: CGBitmapInfo(.premultipliedLast, <span style="color:#ff79c6">true</span>))
+        <span style="color:#ff79c6">case</span> .unknown:
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+        }
+    }
+}</code></pre></div>
 <p>反过来，判断 <code>CGImage</code> 的 ColorConfig 的方法。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">extension</span> <span class="nc">CGImage</span><span class="p">{</span>
-    <span class="kd">var</span> <span class="nv">colorConfig</span><span class="p">:</span><span class="n">ColorConfig</span><span class="p">{</span>
-        <span class="k">if</span> <span class="n">isColorConfig</span><span class="p">(.</span><span class="n">alpha8</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="p">.</span><span class="n">alpha8</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">isColorConfig</span><span class="p">(.</span><span class="n">rgb565</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="p">.</span><span class="n">rgb565</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">isColorConfig</span><span class="p">(.</span><span class="n">argb8888</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="p">.</span><span class="n">argb8888</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">isColorConfig</span><span class="p">(.</span><span class="n">rgbaF16</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="p">.</span><span class="n">rgbaF16</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="p">.</span><span class="n">unknown</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">CGImage</span>{
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">colorConfig</span>:ColorConfig{
+        <span style="color:#ff79c6">if</span> isColorConfig(.alpha8) {
+            <span style="color:#ff79c6">return</span> .alpha8
+        } <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> isColorConfig(.rgb565) {
+            <span style="color:#ff79c6">return</span> .rgb565
+        } <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> isColorConfig(.argb8888) {
+            <span style="color:#ff79c6">return</span> .argb8888
+        } <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> isColorConfig(.rgbaF16) {
+            <span style="color:#ff79c6">return</span> .rgbaF16
+        } <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">return</span> .unknown
+        }
+    }
     
-    <span class="kd">func</span> <span class="nf">isColorConfig</span><span class="p">(</span><span class="kc">_</span> <span class="n">colorConfig</span><span class="p">:</span><span class="n">ColorConfig</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nb">Bool</span><span class="p">{</span>
-        <span class="k">guard</span> <span class="kd">let</span> <span class="nv">imageConfig</span> <span class="p">=</span> <span class="n">colorConfig</span><span class="p">.</span><span class="n">imageConfig</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">false</span>
-        <span class="p">}</span>
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">isColorConfig</span>(<span style="color:#ff79c6">_</span> colorConfig:ColorConfig) -&gt; <span style="color:#8be9fd;font-style:italic">Bool</span>{
+        <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageConfig</span> = colorConfig.imageConfig <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">false</span>
+        }
         
-        <span class="k">if</span> <span class="n">bitsPerComponent</span> <span class="p">==</span> <span class="n">imageConfig</span><span class="p">.</span><span class="n">bitsPerComponent</span> <span class="o">&amp;&amp;</span>
-            <span class="n">bitsPerPixel</span> <span class="p">==</span> <span class="n">imageConfig</span><span class="p">.</span><span class="n">bitsPerPixel</span> <span class="o">&amp;&amp;</span>
-            <span class="n">imageConfig</span><span class="p">.</span><span class="n">bitmapInfo</span><span class="p">.</span><span class="bp">contains</span><span class="p">(</span><span class="n">CGBitmapInfo</span><span class="p">(</span><span class="n">alphaInfo</span><span class="p">))</span> <span class="o">&amp;&amp;</span>
-            <span class="n">imageConfig</span><span class="p">.</span><span class="n">bitmapInfo</span><span class="p">.</span><span class="bp">contains</span><span class="p">(.</span><span class="n">floatComponents</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">true</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">false</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+        <span style="color:#ff79c6">if</span> bitsPerComponent == imageConfig.bitsPerComponent <span style="color:#ff79c6">&amp;&amp;</span>
+            bitsPerPixel == imageConfig.bitsPerPixel <span style="color:#ff79c6">&amp;&amp;</span>
+            imageConfig.bitmapInfo.contains(CGBitmapInfo(alphaInfo)) <span style="color:#ff79c6">&amp;&amp;</span>
+            imageConfig.bitmapInfo.contains(.floatComponents) {
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">true</span>
+        } <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">false</span>
+        }
+    }
+}</code></pre></div>
 <p>对外封装的 Api，也就是直接介绍的 ImageIO 的使用步骤，只是参数不一样。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift">    <span class="c1">/// 改变图片到指定的色彩配置</span>
-    <span class="c1">///</span>
-    <span class="c1">/// - Parameters:</span>
-    <span class="c1">///   - rawData: 原始图片数据</span>
-    <span class="c1">///   - config: 色彩配置</span>
-    <span class="c1">/// - Returns: 处理后数据</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">changeColorWithImageData</span><span class="p">(</span><span class="kc">_</span> <span class="n">rawData</span><span class="p">:</span><span class="n">Data</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span><span class="n">ColorConfig</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Data</span><span class="p">?{</span>
-        <span class="k">guard</span> <span class="kd">let</span> <span class="nv">imageConfig</span> <span class="p">=</span> <span class="n">config</span><span class="p">.</span><span class="n">imageConfig</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="n">rawData</span>
-        <span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">    <span style="color:#6272a4">/// 改变图片到指定的色彩配置</span>
+    <span style="color:#6272a4">///</span>
+    <span style="color:#6272a4">/// - Parameters:</span>
+    <span style="color:#6272a4">///   - rawData: 原始图片数据</span>
+    <span style="color:#6272a4">///   - config: 色彩配置</span>
+    <span style="color:#6272a4">/// - Returns: 处理后数据</span>
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">changeColorWithImageData</span>(<span style="color:#ff79c6">_</span> rawData:Data, config:ColorConfig) -&gt; Data?{
+        <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageConfig</span> = config.imageConfig <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">return</span> rawData
+        }
     
-        <span class="k">guard</span> <span class="kd">let</span> <span class="nv">imageSource</span> <span class="p">=</span> <span class="n">CGImageSourceCreateWithData</span><span class="p">(</span><span class="n">rawData</span> <span class="k">as</span> <span class="n">CFData</span><span class="p">,</span> <span class="p">[</span><span class="n">kCGImageSourceShouldCache</span><span class="p">:</span> <span class="kc">false</span><span class="p">]</span> <span class="k">as</span> <span class="n">CFDictionary</span><span class="p">),</span>
-            <span class="kd">let</span> <span class="nv">writeData</span> <span class="p">=</span> <span class="n">CFDataCreateMutable</span><span class="p">(</span><span class="kc">nil</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-            <span class="kd">let</span> <span class="nv">imageType</span> <span class="p">=</span> <span class="n">CGImageSourceGetType</span><span class="p">(</span><span class="n">imageSource</span><span class="p">),</span>
-            <span class="kd">let</span> <span class="nv">imageDestination</span> <span class="p">=</span> <span class="n">CGImageDestinationCreateWithData</span><span class="p">(</span><span class="n">writeData</span><span class="p">,</span> <span class="n">imageType</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">nil</span><span class="p">),</span>
-            <span class="kd">let</span> <span class="nv">rawDataProvider</span> <span class="p">=</span> <span class="n">CGDataProvider</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">rawData</span> <span class="k">as</span> <span class="n">CFData</span><span class="p">),</span>
-            <span class="kd">let</span> <span class="nv">imageFrame</span> <span class="p">=</span> <span class="n">CGImage</span><span class="p">(</span><span class="n">width</span><span class="p">:</span> <span class="nb">Int</span><span class="p">(</span><span class="n">rawData</span><span class="p">.</span><span class="n">imageSize</span><span class="p">.</span><span class="n">width</span><span class="p">),</span>
-                                     <span class="n">height</span><span class="p">:</span> <span class="nb">Int</span><span class="p">(</span><span class="n">rawData</span><span class="p">.</span><span class="n">imageSize</span><span class="p">.</span><span class="n">height</span><span class="p">),</span>
-                                     <span class="n">bitsPerComponent</span><span class="p">:</span> <span class="n">imageConfig</span><span class="p">.</span><span class="n">bitsPerComponent</span><span class="p">,</span>
-                                     <span class="n">bitsPerPixel</span><span class="p">:</span> <span class="n">imageConfig</span><span class="p">.</span><span class="n">bitsPerPixel</span><span class="p">,</span>
-                                     <span class="n">bytesPerRow</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                                     <span class="n">space</span><span class="p">:</span> <span class="n">CGColorSpaceCreateDeviceRGB</span><span class="p">(),</span>
-                                     <span class="n">bitmapInfo</span><span class="p">:</span> <span class="n">imageConfig</span><span class="p">.</span><span class="n">bitmapInfo</span><span class="p">,</span>
-                                     <span class="n">provider</span><span class="p">:</span> <span class="n">rawDataProvider</span><span class="p">,</span>
-                                     <span class="n">decode</span><span class="p">:</span> <span class="kc">nil</span><span class="p">,</span>
-                                     <span class="n">shouldInterpolate</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                                     <span class="n">intent</span><span class="p">:</span> <span class="p">.</span><span class="n">defaultIntent</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span>
-                                        <span class="k">return</span> <span class="kc">nil</span>
-        <span class="p">}</span>
-        <span class="n">CGImageDestinationAddImage</span><span class="p">(</span><span class="n">imageDestination</span><span class="p">,</span> <span class="n">imageFrame</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-        <span class="k">guard</span> <span class="n">CGImageDestinationFinalize</span><span class="p">(</span><span class="n">imageDestination</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">nil</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="n">writeData</span> <span class="k">as</span> <span class="n">Data</span>
-    <span class="p">}</span>
+        <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageSource</span> = CGImageSourceCreateWithData(rawData <span style="color:#ff79c6">as</span> CFData, [kCGImageSourceShouldCache: <span style="color:#ff79c6">false</span>] <span style="color:#ff79c6">as</span> CFDictionary),
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">writeData</span> = CFDataCreateMutable(<span style="color:#ff79c6">nil</span>, <span style="color:#bd93f9">0</span>),
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageType</span> = CGImageSourceGetType(imageSource),
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageDestination</span> = CGImageDestinationCreateWithData(writeData, imageType, <span style="color:#bd93f9">1</span>, <span style="color:#ff79c6">nil</span>),
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">rawDataProvider</span> = CGDataProvider(data: rawData <span style="color:#ff79c6">as</span> CFData),
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageFrame</span> = CGImage(width: <span style="color:#8be9fd;font-style:italic">Int</span>(rawData.imageSize.width),
+                                     height: <span style="color:#8be9fd;font-style:italic">Int</span>(rawData.imageSize.height),
+                                     bitsPerComponent: imageConfig.bitsPerComponent,
+                                     bitsPerPixel: imageConfig.bitsPerPixel,
+                                     bytesPerRow: <span style="color:#bd93f9">0</span>,
+                                     space: CGColorSpaceCreateDeviceRGB(),
+                                     bitmapInfo: imageConfig.bitmapInfo,
+                                     provider: rawDataProvider,
+                                     decode: <span style="color:#ff79c6">nil</span>,
+                                     shouldInterpolate: <span style="color:#ff79c6">true</span>,
+                                     intent: .defaultIntent) <span style="color:#ff79c6">else</span> {
+                                        <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+        }
+        CGImageDestinationAddImage(imageDestination, imageFrame, <span style="color:#ff79c6">nil</span>)
+        <span style="color:#ff79c6">guard</span> CGImageDestinationFinalize(imageDestination) <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+        }
+        <span style="color:#ff79c6">return</span> writeData <span style="color:#ff79c6">as</span> Data
+    }
     
     
-    <span class="c1">/// 获取图片的色彩配置</span>
-    <span class="c1">///</span>
-    <span class="c1">/// - Parameter rawData: 原始图片数据</span>
-    <span class="c1">/// - Returns: 色彩配置</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">getColorConfigWithImageData</span><span class="p">(</span><span class="kc">_</span> <span class="n">rawData</span><span class="p">:</span><span class="n">Data</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">ColorConfig</span><span class="p">{</span>
-        <span class="k">guard</span> <span class="kd">let</span> <span class="nv">imageSource</span> <span class="p">=</span> <span class="n">CGImageSourceCreateWithData</span><span class="p">(</span><span class="n">rawData</span> <span class="k">as</span> <span class="n">CFData</span><span class="p">,</span> <span class="p">[</span><span class="n">kCGImageSourceShouldCache</span><span class="p">:</span> <span class="kc">false</span><span class="p">]</span> <span class="k">as</span> <span class="n">CFDictionary</span><span class="p">),</span>
-            <span class="kd">let</span> <span class="nv">imageFrame</span> <span class="p">=</span> <span class="n">CGImageSourceCreateImageAtIndex</span><span class="p">(</span><span class="n">imageSource</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="p">.</span><span class="n">unknown</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="n">imageFrame</span><span class="p">.</span><span class="n">colorConfig</span>
-    <span class="p">}</span></code></pre></div>
+    <span style="color:#6272a4">/// 获取图片的色彩配置</span>
+    <span style="color:#6272a4">///</span>
+    <span style="color:#6272a4">/// - Parameter rawData: 原始图片数据</span>
+    <span style="color:#6272a4">/// - Returns: 色彩配置</span>
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">getColorConfigWithImageData</span>(<span style="color:#ff79c6">_</span> rawData:Data) -&gt; ColorConfig{
+        <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageSource</span> = CGImageSourceCreateWithData(rawData <span style="color:#ff79c6">as</span> CFData, [kCGImageSourceShouldCache: <span style="color:#ff79c6">false</span>] <span style="color:#ff79c6">as</span> CFDictionary),
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageFrame</span> = CGImageSourceCreateImageAtIndex(imageSource, <span style="color:#bd93f9">0</span>, <span style="color:#ff79c6">nil</span>) <span style="color:#ff79c6">else</span> {
+                <span style="color:#ff79c6">return</span> .unknown
+        }
+        <span style="color:#ff79c6">return</span> imageFrame.colorConfig
+    }</code></pre></div>
 <h4 id="android">Android</h4>
 
 <p>对于 Android 来说，其原生的 Bitmap 库有相当方便的转换色彩深度的方法，只需要传入 Config 就好。</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="n">Bitmap</span> <span class="nf">copy</span><span class="o">(</span><span class="n">Config</span> <span class="n">config</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">isMutable</span><span class="o">)</span> <span class="o">{</span>
-      <span class="n">checkRecycled</span><span class="o">(</span><span class="s">&#34;Can&#39;t copy a recycled bitmap&#34;</span><span class="o">);</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">config</span> <span class="o">==</span> <span class="n">Config</span><span class="o">.</span><span class="na">HARDWARE</span> <span class="o">&amp;&amp;</span> <span class="n">isMutable</span><span class="o">)</span> <span class="o">{</span>
-          <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&#34;Hardware bitmaps are always immutable&#34;</span><span class="o">);</span>
-      <span class="o">}</span>
-      <span class="n">noteHardwareBitmapSlowCall</span><span class="o">();</span>
-      <span class="n">Bitmap</span> <span class="n">b</span> <span class="o">=</span> <span class="n">nativeCopy</span><span class="o">(</span><span class="n">mNativePtr</span><span class="o">,</span> <span class="n">config</span><span class="o">.</span><span class="na">nativeInt</span><span class="o">,</span> <span class="n">isMutable</span><span class="o">);</span>
-      <span class="k">if</span> <span class="o">(</span><span class="n">b</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-          <span class="n">b</span><span class="o">.</span><span class="na">setPremultiplied</span><span class="o">(</span><span class="n">mRequestPremultiplied</span><span class="o">);</span>
-          <span class="n">b</span><span class="o">.</span><span class="na">mDensity</span> <span class="o">=</span> <span class="n">mDensity</span><span class="o">;</span>
-      <span class="o">}</span>
-      <span class="k">return</span> <span class="n">b</span><span class="o">;</span>
-<span class="o">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#8be9fd;font-style:italic">public</span> Bitmap <span style="color:#50fa7b">copy</span><span style="color:#ff79c6">(</span>Config config<span style="color:#ff79c6">,</span> <span style="color:#8be9fd">boolean</span> isMutable<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">{</span>
+      checkRecycled<span style="color:#ff79c6">(</span><span style="color:#f1fa8c">&#34;Can&#39;t copy a recycled bitmap&#34;</span><span style="color:#ff79c6">);</span>
+      <span style="color:#ff79c6">if</span> <span style="color:#ff79c6">(</span>config <span style="color:#ff79c6">==</span> Config<span style="color:#ff79c6">.</span><span style="color:#50fa7b">HARDWARE</span> <span style="color:#ff79c6">&amp;&amp;</span> isMutable<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">{</span>
+          <span style="color:#ff79c6">throw</span> <span style="color:#ff79c6">new</span> IllegalArgumentException<span style="color:#ff79c6">(</span><span style="color:#f1fa8c">&#34;Hardware bitmaps are always immutable&#34;</span><span style="color:#ff79c6">);</span>
+      <span style="color:#ff79c6">}</span>
+      noteHardwareBitmapSlowCall<span style="color:#ff79c6">();</span>
+      Bitmap b <span style="color:#ff79c6">=</span> nativeCopy<span style="color:#ff79c6">(</span>mNativePtr<span style="color:#ff79c6">,</span> config<span style="color:#ff79c6">.</span><span style="color:#50fa7b">nativeInt</span><span style="color:#ff79c6">,</span> isMutable<span style="color:#ff79c6">);</span>
+      <span style="color:#ff79c6">if</span> <span style="color:#ff79c6">(</span>b <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">null</span><span style="color:#ff79c6">)</span> <span style="color:#ff79c6">{</span>
+          b<span style="color:#ff79c6">.</span><span style="color:#50fa7b">setPremultiplied</span><span style="color:#ff79c6">(</span>mRequestPremultiplied<span style="color:#ff79c6">);</span>
+          b<span style="color:#ff79c6">.</span><span style="color:#50fa7b">mDensity</span> <span style="color:#ff79c6">=</span> mDensity<span style="color:#ff79c6">;</span>
+      <span style="color:#ff79c6">}</span>
+      <span style="color:#ff79c6">return</span> b<span style="color:#ff79c6">;</span>
+<span style="color:#ff79c6">}</span></code></pre></div>
 <p>iOS 的 <code>CGImage</code> 参数和 Android 的 <code>Bitmap.Config</code> 以及色彩深度对应关系如下表：</p>
 
 <table>
@@ -686,28 +697,28 @@
 <h4 id="ios-2">iOS</h4>
 
 <p>iOS 里面压缩系数为 0-1 之间的数值，据说 iOS 相册中采用的压缩系数是 0.9。同时，png 不支持有损压缩，所以 <code>kCGImageDestinationLossyCompressionQuality</code> 这个参数是无效。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">static</span> <span class="kd">func</span> <span class="nf">compressImageData</span><span class="p">(</span><span class="kc">_</span> <span class="n">rawData</span><span class="p">:</span><span class="n">Data</span><span class="p">,</span> <span class="n">compression</span><span class="p">:</span><span class="nb">Double</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Data</span><span class="p">?{</span>
-        <span class="k">guard</span> <span class="kd">let</span> <span class="nv">imageSource</span> <span class="p">=</span> <span class="n">CGImageSourceCreateWithData</span><span class="p">(</span><span class="n">rawData</span> <span class="k">as</span> <span class="n">CFData</span><span class="p">,</span> <span class="p">[</span><span class="n">kCGImageSourceShouldCache</span><span class="p">:</span> <span class="kc">false</span><span class="p">]</span> <span class="k">as</span> <span class="n">CFDictionary</span><span class="p">),</span>
-            <span class="kd">let</span> <span class="nv">writeData</span> <span class="p">=</span> <span class="n">CFDataCreateMutable</span><span class="p">(</span><span class="kc">nil</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-            <span class="kd">let</span> <span class="nv">imageType</span> <span class="p">=</span> <span class="n">CGImageSourceGetType</span><span class="p">(</span><span class="n">imageSource</span><span class="p">),</span>
-            <span class="kd">let</span> <span class="nv">imageDestination</span> <span class="p">=</span> <span class="n">CGImageDestinationCreateWithData</span><span class="p">(</span><span class="n">writeData</span><span class="p">,</span> <span class="n">imageType</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="kc">nil</span>
-        <span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">compressImageData</span>(<span style="color:#ff79c6">_</span> rawData:Data, compression:<span style="color:#8be9fd;font-style:italic">Double</span>) -&gt; Data?{
+        <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageSource</span> = CGImageSourceCreateWithData(rawData <span style="color:#ff79c6">as</span> CFData, [kCGImageSourceShouldCache: <span style="color:#ff79c6">false</span>] <span style="color:#ff79c6">as</span> CFDictionary),
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">writeData</span> = CFDataCreateMutable(<span style="color:#ff79c6">nil</span>, <span style="color:#bd93f9">0</span>),
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageType</span> = CGImageSourceGetType(imageSource),
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageDestination</span> = CGImageDestinationCreateWithData(writeData, imageType, <span style="color:#bd93f9">1</span>, <span style="color:#ff79c6">nil</span>) <span style="color:#ff79c6">else</span> {
+                <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+        }
         
-        <span class="kd">let</span> <span class="nv">frameProperties</span> <span class="p">=</span> <span class="p">[</span><span class="n">kCGImageDestinationLossyCompressionQuality</span><span class="p">:</span> <span class="n">compression</span><span class="p">]</span> <span class="k">as</span> <span class="n">CFDictionary</span>
-        <span class="n">CGImageDestinationAddImageFromSource</span><span class="p">(</span><span class="n">imageDestination</span><span class="p">,</span> <span class="n">imageSource</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">frameProperties</span><span class="p">)</span>
-        <span class="k">guard</span> <span class="n">CGImageDestinationFinalize</span><span class="p">(</span><span class="n">imageDestination</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">nil</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="n">writeData</span> <span class="k">as</span> <span class="n">Data</span>
-    <span class="p">}</span></code></pre></div>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">frameProperties</span> = [kCGImageDestinationLossyCompressionQuality: compression] <span style="color:#ff79c6">as</span> CFDictionary
+        CGImageDestinationAddImageFromSource(imageDestination, imageSource, <span style="color:#bd93f9">0</span>, frameProperties)
+        <span style="color:#ff79c6">guard</span> CGImageDestinationFinalize(imageDestination) <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+        }
+        <span style="color:#ff79c6">return</span> writeData <span style="color:#ff79c6">as</span> Data
+    }</code></pre></div>
 <h4 id="andoid">Andoid</h4>
 
 <p>Andoird 用 Bitmap 自带的接口，并输出到流中。压缩系数是 0-100 之间的数值。这里的参数虽然可以填 <code>Bitmap.CompressFormat.PNG</code>，但当然也是无效的。</p>
-<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="k">val</span> <span class="py">outputStream</span> <span class="p">=</span> <span class="n">ByteArrayOutputStream</span><span class="p">()</span>
-<span class="k">val</span> <span class="py">image</span> <span class="p">=</span> <span class="n">BitmapFactory</span><span class="p">.</span><span class="n">decodeByteArray</span><span class="p">(</span><span class="n">rawData</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="n">rawData</span><span class="p">.</span><span class="n">count</span><span class="p">())</span>
-<span class="n">image</span><span class="p">.</span><span class="n">compress</span><span class="p">(</span><span class="n">Bitmap</span><span class="p">.</span><span class="n">CompressFormat</span><span class="p">.</span><span class="n">JPEG</span><span class="p">,</span> <span class="n">compression</span><span class="p">,</span> <span class="n">outputStream</span><span class="p">)</span>
-<span class="n">resultData</span> <span class="p">=</span> <span class="n">outputStream</span><span class="p">.</span><span class="n">toByteArray</span><span class="p">()</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#ff79c6">val</span> outputStream = ByteArrayOutputStream()
+<span style="color:#ff79c6">val</span> image = BitmapFactory.decodeByteArray(rawData,<span style="color:#bd93f9">0</span>,rawData.count())
+image.compress(Bitmap.CompressFormat.JPEG, compression, outputStream)
+resultData = outputStream.toByteArray()</code></pre></div>
 <h3 id="gif-的压缩">GIF 的压缩</h3>
 
 <p>GIF 压缩上有很多种思路。参考开源项目 <a href="https://github.com/kohler/gifsicle">gifsicle</a> 和 <a href="https://github.com/ImageMagick/ImageMagick">ImageMagick</a> 中的做法，大概有以下几种。</p>
@@ -795,203 +806,203 @@
 <p>iOS 上的实现比较简单，用 ImageIO 的函数即可实现，性能也比较好。</p>
 
 <p>先定义从 ImageSource 获取每帧的时间的便捷扩展方法，帧时长会存在 <code>kCGImagePropertyGIFUnclampedDelayTime</code> 或者 <code>kCGImagePropertyGIFDelayTime</code> 中，两个 key 不同之处在于后者有最小值的限制，正确的获取方法参考苹果在 WebKit 中的 <a href="https://stackoverflow.com/questions/16964366/delaytime-or-unclampeddelaytime-for-gifs">使用方法</a>。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">extension</span> <span class="nc">CGImageSource</span> <span class="p">{</span>
-    <span class="kd">func</span> <span class="nf">frameDurationAtIndex</span><span class="p">(</span><span class="kc">_</span> <span class="n">index</span><span class="p">:</span> <span class="nb">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nb">Double</span><span class="p">{</span>
-        <span class="kd">var</span> <span class="nv">frameDuration</span> <span class="p">=</span> <span class="nb">Double</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
-        <span class="k">guard</span> <span class="kd">let</span> <span class="nv">frameProperties</span> <span class="p">=</span> <span class="n">CGImageSourceCopyPropertiesAtIndex</span><span class="p">(</span><span class="kc">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span> <span class="k">as</span><span class="p">?</span> <span class="p">[</span><span class="n">AnyHashable</span><span class="p">:</span><span class="nb">Any</span><span class="p">],</span> <span class="kd">let</span> <span class="nv">gifProperties</span> <span class="p">=</span> <span class="n">frameProperties</span><span class="p">[</span><span class="n">kCGImagePropertyGIFDictionary</span><span class="p">]</span> <span class="k">as</span><span class="p">?</span> <span class="p">[</span><span class="n">AnyHashable</span><span class="p">:</span><span class="nb">Any</span><span class="p">]</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="n">frameDuration</span>
-        <span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">CGImageSource</span> {
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">frameDurationAtIndex</span>(<span style="color:#ff79c6">_</span> index: <span style="color:#8be9fd;font-style:italic">Int</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Double</span>{
+        <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">frameDuration</span> = <span style="color:#8be9fd;font-style:italic">Double</span>(<span style="color:#bd93f9">0.1</span>)
+        <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">frameProperties</span> = CGImageSourceCopyPropertiesAtIndex(<span style="color:#ff79c6">self</span>, index, <span style="color:#ff79c6">nil</span>) <span style="color:#ff79c6">as</span>? [AnyHashable:<span style="color:#8be9fd;font-style:italic">Any</span>], <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">gifProperties</span> = frameProperties[kCGImagePropertyGIFDictionary] <span style="color:#ff79c6">as</span>? [AnyHashable:<span style="color:#8be9fd;font-style:italic">Any</span>] <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">return</span> frameDuration
+        }
         
-        <span class="k">if</span> <span class="kd">let</span> <span class="nv">unclampedDuration</span> <span class="p">=</span> <span class="n">gifProperties</span><span class="p">[</span><span class="n">kCGImagePropertyGIFUnclampedDelayTime</span><span class="p">]</span> <span class="k">as</span><span class="p">?</span> <span class="n">NSNumber</span> <span class="p">{</span>
-            <span class="n">frameDuration</span> <span class="p">=</span> <span class="n">unclampedDuration</span><span class="p">.</span><span class="n">doubleValue</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="kd">let</span> <span class="nv">clampedDuration</span> <span class="p">=</span> <span class="n">gifProperties</span><span class="p">[</span><span class="n">kCGImagePropertyGIFDelayTime</span><span class="p">]</span> <span class="k">as</span><span class="p">?</span> <span class="n">NSNumber</span> <span class="p">{</span>
-                <span class="n">frameDuration</span> <span class="p">=</span> <span class="n">clampedDuration</span><span class="p">.</span><span class="n">doubleValue</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
+        <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">unclampedDuration</span> = gifProperties[kCGImagePropertyGIFUnclampedDelayTime] <span style="color:#ff79c6">as</span>? NSNumber {
+            frameDuration = unclampedDuration.doubleValue
+        } <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">clampedDuration</span> = gifProperties[kCGImagePropertyGIFDelayTime] <span style="color:#ff79c6">as</span>? NSNumber {
+                frameDuration = clampedDuration.doubleValue
+            }
+        }
         
-        <span class="k">if</span> <span class="n">frameDuration</span> <span class="o">&lt;</span> <span class="mf">0.011</span> <span class="p">{</span>
-            <span class="n">frameDuration</span> <span class="p">=</span> <span class="mf">0.1</span>
-        <span class="p">}</span>
+        <span style="color:#ff79c6">if</span> frameDuration <span style="color:#ff79c6">&lt;</span> <span style="color:#bd93f9">0.011</span> {
+            frameDuration = <span style="color:#bd93f9">0.1</span>
+        }
         
-        <span class="k">return</span> <span class="n">frameDuration</span>
-    <span class="p">}</span>
+        <span style="color:#ff79c6">return</span> frameDuration
+    }
     
-    <span class="kd">var</span> <span class="nv">frameDurations</span><span class="p">:[</span><span class="nb">Double</span><span class="p">]{</span>
-        <span class="kd">let</span> <span class="nv">frameCount</span> <span class="p">=</span> <span class="n">CGImageSourceGetCount</span><span class="p">(</span><span class="kc">self</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="mf">0.</span><span class="p">.&lt;</span><span class="n">frameCount</span><span class="p">).</span><span class="bp">map</span><span class="p">{</span> <span class="kc">self</span><span class="p">.</span><span class="n">frameDurationAtIndex</span><span class="p">(</span><span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">frameDurations</span>:[<span style="color:#8be9fd;font-style:italic">Double</span>]{
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">frameCount</span> = CGImageSourceGetCount(<span style="color:#ff79c6">self</span>)
+        <span style="color:#ff79c6">return</span> (<span style="color:#bd93f9">0.</span>.&lt;frameCount).map{ <span style="color:#ff79c6">self</span>.frameDurationAtIndex(<span style="color:#8be9fd;font-style:italic">$0</span>) }
+    }
+}</code></pre></div>
 <p>先去掉不要的帧，合并帧的时间，再重新生成帧就完成了。注意帧不要被拖得太长，不然体验不好，我这里给的最大值是 200ms。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift">    <span class="c1">/// 同步压缩图片抽取帧数，仅支持 GIF</span>
-    <span class="c1">///</span>
-    <span class="c1">/// - Parameters:</span>
-    <span class="c1">///   - rawData: 原始图片数据</span>
-    <span class="c1">///   - sampleCount: 采样频率，比如 3 则每三张用第一张，然后延长时间</span>
-    <span class="c1">/// - Returns: 处理后数据</span>
-    <span class="kd">static</span> <span class="kd">func</span> <span class="nf">compressImageData</span><span class="p">(</span><span class="kc">_</span> <span class="n">rawData</span><span class="p">:</span><span class="n">Data</span><span class="p">,</span> <span class="n">sampleCount</span><span class="p">:</span><span class="nb">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Data</span><span class="p">?{</span>
-        <span class="k">guard</span> <span class="kd">let</span> <span class="nv">imageSource</span> <span class="p">=</span> <span class="n">CGImageSourceCreateWithData</span><span class="p">(</span><span class="n">rawData</span> <span class="k">as</span> <span class="n">CFData</span><span class="p">,</span> <span class="p">[</span><span class="n">kCGImageSourceShouldCache</span><span class="p">:</span> <span class="kc">false</span><span class="p">]</span> <span class="k">as</span> <span class="n">CFDictionary</span><span class="p">),</span>
-            <span class="kd">let</span> <span class="nv">writeData</span> <span class="p">=</span> <span class="n">CFDataCreateMutable</span><span class="p">(</span><span class="kc">nil</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-            <span class="kd">let</span> <span class="nv">imageType</span> <span class="p">=</span> <span class="n">CGImageSourceGetType</span><span class="p">(</span><span class="n">imageSource</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="kc">nil</span>
-        <span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">    <span style="color:#6272a4">/// 同步压缩图片抽取帧数，仅支持 GIF</span>
+    <span style="color:#6272a4">///</span>
+    <span style="color:#6272a4">/// - Parameters:</span>
+    <span style="color:#6272a4">///   - rawData: 原始图片数据</span>
+    <span style="color:#6272a4">///   - sampleCount: 采样频率，比如 3 则每三张用第一张，然后延长时间</span>
+    <span style="color:#6272a4">/// - Returns: 处理后数据</span>
+    <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">compressImageData</span>(<span style="color:#ff79c6">_</span> rawData:Data, sampleCount:<span style="color:#8be9fd;font-style:italic">Int</span>) -&gt; Data?{
+        <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageSource</span> = CGImageSourceCreateWithData(rawData <span style="color:#ff79c6">as</span> CFData, [kCGImageSourceShouldCache: <span style="color:#ff79c6">false</span>] <span style="color:#ff79c6">as</span> CFDictionary),
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">writeData</span> = CFDataCreateMutable(<span style="color:#ff79c6">nil</span>, <span style="color:#bd93f9">0</span>),
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageType</span> = CGImageSourceGetType(imageSource) <span style="color:#ff79c6">else</span> {
+                <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+        }
         
-        <span class="c1">// 计算帧的间隔</span>
-        <span class="kd">let</span> <span class="nv">frameDurations</span> <span class="p">=</span> <span class="n">imageSource</span><span class="p">.</span><span class="n">frameDurations</span>
+        <span style="color:#6272a4">// 计算帧的间隔</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">frameDurations</span> = imageSource.frameDurations
         
-        <span class="c1">// 合并帧的时间,最长不可高于 200ms</span>
-        <span class="kd">let</span> <span class="nv">mergeFrameDurations</span> <span class="p">=</span> <span class="p">(</span><span class="mf">0.</span><span class="p">.&lt;</span><span class="n">frameDurations</span><span class="p">.</span><span class="bp">count</span><span class="p">).</span><span class="bp">filter</span><span class="p">{</span> <span class="nv">$0</span> <span class="o">%</span> <span class="n">sampleCount</span> <span class="p">==</span> <span class="mi">0</span> <span class="p">}.</span><span class="bp">map</span><span class="p">{</span> <span class="bp">min</span><span class="p">(</span><span class="n">frameDurations</span><span class="p">[</span><span class="nv">$0</span><span class="p">..&lt;</span><span class="bp">min</span><span class="p">(</span><span class="nv">$0</span> <span class="o">+</span> <span class="n">sampleCount</span><span class="p">,</span> <span class="n">frameDurations</span><span class="p">.</span><span class="bp">count</span><span class="p">)].</span><span class="bp">reduce</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span> <span class="p">{</span> <span class="nv">$0</span> <span class="o">+</span> <span class="nv">$1</span> <span class="p">},</span> <span class="mf">0.2</span><span class="p">)</span> <span class="p">}</span>
+        <span style="color:#6272a4">// 合并帧的时间,最长不可高于 200ms</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">mergeFrameDurations</span> = (<span style="color:#bd93f9">0.</span>.&lt;frameDurations.count).filter{ <span style="color:#8be9fd;font-style:italic">$0</span> <span style="color:#ff79c6">%</span> sampleCount == <span style="color:#bd93f9">0</span> }.map{ min(frameDurations[<span style="color:#8be9fd;font-style:italic">$0</span>..&lt;min(<span style="color:#8be9fd;font-style:italic">$0</span> <span style="color:#ff79c6">+</span> sampleCount, frameDurations.count)].reduce(<span style="color:#bd93f9">0.0</span>) { <span style="color:#8be9fd;font-style:italic">$0</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">$1</span> }, <span style="color:#bd93f9">0.2</span>) }
         
-        <span class="c1">// 抽取帧 每 n 帧使用 1 帧</span>
-        <span class="kd">let</span> <span class="nv">sampleImageFrames</span> <span class="p">=</span> <span class="p">(</span><span class="mf">0.</span><span class="p">.&lt;</span><span class="n">frameDurations</span><span class="p">.</span><span class="bp">count</span><span class="p">).</span><span class="bp">filter</span><span class="p">{</span> <span class="nv">$0</span> <span class="o">%</span> <span class="n">sampleCount</span> <span class="p">==</span> <span class="mi">0</span> <span class="p">}.</span><span class="n">compactMap</span><span class="p">{</span> <span class="n">CGImageSourceCreateImageAtIndex</span><span class="p">(</span><span class="n">imageSource</span><span class="p">,</span> <span class="nv">$0</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span> <span class="p">}</span>
+        <span style="color:#6272a4">// 抽取帧 每 n 帧使用 1 帧</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">sampleImageFrames</span> = (<span style="color:#bd93f9">0.</span>.&lt;frameDurations.count).filter{ <span style="color:#8be9fd;font-style:italic">$0</span> <span style="color:#ff79c6">%</span> sampleCount == <span style="color:#bd93f9">0</span> }.compactMap{ CGImageSourceCreateImageAtIndex(imageSource, <span style="color:#8be9fd;font-style:italic">$0</span>, <span style="color:#ff79c6">nil</span>) }
         
-        <span class="k">guard</span> <span class="kd">let</span> <span class="nv">imageDestination</span> <span class="p">=</span> <span class="n">CGImageDestinationCreateWithData</span><span class="p">(</span><span class="n">writeData</span><span class="p">,</span> <span class="n">imageType</span><span class="p">,</span> <span class="n">sampleImageFrames</span><span class="p">.</span><span class="bp">count</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span> <span class="k">else</span><span class="p">{</span>
-            <span class="k">return</span> <span class="kc">nil</span>
-        <span class="p">}</span>
+        <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageDestination</span> = CGImageDestinationCreateWithData(writeData, imageType, sampleImageFrames.count, <span style="color:#ff79c6">nil</span>) <span style="color:#ff79c6">else</span>{
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+        }
         
-        <span class="c1">// 每一帧图片都进行重新编码</span>
-        <span class="n">zip</span><span class="p">(</span><span class="n">sampleImageFrames</span><span class="p">,</span> <span class="n">mergeFrameDurations</span><span class="p">).</span><span class="n">forEach</span><span class="p">{</span>
-            <span class="c1">// 设置帧间隔</span>
-            <span class="kd">let</span> <span class="nv">frameProperties</span> <span class="p">=</span> <span class="p">[</span><span class="n">kCGImagePropertyGIFDictionary</span> <span class="p">:</span> <span class="p">[</span><span class="n">kCGImagePropertyGIFDelayTime</span><span class="p">:</span> <span class="nv">$1</span><span class="p">,</span> <span class="n">kCGImagePropertyGIFUnclampedDelayTime</span><span class="p">:</span> <span class="nv">$1</span><span class="p">]]</span>
-            <span class="n">CGImageDestinationAddImage</span><span class="p">(</span><span class="n">imageDestination</span><span class="p">,</span> <span class="nv">$0</span><span class="p">,</span> <span class="n">frameProperties</span> <span class="k">as</span> <span class="n">CFDictionary</span><span class="p">)</span>
-        <span class="p">}</span>
+        <span style="color:#6272a4">// 每一帧图片都进行重新编码</span>
+        zip(sampleImageFrames, mergeFrameDurations).forEach{
+            <span style="color:#6272a4">// 设置帧间隔</span>
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">frameProperties</span> = [kCGImagePropertyGIFDictionary : [kCGImagePropertyGIFDelayTime: <span style="color:#8be9fd;font-style:italic">$1</span>, kCGImagePropertyGIFUnclampedDelayTime: <span style="color:#8be9fd;font-style:italic">$1</span>]]
+            CGImageDestinationAddImage(imageDestination, <span style="color:#8be9fd;font-style:italic">$0</span>, frameProperties <span style="color:#ff79c6">as</span> CFDictionary)
+        }
         
-        <span class="k">guard</span> <span class="n">CGImageDestinationFinalize</span><span class="p">(</span><span class="n">imageDestination</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">nil</span>
-        <span class="p">}</span>
+        <span style="color:#ff79c6">guard</span> CGImageDestinationFinalize(imageDestination) <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+        }
         
-        <span class="k">return</span> <span class="n">writeData</span> <span class="k">as</span> <span class="n">Data</span>
-    <span class="p">}</span>
+        <span style="color:#ff79c6">return</span> writeData <span style="color:#ff79c6">as</span> Data
+    }
     </code></pre></div>
 <p>压缩分辨率也是类似的，每帧按分辨率压缩再重新编码就好。</p>
 
 <h4 id="android-1">Android</h4>
 
 <p>Android 原生对于 GIF 的支持就不怎么友好了，由于笔者 Android 研究不深，暂时先用 <a href="https://github.com/bumptech/glide">Glide</a> 中的 GIF 编解码组件来完成。编码的性能比较一般，比不上 iOS，但除非换用更底层 C++ 库实现的编码库，Java 写的性能都很普通。先用 Gradle 导入 Glide，注意解码器是默认的，但编码器需要另外导入。</p>
-<div class="highlight"><pre class="chroma"><code class="language-groovy" data-lang="groovy"><span class="n">api</span> <span class="s1">&#39;com.github.bumptech.glide:glide:4.8.0&#39;</span>
-<span class="n">api</span> <span class="s1">&#39;com.github.bumptech.glide:gifencoder-integration:4.8.0&#39;</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy">api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:glide:4.8.0&#39;</span>
+api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integration:4.8.0&#39;</span></code></pre></div>
 <p>抽帧思路和 iOS 一样，只是 Glide 的这个 GIF 解码器没办法按指定的 index 取读取某一帧，只能一帧帧读取，调用 <code>advance</code> 方法往后读取。先从 GIF 读出头部信息，然后在读真正的帧信息。</p>
-<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin">	<span class="cm">/**
-</span><span class="cm">     * 返回同步压缩 gif 图片 Byte 数据 [rawData] 的按 [sampleCount] 采样后的 Byte 数据
-</span><span class="cm">     */</span>
-    <span class="k">private</span> <span class="k">fun</span> <span class="nf">compressGifDataWithSampleCount</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">rawData</span><span class="p">:</span> <span class="n">ByteArray</span><span class="p">,</span> <span class="n">sampleCount</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">ByteArray</span><span class="p">?</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">sampleCount</span> <span class="p">&lt;=</span> <span class="m">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="n">rawData</span>
-        <span class="p">}</span>
-        <span class="k">val</span> <span class="py">gifDecoder</span> <span class="p">=</span> <span class="n">StandardGifDecoder</span><span class="p">(</span><span class="n">GifBitmapProvider</span><span class="p">(</span><span class="n">Glide</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">bitmapPool</span><span class="p">))</span>
-        <span class="k">val</span> <span class="py">headerParser</span> <span class="p">=</span> <span class="n">GifHeaderParser</span><span class="p">()</span>
-        <span class="n">headerParser</span><span class="p">.</span><span class="n">setData</span><span class="p">(</span><span class="n">rawData</span><span class="p">)</span>
-        <span class="k">val</span> <span class="py">header</span> <span class="p">=</span> <span class="n">headerParser</span><span class="p">.</span><span class="n">parseHeader</span><span class="p">()</span>
-        <span class="n">gifDecoder</span><span class="p">.</span><span class="n">setData</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">rawData</span><span class="p">)</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">	<span style="color:#6272a4">/**
+</span><span style="color:#6272a4">     * 返回同步压缩 gif 图片 Byte 数据 [rawData] 的按 [sampleCount] 采样后的 Byte 数据
+</span><span style="color:#6272a4">     */</span>
+    <span style="color:#ff79c6">private</span> <span style="color:#ff79c6">fun</span> <span style="color:#50fa7b">compressGifDataWithSampleCount</span>(context: Context, rawData: ByteArray, sampleCount: Int): ByteArray? {
+        <span style="color:#ff79c6">if</span> (sampleCount &lt;= <span style="color:#bd93f9">1</span>) {
+            <span style="color:#ff79c6">return</span> rawData
+        }
+        <span style="color:#ff79c6">val</span> gifDecoder = StandardGifDecoder(GifBitmapProvider(Glide.<span style="color:#ff79c6">get</span>(context).bitmapPool))
+        <span style="color:#ff79c6">val</span> headerParser = GifHeaderParser()
+        headerParser.setData(rawData)
+        <span style="color:#ff79c6">val</span> header = headerParser.parseHeader()
+        gifDecoder.setData(header, rawData)
 
-        <span class="k">val</span> <span class="py">frameCount</span> <span class="p">=</span> <span class="n">gifDecoder</span><span class="p">.</span><span class="n">frameCount</span>
+        <span style="color:#ff79c6">val</span> frameCount = gifDecoder.frameCount
 
-        <span class="c1">// 计算帧的间隔
-</span><span class="c1"></span>        <span class="k">val</span> <span class="py">frameDurations</span> <span class="p">=</span> <span class="p">(</span><span class="m">0</span> <span class="n">until</span> <span class="n">frameCount</span><span class="p">).</span><span class="n">map</span> <span class="p">{</span> <span class="n">gifDecoder</span><span class="p">.</span><span class="n">getDelay</span><span class="p">(</span><span class="n">it</span><span class="p">)</span> <span class="p">}</span>
+        <span style="color:#6272a4">// 计算帧的间隔
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">val</span> frameDurations = (<span style="color:#bd93f9">0</span> until frameCount).map { gifDecoder.getDelay(it) }
 
-        <span class="c1">// 合并帧的时间,最长不可高于 200ms
-</span><span class="c1"></span>        <span class="k">val</span> <span class="py">mergeFrameDurations</span> <span class="p">=</span> <span class="p">(</span><span class="m">0</span> <span class="n">until</span> <span class="n">frameCount</span><span class="p">).</span><span class="n">filter</span> <span class="p">{</span> <span class="n">it</span> <span class="p">%</span> <span class="n">sampleCount</span> <span class="p">==</span> <span class="m">0</span> <span class="p">}.</span><span class="n">map</span> <span class="p">{</span>
-            <span class="n">min</span><span class="p">(</span>
-                <span class="n">frameDurations</span><span class="p">.</span><span class="n">subList</span><span class="p">(</span>
-                    <span class="n">it</span><span class="p">,</span>
-                    <span class="n">min</span><span class="p">(</span><span class="n">it</span> <span class="p">+</span> <span class="n">sampleCount</span><span class="p">,</span> <span class="n">frameCount</span><span class="p">)</span>
-                <span class="p">).</span><span class="n">fold</span><span class="p">(</span><span class="m">0</span><span class="p">)</span> <span class="p">{</span> <span class="n">acc</span><span class="p">,</span> <span class="n">duration</span> <span class="p">-&gt;</span> <span class="n">acc</span> <span class="p">+</span> <span class="n">duration</span> <span class="p">},</span> <span class="m">200</span>
-            <span class="p">)</span>
-        <span class="p">}</span>
+        <span style="color:#6272a4">// 合并帧的时间,最长不可高于 200ms
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">val</span> mergeFrameDurations = (<span style="color:#bd93f9">0</span> until frameCount).filter { it % sampleCount == <span style="color:#bd93f9">0</span> }.map {
+            min(
+                frameDurations.subList(
+                    it,
+                    min(it + sampleCount, frameCount)
+                ).fold(<span style="color:#bd93f9">0</span>) { acc, duration -&gt; acc + duration }, <span style="color:#bd93f9">200</span>
+            )
+        }
 
-        <span class="c1">// 抽取帧
-</span><span class="c1"></span>        <span class="k">val</span> <span class="py">sampleImageFrames</span> <span class="p">=</span> <span class="p">(</span><span class="m">0</span> <span class="n">until</span> <span class="n">frameCount</span><span class="p">).</span><span class="n">mapNotNull</span> <span class="p">{</span>
-            <span class="n">gifDecoder</span><span class="p">.</span><span class="n">advance</span><span class="p">()</span>
-            <span class="k">var</span> <span class="py">imageFrame</span><span class="p">:</span> <span class="n">Bitmap</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">it</span> <span class="p">%</span> <span class="n">sampleCount</span> <span class="p">==</span> <span class="m">0</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">imageFrame</span> <span class="p">=</span> <span class="n">gifDecoder</span><span class="p">.</span><span class="n">nextFrame</span>
-            <span class="p">}</span>
-            <span class="n">imageFrame</span>
-        <span class="p">}</span>
+        <span style="color:#6272a4">// 抽取帧
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">val</span> sampleImageFrames = (<span style="color:#bd93f9">0</span> until frameCount).mapNotNull {
+            gifDecoder.advance()
+            <span style="color:#ff79c6">var</span> imageFrame: Bitmap? = <span style="color:#ff79c6">null</span>
+            <span style="color:#ff79c6">if</span> (it % sampleCount == <span style="color:#bd93f9">0</span>) {
+                imageFrame = gifDecoder.nextFrame
+            }
+            imageFrame
+        }
 
-        <span class="k">val</span> <span class="py">gifEncoder</span> <span class="p">=</span> <span class="n">AnimatedGifEncoder</span><span class="p">()</span>
+        <span style="color:#ff79c6">val</span> gifEncoder = AnimatedGifEncoder()
 
-        <span class="k">var</span> <span class="py">resultData</span><span class="p">:</span> <span class="n">ByteArray</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span>
+        <span style="color:#ff79c6">var</span> resultData: ByteArray? = <span style="color:#ff79c6">null</span>
 
-        <span class="k">try</span> <span class="p">{</span>
-            <span class="k">val</span> <span class="py">outputStream</span> <span class="p">=</span> <span class="n">ByteArrayOutputStream</span><span class="p">()</span>
-            <span class="n">gifEncoder</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">outputStream</span><span class="p">)</span>
-            <span class="n">gifEncoder</span><span class="p">.</span><span class="n">setRepeat</span><span class="p">(</span><span class="m">0</span><span class="p">)</span>
+        <span style="color:#ff79c6">try</span> {
+            <span style="color:#ff79c6">val</span> outputStream = ByteArrayOutputStream()
+            gifEncoder.start(outputStream)
+            gifEncoder.setRepeat(<span style="color:#bd93f9">0</span>)
 
-            <span class="c1">// 每一帧图片都进行重新编码
-</span><span class="c1"></span>            <span class="n">sampleImageFrames</span><span class="p">.</span><span class="n">zip</span><span class="p">(</span><span class="n">mergeFrameDurations</span><span class="p">).</span><span class="n">forEach</span> <span class="p">{</span>
-                <span class="c1">// 设置帧间隔
-</span><span class="c1"></span>                <span class="n">gifEncoder</span><span class="p">.</span><span class="n">setDelay</span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="n">second</span><span class="p">)</span>
-                <span class="n">gifEncoder</span><span class="p">.</span><span class="n">addFrame</span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="n">first</span><span class="p">)</span>
-                <span class="n">it</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">recycle</span><span class="p">()</span>
-            <span class="p">}</span>
-            <span class="n">gifEncoder</span><span class="p">.</span><span class="n">finish</span><span class="p">()</span>
+            <span style="color:#6272a4">// 每一帧图片都进行重新编码
+</span><span style="color:#6272a4"></span>            sampleImageFrames.zip(mergeFrameDurations).forEach {
+                <span style="color:#6272a4">// 设置帧间隔
+</span><span style="color:#6272a4"></span>                gifEncoder.setDelay(it.second)
+                gifEncoder.addFrame(it.first)
+                it.first.recycle()
+            }
+            gifEncoder.finish()
 
-            <span class="n">resultData</span> <span class="p">=</span> <span class="n">outputStream</span><span class="p">.</span><span class="n">toByteArray</span><span class="p">()</span>
-            <span class="n">outputStream</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">IOException</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">e</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">()</span>
-        <span class="p">}</span>
+            resultData = outputStream.toByteArray()
+            outputStream.close()
+        } <span style="color:#ff79c6">catch</span> (e: IOException) {
+            e.printStackTrace()
+        }
 
-        <span class="k">return</span> <span class="n">resultData</span>
-    <span class="p">}</span></code></pre></div>
+        <span style="color:#ff79c6">return</span> resultData
+    }</code></pre></div>
 <p>压缩分辨率的时候要注意，分辨率太大编码容易出现 Crash（应该是 OOM），这里设置为 512。</p>
-<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin">    <span class="cm">/**
-</span><span class="cm">     * 返回同步压缩 gif 图片 Byte 数据 [rawData] 每一帧长边到 [limitLongWidth] 后的 Byte 数据
-</span><span class="cm">     */</span>
-    <span class="k">private</span> <span class="k">fun</span> <span class="nf">compressGifDataWithLongWidth</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">rawData</span><span class="p">:</span> <span class="n">ByteArray</span><span class="p">,</span> <span class="n">limitLongWidth</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">ByteArray</span><span class="p">?</span> <span class="p">{</span>
-        <span class="k">val</span> <span class="py">gifDecoder</span> <span class="p">=</span> <span class="n">StandardGifDecoder</span><span class="p">(</span><span class="n">GifBitmapProvider</span><span class="p">(</span><span class="n">Glide</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">bitmapPool</span><span class="p">))</span>
-        <span class="k">val</span> <span class="py">headerParser</span> <span class="p">=</span> <span class="n">GifHeaderParser</span><span class="p">()</span>
-        <span class="n">headerParser</span><span class="p">.</span><span class="n">setData</span><span class="p">(</span><span class="n">rawData</span><span class="p">)</span>
-        <span class="k">val</span> <span class="py">header</span> <span class="p">=</span> <span class="n">headerParser</span><span class="p">.</span><span class="n">parseHeader</span><span class="p">()</span>
-        <span class="n">gifDecoder</span><span class="p">.</span><span class="n">setData</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">rawData</span><span class="p">)</span>
-        <span class="k">val</span> <span class="py">frameCount</span> <span class="p">=</span> <span class="n">gifDecoder</span><span class="p">.</span><span class="n">frameCount</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">    <span style="color:#6272a4">/**
+</span><span style="color:#6272a4">     * 返回同步压缩 gif 图片 Byte 数据 [rawData] 每一帧长边到 [limitLongWidth] 后的 Byte 数据
+</span><span style="color:#6272a4">     */</span>
+    <span style="color:#ff79c6">private</span> <span style="color:#ff79c6">fun</span> <span style="color:#50fa7b">compressGifDataWithLongWidth</span>(context: Context, rawData: ByteArray, limitLongWidth: Int): ByteArray? {
+        <span style="color:#ff79c6">val</span> gifDecoder = StandardGifDecoder(GifBitmapProvider(Glide.<span style="color:#ff79c6">get</span>(context).bitmapPool))
+        <span style="color:#ff79c6">val</span> headerParser = GifHeaderParser()
+        headerParser.setData(rawData)
+        <span style="color:#ff79c6">val</span> header = headerParser.parseHeader()
+        gifDecoder.setData(header, rawData)
+        <span style="color:#ff79c6">val</span> frameCount = gifDecoder.frameCount
 
-        <span class="c1">// 计算帧的间隔
-</span><span class="c1"></span>        <span class="k">val</span> <span class="py">frameDurations</span> <span class="p">=</span> <span class="p">(</span><span class="m">0.</span><span class="p">.(</span><span class="n">frameCount</span> <span class="p">-</span> <span class="m">1</span><span class="p">)).</span><span class="n">map</span> <span class="p">{</span> <span class="n">gifDecoder</span><span class="p">.</span><span class="n">getDelay</span><span class="p">(</span><span class="n">it</span><span class="p">)</span> <span class="p">}</span>
+        <span style="color:#6272a4">// 计算帧的间隔
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">val</span> frameDurations = (<span style="color:#bd93f9">0.</span>.(frameCount - <span style="color:#bd93f9">1</span>)).map { gifDecoder.getDelay(it) }
 
-        <span class="c1">// 计算调整后大小
-</span><span class="c1"></span>        <span class="k">val</span> <span class="py">longSideWidth</span> <span class="p">=</span> <span class="n">max</span><span class="p">(</span><span class="n">header</span><span class="p">.</span><span class="n">width</span><span class="p">,</span> <span class="n">header</span><span class="p">.</span><span class="n">height</span><span class="p">)</span>
-        <span class="k">val</span> <span class="py">ratio</span> <span class="p">=</span> <span class="n">limitLongWidth</span><span class="p">.</span><span class="n">toFloat</span><span class="p">()</span> <span class="p">/</span> <span class="n">longSideWidth</span><span class="p">.</span><span class="n">toFloat</span><span class="p">()</span>
-        <span class="k">val</span> <span class="py">resizeWidth</span> <span class="p">=</span> <span class="p">(</span><span class="n">header</span><span class="p">.</span><span class="n">width</span><span class="p">.</span><span class="n">toFloat</span><span class="p">()</span> <span class="p">*</span> <span class="n">ratio</span><span class="p">).</span><span class="n">toInt</span><span class="p">()</span>
-        <span class="k">val</span> <span class="py">resizeHeight</span> <span class="p">=</span> <span class="p">(</span><span class="n">header</span><span class="p">.</span><span class="n">height</span><span class="p">.</span><span class="n">toFloat</span><span class="p">()</span> <span class="p">*</span> <span class="n">ratio</span><span class="p">).</span><span class="n">toInt</span><span class="p">()</span>
+        <span style="color:#6272a4">// 计算调整后大小
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">val</span> longSideWidth = max(header.width, header.height)
+        <span style="color:#ff79c6">val</span> ratio = limitLongWidth.toFloat() / longSideWidth.toFloat()
+        <span style="color:#ff79c6">val</span> resizeWidth = (header.width.toFloat() * ratio).toInt()
+        <span style="color:#ff79c6">val</span> resizeHeight = (header.height.toFloat() * ratio).toInt()
 
-        <span class="c1">// 每一帧进行缩放
-</span><span class="c1"></span>        <span class="k">val</span> <span class="py">resizeImageFrames</span> <span class="p">=</span> <span class="p">(</span><span class="m">0</span> <span class="n">until</span> <span class="n">frameCount</span><span class="p">).</span><span class="n">mapNotNull</span> <span class="p">{</span>
-            <span class="n">gifDecoder</span><span class="p">.</span><span class="n">advance</span><span class="p">()</span>
-            <span class="k">var</span> <span class="py">imageFrame</span> <span class="p">=</span> <span class="n">gifDecoder</span><span class="p">.</span><span class="n">nextFrame</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">imageFrame</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">imageFrame</span> <span class="p">=</span> <span class="n">Bitmap</span><span class="p">.</span><span class="n">createScaledBitmap</span><span class="p">(</span><span class="n">imageFrame</span><span class="p">,</span> <span class="n">resizeWidth</span><span class="p">,</span> <span class="n">resizeHeight</span><span class="p">,</span> <span class="k">true</span><span class="p">)</span>
-            <span class="p">}</span>
-            <span class="n">imageFrame</span>
-        <span class="p">}</span>
+        <span style="color:#6272a4">// 每一帧进行缩放
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">val</span> resizeImageFrames = (<span style="color:#bd93f9">0</span> until frameCount).mapNotNull {
+            gifDecoder.advance()
+            <span style="color:#ff79c6">var</span> imageFrame = gifDecoder.nextFrame
+            <span style="color:#ff79c6">if</span> (imageFrame != <span style="color:#ff79c6">null</span>) {
+                imageFrame = Bitmap.createScaledBitmap(imageFrame, resizeWidth, resizeHeight, <span style="color:#ff79c6">true</span>)
+            }
+            imageFrame
+        }
 
-        <span class="k">val</span> <span class="py">gifEncoder</span> <span class="p">=</span> <span class="n">AnimatedGifEncoder</span><span class="p">()</span>
-        <span class="k">var</span> <span class="py">resultData</span><span class="p">:</span> <span class="n">ByteArray</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span>
+        <span style="color:#ff79c6">val</span> gifEncoder = AnimatedGifEncoder()
+        <span style="color:#ff79c6">var</span> resultData: ByteArray? = <span style="color:#ff79c6">null</span>
 
-        <span class="k">try</span> <span class="p">{</span>
-            <span class="k">val</span> <span class="py">outputStream</span> <span class="p">=</span> <span class="n">ByteArrayOutputStream</span><span class="p">()</span>
-            <span class="n">gifEncoder</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">outputStream</span><span class="p">)</span>
-            <span class="n">gifEncoder</span><span class="p">.</span><span class="n">setRepeat</span><span class="p">(</span><span class="m">0</span><span class="p">)</span>
+        <span style="color:#ff79c6">try</span> {
+            <span style="color:#ff79c6">val</span> outputStream = ByteArrayOutputStream()
+            gifEncoder.start(outputStream)
+            gifEncoder.setRepeat(<span style="color:#bd93f9">0</span>)
 
-            <span class="c1">// 每一帧都进行重新编码
-</span><span class="c1"></span>            <span class="n">resizeImageFrames</span><span class="p">.</span><span class="n">zip</span><span class="p">(</span><span class="n">frameDurations</span><span class="p">).</span><span class="n">forEach</span> <span class="p">{</span>
-                <span class="c1">// 设置帧间隔
-</span><span class="c1"></span>                <span class="n">gifEncoder</span><span class="p">.</span><span class="n">setDelay</span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="n">second</span><span class="p">)</span>
-                <span class="n">gifEncoder</span><span class="p">.</span><span class="n">addFrame</span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="n">first</span><span class="p">)</span>
-                <span class="n">it</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">recycle</span><span class="p">()</span>
-            <span class="p">}</span>
+            <span style="color:#6272a4">// 每一帧都进行重新编码
+</span><span style="color:#6272a4"></span>            resizeImageFrames.zip(frameDurations).forEach {
+                <span style="color:#6272a4">// 设置帧间隔
+</span><span style="color:#6272a4"></span>                gifEncoder.setDelay(it.second)
+                gifEncoder.addFrame(it.first)
+                it.first.recycle()
+            }
 
-            <span class="n">gifEncoder</span><span class="p">.</span><span class="n">finish</span><span class="p">()</span>
+            gifEncoder.finish()
 
-            <span class="n">resultData</span> <span class="p">=</span> <span class="n">outputStream</span><span class="p">.</span><span class="n">toByteArray</span><span class="p">()</span>
-            <span class="n">outputStream</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="k">return</span> <span class="n">resultData</span>
-        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">IOException</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">e</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">()</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="n">resultData</span>
-    <span class="p">}</span></code></pre></div>
+            resultData = outputStream.toByteArray()
+            outputStream.close()
+            <span style="color:#ff79c6">return</span> resultData
+        } <span style="color:#ff79c6">catch</span> (e: IOException) {
+            e.printStackTrace()
+        }
+        <span style="color:#ff79c6">return</span> resultData
+    }</code></pre></div>
 <h3 id="分辨率压缩">分辨率压缩</h3>
 
 <p>这个是最常用的，而且也比较简单。</p>
@@ -999,257 +1010,257 @@
 <h4 id="ios-4">iOS</h4>
 
 <p>iOS 的 ImageIO 提供了 <code>CGImageSourceCreateThumbnailAtIndex</code> 的 API 来创建缩放的缩略图。在 options 中添加需要缩放的长边参数即可。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift">    <span class="c1">/// 同步压缩图片数据长边到指定数值</span>
-    <span class="c1">///</span>
-    <span class="c1">/// - Parameters:</span>
-    <span class="c1">///   - rawData: 原始图片数据</span>
-    <span class="c1">///   - limitLongWidth: 长边限制</span>
-    <span class="c1">/// - Returns: 处理后数据</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">compressImageData</span><span class="p">(</span><span class="kc">_</span> <span class="n">rawData</span><span class="p">:</span><span class="n">Data</span><span class="p">,</span> <span class="n">limitLongWidth</span><span class="p">:</span><span class="n">CGFloat</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Data</span><span class="p">?{</span>
-        <span class="k">guard</span> <span class="bp">max</span><span class="p">(</span><span class="n">rawData</span><span class="p">.</span><span class="n">imageSize</span><span class="p">.</span><span class="n">height</span><span class="p">,</span> <span class="n">rawData</span><span class="p">.</span><span class="n">imageSize</span><span class="p">.</span><span class="n">width</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">limitLongWidth</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="n">rawData</span>
-        <span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">    <span style="color:#6272a4">/// 同步压缩图片数据长边到指定数值</span>
+    <span style="color:#6272a4">///</span>
+    <span style="color:#6272a4">/// - Parameters:</span>
+    <span style="color:#6272a4">///   - rawData: 原始图片数据</span>
+    <span style="color:#6272a4">///   - limitLongWidth: 长边限制</span>
+    <span style="color:#6272a4">/// - Returns: 处理后数据</span>
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">compressImageData</span>(<span style="color:#ff79c6">_</span> rawData:Data, limitLongWidth:CGFloat) -&gt; Data?{
+        <span style="color:#ff79c6">guard</span> max(rawData.imageSize.height, rawData.imageSize.width) <span style="color:#ff79c6">&gt;</span> limitLongWidth <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">return</span> rawData
+        }
         
-        <span class="k">guard</span> <span class="kd">let</span> <span class="nv">imageSource</span> <span class="p">=</span> <span class="n">CGImageSourceCreateWithData</span><span class="p">(</span><span class="n">rawData</span> <span class="k">as</span> <span class="n">CFData</span><span class="p">,</span> <span class="p">[</span><span class="n">kCGImageSourceShouldCache</span><span class="p">:</span> <span class="kc">false</span><span class="p">]</span> <span class="k">as</span> <span class="n">CFDictionary</span><span class="p">),</span>
-            <span class="kd">let</span> <span class="nv">writeData</span> <span class="p">=</span> <span class="n">CFDataCreateMutable</span><span class="p">(</span><span class="kc">nil</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-            <span class="kd">let</span> <span class="nv">imageType</span> <span class="p">=</span> <span class="n">CGImageSourceGetType</span><span class="p">(</span><span class="n">imageSource</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="kc">nil</span>
-        <span class="p">}</span>
+        <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageSource</span> = CGImageSourceCreateWithData(rawData <span style="color:#ff79c6">as</span> CFData, [kCGImageSourceShouldCache: <span style="color:#ff79c6">false</span>] <span style="color:#ff79c6">as</span> CFDictionary),
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">writeData</span> = CFDataCreateMutable(<span style="color:#ff79c6">nil</span>, <span style="color:#bd93f9">0</span>),
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageType</span> = CGImageSourceGetType(imageSource) <span style="color:#ff79c6">else</span> {
+                <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+        }
         
         
-        <span class="kd">let</span> <span class="nv">frameCount</span> <span class="p">=</span> <span class="n">CGImageSourceGetCount</span><span class="p">(</span><span class="n">imageSource</span><span class="p">)</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">frameCount</span> = CGImageSourceGetCount(imageSource)
         
-        <span class="k">guard</span> <span class="kd">let</span> <span class="nv">imageDestination</span> <span class="p">=</span> <span class="n">CGImageDestinationCreateWithData</span><span class="p">(</span><span class="n">writeData</span><span class="p">,</span> <span class="n">imageType</span><span class="p">,</span> <span class="n">frameCount</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span> <span class="k">else</span><span class="p">{</span>
-            <span class="k">return</span> <span class="kc">nil</span>
-        <span class="p">}</span>
+        <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageDestination</span> = CGImageDestinationCreateWithData(writeData, imageType, frameCount, <span style="color:#ff79c6">nil</span>) <span style="color:#ff79c6">else</span>{
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+        }
         
-        <span class="c1">// 设置缩略图参数，kCGImageSourceThumbnailMaxPixelSize 为生成缩略图的大小。当设置为 800，如果图片本身大于 800*600，则生成后图片大小为 800*600，如果源图片为 700*500，则生成图片为 800*500</span>
-        <span class="kd">let</span> <span class="nv">options</span> <span class="p">=</span> <span class="p">[</span><span class="n">kCGImageSourceThumbnailMaxPixelSize</span><span class="p">:</span> <span class="n">limitLongWidth</span><span class="p">,</span> <span class="n">kCGImageSourceCreateThumbnailWithTransform</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span> <span class="n">kCGImageSourceCreateThumbnailFromImageIfAbsent</span><span class="p">:</span><span class="kc">true</span><span class="p">]</span> <span class="k">as</span> <span class="n">CFDictionary</span>
+        <span style="color:#6272a4">// 设置缩略图参数，kCGImageSourceThumbnailMaxPixelSize 为生成缩略图的大小。当设置为 800，如果图片本身大于 800*600，则生成后图片大小为 800*600，如果源图片为 700*500，则生成图片为 800*500</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">options</span> = [kCGImageSourceThumbnailMaxPixelSize: limitLongWidth, kCGImageSourceCreateThumbnailWithTransform:<span style="color:#ff79c6">true</span>, kCGImageSourceCreateThumbnailFromImageIfAbsent:<span style="color:#ff79c6">true</span>] <span style="color:#ff79c6">as</span> CFDictionary
         
-        <span class="k">if</span> <span class="n">frameCount</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="p">{</span>
-            <span class="c1">// 计算帧的间隔</span>
-            <span class="kd">let</span> <span class="nv">frameDurations</span> <span class="p">=</span> <span class="n">imageSource</span><span class="p">.</span><span class="n">frameDurations</span>
+        <span style="color:#ff79c6">if</span> frameCount <span style="color:#ff79c6">&gt;</span> <span style="color:#bd93f9">1</span> {
+            <span style="color:#6272a4">// 计算帧的间隔</span>
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">frameDurations</span> = imageSource.frameDurations
             
-            <span class="c1">// 每一帧都进行缩放</span>
-            <span class="kd">let</span> <span class="nv">resizedImageFrames</span> <span class="p">=</span> <span class="p">(</span><span class="mf">0.</span><span class="p">.&lt;</span><span class="n">frameCount</span><span class="p">).</span><span class="n">compactMap</span><span class="p">{</span> <span class="n">CGImageSourceCreateThumbnailAtIndex</span><span class="p">(</span><span class="n">imageSource</span><span class="p">,</span> <span class="nv">$0</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="p">}</span>
+            <span style="color:#6272a4">// 每一帧都进行缩放</span>
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">resizedImageFrames</span> = (<span style="color:#bd93f9">0.</span>.&lt;frameCount).compactMap{ CGImageSourceCreateThumbnailAtIndex(imageSource, <span style="color:#8be9fd;font-style:italic">$0</span>, options) }
             
-            <span class="c1">// 每一帧都进行重新编码</span>
-            <span class="n">zip</span><span class="p">(</span><span class="n">resizedImageFrames</span><span class="p">,</span> <span class="n">frameDurations</span><span class="p">).</span><span class="n">forEach</span> <span class="p">{</span>
-                <span class="c1">// 设置帧间隔</span>
-                <span class="kd">let</span> <span class="nv">frameProperties</span> <span class="p">=</span> <span class="p">[</span><span class="n">kCGImagePropertyGIFDictionary</span> <span class="p">:</span> <span class="p">[</span><span class="n">kCGImagePropertyGIFDelayTime</span><span class="p">:</span> <span class="nv">$1</span><span class="p">,</span> <span class="n">kCGImagePropertyGIFUnclampedDelayTime</span><span class="p">:</span> <span class="nv">$1</span><span class="p">]]</span>
-                <span class="n">CGImageDestinationAddImage</span><span class="p">(</span><span class="n">imageDestination</span><span class="p">,</span> <span class="nv">$0</span><span class="p">,</span> <span class="n">frameProperties</span> <span class="k">as</span> <span class="n">CFDictionary</span><span class="p">)</span>
-            <span class="p">}</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">guard</span> <span class="kd">let</span> <span class="nv">resizedImageFrame</span> <span class="p">=</span> <span class="n">CGImageSourceCreateThumbnailAtIndex</span><span class="p">(</span><span class="n">imageSource</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="kc">nil</span>
-            <span class="p">}</span>
-            <span class="n">CGImageDestinationAddImage</span><span class="p">(</span><span class="n">imageDestination</span><span class="p">,</span> <span class="n">resizedImageFrame</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
-        <span class="p">}</span>
+            <span style="color:#6272a4">// 每一帧都进行重新编码</span>
+            zip(resizedImageFrames, frameDurations).forEach {
+                <span style="color:#6272a4">// 设置帧间隔</span>
+                <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">frameProperties</span> = [kCGImagePropertyGIFDictionary : [kCGImagePropertyGIFDelayTime: <span style="color:#8be9fd;font-style:italic">$1</span>, kCGImagePropertyGIFUnclampedDelayTime: <span style="color:#8be9fd;font-style:italic">$1</span>]]
+                CGImageDestinationAddImage(imageDestination, <span style="color:#8be9fd;font-style:italic">$0</span>, frameProperties <span style="color:#ff79c6">as</span> CFDictionary)
+            }
+        } <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">resizedImageFrame</span> = CGImageSourceCreateThumbnailAtIndex(imageSource, <span style="color:#bd93f9">0</span>, options) <span style="color:#ff79c6">else</span> {
+                <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+            }
+            CGImageDestinationAddImage(imageDestination, resizedImageFrame, <span style="color:#ff79c6">nil</span>)
+        }
         
-        <span class="k">guard</span> <span class="n">CGImageDestinationFinalize</span><span class="p">(</span><span class="n">imageDestination</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">nil</span>
-        <span class="p">}</span>
+        <span style="color:#ff79c6">guard</span> CGImageDestinationFinalize(imageDestination) <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+        }
         
-        <span class="k">return</span> <span class="n">writeData</span> <span class="k">as</span> <span class="n">Data</span>
-    <span class="p">}</span></code></pre></div>
+        <span style="color:#ff79c6">return</span> writeData <span style="color:#ff79c6">as</span> Data
+    }</code></pre></div>
 <h4 id="android-2">Android</h4>
 
 <p>Android 静态图用 Bitmap 里面的 <code>createScaleBitmap</code> API 就好了，GIF 上文已经讲了。</p>
-<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin">   <span class="cm">/**
-</span><span class="cm">     * 返回同步压缩图片 Byte 数据 [rawData] 的长边到 [limitLongWidth] 后的 Byte 数据，Gif 目标长边最大压缩到 512，超过用 512
-</span><span class="cm">     */</span>
-    <span class="k">fun</span> <span class="nf">compressImageDataWithLongWidth</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">rawData</span><span class="p">:</span> <span class="n">ByteArray</span><span class="p">,</span> <span class="n">limitLongWidth</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">ByteArray</span><span class="p">?</span> <span class="p">{</span>
-        <span class="k">val</span> <span class="py">format</span> <span class="p">=</span> <span class="n">rawData</span><span class="p">.</span><span class="n">imageFormat</span><span class="p">()</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">format</span> <span class="p">==</span> <span class="n">ImageFormat</span><span class="p">.</span><span class="n">UNKNOWN</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">null</span>
-        <span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">   <span style="color:#6272a4">/**
+</span><span style="color:#6272a4">     * 返回同步压缩图片 Byte 数据 [rawData] 的长边到 [limitLongWidth] 后的 Byte 数据，Gif 目标长边最大压缩到 512，超过用 512
+</span><span style="color:#6272a4">     */</span>
+    <span style="color:#ff79c6">fun</span> <span style="color:#50fa7b">compressImageDataWithLongWidth</span>(context: Context, rawData: ByteArray, limitLongWidth: Int): ByteArray? {
+        <span style="color:#ff79c6">val</span> format = rawData.imageFormat()
+        <span style="color:#ff79c6">if</span> (format == ImageFormat.UNKNOWN) {
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">null</span>
+        }
 
-        <span class="k">val</span> <span class="err">(</span><span class="py">imageWidth</span><span class="p">,</span> <span class="n">imageHeight</span><span class="p">)</span> <span class="p">=</span> <span class="n">rawData</span><span class="p">.</span><span class="n">imageSize</span><span class="p">()</span>
-        <span class="k">val</span> <span class="py">longSideWidth</span> <span class="p">=</span> <span class="n">max</span><span class="p">(</span><span class="n">imageWidth</span><span class="p">,</span> <span class="n">imageHeight</span><span class="p">)</span>
+        <span style="color:#ff79c6">val</span> (imageWidth, imageHeight) = rawData.imageSize()
+        <span style="color:#ff79c6">val</span> longSideWidth = max(imageWidth, imageHeight)
 
-        <span class="k">if</span> <span class="p">(</span><span class="n">longSideWidth</span> <span class="p">&lt;=</span> <span class="n">limitLongWidth</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="n">rawData</span>
-        <span class="p">}</span>
+        <span style="color:#ff79c6">if</span> (longSideWidth &lt;= limitLongWidth) {
+            <span style="color:#ff79c6">return</span> rawData
+        }
 
-        <span class="k">if</span> <span class="p">(</span><span class="n">format</span> <span class="p">==</span> <span class="n">ImageFormat</span><span class="p">.</span><span class="n">GIF</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c1">// 压缩 Gif 分辨率太大编码时容易崩溃
-</span><span class="c1"></span>            <span class="k">return</span> <span class="n">compressGifDataWithLongWidth</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">rawData</span><span class="p">,</span> <span class="n">max</span><span class="p">(</span><span class="m">512</span><span class="p">,</span> <span class="n">longSideWidth</span><span class="p">))</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">val</span> <span class="py">image</span> <span class="p">=</span> <span class="n">BitmapFactory</span><span class="p">.</span><span class="n">decodeByteArray</span><span class="p">(</span><span class="n">rawData</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">rawData</span><span class="p">.</span><span class="n">size</span><span class="p">)</span>
-            <span class="k">val</span> <span class="py">ratio</span> <span class="p">=</span> <span class="n">limitLongWidth</span><span class="p">.</span><span class="n">toDouble</span><span class="p">()</span> <span class="p">/</span> <span class="n">longSideWidth</span><span class="p">.</span><span class="n">toDouble</span><span class="p">()</span>
-            <span class="k">val</span> <span class="py">resizeImageFrame</span> <span class="p">=</span> <span class="n">Bitmap</span><span class="p">.</span><span class="n">createScaledBitmap</span><span class="p">(</span>
-                <span class="n">image</span><span class="p">,</span>
-                <span class="p">(</span><span class="n">image</span><span class="p">.</span><span class="n">width</span><span class="p">.</span><span class="n">toDouble</span><span class="p">()</span> <span class="p">*</span> <span class="n">ratio</span><span class="p">).</span><span class="n">toInt</span><span class="p">(),</span>
-                <span class="p">(</span><span class="n">image</span><span class="p">.</span><span class="n">height</span><span class="p">.</span><span class="n">toDouble</span><span class="p">()</span> <span class="p">*</span> <span class="n">ratio</span><span class="p">).</span><span class="n">toInt</span><span class="p">(),</span>
-                <span class="k">true</span>
-            <span class="p">)</span>
-            <span class="n">image</span><span class="p">.</span><span class="n">recycle</span><span class="p">()</span>
-            <span class="k">var</span> <span class="py">resultData</span><span class="p">:</span> <span class="n">ByteArray</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span>
-            <span class="k">when</span> <span class="p">(</span><span class="n">format</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">ImageFormat</span><span class="p">.</span><span class="n">PNG</span> <span class="p">-&gt;</span> <span class="p">{</span>
-                    <span class="n">resultData</span> <span class="p">=</span> <span class="n">resizeImageFrame</span><span class="p">.</span><span class="n">toByteArray</span><span class="p">(</span><span class="n">Bitmap</span><span class="p">.</span><span class="n">CompressFormat</span><span class="p">.</span><span class="n">PNG</span><span class="p">)</span>
-                <span class="p">}</span>
-                <span class="n">ImageFormat</span><span class="p">.</span><span class="n">JPG</span> <span class="p">-&gt;</span> <span class="p">{</span>
-                    <span class="n">resultData</span> <span class="p">=</span> <span class="n">resizeImageFrame</span><span class="p">.</span><span class="n">toByteArray</span><span class="p">(</span><span class="n">Bitmap</span><span class="p">.</span><span class="n">CompressFormat</span><span class="p">.</span><span class="n">JPEG</span><span class="p">)</span>
-                <span class="p">}</span>
-                <span class="k">else</span> <span class="p">-&gt;</span> <span class="p">{</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-            <span class="n">resizeImageFrame</span><span class="p">.</span><span class="n">recycle</span><span class="p">()</span>
-            <span class="k">return</span> <span class="n">resultData</span>
-        <span class="p">}</span>
-    <span class="p">}</span></code></pre></div>
+        <span style="color:#ff79c6">if</span> (format == ImageFormat.GIF) {
+            <span style="color:#6272a4">// 压缩 Gif 分辨率太大编码时容易崩溃
+</span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">return</span> compressGifDataWithLongWidth(context, rawData, max(<span style="color:#bd93f9">512</span>, longSideWidth))
+        } <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">val</span> image = BitmapFactory.decodeByteArray(rawData, <span style="color:#bd93f9">0</span>, rawData.size)
+            <span style="color:#ff79c6">val</span> ratio = limitLongWidth.toDouble() / longSideWidth.toDouble()
+            <span style="color:#ff79c6">val</span> resizeImageFrame = Bitmap.createScaledBitmap(
+                image,
+                (image.width.toDouble() * ratio).toInt(),
+                (image.height.toDouble() * ratio).toInt(),
+                <span style="color:#ff79c6">true</span>
+            )
+            image.recycle()
+            <span style="color:#ff79c6">var</span> resultData: ByteArray? = <span style="color:#ff79c6">null</span>
+            <span style="color:#ff79c6">when</span> (format) {
+                ImageFormat.PNG -&gt; {
+                    resultData = resizeImageFrame.toByteArray(Bitmap.CompressFormat.PNG)
+                }
+                ImageFormat.JPG -&gt; {
+                    resultData = resizeImageFrame.toByteArray(Bitmap.CompressFormat.JPEG)
+                }
+                <span style="color:#ff79c6">else</span> -&gt; {
+                }
+            }
+            resizeImageFrame.recycle()
+            <span style="color:#ff79c6">return</span> resultData
+        }
+    }</code></pre></div>
 <h2 id="限制大小的压缩方式">限制大小的压缩方式</h2>
 
 <p>也就是将前面讲的方法综合起来，笔者这边给出一种方案，没有对色彩进行改变，JPG 先用二分法减少最多 6 次的压缩系数，GIF 先抽帧，抽帧间隔参考前文，最后采用逼近目标大小缩小分辨率。</p>
 
 <h3 id="ios-5">iOS</h3>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift">    <span class="c1">/// 同步压缩图片到指定文件大小</span>
-    <span class="c1">///</span>
-    <span class="c1">/// - Parameters:</span>
-    <span class="c1">///   - rawData: 原始图片数据</span>
-    <span class="c1">///   - limitDataSize: 限制文件大小，单位字节</span>
-    <span class="c1">/// - Returns: 处理后数据</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">compressImageData</span><span class="p">(</span><span class="kc">_</span> <span class="n">rawData</span><span class="p">:</span><span class="n">Data</span><span class="p">,</span> <span class="n">limitDataSize</span><span class="p">:</span><span class="nb">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Data</span><span class="p">?{</span>
-        <span class="k">guard</span> <span class="n">rawData</span><span class="p">.</span><span class="bp">count</span> <span class="o">&gt;</span> <span class="n">limitDataSize</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="n">rawData</span>
-        <span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">    <span style="color:#6272a4">/// 同步压缩图片到指定文件大小</span>
+    <span style="color:#6272a4">///</span>
+    <span style="color:#6272a4">/// - Parameters:</span>
+    <span style="color:#6272a4">///   - rawData: 原始图片数据</span>
+    <span style="color:#6272a4">///   - limitDataSize: 限制文件大小，单位字节</span>
+    <span style="color:#6272a4">/// - Returns: 处理后数据</span>
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">compressImageData</span>(<span style="color:#ff79c6">_</span> rawData:Data, limitDataSize:<span style="color:#8be9fd;font-style:italic">Int</span>) -&gt; Data?{
+        <span style="color:#ff79c6">guard</span> rawData.count <span style="color:#ff79c6">&gt;</span> limitDataSize <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">return</span> rawData
+        }
         
-        <span class="kd">var</span> <span class="nv">resultData</span> <span class="p">=</span> <span class="n">rawData</span>
+        <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">resultData</span> = rawData
         
-        <span class="c1">// 若是 JPG，先用压缩系数压缩 6 次，二分法</span>
-        <span class="k">if</span> <span class="n">resultData</span><span class="p">.</span><span class="n">imageFormat</span> <span class="p">==</span> <span class="p">.</span><span class="n">jpg</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nv">compression</span><span class="p">:</span> <span class="nb">Double</span> <span class="p">=</span> <span class="mi">1</span>
-            <span class="kd">var</span> <span class="nv">maxCompression</span><span class="p">:</span> <span class="nb">Double</span> <span class="p">=</span> <span class="mi">1</span>
-            <span class="kd">var</span> <span class="nv">minCompression</span><span class="p">:</span> <span class="nb">Double</span> <span class="p">=</span> <span class="mi">0</span>
-            <span class="k">for</span> <span class="kc">_</span> <span class="k">in</span> <span class="mf">0.</span><span class="p">.&lt;</span><span class="mi">6</span> <span class="p">{</span>
-                <span class="n">compression</span> <span class="p">=</span> <span class="p">(</span><span class="n">maxCompression</span> <span class="o">+</span> <span class="n">minCompression</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
-                <span class="k">if</span> <span class="kd">let</span> <span class="nv">data</span> <span class="p">=</span> <span class="n">compressImageData</span><span class="p">(</span><span class="n">resultData</span><span class="p">,</span> <span class="n">compression</span><span class="p">:</span> <span class="n">compression</span><span class="p">){</span>
-                    <span class="n">resultData</span> <span class="p">=</span> <span class="n">data</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="k">return</span> <span class="kc">nil</span>
-                <span class="p">}</span>
-                <span class="k">if</span> <span class="n">resultData</span><span class="p">.</span><span class="bp">count</span> <span class="o">&lt;</span> <span class="nb">Int</span><span class="p">(</span><span class="n">CGFloat</span><span class="p">(</span><span class="n">limitDataSize</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.9</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="n">minCompression</span> <span class="p">=</span> <span class="n">compression</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">resultData</span><span class="p">.</span><span class="bp">count</span> <span class="o">&gt;</span> <span class="n">limitDataSize</span> <span class="p">{</span>
-                    <span class="n">maxCompression</span> <span class="p">=</span> <span class="n">compression</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="k">break</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="n">resultData</span><span class="p">.</span><span class="bp">count</span> <span class="o">&lt;=</span> <span class="n">limitDataSize</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="n">resultData</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
+        <span style="color:#6272a4">// 若是 JPG，先用压缩系数压缩 6 次，二分法</span>
+        <span style="color:#ff79c6">if</span> resultData.imageFormat == .jpg {
+            <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">compression</span>: <span style="color:#8be9fd;font-style:italic">Double</span> = <span style="color:#bd93f9">1</span>
+            <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">maxCompression</span>: <span style="color:#8be9fd;font-style:italic">Double</span> = <span style="color:#bd93f9">1</span>
+            <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">minCompression</span>: <span style="color:#8be9fd;font-style:italic">Double</span> = <span style="color:#bd93f9">0</span>
+            <span style="color:#ff79c6">for</span> <span style="color:#ff79c6">_</span> <span style="color:#ff79c6">in</span> <span style="color:#bd93f9">0.</span>.&lt;<span style="color:#bd93f9">6</span> {
+                compression = (maxCompression <span style="color:#ff79c6">+</span> minCompression) <span style="color:#ff79c6">/</span> <span style="color:#bd93f9">2</span>
+                <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">data</span> = compressImageData(resultData, compression: compression){
+                    resultData = data
+                } <span style="color:#ff79c6">else</span> {
+                    <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+                }
+                <span style="color:#ff79c6">if</span> resultData.count <span style="color:#ff79c6">&lt;</span> <span style="color:#8be9fd;font-style:italic">Int</span>(CGFloat(limitDataSize) <span style="color:#ff79c6">*</span> <span style="color:#bd93f9">0.9</span>) {
+                    minCompression = compression
+                } <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> resultData.count <span style="color:#ff79c6">&gt;</span> limitDataSize {
+                    maxCompression = compression
+                } <span style="color:#ff79c6">else</span> {
+                    <span style="color:#ff79c6">break</span>
+                }
+            }
+            <span style="color:#ff79c6">if</span> resultData.count <span style="color:#ff79c6">&lt;=</span> limitDataSize {
+                <span style="color:#ff79c6">return</span> resultData
+            }
+        }
         
-        <span class="c1">// 若是 GIF，先用抽帧减少大小</span>
-        <span class="k">if</span> <span class="n">resultData</span><span class="p">.</span><span class="n">imageFormat</span> <span class="p">==</span> <span class="p">.</span><span class="n">gif</span> <span class="p">{</span>
-            <span class="kd">let</span> <span class="nv">sampleCount</span> <span class="p">=</span> <span class="n">resultData</span><span class="p">.</span><span class="n">fitSampleCount</span>
-            <span class="k">if</span> <span class="kd">let</span> <span class="nv">data</span> <span class="p">=</span> <span class="n">compressImageData</span><span class="p">(</span><span class="n">resultData</span><span class="p">,</span> <span class="n">sampleCount</span><span class="p">:</span> <span class="n">sampleCount</span><span class="p">){</span>
-                <span class="n">resultData</span> <span class="p">=</span> <span class="n">data</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="kc">nil</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="n">resultData</span><span class="p">.</span><span class="bp">count</span> <span class="o">&lt;=</span> <span class="n">limitDataSize</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="n">resultData</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
+        <span style="color:#6272a4">// 若是 GIF，先用抽帧减少大小</span>
+        <span style="color:#ff79c6">if</span> resultData.imageFormat == .gif {
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">sampleCount</span> = resultData.fitSampleCount
+            <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">data</span> = compressImageData(resultData, sampleCount: sampleCount){
+                resultData = data
+            } <span style="color:#ff79c6">else</span> {
+                <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+            }
+            <span style="color:#ff79c6">if</span> resultData.count <span style="color:#ff79c6">&lt;=</span> limitDataSize {
+                <span style="color:#ff79c6">return</span> resultData
+            }
+        }
         
-        <span class="kd">var</span> <span class="nv">longSideWidth</span> <span class="p">=</span> <span class="bp">max</span><span class="p">(</span><span class="n">resultData</span><span class="p">.</span><span class="n">imageSize</span><span class="p">.</span><span class="n">height</span><span class="p">,</span> <span class="n">resultData</span><span class="p">.</span><span class="n">imageSize</span><span class="p">.</span><span class="n">width</span><span class="p">)</span>
-        <span class="c1">// 图片尺寸按比率缩小，比率按字节比例逼近</span>
-        <span class="k">while</span> <span class="n">resultData</span><span class="p">.</span><span class="bp">count</span> <span class="o">&gt;</span> <span class="n">limitDataSize</span><span class="p">{</span>
-            <span class="kd">let</span> <span class="nv">ratio</span> <span class="p">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">CGFloat</span><span class="p">(</span><span class="n">limitDataSize</span><span class="p">)</span> <span class="o">/</span> <span class="n">CGFloat</span><span class="p">(</span><span class="n">resultData</span><span class="p">.</span><span class="bp">count</span><span class="p">))</span>
-            <span class="n">longSideWidth</span> <span class="o">*=</span> <span class="n">ratio</span>
-            <span class="k">if</span> <span class="kd">let</span> <span class="nv">data</span> <span class="p">=</span> <span class="n">compressImageData</span><span class="p">(</span><span class="n">resultData</span><span class="p">,</span> <span class="n">limitLongWidth</span><span class="p">:</span> <span class="n">longSideWidth</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">resultData</span> <span class="p">=</span> <span class="n">data</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="kc">nil</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="n">resultData</span>
-    <span class="p">}</span></code></pre></div>
+        <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">longSideWidth</span> = max(resultData.imageSize.height, resultData.imageSize.width)
+        <span style="color:#6272a4">// 图片尺寸按比率缩小，比率按字节比例逼近</span>
+        <span style="color:#ff79c6">while</span> resultData.count <span style="color:#ff79c6">&gt;</span> limitDataSize{
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">ratio</span> = sqrt(CGFloat(limitDataSize) <span style="color:#ff79c6">/</span> CGFloat(resultData.count))
+            longSideWidth <span style="color:#ff79c6">*=</span> ratio
+            <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">data</span> = compressImageData(resultData, limitLongWidth: longSideWidth) {
+                resultData = data
+            } <span style="color:#ff79c6">else</span> {
+                <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+            }
+        }
+        <span style="color:#ff79c6">return</span> resultData
+    }</code></pre></div>
 <h3 id="android-3">Android</h3>
-<div class="highlight"><pre class="chroma"><code class="language-kotlin" data-lang="kotlin">    <span class="cm">/**
-</span><span class="cm">     * 返回同步压缩图片 Byte 数据 [rawData] 的数据大小到 [limitDataSize] 后的 Byte 数据
-</span><span class="cm">     */</span>
-    <span class="k">fun</span> <span class="nf">compressImageDataWithSize</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">rawData</span><span class="p">:</span> <span class="n">ByteArray</span><span class="p">,</span> <span class="n">limitDataSize</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">ByteArray</span><span class="p">?</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">rawData</span><span class="p">.</span><span class="n">size</span> <span class="p">&lt;=</span> <span class="n">limitDataSize</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="n">rawData</span>
-        <span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">    <span style="color:#6272a4">/**
+</span><span style="color:#6272a4">     * 返回同步压缩图片 Byte 数据 [rawData] 的数据大小到 [limitDataSize] 后的 Byte 数据
+</span><span style="color:#6272a4">     */</span>
+    <span style="color:#ff79c6">fun</span> <span style="color:#50fa7b">compressImageDataWithSize</span>(context: Context, rawData: ByteArray, limitDataSize: Int): ByteArray? {
+        <span style="color:#ff79c6">if</span> (rawData.size &lt;= limitDataSize) {
+            <span style="color:#ff79c6">return</span> rawData
+        }
 
-        <span class="k">val</span> <span class="py">format</span> <span class="p">=</span> <span class="n">rawData</span><span class="p">.</span><span class="n">imageFormat</span><span class="p">()</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">format</span> <span class="p">==</span> <span class="n">ImageFormat</span><span class="p">.</span><span class="n">UNKNOWN</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">null</span>
-        <span class="p">}</span>
+        <span style="color:#ff79c6">val</span> format = rawData.imageFormat()
+        <span style="color:#ff79c6">if</span> (format == ImageFormat.UNKNOWN) {
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">null</span>
+        }
 
-        <span class="k">var</span> <span class="py">resultData</span> <span class="p">=</span> <span class="n">rawData</span>
+        <span style="color:#ff79c6">var</span> resultData = rawData
 
-        <span class="c1">// 若是 JPG，先用压缩系数压缩 6 次，二分法
-</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">format</span> <span class="p">==</span> <span class="n">ImageFormat</span><span class="p">.</span><span class="n">JPG</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">var</span> <span class="py">compression</span> <span class="p">=</span> <span class="m">100</span>
-            <span class="k">var</span> <span class="py">maxCompression</span> <span class="p">=</span> <span class="m">100</span>
-            <span class="k">var</span> <span class="py">minCompression</span> <span class="p">=</span> <span class="m">0</span>
+        <span style="color:#6272a4">// 若是 JPG，先用压缩系数压缩 6 次，二分法
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">if</span> (format == ImageFormat.JPG) {
+            <span style="color:#ff79c6">var</span> compression = <span style="color:#bd93f9">100</span>
+            <span style="color:#ff79c6">var</span> maxCompression = <span style="color:#bd93f9">100</span>
+            <span style="color:#ff79c6">var</span> minCompression = <span style="color:#bd93f9">0</span>
 
-            <span class="k">try</span> <span class="p">{</span>
-                <span class="k">val</span> <span class="py">outputStream</span> <span class="p">=</span> <span class="n">ByteArrayOutputStream</span><span class="p">()</span>
-                <span class="k">for</span> <span class="p">(</span><span class="n">index</span> <span class="k">in</span> <span class="m">0.</span><span class="p">.</span><span class="m">6</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="n">compression</span> <span class="p">=</span> <span class="p">(</span><span class="n">maxCompression</span> <span class="p">+</span> <span class="n">minCompression</span><span class="p">)</span> <span class="p">/</span> <span class="m">2</span>
-                    <span class="n">outputStream</span><span class="p">.</span><span class="n">reset</span><span class="p">()</span>
-                    <span class="k">val</span> <span class="py">image</span> <span class="p">=</span> <span class="n">BitmapFactory</span><span class="p">.</span><span class="n">decodeByteArray</span><span class="p">(</span><span class="n">rawData</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">rawData</span><span class="p">.</span><span class="n">size</span><span class="p">)</span>
-                    <span class="n">image</span><span class="p">.</span><span class="n">compress</span><span class="p">(</span><span class="n">Bitmap</span><span class="p">.</span><span class="n">CompressFormat</span><span class="p">.</span><span class="n">JPEG</span><span class="p">,</span> <span class="n">compression</span><span class="p">,</span> <span class="n">outputStream</span><span class="p">)</span>
-                    <span class="n">image</span><span class="p">.</span><span class="n">recycle</span><span class="p">()</span>
-                    <span class="n">resultData</span> <span class="p">=</span> <span class="n">outputStream</span><span class="p">.</span><span class="n">toByteArray</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="n">resultData</span><span class="p">.</span><span class="n">size</span> <span class="p">&lt;</span> <span class="p">(</span><span class="n">limitDataSize</span><span class="p">.</span><span class="n">toDouble</span><span class="p">()</span> <span class="p">*</span> <span class="m">0.9</span><span class="p">).</span><span class="n">toInt</span><span class="p">())</span> <span class="p">{</span>
-                        <span class="n">minCompression</span> <span class="p">=</span> <span class="n">compression</span>
-                    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">resultData</span><span class="p">.</span><span class="n">size</span> <span class="p">&gt;</span> <span class="n">limitDataSize</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="n">maxCompression</span> <span class="p">=</span> <span class="n">compression</span>
-                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                        <span class="k">break</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-                <span class="n">outputStream</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">IOException</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">e</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">()</span>
-            <span class="p">}</span>
+            <span style="color:#ff79c6">try</span> {
+                <span style="color:#ff79c6">val</span> outputStream = ByteArrayOutputStream()
+                <span style="color:#ff79c6">for</span> (index <span style="color:#ff79c6">in</span> <span style="color:#bd93f9">0.</span>.<span style="color:#bd93f9">6</span>) {
+                    compression = (maxCompression + minCompression) / <span style="color:#bd93f9">2</span>
+                    outputStream.reset()
+                    <span style="color:#ff79c6">val</span> image = BitmapFactory.decodeByteArray(rawData, <span style="color:#bd93f9">0</span>, rawData.size)
+                    image.compress(Bitmap.CompressFormat.JPEG, compression, outputStream)
+                    image.recycle()
+                    resultData = outputStream.toByteArray()
+                    <span style="color:#ff79c6">if</span> (resultData.size &lt; (limitDataSize.toDouble() * <span style="color:#bd93f9">0.9</span>).toInt()) {
+                        minCompression = compression
+                    } <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> (resultData.size &gt; limitDataSize) {
+                        maxCompression = compression
+                    } <span style="color:#ff79c6">else</span> {
+                        <span style="color:#ff79c6">break</span>
+                    }
+                }
+                outputStream.close()
+            } <span style="color:#ff79c6">catch</span> (e: IOException) {
+                e.printStackTrace()
+            }
 
-            <span class="k">if</span> <span class="p">(</span><span class="n">resultData</span><span class="p">.</span><span class="n">size</span> <span class="p">&lt;=</span> <span class="n">limitDataSize</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="n">resultData</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
+            <span style="color:#ff79c6">if</span> (resultData.size &lt;= limitDataSize) {
+                <span style="color:#ff79c6">return</span> resultData
+            }
+        }
 
-        <span class="c1">// 若是 GIF，先用抽帧减少大小
-</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">format</span> <span class="p">==</span> <span class="n">ImageFormat</span><span class="p">.</span><span class="n">GIF</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">val</span> <span class="py">sampleCount</span> <span class="p">=</span> <span class="n">resultData</span><span class="p">.</span><span class="n">fitSampleCount</span><span class="p">()</span>
-            <span class="k">val</span> <span class="py">data</span> <span class="p">=</span> <span class="n">compressGifDataWithSampleCount</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">resultData</span><span class="p">,</span> <span class="n">sampleCount</span><span class="p">)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">data</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">resultData</span> <span class="p">=</span> <span class="k">data</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="k">null</span>
-            <span class="p">}</span>
+        <span style="color:#6272a4">// 若是 GIF，先用抽帧减少大小
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">if</span> (format == ImageFormat.GIF) {
+            <span style="color:#ff79c6">val</span> sampleCount = resultData.fitSampleCount()
+            <span style="color:#ff79c6">val</span> data = compressGifDataWithSampleCount(context, resultData, sampleCount)
+            <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">data</span> != <span style="color:#ff79c6">null</span>) {
+                resultData = <span style="color:#ff79c6">data</span>
+            } <span style="color:#ff79c6">else</span> {
+                <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">null</span>
+            }
 
-            <span class="k">if</span> <span class="p">(</span><span class="n">resultData</span><span class="p">.</span><span class="n">size</span> <span class="p">&lt;=</span> <span class="n">limitDataSize</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="n">resultData</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
+            <span style="color:#ff79c6">if</span> (resultData.size &lt;= limitDataSize) {
+                <span style="color:#ff79c6">return</span> resultData
+            }
+        }
 
 
-        <span class="k">val</span> <span class="err">(</span><span class="py">imageWidth</span><span class="p">,</span> <span class="n">imageHeight</span><span class="p">)</span> <span class="p">=</span> <span class="n">resultData</span><span class="p">.</span><span class="n">imageSize</span><span class="p">()</span>
-        <span class="k">var</span> <span class="py">longSideWidth</span> <span class="p">=</span> <span class="n">max</span><span class="p">(</span><span class="n">imageWidth</span><span class="p">,</span> <span class="n">imageHeight</span><span class="p">)</span>
+        <span style="color:#ff79c6">val</span> (imageWidth, imageHeight) = resultData.imageSize()
+        <span style="color:#ff79c6">var</span> longSideWidth = max(imageWidth, imageHeight)
 
-        <span class="c1">// 图片尺寸按比率缩小，比率按字节比例逼近
-</span><span class="c1"></span>        <span class="k">while</span> <span class="p">(</span><span class="n">resultData</span><span class="p">.</span><span class="n">size</span> <span class="p">&gt;</span> <span class="n">limitDataSize</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">val</span> <span class="py">ratio</span> <span class="p">=</span> <span class="n">Math</span><span class="p">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">limitDataSize</span><span class="p">.</span><span class="n">toDouble</span><span class="p">()</span> <span class="p">/</span> <span class="n">resultData</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">toDouble</span><span class="p">())</span>
-            <span class="n">longSideWidth</span> <span class="p">=</span> <span class="p">(</span><span class="n">longSideWidth</span><span class="p">.</span><span class="n">toDouble</span><span class="p">()</span> <span class="p">*</span> <span class="n">ratio</span><span class="p">).</span><span class="n">toInt</span><span class="p">()</span>
-            <span class="k">val</span> <span class="py">data</span> <span class="p">=</span> <span class="n">compressImageDataWithLongWidth</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">resultData</span><span class="p">,</span> <span class="n">longSideWidth</span><span class="p">)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">data</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">resultData</span> <span class="p">=</span> <span class="k">data</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="k">null</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
+        <span style="color:#6272a4">// 图片尺寸按比率缩小，比率按字节比例逼近
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">while</span> (resultData.size &gt; limitDataSize) {
+            <span style="color:#ff79c6">val</span> ratio = Math.sqrt(limitDataSize.toDouble() / resultData.size.toDouble())
+            longSideWidth = (longSideWidth.toDouble() * ratio).toInt()
+            <span style="color:#ff79c6">val</span> data = compressImageDataWithLongWidth(context, resultData, longSideWidth)
+            <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">data</span> != <span style="color:#ff79c6">null</span>) {
+                resultData = <span style="color:#ff79c6">data</span>
+            } <span style="color:#ff79c6">else</span> {
+                <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">null</span>
+            }
+        }
 
-        <span class="k">return</span> <span class="n">resultData</span>
-    <span class="p">}</span></code></pre></div>
+        <span style="color:#ff79c6">return</span> resultData
+    }</code></pre></div>
 <p>注意在异步线程中使用，毕竟是耗时操作。</p>
 
 <h2 id="最后">最后</h2>
@@ -1278,7 +1289,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>188</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>189</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -1305,18 +1316,61 @@
       
     
   </section>
-  <footer class="site-footer">
+  
+<footer class="site-footer">
   <p>© 2017-2019 Nemocdz&#39;s Blog</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>
 
 
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
 
-<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
-<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
 
 
 

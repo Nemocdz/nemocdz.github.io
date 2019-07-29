@@ -9,113 +9,150 @@
 
   
   
-
-
-
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
 
   
-  <meta name="author" content="Nemocdz" />
+
+  
+  
   <meta name="description" content="[TOC]
 在 iOS 10 上，苹果将原来散落在 UIKit 中各处的用户通知相关的代码进行重构，剥离，打造了一个全新的通知框架 UserNotifications。笔者最近在开发公司通知相关的需求，跟着 WWDC 2016 的视频和官方文档，学习了一下新框架。同时，在学习过程中，和老框架对应 API 进行对比，有了个人的感受和看法。
-" />
+">
 
   
   
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@Nemocdz" />
-    <meta name="twitter:title" content="iOS 10 通知框架 UserNotifications 学习及兼容笔记" />
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="iOS 10 通知框架 UserNotifications 学习及兼容笔记">
     <meta name="twitter:description" content="[TOC]
 在 iOS 10 上，苹果将原来散落在 UIKit 中各处的用户通知相关的代码进行重构，剥离，打造了一个全新的通知框架 UserNotifications。笔者最近在开发公司通知相关的需求，跟着 WWDC 2016 的视频和官方文档，学习了一下新框架。同时，在学习过程中，和老框架对应 API 进行对比，有了个人的感受和看法。
-" />
-    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+">
+    <meta name="twitter:image" content="/images/avatar.png">
   
 
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="iOS 10 通知框架 UserNotifications 学习及兼容笔记">
+  <meta property="og:description" content="[TOC]
+在 iOS 10 上，苹果将原来散落在 UIKit 中各处的用户通知相关的代码进行重构，剥离，打造了一个全新的通知框架 UserNotifications。笔者最近在开发公司通知相关的需求，跟着 WWDC 2016 的视频和官方文档，学习了一下新框架。同时，在学习过程中，和老框架对应 API 进行对比，有了个人的感受和看法。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/ios-10-%E9%80%9A%E7%9F%A5%E6%A1%86%E6%9E%B6-usernotifications-%E5%AD%A6%E4%B9%A0%E5%8F%8A%E5%85%BC%E5%AE%B9%E7%AC%94%E8%AE%B0/">
+  <meta property="og:image" content="/images/avatar.png">
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+
+<meta name="generator" content="Hugo 0.55.6">
 
 
-<link rel="canonical" href="https://nemocdz.github.io/post/ios-10-%E9%80%9A%E7%9F%A5%E6%A1%86%E6%9E%B6-usernotifications-%E5%AD%A6%E4%B9%A0%E5%8F%8A%E5%85%BC%E5%AE%B9%E7%AC%94%E8%AE%B0/" />
-<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+<link rel="canonical" href="https://nemocdz.github.io/post/ios-10-%E9%80%9A%E7%9F%A5%E6%A1%86%E6%9E%B6-usernotifications-%E5%AD%A6%E4%B9%A0%E5%8F%8A%E5%85%BC%E5%AE%B9%E7%AC%94%E8%AE%B0/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
 
 
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
-<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
-<meta name="baidu-site-verification" content="iVpH4VhHBT" />
-<meta name="sogou_site_verification" content="YPqjjJgiSh" />
-<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
 
 
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
-<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
 
 
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
 
-<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
 
 
   
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
 
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
-  <![endif]-->
-
-
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
-
-
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
 
 
 </head>
   <body>
-    
     <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
       
         
-        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
         
       
     </div>
     
     
   <header class="site-header">
-  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
   
-  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
   
-  <p class="subtitle">iOS&amp;Android Dev</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
   </button>
+
   <nav class="site-menu collapsed">
     <h2 class="offscreen">Main Menu</h2>
     <ul class="menu-list">
@@ -123,79 +160,53 @@
       
       
       
-        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/">首页</a>
+        </li>
       
-        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
       
     </ul>
   </nav>
   <nav class="social-menu collapsed">
     <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-      <li class="social-item">
-        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
-      </li>
-
-      
-      <li class="social-item">
-        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
-      </li>
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
-      </li>
-
-      
-
-      <li class="social-item">
-        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
   </nav>
 </header>
 
@@ -222,30 +233,30 @@
 <h2 id="1-申请权限-注册配置">1.申请权限/注册配置</h2>
 
 <p>在新框架中，将申请权限和注册配置拆分为两个 API，使得职责更加分明。先看旧框架的实现。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="n">UIUserNotificationType</span> <span class="n">types</span> <span class="o">=</span> <span class="p">...</span><span class="c1">//通知可显示的样式
-</span><span class="c1"></span>
-<span class="n">UIUserNotificationSettings</span> <span class="o">*</span><span class="n">settting</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIUserNotificationSettings</span> <span class="nl">settingsForTypes</span><span class="p">:</span><span class="n">types</span> <span class="nl">categories</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span> <span class="c1">//将样式和 Category 一起生成配置
-</span><span class="c1"></span>
-<span class="p">[[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">]</span> <span class="nl">registerUserNotificationSettings</span><span class="p">:</span><span class="n">settting</span><span class="p">];</span><span class="o">//</span><span class="err">用这个配置注册</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">UIUserNotificationType types <span style="color:#ff79c6">=</span> ...<span style="color:#6272a4">//通知可显示的样式
+</span><span style="color:#6272a4"></span>
+UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span style="color:#ff79c6">=</span> [UIUserNotificationSettings <span style="color:#8be9fd;font-style:italic">settingsForTypes</span>:types <span style="color:#8be9fd;font-style:italic">categories</span>:<span style="color:#8be9fd;font-style:italic">nil</span>]; <span style="color:#6272a4">//将样式和 Category 一起生成配置
+</span><span style="color:#6272a4"></span>
+[[UIApplication sharedApplication] <span style="color:#8be9fd;font-style:italic">registerUserNotificationSettings</span>:settting];<span style="color:#ff79c6">//</span>用这个配置注册</code></pre></div>
 <p>Category 的概念，是一个通知的种类。对同种类的通知，可以规定对应的一组按钮操作，同时，iOS 10 以上的 Rich Notification（可以展示图片，自定义视图）的区分读也是通过 Category 来区分。</p>
 
 <p>而在老的通知框架中，上面第二行代码中可以看到，Category 和展示样式一同绑定起来用于申请权限。实际上，Category 的概念用于区分接收消息的种类，也就是其实这个概念属于接收消息后进行自定义处理的使用者，也就是 App 内部开发。而对于申请权限，其实最终是向 App 外部的交互，也就是 App 用户关心的。而新框架进行拆分后，就更加自由和职责区分了。</p>
 
 <p>UserNotifications 中请求权限的用法：</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">[[</span><span class="n">UNUserNotificationCenter</span> <span class="n">currentNotificationCenter</span><span class="p">]</span> <span class="nl">requestAuthorizationWithOptions</span><span class="p">:...</span> <span class="nl">completionHandler</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="kt">BOOL</span> <span class="n">granted</span><span class="p">,</span> <span class="n">NSError</span> <span class="o">*</span> <span class="n">_Nullable</span> <span class="n">error</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">granted</span><span class="p">)</span> <span class="p">{</span>
-			<span class="c1">//...如果被授权了
-</span><span class="c1"></span>        <span class="p">}</span>
-<span class="p">}];</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">[[UNUserNotificationCenter currentNotificationCenter] <span style="color:#8be9fd;font-style:italic">requestAuthorizationWithOptions</span>:... <span style="color:#8be9fd;font-style:italic">completionHandler</span>:<span style="color:#ff79c6">^</span>(<span style="color:#8be9fd">BOOL</span> granted, NSError <span style="color:#ff79c6">*</span> _Nullable error) {
+        <span style="color:#ff79c6">if</span> (granted) {
+			<span style="color:#6272a4">//...如果被授权了
+</span><span style="color:#6272a4"></span>        }
+}];</code></pre></div>
 <p>同时，增加一个 callback 将授权后的状态返回，就像分散型网络请求一般。</p>
 
 <p>对于远程通知，还需要一个获取用户 token 的操作，并使用这个 token 进行 APNs 推送。但是奇怪的是，对于申请 token 这个操作，新框架中却没有对应的 API，沿用旧的 API。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">[[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">]</span> <span class="n">registerForRemoteNotifications</span><span class="p">];</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">[[UIApplication sharedApplication] registerForRemoteNotifications];
 
-<span class="c1">//AppDelegate
-</span><span class="c1"></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">application:</span><span class="p">(</span><span class="n">UIApplication</span> <span class="o">*</span><span class="p">)</span><span class="nv">application</span> <span class="nf">didRegisterForRemoteNotificationsWithDeviceToken:</span><span class="p">(</span><span class="n">NSData</span> <span class="o">*</span><span class="p">)</span><span class="nv">deviceToken</span><span class="p">{</span>
-  <span class="p">....</span>
-<span class="p">}</span></code></pre></div>
+<span style="color:#6272a4">//AppDelegate
+</span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">application:</span>(UIApplication <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">application</span> <span style="color:#50fa7b">didRegisterForRemoteNotificationsWithDeviceToken:</span>(NSData <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">deviceToken</span>{
+  ....
+}</code></pre></div>
 <p>获取操作被放在 <code>AppDelegate</code> 的回调中，如果按照新框架的设计，应该会被设计成一个带 callBack 的 API。所以笔者猜测沿用旧设计的原因是，在以后，获取 token 的操作不一定由发起请求后产生，也许可能会有多种情况下产生获取操作，也可能 token 会过期可以进行更新，重置操作。所以 delegate 的集中式管理更加拥有拓展性，当然也有可能这个 API 忘记迁移哈哈。</p>
 
 <h3 id="配置-category-并注册">配置 Category 并注册</h3>
@@ -277,7 +288,7 @@
 </ul>
 
 <p>新建一个按钮也很简单</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="n">UNNotificationAction</span> <span class="o">*</span><span class="n">callDriverAction</span> <span class="o">=</span> <span class="p">[</span><span class="n">UNNotificationAction</span> <span class="nl">actionWithIdentifier</span><span class="p">:</span><span class="s">@&#34;xxx&#34;</span> <span class="nl">title</span><span class="p">:</span><span class="s">@&#34;呼叫司机&#34;</span> <span class="nl">options</span><span class="p">:</span><span class="n">UNNotificationActionOptionForeground</span><span class="p">];</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">UNNotificationAction <span style="color:#ff79c6">*</span>callDriverAction <span style="color:#ff79c6">=</span> [UNNotificationAction <span style="color:#8be9fd;font-style:italic">actionWithIdentifier</span>:<span style="color:#f1fa8c">@&#34;xxx&#34;</span> <span style="color:#8be9fd;font-style:italic">title</span>:<span style="color:#f1fa8c">@&#34;呼叫司机&#34;</span> <span style="color:#8be9fd;font-style:italic">options</span>:UNNotificationActionOptionForeground];</code></pre></div>
 <p>options 中可以选择是否需要解锁后才能操作、按钮颜色是否为红色（代表操作有破坏性）、是否打开 App。</p>
 
 <p>然后将整组按钮加入 <code>UNNotificationCategory</code>（新）或 <code>UIUserNotificationCategory</code>（旧）中。</p>
@@ -306,13 +317,13 @@
 </ul>
 
 <p>之后调用 <code>setNotificationCategories</code> 方法注册即可</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">[[</span><span class="n">UNUserNotificationCenter</span> <span class="n">currentNotificationCenter</span><span class="p">]</span><span class="nl">setNotificationCategories</span><span class="p">:[</span><span class="n">NSSet</span> <span class="nl">setWithObject</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">category</span><span class="p">]];</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">[[UNUserNotificationCenter currentNotificationCenter]<span style="color:#8be9fd;font-style:italic">setNotificationCategories</span>:[NSSet <span style="color:#8be9fd;font-style:italic">setWithObject</span>:<span style="color:#8be9fd;font-style:italic">self</span>.category]];</code></pre></div>
 <p><strong>在运行 App 时，原来的 set 里的 categories 并不会清空，所以需要将整个 set 传进去作为参数，这样会把原来的 set 完整替换成新的 set。</strong>每次调用时，整个 set 替换原来的 set。</p>
 
 <p>同时，对于通知设置和 Category 设置，拆分了两个 API 去获取当前的设置。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">getNotificationCategoriesWithCompletionHandler:</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">^</span><span class="p">)(</span><span class="n">NSSet</span><span class="o">&lt;</span><span class="n">UNNotificationCategory</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">categories</span><span class="p">))</span><span class="nv">completionHandler</span><span class="p">;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">getNotificationCategoriesWithCompletionHandler:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)(NSSet<span style="color:#ff79c6">&lt;</span>UNNotificationCategory <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>categories))<span style="color:#8be9fd;font-style:italic">completionHandler</span>;
 
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">getNotificationSettingsWithCompletionHandler:</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">^</span><span class="p">)(</span><span class="n">UNNotificationSettings</span> <span class="o">*</span><span class="n">settings</span><span class="p">))</span><span class="nv">completionHandler</span><span class="p">;</span></code></pre></div>
+- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">getNotificationSettingsWithCompletionHandler:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)(UNNotificationSettings <span style="color:#ff79c6">*</span>settings))<span style="color:#8be9fd;font-style:italic">completionHandler</span>;</code></pre></div>
 <p>而对于按钮的操作响应，将在第三部分响应通知中介绍。</p>
 
 <h2 id="2-发送本地通知">2.发送本地通知</h2>
@@ -359,33 +370,33 @@
 <p>而标识同一通知的标志，就是通知的 identifer。</p>
 
 <p>而发送/更新通知用的是同一个 API，就是将 request 添加到 UNNotificationCenter 里，同时也有一个 callback 回调状态</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">[[</span><span class="n">UNUserNotificationCenter</span> <span class="n">currentNotificationCenter</span><span class="p">]</span> <span class="nl">addNotificationRequest</span><span class="p">:[</span><span class="n">UNNotificationRequest</span> <span class="nl">requestWithIdentifier</span><span class="p">:</span><span class="n">sameIdentifer</span> <span class="nl">content</span><span class="p">:</span><span class="n">content</span> <span class="nl">trigger</span><span class="p">:</span><span class="n">trigger</span><span class="p">]</span> <span class="nl">withCompletionHandler</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">NSError</span> <span class="o">*</span> <span class="n">_Nullable</span> <span class="n">error</span><span class="p">)</span> <span class="p">{</span>
-		<span class="p">...</span>
-<span class="p">}];</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">[[UNUserNotificationCenter currentNotificationCenter] <span style="color:#8be9fd;font-style:italic">addNotificationRequest</span>:[UNNotificationRequest <span style="color:#8be9fd;font-style:italic">requestWithIdentifier</span>:sameIdentifer <span style="color:#8be9fd;font-style:italic">content</span>:content <span style="color:#8be9fd;font-style:italic">trigger</span>:trigger] <span style="color:#8be9fd;font-style:italic">withCompletionHandler</span>:<span style="color:#ff79c6">^</span>(NSError <span style="color:#ff79c6">*</span> _Nullable error) {
+		...
+}];</code></pre></div>
 <p>而取消或移除未展示和已展示的通知，分开了两组 API 方便根据情况选择，同时也有 get 方法获取当前已展示/未展示的队列里的所有通知，而且和添加/更新不同，移除只需要一个 identifer，且可以同时传入一组 identifer，一次性移除多个。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">getPendingNotificationRequestsWithCompletionHandler:</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">^</span><span class="p">)(</span><span class="n">NSArray</span><span class="o">&lt;</span><span class="n">UNNotificationRequest</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">requests</span><span class="p">))</span><span class="nv">completionHandler</span><span class="p">;</span><span class="c1">//获取未展示通知
-</span><span class="c1"></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">removePendingNotificationRequestsWithIdentifiers:</span><span class="p">(</span><span class="n">NSArray</span><span class="o">&lt;</span><span class="n">NSString</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="p">)</span><span class="nv">identifiers</span><span class="p">;</span><span class="c1">//取消未展示通知
-</span><span class="c1"></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">removeAllPendingNotificationRequests</span><span class="p">;</span><span class="c1">//取消所有未展示通知队列里的通知
-</span><span class="c1"></span>
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">getDeliveredNotificationsWithCompletionHandler:</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">^</span><span class="p">)(</span><span class="n">NSArray</span><span class="o">&lt;</span><span class="n">UNNotification</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">notifications</span><span class="p">))</span><span class="nv">completionHandler</span><span class="p">;</span><span class="c1">//获取已展示通知
-</span><span class="c1"></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">removeDeliveredNotificationsWithIdentifiers:</span><span class="p">(</span><span class="n">NSArray</span><span class="o">&lt;</span><span class="n">NSString</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="p">)</span><span class="nv">identifiers</span><span class="p">;</span><span class="c1">//从通知中心中移除已展示通知
-</span><span class="c1"></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">removeAllDeliveredNotifications</span><span class="p">;</span><span class="o">//</span><span class="err">移除所有通知中心里的通知</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">getPendingNotificationRequestsWithCompletionHandler:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)(NSArray<span style="color:#ff79c6">&lt;</span>UNNotificationRequest <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>requests))<span style="color:#8be9fd;font-style:italic">completionHandler</span>;<span style="color:#6272a4">//获取未展示通知
+</span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">removePendingNotificationRequestsWithIdentifiers:</span>(NSArray<span style="color:#ff79c6">&lt;</span>NSString <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">identifiers</span>;<span style="color:#6272a4">//取消未展示通知
+</span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">removeAllPendingNotificationRequests</span>;<span style="color:#6272a4">//取消所有未展示通知队列里的通知
+</span><span style="color:#6272a4"></span>
+- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">getDeliveredNotificationsWithCompletionHandler:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)(NSArray<span style="color:#ff79c6">&lt;</span>UNNotification <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>notifications))<span style="color:#8be9fd;font-style:italic">completionHandler</span>;<span style="color:#6272a4">//获取已展示通知
+</span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">removeDeliveredNotificationsWithIdentifiers:</span>(NSArray<span style="color:#ff79c6">&lt;</span>NSString <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">identifiers</span>;<span style="color:#6272a4">//从通知中心中移除已展示通知
+</span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">removeAllDeliveredNotifications</span>;<span style="color:#ff79c6">//</span>移除所有通知中心里的通知</code></pre></div>
 <h2 id="3-展示和响应">3.展示和响应</h2>
 
 <p>在旧框架里面，这部分 API 是最为混乱的部分。一共有 1..2&hellip;..7 个 delegate&hellip;&hellip;而且之中有的还有取代关系，也就是有其中一个另一个不执行&hellip;&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">application:</span><span class="p">(</span><span class="n">UIApplication</span> <span class="o">*</span><span class="p">)</span><span class="nv">application</span> <span class="nf">didReceiveRemoteNotification:</span><span class="p">(</span><span class="n">NSDictionary</span> <span class="o">*</span><span class="p">)</span><span class="nv">userInfo</span><span class="p">;</span><span class="c1">//前台收到远程通知
-</span><span class="c1"></span>
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">application:</span><span class="p">(</span><span class="n">UIApplication</span> <span class="o">*</span><span class="p">)</span><span class="nv">application</span> <span class="nf">didReceiveLocalNotification:</span><span class="p">(</span><span class="n">UILocalNotification</span> <span class="o">*</span><span class="p">)</span><span class="nv">notification</span><span class="p">;</span><span class="c1">//前台收到本地通知
-</span><span class="c1"></span>
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">application:</span><span class="p">(</span><span class="n">UIApplication</span> <span class="o">*</span><span class="p">)</span><span class="nv">application</span> <span class="nf">handleActionWithIdentifier:</span><span class="p">(</span><span class="n">nullable</span> <span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">identifier</span> <span class="nf">forLocalNotification:</span><span class="p">(</span><span class="n">UILocalNotification</span> <span class="o">*</span><span class="p">)</span><span class="nv">notification</span> <span class="nf">completionHandler:</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">^</span><span class="p">)())</span><span class="nv">completionHandler</span><span class="p">;</span><span class="c1">//iOS 9 之前本地通知点击按钮后
-</span><span class="c1"></span>
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">application:</span><span class="p">(</span><span class="n">UIApplication</span> <span class="o">*</span><span class="p">)</span><span class="nv">application</span> <span class="nf">handleActionWithIdentifier:</span><span class="p">(</span><span class="n">nullable</span> <span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">identifier</span> <span class="nf">forRemoteNotification:</span><span class="p">(</span><span class="n">NSDictionary</span> <span class="o">*</span><span class="p">)</span><span class="nv">userInfo</span> <span class="nf">withResponseInfo:</span><span class="p">(</span><span class="n">NSDictionary</span> <span class="o">*</span><span class="p">)</span><span class="nv">responseInfo</span> <span class="nf">completionHandler:</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">^</span><span class="p">)())</span><span class="nv">completionHandler</span><span class="p">;</span><span class="c1">//iOS 9 远程通知点击按钮后
-</span><span class="c1"></span>
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">application:</span><span class="p">(</span><span class="n">UIApplication</span> <span class="o">*</span><span class="p">)</span><span class="nv">application</span> <span class="nf">handleActionWithIdentifier:</span><span class="p">(</span><span class="n">nullable</span> <span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">identifier</span> <span class="nf">forRemoteNotification:</span><span class="p">(</span><span class="n">NSDictionary</span> <span class="o">*</span><span class="p">)</span><span class="nv">userInfo</span> <span class="nf">completionHandler:</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">^</span><span class="p">)())</span><span class="nv">completionHandler</span><span class="p">;</span><span class="c1">//iOS 9 之前远程通知点击按钮后
-</span><span class="c1"></span>
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">application:</span><span class="p">(</span><span class="n">UIApplication</span> <span class="o">*</span><span class="p">)</span><span class="nv">application</span> <span class="nf">handleActionWithIdentifier:</span><span class="p">(</span><span class="n">nullable</span> <span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">identifier</span> <span class="nf">forLocalNotification:</span><span class="p">(</span><span class="n">UILocalNotification</span> <span class="o">*</span><span class="p">)</span><span class="nv">notification</span> <span class="nf">withResponseInfo:</span><span class="p">(</span><span class="n">NSDictionary</span> <span class="o">*</span><span class="p">)</span><span class="nv">responseInfo</span> <span class="nf">completionHandler:</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">^</span><span class="p">)())</span><span class="nv">completionHandler</span><span class="p">;</span><span class="c1">//iOS 9 本地通知点击按钮
-</span><span class="c1"></span>
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">application:</span><span class="p">(</span><span class="n">UIApplication</span> <span class="o">*</span><span class="p">)</span><span class="nv">application</span> <span class="nf">didReceiveRemoteNotification:</span><span class="p">(</span><span class="n">NSDictionary</span> <span class="o">*</span><span class="p">)</span><span class="nv">userInfo</span> <span class="nf">fetchCompletionHandler:</span><span class="p">(</span><span class="kt">void</span> <span class="p">(</span><span class="o">^</span><span class="p">)(</span><span class="n">UIBackgroundFetchResult</span> <span class="n">result</span><span class="p">))</span><span class="nv">completionHandler</span><span class="p">;</span><span class="o">//</span><span class="n">iOS</span> <span class="mi">7</span> <span class="err">以上收到远程通知调用</span><span class="p">(</span><span class="err">未被废弃</span><span class="p">)</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">application:</span>(UIApplication <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">application</span> <span style="color:#50fa7b">didReceiveRemoteNotification:</span>(NSDictionary <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">userInfo</span>;<span style="color:#6272a4">//前台收到远程通知
+</span><span style="color:#6272a4"></span>
+- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">application:</span>(UIApplication <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">application</span> <span style="color:#50fa7b">didReceiveLocalNotification:</span>(UILocalNotification <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">notification</span>;<span style="color:#6272a4">//前台收到本地通知
+</span><span style="color:#6272a4"></span>
+- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">application:</span>(UIApplication <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">application</span> <span style="color:#50fa7b">handleActionWithIdentifier:</span>(nullable NSString <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">identifier</span> <span style="color:#50fa7b">forLocalNotification:</span>(UILocalNotification <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">notification</span> <span style="color:#50fa7b">completionHandler:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)())<span style="color:#8be9fd;font-style:italic">completionHandler</span>;<span style="color:#6272a4">//iOS 9 之前本地通知点击按钮后
+</span><span style="color:#6272a4"></span>
+- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">application:</span>(UIApplication <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">application</span> <span style="color:#50fa7b">handleActionWithIdentifier:</span>(nullable NSString <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">identifier</span> <span style="color:#50fa7b">forRemoteNotification:</span>(NSDictionary <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">userInfo</span> <span style="color:#50fa7b">withResponseInfo:</span>(NSDictionary <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">responseInfo</span> <span style="color:#50fa7b">completionHandler:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)())<span style="color:#8be9fd;font-style:italic">completionHandler</span>;<span style="color:#6272a4">//iOS 9 远程通知点击按钮后
+</span><span style="color:#6272a4"></span>
+- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">application:</span>(UIApplication <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">application</span> <span style="color:#50fa7b">handleActionWithIdentifier:</span>(nullable NSString <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">identifier</span> <span style="color:#50fa7b">forRemoteNotification:</span>(NSDictionary <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">userInfo</span> <span style="color:#50fa7b">completionHandler:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)())<span style="color:#8be9fd;font-style:italic">completionHandler</span>;<span style="color:#6272a4">//iOS 9 之前远程通知点击按钮后
+</span><span style="color:#6272a4"></span>
+- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">application:</span>(UIApplication <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">application</span> <span style="color:#50fa7b">handleActionWithIdentifier:</span>(nullable NSString <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">identifier</span> <span style="color:#50fa7b">forLocalNotification:</span>(UILocalNotification <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">notification</span> <span style="color:#50fa7b">withResponseInfo:</span>(NSDictionary <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">responseInfo</span> <span style="color:#50fa7b">completionHandler:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)())<span style="color:#8be9fd;font-style:italic">completionHandler</span>;<span style="color:#6272a4">//iOS 9 本地通知点击按钮
+</span><span style="color:#6272a4"></span>
+- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">application:</span>(UIApplication <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">application</span> <span style="color:#50fa7b">didReceiveRemoteNotification:</span>(NSDictionary <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">userInfo</span> <span style="color:#50fa7b">fetchCompletionHandler:</span>(<span style="color:#8be9fd">void</span> (<span style="color:#ff79c6">^</span>)(UIBackgroundFetchResult result))<span style="color:#8be9fd;font-style:italic">completionHandler</span>;<span style="color:#ff79c6">//</span>iOS <span style="color:#bd93f9">7</span> 以上收到远程通知调用(未被废弃)</code></pre></div>
 <p>这么乱，笔者重新分类如下：</p>
 
 <ul>
@@ -430,28 +441,28 @@
 <h3 id="通知的收到">通知的收到</h3>
 
 <p>在前台的时候，收到不管是本地还是远程通知都会被新的 delegate 接管。以前的通知框架，在前台收到通知时，默认是不展示（没有横幅等）的。而新 delegate 可以在前台收到通知后，展示前，做一些处理，包括以什么形式展示，已经做一些自定义操作。而这个 Delegate 只有 App 在前台才会执行。因为在后台 App 收到通知时，通知不会唤醒 App（不是唤起），而 App 可能是被杀死的，所以这个 Delegate 没有被赋值，所以统一只在 App 在前台时才执行。而将新的 API 对应旧的 API 转换起来的话，就是下面的代码。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">userNotificationCenter:</span><span class="p">(</span><span class="n">UNUserNotificationCenter</span> <span class="o">*</span><span class="p">)</span><span class="nv">center</span> <span class="nf">willPresentNotification:</span><span class="p">(</span><span class="n">UNNotification</span> <span class="o">*</span><span class="p">)</span><span class="nv">notification</span> <span class="nf">withCompletionHandler:</span><span class="p">(</span><span class="kt">void</span> <span class="p">(</span><span class="o">^</span><span class="p">)(</span><span class="n">UNNotificationPresentationOptions</span><span class="p">))</span><span class="nv">completionHandler</span><span class="p">{</span>
-    <span class="kt">BOOL</span> <span class="n">isRemote</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span>
-    <span class="k">if</span> <span class="p">([</span><span class="n">notification</span><span class="p">.</span><span class="n">request</span><span class="p">.</span><span class="n">trigger</span> <span class="nl">isKindOfClass</span><span class="p">:[</span><span class="n">UNPushNotificationTrigger</span> <span class="k">class</span><span class="p">]])</span> <span class="p">{</span>
-        <span class="n">isRemote</span> <span class="o">=</span> <span class="nb">YES</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="n">UILocalNotification</span> <span class="o">*</span><span class="n">localNotification</span><span class="p">;</span><span class="c1">//从新的转换为旧的本地通知
-</span><span class="c1"></span>    
-     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">isRemote</span> <span class="o">&amp;&amp;</span> <span class="p">[[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">application</span><span class="p">:</span><span class="nl">didReceiveLocalNotification</span><span class="p">:)])</span> <span class="p">{</span>
-        <span class="p">[[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">application</span><span class="p">:[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">]</span> <span class="nl">didReceiveLocalNotification</span><span class="p">:</span><span class="n">localNotification</span><span class="p">];</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">isRemote</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">([[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">application</span><span class="p">:</span><span class="nl">didReceiveRemoteNotification</span><span class="p">:</span><span class="nl">fetchCompletionHandler</span><span class="p">:)])</span> <span class="p">{</span>
-            <span class="p">[[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">application</span><span class="p">:[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">]</span> <span class="nl">didReceiveRemoteNotification</span><span class="p">:</span><span class="n">notification</span><span class="p">.</span><span class="n">request</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">userInfo</span> <span class="nl">fetchCompletionHandler</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">UIBackgroundFetchResult</span> <span class="n">result</span><span class="p">)</span> <span class="p">{}];</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">([[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">application</span><span class="p">:</span><span class="nl">didReceiveRemoteNotification</span><span class="p">:)]){</span>
-            <span class="p">[[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">application</span><span class="p">:[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">]</span> <span class="nl">didReceiveRemoteNotification</span><span class="p">:</span><span class="n">notification</span><span class="p">.</span><span class="n">request</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">userInfo</span><span class="p">];</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">userNotificationCenter:</span>(UNUserNotificationCenter <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">center</span> <span style="color:#50fa7b">willPresentNotification:</span>(UNNotification <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">notification</span> <span style="color:#50fa7b">withCompletionHandler:</span>(<span style="color:#8be9fd">void</span> (<span style="color:#ff79c6">^</span>)(UNNotificationPresentationOptions))<span style="color:#8be9fd;font-style:italic">completionHandler</span>{
+    <span style="color:#8be9fd">BOOL</span> isRemote <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
+    <span style="color:#ff79c6">if</span> ([notification.request.trigger <span style="color:#8be9fd;font-style:italic">isKindOfClass</span>:[UNPushNotificationTrigger <span style="color:#ff79c6">class</span>]]) {
+        isRemote <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
+    }
+    UILocalNotification <span style="color:#ff79c6">*</span>localNotification;<span style="color:#6272a4">//从新的转换为旧的本地通知
+</span><span style="color:#6272a4"></span>    
+     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>isRemote <span style="color:#ff79c6">&amp;&amp;</span> [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">application</span>:<span style="color:#8be9fd;font-style:italic">didReceiveLocalNotification</span>:)]) {
+        [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">application</span>:[UIApplication sharedApplication] <span style="color:#8be9fd;font-style:italic">didReceiveLocalNotification</span>:localNotification];
+    }
+    <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> (isRemote) {
+        <span style="color:#ff79c6">if</span> ([[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">application</span>:<span style="color:#8be9fd;font-style:italic">didReceiveRemoteNotification</span>:<span style="color:#8be9fd;font-style:italic">fetchCompletionHandler</span>:)]) {
+            [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">application</span>:[UIApplication sharedApplication] <span style="color:#8be9fd;font-style:italic">didReceiveRemoteNotification</span>:notification.request.content.userInfo <span style="color:#8be9fd;font-style:italic">fetchCompletionHandler</span>:<span style="color:#ff79c6">^</span>(UIBackgroundFetchResult result) {}];
+        }
+        <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> ([[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">application</span>:<span style="color:#8be9fd;font-style:italic">didReceiveRemoteNotification</span>:)]){
+            [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">application</span>:[UIApplication sharedApplication] <span style="color:#8be9fd;font-style:italic">didReceiveRemoteNotification</span>:notification.request.content.userInfo];
+        }
+    }
 
     
-    <span class="n">completionHandler</span><span class="p">(</span><span class="n">UNNotificationPresentationOptionBadge</span><span class="o">|</span><span class="n">UNNotificationPresentationOptionAlert</span><span class="p">);</span><span class="c1">//决定前台展示形式
-</span><span class="c1"></span><span class="p">}</span></code></pre></div>
+    completionHandler(UNNotificationPresentationOptionBadge<span style="color:#ff79c6">|</span>UNNotificationPresentationOptionAlert);<span style="color:#6272a4">//决定前台展示形式
+</span><span style="color:#6272a4"></span>}</code></pre></div>
 <p>而 CompletionHandler 里传入希望通知支持的类型（横幅、红点、声音），在自定义操作完成后执行这个 block 就可。当然可以在这里为不同消息定制不同的支持类型。</p>
 
 <h3 id="点击通知或按钮的操作响应">点击通知或按钮的操作响应</h3>
@@ -459,51 +470,51 @@
 <p>新框架中，点击操作和收到通知的 API 的响应终于被区分开了。而且点击操作也包含点击通知本身，以及有了点清除关闭通知的事件响应。拆分点击和收到的 API 是很好的，因为点击通知和按钮时，实际上会将 App 唤起到前台，一般这时候需要进行页面跳转，界面状态恢复等等，这些在收到通知时是没有必要的。</p>
 
 <p>新的 API 和就的转换的话就是下面这样</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">userNotificationCenter:</span><span class="p">(</span><span class="n">UNUserNotificationCenter</span> <span class="o">*</span><span class="p">)</span><span class="nv">center</span> <span class="nf">didReceiveNotificationResponse:</span><span class="p">(</span><span class="n">UNNotificationResponse</span> <span class="o">*</span><span class="p">)</span><span class="nv">response</span> <span class="nf">withCompletionHandler:</span><span class="p">(</span><span class="kt">void</span> <span class="p">(</span><span class="o">^</span><span class="p">)())</span><span class="nv">completionHandler</span><span class="p">{</span>
-    <span class="kt">BOOL</span> <span class="n">isRemote</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span>
-    <span class="k">if</span> <span class="p">([</span><span class="n">response</span><span class="p">.</span><span class="n">notification</span><span class="p">.</span><span class="n">request</span><span class="p">.</span><span class="n">trigger</span> <span class="nl">isKindOfClass</span><span class="p">:[</span><span class="n">UNPushNotificationTrigger</span> <span class="k">class</span><span class="p">]])</span> <span class="p">{</span>
-        <span class="n">isRemote</span> <span class="o">=</span> <span class="nb">YES</span><span class="p">;</span>
-    <span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">userNotificationCenter:</span>(UNUserNotificationCenter <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">center</span> <span style="color:#50fa7b">didReceiveNotificationResponse:</span>(UNNotificationResponse <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">response</span> <span style="color:#50fa7b">withCompletionHandler:</span>(<span style="color:#8be9fd">void</span> (<span style="color:#ff79c6">^</span>)())<span style="color:#8be9fd;font-style:italic">completionHandler</span>{
+    <span style="color:#8be9fd">BOOL</span> isRemote <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
+    <span style="color:#ff79c6">if</span> ([response.notification.request.trigger <span style="color:#8be9fd;font-style:italic">isKindOfClass</span>:[UNPushNotificationTrigger <span style="color:#ff79c6">class</span>]]) {
+        isRemote <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
+    }
     
-    <span class="n">UILocalNotification</span> <span class="o">*</span><span class="n">localNotification</span><span class="p">;</span><span class="c1">//从新的转换为旧的本地通知
-</span><span class="c1"></span>
+    UILocalNotification <span style="color:#ff79c6">*</span>localNotification;<span style="color:#6272a4">//从新的转换为旧的本地通知
+</span><span style="color:#6272a4"></span>
     
-    <span class="k">if</span> <span class="p">([</span><span class="n">response</span><span class="p">.</span><span class="n">actionIdentifier</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="n">UNNotificationDefaultActionIdentifier</span><span class="p">]</span> <span class="o">||</span> <span class="p">[</span><span class="n">response</span><span class="p">.</span><span class="n">actionIdentifier</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="n">UNNotificationDismissActionIdentifier</span><span class="p">])</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">isRemote</span> <span class="o">&amp;&amp;</span> <span class="p">[[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">application</span><span class="p">:</span><span class="nl">didReceiveLocalNotification</span><span class="p">:)])</span> <span class="p">{</span>
-            <span class="p">[[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">application</span><span class="p">:[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">]</span> <span class="nl">didReceiveLocalNotification</span><span class="p">:</span><span class="n">localNotification</span><span class="p">];</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">isRemote</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">([[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">application</span><span class="p">:</span><span class="nl">didReceiveRemoteNotification</span><span class="p">:</span><span class="nl">fetchCompletionHandler</span><span class="p">:)])</span> <span class="p">{</span>
-                <span class="p">[[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">application</span><span class="p">:[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">]</span> <span class="nl">didReceiveRemoteNotification</span><span class="p">:</span><span class="n">response</span><span class="p">.</span><span class="n">notification</span><span class="p">.</span><span class="n">request</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">userInfo</span> <span class="nl">fetchCompletionHandler</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">UIBackgroundFetchResult</span> <span class="n">result</span><span class="p">)</span> <span class="p">{}];</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="k">if</span> <span class="p">([[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">application</span><span class="p">:</span><span class="nl">didReceiveRemoteNotification</span><span class="p">:)]){</span>
-                <span class="p">[[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">application</span><span class="p">:[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">]</span> <span class="nl">didReceiveRemoteNotification</span><span class="p">:</span><span class="n">response</span><span class="p">.</span><span class="n">notification</span><span class="p">.</span><span class="n">request</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">userInfo</span><span class="p">];</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="k">else</span><span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">isRemote</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">([[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">application</span><span class="p">:</span><span class="nl">handleActionWithIdentifier</span><span class="p">:</span><span class="nl">forLocalNotification</span><span class="p">:</span><span class="nl">withResponseInfo</span><span class="p">:</span><span class="nl">completionHandler</span><span class="p">:)])</span> <span class="p">{</span>
-                <span class="p">[[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">application</span><span class="p">:[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">]</span> <span class="nl">handleActionWithIdentifier</span><span class="p">:</span><span class="n">response</span><span class="p">.</span><span class="n">actionIdentifier</span> <span class="nl">forLocalNotification</span><span class="p">:</span><span class="n">localNotification</span> <span class="nl">withResponseInfo</span><span class="p">:</span><span class="l">@{}</span> <span class="nl">completionHandler</span><span class="p">:</span><span class="o">^</span><span class="p">{}];</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="k">if</span> <span class="p">([[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">application</span><span class="p">:</span><span class="nl">handleActionWithIdentifier</span><span class="p">:</span><span class="nl">forLocalNotification</span><span class="p">:</span><span class="nl">completionHandler</span><span class="p">:)]){</span>
-                <span class="p">[[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">application</span><span class="p">:[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">]</span> <span class="nl">handleActionWithIdentifier</span><span class="p">:</span><span class="n">response</span><span class="p">.</span><span class="n">actionIdentifier</span> <span class="nl">forLocalNotification</span><span class="p">:</span><span class="n">localNotification</span> <span class="nl">completionHandler</span><span class="p">:</span><span class="o">^</span><span class="p">{}];</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="k">else</span><span class="p">{</span>
-            <span class="k">if</span> <span class="p">([[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">application</span><span class="p">:</span><span class="nl">handleActionWithIdentifier</span><span class="p">:</span><span class="nl">forRemoteNotification</span><span class="p">:</span><span class="nl">withResponseInfo</span><span class="p">:</span><span class="nl">completionHandler</span><span class="p">:)])</span> <span class="p">{</span>
-                <span class="p">[[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">application</span><span class="p">:[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">]</span> <span class="nl">handleActionWithIdentifier</span><span class="p">:</span><span class="n">response</span><span class="p">.</span><span class="n">actionIdentifier</span> <span class="nl">forRemoteNotification</span><span class="p">:</span><span class="n">response</span><span class="p">.</span><span class="n">notification</span><span class="p">.</span><span class="n">request</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">userInfo</span> <span class="nl">withResponseInfo</span><span class="p">:</span><span class="l">@{}</span> <span class="nl">completionHandler</span><span class="p">:</span><span class="o">^</span><span class="p">{}];</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="k">if</span> <span class="p">([[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">application</span><span class="p">:</span><span class="nl">handleActionWithIdentifier</span><span class="p">:</span><span class="nl">forRemoteNotification</span><span class="p">:</span><span class="nl">completionHandler</span><span class="p">:)]){</span>
-                <span class="p">[[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">].</span><span class="n">delegate</span> <span class="nl">application</span><span class="p">:[</span><span class="n">UIApplication</span> <span class="n">sharedApplication</span><span class="p">]</span> <span class="nl">handleActionWithIdentifier</span><span class="p">:</span><span class="n">response</span><span class="p">.</span><span class="n">actionIdentifier</span> <span class="nl">forRemoteNotification</span><span class="p">:</span><span class="n">response</span><span class="p">.</span><span class="n">notification</span><span class="p">.</span><span class="n">request</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">userInfo</span> <span class="nl">completionHandler</span><span class="p">:</span><span class="o">^</span><span class="p">{}];</span>
-            <span class="p">}</span>
+    <span style="color:#ff79c6">if</span> ([response.actionIdentifier <span style="color:#8be9fd;font-style:italic">isEqualToString</span>:UNNotificationDefaultActionIdentifier] <span style="color:#ff79c6">||</span> [response.actionIdentifier <span style="color:#8be9fd;font-style:italic">isEqualToString</span>:UNNotificationDismissActionIdentifier]) {
+        <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>isRemote <span style="color:#ff79c6">&amp;&amp;</span> [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">application</span>:<span style="color:#8be9fd;font-style:italic">didReceiveLocalNotification</span>:)]) {
+            [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">application</span>:[UIApplication sharedApplication] <span style="color:#8be9fd;font-style:italic">didReceiveLocalNotification</span>:localNotification];
+        }
+        <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> (isRemote) {
+            <span style="color:#ff79c6">if</span> ([[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">application</span>:<span style="color:#8be9fd;font-style:italic">didReceiveRemoteNotification</span>:<span style="color:#8be9fd;font-style:italic">fetchCompletionHandler</span>:)]) {
+                [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">application</span>:[UIApplication sharedApplication] <span style="color:#8be9fd;font-style:italic">didReceiveRemoteNotification</span>:response.notification.request.content.userInfo <span style="color:#8be9fd;font-style:italic">fetchCompletionHandler</span>:<span style="color:#ff79c6">^</span>(UIBackgroundFetchResult result) {}];
+            }
+            <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> ([[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">application</span>:<span style="color:#8be9fd;font-style:italic">didReceiveRemoteNotification</span>:)]){
+                [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">application</span>:[UIApplication sharedApplication] <span style="color:#8be9fd;font-style:italic">didReceiveRemoteNotification</span>:response.notification.request.content.userInfo];
+            }
+        }
+    }
+    <span style="color:#ff79c6">else</span>{
+        <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>isRemote) {
+            <span style="color:#ff79c6">if</span> ([[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">application</span>:<span style="color:#8be9fd;font-style:italic">handleActionWithIdentifier</span>:<span style="color:#8be9fd;font-style:italic">forLocalNotification</span>:<span style="color:#8be9fd;font-style:italic">withResponseInfo</span>:<span style="color:#8be9fd;font-style:italic">completionHandler</span>:)]) {
+                [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">application</span>:[UIApplication sharedApplication] <span style="color:#8be9fd;font-style:italic">handleActionWithIdentifier</span>:response.actionIdentifier <span style="color:#8be9fd;font-style:italic">forLocalNotification</span>:localNotification <span style="color:#8be9fd;font-style:italic">withResponseInfo</span>:@{} <span style="color:#8be9fd;font-style:italic">completionHandler</span>:<span style="color:#ff79c6">^</span>{}];
+            }
+            <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> ([[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">application</span>:<span style="color:#8be9fd;font-style:italic">handleActionWithIdentifier</span>:<span style="color:#8be9fd;font-style:italic">forLocalNotification</span>:<span style="color:#8be9fd;font-style:italic">completionHandler</span>:)]){
+                [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">application</span>:[UIApplication sharedApplication] <span style="color:#8be9fd;font-style:italic">handleActionWithIdentifier</span>:response.actionIdentifier <span style="color:#8be9fd;font-style:italic">forLocalNotification</span>:localNotification <span style="color:#8be9fd;font-style:italic">completionHandler</span>:<span style="color:#ff79c6">^</span>{}];
+            }
+        }
+        <span style="color:#ff79c6">else</span>{
+            <span style="color:#ff79c6">if</span> ([[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">application</span>:<span style="color:#8be9fd;font-style:italic">handleActionWithIdentifier</span>:<span style="color:#8be9fd;font-style:italic">forRemoteNotification</span>:<span style="color:#8be9fd;font-style:italic">withResponseInfo</span>:<span style="color:#8be9fd;font-style:italic">completionHandler</span>:)]) {
+                [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">application</span>:[UIApplication sharedApplication] <span style="color:#8be9fd;font-style:italic">handleActionWithIdentifier</span>:response.actionIdentifier <span style="color:#8be9fd;font-style:italic">forRemoteNotification</span>:response.notification.request.content.userInfo <span style="color:#8be9fd;font-style:italic">withResponseInfo</span>:@{} <span style="color:#8be9fd;font-style:italic">completionHandler</span>:<span style="color:#ff79c6">^</span>{}];
+            }
+            <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> ([[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">application</span>:<span style="color:#8be9fd;font-style:italic">handleActionWithIdentifier</span>:<span style="color:#8be9fd;font-style:italic">forRemoteNotification</span>:<span style="color:#8be9fd;font-style:italic">completionHandler</span>:)]){
+                [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">application</span>:[UIApplication sharedApplication] <span style="color:#8be9fd;font-style:italic">handleActionWithIdentifier</span>:response.actionIdentifier <span style="color:#8be9fd;font-style:italic">forRemoteNotification</span>:response.notification.request.content.userInfo <span style="color:#8be9fd;font-style:italic">completionHandler</span>:<span style="color:#ff79c6">^</span>{}];
+            }
             
-        <span class="p">}</span>
-    <span class="p">}</span>
+        }
+    }
 
-    <span class="p">}</span>
-    <span class="n">completionHandler</span><span class="p">();</span>
-<span class="p">}</span></code></pre></div>
+    }
+    completionHandler();
+}</code></pre></div>
 <p>当实现了新框架这两个 Delegate 后，旧框架的 6 个 Delegate 将不会被执行，所以除非 App 只支持 iOS 10，尽量按上面的代码进行兼容。</p>
 
 <p><strong>注意 -(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;</strong> 这个方法并未随着旧框架被废弃，还是正常使用。</p>
@@ -517,26 +528,26 @@
 <h3 id="notificationservice-extension">NotificationService Extension</h3>
 
 <p>这个 Extension 允许我们在远程通知收到前做一些修改。因为之前 App 内 <code>UNNotificaionCenter</code> 的 Delegte 并不能在 App 不存活情况下执行，所以有了这个 Extension 来提供这样的功能。新建 NotificationService 的 target 后，发现系统会自动生成了 <code>UNNotificationServiceExtension</code> 的子类。其中重写方法的模板，系统也生成好了。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@interface</span> <span class="nc">NotificationService</span> <span class="p">()</span>
-<span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">strong</span><span class="p">)</span> <span class="kt">void</span> <span class="p">(</span><span class="o">^</span><span class="n">contentHandler</span><span class="p">)(</span><span class="n">UNNotificationContent</span> <span class="o">*</span><span class="n">contentToDeliver</span><span class="p">);</span>
-<span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">strong</span><span class="p">)</span> <span class="n">UNMutableNotificationContent</span> <span class="o">*</span><span class="n">bestAttemptContent</span><span class="p">;</span>
-<span class="k">@end</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@interface</span> <span style="color:#50fa7b">NotificationService</span> ()
+<span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">strong</span>) <span style="color:#8be9fd">void</span> (<span style="color:#ff79c6">^</span>contentHandler)(UNNotificationContent <span style="color:#ff79c6">*</span>contentToDeliver);
+<span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">strong</span>) UNMutableNotificationContent <span style="color:#ff79c6">*</span>bestAttemptContent;
+<span style="color:#ff79c6">@end</span>
 
-<span class="k">@implementation</span> <span class="nc">NotificationService</span>
+<span style="color:#ff79c6">@implementation</span> <span style="color:#50fa7b">NotificationService</span>
 
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">didReceiveNotificationRequest:</span><span class="p">(</span><span class="n">UNNotificationRequest</span> <span class="o">*</span><span class="p">)</span><span class="nv">request</span> <span class="nf">withContentHandler:</span><span class="p">(</span><span class="kt">void</span> <span class="p">(</span><span class="o">^</span><span class="p">)(</span><span class="n">UNNotificationContent</span> <span class="o">*</span> <span class="n">_Nonnull</span><span class="p">))</span><span class="nv">contentHandler</span> <span class="p">{</span>
-    <span class="nb">self</span><span class="p">.</span><span class="n">contentHandler</span> <span class="o">=</span> <span class="n">contentHandler</span><span class="p">;</span>
-    <span class="nb">self</span><span class="p">.</span><span class="n">bestAttemptContent</span> <span class="o">=</span> <span class="p">[</span><span class="n">request</span><span class="p">.</span><span class="n">content</span> <span class="n">mutableCopy</span><span class="p">];</span>
+- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">didReceiveNotificationRequest:</span>(UNNotificationRequest <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">request</span> <span style="color:#50fa7b">withContentHandler:</span>(<span style="color:#8be9fd">void</span> (<span style="color:#ff79c6">^</span>)(UNNotificationContent <span style="color:#ff79c6">*</span> _Nonnull))<span style="color:#8be9fd;font-style:italic">contentHandler</span> {
+    <span style="color:#8be9fd;font-style:italic">self</span>.contentHandler <span style="color:#ff79c6">=</span> contentHandler;
+    <span style="color:#8be9fd;font-style:italic">self</span>.bestAttemptContent <span style="color:#ff79c6">=</span> [request.content mutableCopy];
     
-    <span class="nb">self</span><span class="p">.</span><span class="n">contentHandler</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">bestAttemptContent</span><span class="p">);</span>
-<span class="p">}</span>
+    <span style="color:#8be9fd;font-style:italic">self</span>.contentHandler(<span style="color:#8be9fd;font-style:italic">self</span>.bestAttemptContent);
+}
 
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">serviceExtensionTimeWillExpire</span> <span class="p">{</span>
+- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">serviceExtensionTimeWillExpire</span> {
 
-    <span class="nb">self</span><span class="p">.</span><span class="n">contentHandler</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">bestAttemptContent</span><span class="p">);</span>
-<span class="p">}</span>
+    <span style="color:#8be9fd;font-style:italic">self</span>.contentHandler(<span style="color:#8be9fd;font-style:italic">self</span>.bestAttemptContent);
+}
 
-<span class="k">@end</span></code></pre></div>
+<span style="color:#ff79c6">@end</span></code></pre></div>
 <p>第一个方法在收到远程通知时，可以拦截通知并修改通知内容。先用一个 block 保存当时的上下文，再修改完后再调用 block 再修改完新的通知内容回调回去。</p>
 
 <p>第二个方法是在修改通知时机将要结束时调用，这时候会强制执行 block 了。</p>
@@ -546,13 +557,13 @@
 <h3 id="notificationcontent-extension">NotificationContent Extension</h3>
 
 <p>这个就是实现 Rich Notification 的拓展。新建这个 Target 后，可以发现自动生成了一个 ViewController 并遵循了 UserNotificationsUI 框架的 <code>UNNotificationContentExtension</code> 协议。又是一个新框架，看来之后在通知视图上的功能将会变得更强大。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">didReceiveNotification:</span><span class="p">(</span><span class="n">UNNotification</span> <span class="o">*</span><span class="p">)</span><span class="nv">notification</span> <span class="p">{</span>
-	<span class="c1">//收到通知后的操作
-</span><span class="c1"></span><span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">didReceiveNotification:</span>(UNNotification <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">notification</span> {
+	<span style="color:#6272a4">//收到通知后的操作
+</span><span style="color:#6272a4"></span>}
 
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">didReceiveNotificationResponse:</span><span class="p">(</span><span class="n">UNNotificationResponse</span> <span class="o">*</span><span class="p">)</span><span class="nv">response</span> <span class="nf">completionHandler:</span><span class="p">(</span><span class="kt">void</span> <span class="p">(</span><span class="o">^</span><span class="p">)(</span><span class="n">UNNotificationContentExtensionResponseOption</span> <span class="n">option</span><span class="p">))</span><span class="nv">completion</span><span class="p">{</span>
-   <span class="c1">//收到通知响应，如按钮，可以这个方法里拦截，并自定义操作，再决定是否将按钮放行至主app
-</span><span class="c1"></span><span class="p">}</span></code></pre></div>
+- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">didReceiveNotificationResponse:</span>(UNNotificationResponse <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">response</span> <span style="color:#50fa7b">completionHandler:</span>(<span style="color:#8be9fd">void</span> (<span style="color:#ff79c6">^</span>)(UNNotificationContentExtensionResponseOption option))<span style="color:#8be9fd;font-style:italic">completion</span>{
+   <span style="color:#6272a4">//收到通知响应，如按钮，可以这个方法里拦截，并自定义操作，再决定是否将按钮放行至主app
+</span><span style="color:#6272a4"></span>}</code></pre></div>
 <p>这个协议里面只有上面两个方法。第一个方法用于在展开 Rich 视图时触发，进行根据数据去改变视图。就如平时收到网络请求后根据网络请求返回的响应改变视图元素。当打开 RIch 视图后，这个方法还有两个时机会触发。</p>
 
 <ol>
@@ -812,7 +823,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>729</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>730</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -839,18 +850,61 @@
       
     
   </section>
-  <footer class="site-footer">
+  
+<footer class="site-footer">
   <p>© 2017-2019 Nemocdz&#39;s Blog</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>
 
 
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
 
-<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
-<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
 
 
 

@@ -9,113 +9,150 @@
 
   
   
-
-
-
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
 
   
-  <meta name="author" content="Nemocdz" />
+
+  
+  
   <meta name="description" content="[TOC]
 最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。
-" />
+">
 
   
   
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@Nemocdz" />
-    <meta name="twitter:title" content="TCP/IP 协议族边学边想" />
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="TCP/IP 协议族边学边想">
     <meta name="twitter:description" content="[TOC]
 最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。
-" />
-    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+">
+    <meta name="twitter:image" content="/images/avatar.png">
   
 
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="TCP/IP 协议族边学边想">
+  <meta property="og:description" content="[TOC]
+最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/tcpip-%E5%8D%8F%E8%AE%AE%E6%97%8F%E8%BE%B9%E5%AD%A6%E8%BE%B9%E6%83%B3/">
+  <meta property="og:image" content="/images/avatar.png">
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+
+<meta name="generator" content="Hugo 0.55.6">
 
 
-<link rel="canonical" href="https://nemocdz.github.io/post/tcpip-%E5%8D%8F%E8%AE%AE%E6%97%8F%E8%BE%B9%E5%AD%A6%E8%BE%B9%E6%83%B3/" />
-<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+<link rel="canonical" href="https://nemocdz.github.io/post/tcpip-%E5%8D%8F%E8%AE%AE%E6%97%8F%E8%BE%B9%E5%AD%A6%E8%BE%B9%E6%83%B3/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
 
 
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
-<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
-<meta name="baidu-site-verification" content="iVpH4VhHBT" />
-<meta name="sogou_site_verification" content="YPqjjJgiSh" />
-<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
 
 
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
-<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
 
 
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
 
-<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
 
 
   
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
 
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
-  <![endif]-->
-
-
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
-
-
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
 
 
 </head>
   <body>
-    
     <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
       
         
-        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
         
       
     </div>
     
     
   <header class="site-header">
-  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
   
-  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
   
-  <p class="subtitle">iOS&amp;Android Dev</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
   </button>
+
   <nav class="site-menu collapsed">
     <h2 class="offscreen">Main Menu</h2>
     <ul class="menu-list">
@@ -123,79 +160,53 @@
       
       
       
-        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/">首页</a>
+        </li>
       
-        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
       
     </ul>
   </nav>
   <nav class="social-menu collapsed">
     <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-      <li class="social-item">
-        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
-      </li>
-
-      
-      <li class="social-item">
-        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
-      </li>
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
-      </li>
-
-      
-
-      <li class="social-item">
-        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
   </nav>
 </header>
 
@@ -258,12 +269,9 @@
 <p>Q：0.0.0.0/0，IP地址/32，127.0.0.1分别是什么意思？</p>
 
 <p>A：</p>
-
-<pre><code>1. 代表默认路由，路由表中任意的地址都能和它匹配，并不是一个 IP 地址（IP 地址应标识为 0.0.0.0/32）。匹配不到的都走默认路由。在家用路由器中用来描述 Internet 上所有的路由从而不用存储所有路由。
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">1. 代表默认路由，路由表中任意的地址都能和它匹配，并不是一个 IP 地址（IP 地址应标识为 0.0.0.0/32）。匹配不到的都走默认路由。在家用路由器中用来描述 Internet 上所有的路由从而不用存储所有路由。
 2. 代表主机路由，所有位都参与路由，代表某一个主机的唯一路由。可用于匹配家用路由器的默认路由的寻找。
-3. 代表环回地址，同一计算机内的网络通信的本地默认地址，数据不会被流向网络。
-</code></pre>
-
+3. 代表环回地址，同一计算机内的网络通信的本地默认地址，数据不会被流向网络。</pre></div>
 <h4 id="ip-包的分割和重组">IP 包的分割和重组</h4>
 
 <p>在发送端和路由根据每段链路的 MTU 进行分片，接收端进行重组。</p>
@@ -275,12 +283,9 @@
 <p>Q：为何只在接收端而不在途中重组？</p>
 
 <p>A：</p>
-
-<pre><code>1. 无法保证分片在同一路径传输
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">1. 无法保证分片在同一路径传输
 2. 分片可能丢失 
-3. 可能之后还需要重新分片
-</code></pre>
-
+3. 可能之后还需要重新分片</pre></div>
 <p>分片机制的不足之处</p>
 
 <ul>
@@ -293,12 +298,9 @@
 <p>先获取整个路径中数据链路的最小 MTU，发送端按照这个 MTU 分片</p>
 
 <p>工作原理：</p>
-
-<pre><code>1. 先设置 IP 包禁止分片
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">1. 先设置 IP 包禁止分片
 2. 发送并在丢弃时（说明包 MTU 过大）将当时可最大的 MTU 用 ICMP 不可达消息返回
-3. 设置包 MTU 为 ICMP 返回的 MTU 并重新循环上述步奏，直到无 ICMP 返回
-</code></pre>
-
+3. 设置包 MTU 为 ICMP 返回的 MTU 并重新循环上述步奏，直到无 ICMP 返回</pre></div>
 <h4 id="ipv6">IPv6</h4>
 
 <p>特点：</p>
@@ -318,13 +320,10 @@
 <p>各个域的分层有对应的域名服务器，像树一样连接分层，分别可以解析对应域名的 IP。</p>
 
 <p>工作原理：</p>
-
-<pre><code>1. 查询时先向该域内的域名服务器A查询，
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">1. 查询时先向该域内的域名服务器A查询，
 2. 域名服务器 A 从下至上找到根域名服务器，
 3. 根域名服务器再从上往下找到对应的域名服务器 B 地址并返回给域名服务器 A
-4. A 向 B 查询域名的 IP 地址并返回。
-</code></pre>
-
+4. A 向 B 查询域名的 IP 地址并返回。</pre></div>
 <h3 id="arp-address-resolution-protocol">ARP（Address Resolution Protocol）</h3>
 
 <p>通过目标 IP 地址定位下一个接收的网络设备 MAC 地址。分为请求和响应两部分。一般获取到 Mac 地址后会缓存一段时间。</p>
@@ -345,13 +344,10 @@
 <p>为主机自动设置 IP 地址和统一管理 IP 地址分配。</p>
 
 <p>工作原理：</p>
-
-<pre><code>1. 发送 DHCP 发现包（目标地址广播，源地址未知），请求网络设置（IP 地址和子网掩码等）
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">1. 发送 DHCP 发现包（目标地址广播，源地址未知），请求网络设置（IP 地址和子网掩码等）
 2. DHCP服 务器返回可使用的网络设置
 3. 发送 DHCP 请求包（目标地址广播，源地址未知），通知想要应用该网络设置
-4. DHCP 服务器通知允许应用该设置
-</code></pre>
-
+4. DHCP 服务器通知允许应用该设置</pre></div>
 <p>Q：为什么需要第二次通知和确认设置？</p>
 
 <p>A：DHCP 服务器的可分配目标地址可被管理员设置，二次确认可保证即使被重复的设置后也可以正常工作</p>
@@ -428,12 +424,9 @@
 <p>Q：为啥建立连接是三次握手？</p>
 
 <p>A：首先这三个包分别是</p>
-
-<pre><code>1. 客户端的请求（建立连接）
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">1. 客户端的请求（建立连接）
 2. 客户端请求的应答+服务端请求 （建立连接）
-3. 服务端请求的应答
-</code></pre>
-
+3. 服务端请求的应答</pre></div>
 <p>也就是中间那个包实际上包含两个功能。</p>
 
 <p>客户端和服务端都需要请求是因为建立连接前，两端配置（比如序列号）需要<strong>协商同步</strong>。</p>
@@ -507,14 +500,11 @@
 <p>设计思想：无拥塞则调大拥塞窗口，拥塞时马上减小窗口</p>
 
 <p>慢启动算法：</p>
-
-<pre><code>1. 将拥塞窗口设置为 1 个 MSS（Maximum Segment Size，最大数据段）
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">1. 将拥塞窗口设置为 1 个 MSS（Maximum Segment Size，最大数据段）
 2. 开始窗口指数增长到慢启动阀值（第一次无限制）
 3. 到达慢启动阀值后改为线性增长（除第一次）
 4. 一旦发生超时则将慢启动阀值设置成当时的拥塞窗口大小的一半，并重新步骤 1
-5. 一旦发生重复确认应答则将慢启动阀值设置成当时拥塞窗口的一半，之后将拥塞窗口设置为慢启动阀值大小 +3MSS，并重新步骤 3
-</code></pre>
-
+5. 一旦发生重复确认应答则将慢启动阀值设置成当时拥塞窗口的一半，之后将拥塞窗口设置为慢启动阀值大小 +3MSS，并重新步骤 3</pre></div>
 <h2 id="应用层">应用层</h2>
 
 <h3 id="www基本概念">WWW基本概念</h3>
@@ -573,7 +563,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>705</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>706</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -600,18 +590,61 @@
       
     
   </section>
-  <footer class="site-footer">
+  
+<footer class="site-footer">
   <p>© 2017-2019 Nemocdz&#39;s Blog</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>
 
 
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
 
-<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
-<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
 
 
 

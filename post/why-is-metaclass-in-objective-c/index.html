@@ -9,113 +9,150 @@
 
   
   
-
-
-
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
 
   
-  <meta name="author" content="Nemocdz" />
+
+  
+  
   <meta name="description" content="[TOC]
 这篇文章源于美团面试官问的我一个问题，为什么 Objective-C 中有 Class 和 MetaClass 这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有 MetaClass 而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么 Objective-C 中有 MetaClass 这个设计？
-" />
+">
 
   
   
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@Nemocdz" />
-    <meta name="twitter:title" content="Why is MetaClass in Objective-C？" />
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="Why is MetaClass in Objective-C？">
     <meta name="twitter:description" content="[TOC]
 这篇文章源于美团面试官问的我一个问题，为什么 Objective-C 中有 Class 和 MetaClass 这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有 MetaClass 而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么 Objective-C 中有 MetaClass 这个设计？
-" />
-    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+">
+    <meta name="twitter:image" content="/images/avatar.png">
   
 
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Why is MetaClass in Objective-C？">
+  <meta property="og:description" content="[TOC]
+这篇文章源于美团面试官问的我一个问题，为什么 Objective-C 中有 Class 和 MetaClass 这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有 MetaClass 而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么 Objective-C 中有 MetaClass 这个设计？
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/why-is-metaclass-in-objective-c/">
+  <meta property="og:image" content="/images/avatar.png">
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+
+<meta name="generator" content="Hugo 0.55.6">
 
 
-<link rel="canonical" href="https://nemocdz.github.io/post/why-is-metaclass-in-objective-c/" />
-<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+<link rel="canonical" href="https://nemocdz.github.io/post/why-is-metaclass-in-objective-c/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
 
 
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
-<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
-<meta name="baidu-site-verification" content="iVpH4VhHBT" />
-<meta name="sogou_site_verification" content="YPqjjJgiSh" />
-<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
 
 
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
-<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
 
 
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
 
-<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
 
 
   
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
 
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
-  <![endif]-->
-
-
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
-
-
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
 
 
 </head>
   <body>
-    
     <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
       
         
-        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
         
       
     </div>
     
     
   <header class="site-header">
-  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
   
-  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
   
-  <p class="subtitle">iOS&amp;Android Dev</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
   </button>
+
   <nav class="site-menu collapsed">
     <h2 class="offscreen">Main Menu</h2>
     <ul class="menu-list">
@@ -123,79 +160,53 @@
       
       
       
-        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/">首页</a>
+        </li>
       
-        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
       
     </ul>
   </nav>
   <nav class="social-menu collapsed">
     <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-      <li class="social-item">
-        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
-      </li>
-
-      
-      <li class="social-item">
-        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
-      </li>
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
-      </li>
-
-      
-
-      <li class="social-item">
-        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
   </nav>
 </header>
 
@@ -211,46 +222,46 @@
 <h2 id="前置知识">前置知识</h2>
 
 <p>首先简单分析下在 Objective-C 中，对象是什么。下面源码基于 <a href="https://opensource.apple.com/tarballs/objc4/">Runtime-709</a> 分析。</p>
-<div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">objc_object</span> <span class="o">*</span><span class="n">id</span><span class="p">;</span><span class="c1">//id其实是一个object结构体的指针，所以id不用加*
-</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">objc_class</span> <span class="o">*</span><span class="n">Class</span><span class="p">;</span><span class="c1">//Class是class结构体的指针
-</span><span class="c1"></span>
-<span class="k">struct</span> <span class="n">objc_object</span> <span class="p">{</span>
-    <span class="n">Class</span> <span class="n">isa</span><span class="p">;</span>
-<span class="p">};</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#ff79c6">typedef</span> <span style="color:#ff79c6">struct</span> objc_object <span style="color:#ff79c6">*</span>id;<span style="color:#6272a4">//id其实是一个object结构体的指针，所以id不用加*
+</span><span style="color:#6272a4"></span><span style="color:#ff79c6">typedef</span> <span style="color:#ff79c6">struct</span> objc_class <span style="color:#ff79c6">*</span>Class;<span style="color:#6272a4">//Class是class结构体的指针
+</span><span style="color:#6272a4"></span>
+<span style="color:#ff79c6">struct</span> objc_object {
+    Class isa;
+};
 
-<span class="k">struct</span> <span class="nl">objc_class</span> <span class="p">:</span> <span class="n">objc_object</span> <span class="p">{</span>
-    <span class="n">Class</span> <span class="n">superclass</span><span class="p">;</span>
-    <span class="n">cache_t</span> <span class="n">cache</span><span class="p">;</span>     <span class="c1">// 用来缓存指针和虚函数表  
-</span><span class="c1"></span>    <span class="n">class_data_bits_t</span> <span class="n">bits</span><span class="p">;</span>  <span class="c1">//方法列表等
-</span><span class="c1"></span>  	<span class="c1">//...
-</span><span class="c1"></span><span class="p">}</span>
+<span style="color:#ff79c6">struct</span> <span style="color:#8be9fd;font-style:italic">objc_class</span> : objc_object {
+    Class superclass;
+    cache_t cache;     <span style="color:#6272a4">// 用来缓存指针和虚函数表  
+</span><span style="color:#6272a4"></span>    class_data_bits_t bits;  <span style="color:#6272a4">//方法列表等
+</span><span style="color:#6272a4"></span>  	<span style="color:#6272a4">//...
+</span><span style="color:#6272a4"></span>}
 </code></pre></div>
 <p>可以看到，对象最基本的就是有一个 isa 指针，指向他的 Class，而 Class 本身是继承自 object。isa 指针的理解诶就是英文 is a，代表 “xxx is a （class）”。那么也就是说，一个对象的 isa 指向哪个 Class，代表它是那个类的对象。那么对于 Class 来说，它也是一个对象，它的 isa 指针指向什么呢？</p>
 
 <p>对于 Class 来说，也就需要一个描述他的类，也就是“类的类”，而 meta 正是“关于某事自身的某事”的解释，所以 MetaClass 就因此而生了。</p>
 
 <p>而从 Runtime 动态生成一个类的 API 的方法中，我们也可以发现 MetaClass 的踪迹。</p>
-<div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="n">Class</span> <span class="nf">objc_allocateClassPair</span><span class="p">(</span><span class="n">Class</span> <span class="n">superclass</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> 
-                             <span class="n">size_t</span> <span class="n">extraBytes</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="n">Class</span> <span class="n">cls</span><span class="p">,</span> <span class="n">meta</span><span class="p">;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Class <span style="color:#50fa7b">objc_allocateClassPair</span>(Class superclass, <span style="color:#ff79c6">const</span> <span style="color:#8be9fd">char</span> <span style="color:#ff79c6">*</span>name, 
+                             size_t extraBytes)
+{
+    Class cls, meta;
 
-    <span class="n">rwlock_writer_t</span> <span class="n">lock</span><span class="p">(</span><span class="n">runtimeLock</span><span class="p">);</span>
+    rwlock_writer_t lock(runtimeLock);
 
-    <span class="c1">// 如果 Class 名字已存在或父类没有通过认证则创建失败
-</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">getClass</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>  <span class="o">||</span>  <span class="o">!</span><span class="n">verifySuperclass</span><span class="p">(</span><span class="n">superclass</span><span class="p">,</span> <span class="nb">true</span><span class="cm">/*rootOK*/</span><span class="p">))</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="n">nil</span><span class="p">;</span>
-    <span class="p">}</span>
+    <span style="color:#6272a4">// 如果 Class 名字已存在或父类没有通过认证则创建失败
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (getClass(name)  <span style="color:#ff79c6">||</span>  <span style="color:#ff79c6">!</span>verifySuperclass(superclass, <span style="color:#8be9fd;font-style:italic">true</span><span style="color:#6272a4">/*rootOK*/</span>)) {
+        <span style="color:#ff79c6">return</span> nil;
+    }
 
-    <span class="c1">//分配空间
-</span><span class="c1"></span>    <span class="n">cls</span>  <span class="o">=</span> <span class="n">alloc_class_for_subclass</span><span class="p">(</span><span class="n">superclass</span><span class="p">,</span> <span class="n">extraBytes</span><span class="p">);</span>
-    <span class="n">meta</span> <span class="o">=</span> <span class="n">alloc_class_for_subclass</span><span class="p">(</span><span class="n">superclass</span><span class="p">,</span> <span class="n">extraBytes</span><span class="p">);</span>
+    <span style="color:#6272a4">//分配空间
+</span><span style="color:#6272a4"></span>    cls  <span style="color:#ff79c6">=</span> alloc_class_for_subclass(superclass, extraBytes);
+    meta <span style="color:#ff79c6">=</span> alloc_class_for_subclass(superclass, extraBytes);
 
-	<span class="c1">//构建meta和class的关系
-</span><span class="c1"></span>    <span class="n">objc_initializeClassPair_internal</span><span class="p">(</span><span class="n">superclass</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">cls</span><span class="p">,</span> <span class="n">meta</span><span class="p">);</span>
+	<span style="color:#6272a4">//构建meta和class的关系
+</span><span style="color:#6272a4"></span>    objc_initializeClassPair_internal(superclass, name, cls, meta);
 
-    <span class="k">return</span> <span class="n">cls</span><span class="p">;</span>
-<span class="p">}</span>
+    <span style="color:#ff79c6">return</span> cls;
+}
 </code></pre></div>
 <p>通过这个方法生成后，就成了大家熟悉的那张图。</p>
 
@@ -265,44 +276,44 @@
 <p>再讲 Objective-C 之前，先讲讲别的语言的设计，通过各种语言的比较，可以从更广的层面去理解语言的设计思想。而之所以先讲起 Python，是因为我在搜索 MetaClass 时，搜索结果中大部分其实是讲 Python 中 MetaClass 的。</p>
 
 <p>先看看 Python 中一个对象结构是怎么样的，以下源码基于 <a href="https://github.com/python/cpython">CPython 3.7.0 alpha 1</a>。</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">//object.h
-</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_object</span> <span class="p">{</span>
-    <span class="n">_PyObject_HEAD_EXTRA</span>
-    <span class="n">Py_ssize_t</span> <span class="n">ob_refcnt</span><span class="p">;</span><span class="c1">//引用计数
-</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">_typeobject</span> <span class="o">*</span><span class="n">ob_type</span><span class="p">;</span><span class="c1">//类型
-</span><span class="c1"></span><span class="p">}</span> <span class="n">PyObject</span><span class="p">;</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#6272a4">//object.h
+</span><span style="color:#6272a4"></span><span style="color:#ff79c6">typedef</span> <span style="color:#ff79c6">struct</span> _object {
+    _PyObject_HEAD_EXTRA
+    Py_ssize_t ob_refcnt;<span style="color:#6272a4">//引用计数
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">struct</span> _typeobject <span style="color:#ff79c6">*</span>ob_type;<span style="color:#6272a4">//类型
+</span><span style="color:#6272a4"></span>} PyObject;</code></pre></div>
 <p>和 Objective-C 中类似，ob_type 其实就是一个 isa 指针，代表是什么类型。</p>
 
 <p>而再看看 <code>PyTypeObject</code> 是怎么样的。</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">//object.h
-</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_typeobject</span> <span class="p">{</span>
-    <span class="n">PyObject_VAR_HEAD</span>
-    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">tp_name</span><span class="p">;</span> <span class="cm">/* For printing, in format &#34;&lt;module&gt;.&lt;name&gt;&#34; */</span>
-    <span class="n">Py_ssize_t</span> <span class="n">tp_basicsize</span><span class="p">,</span> <span class="n">tp_itemsize</span><span class="p">;</span> <span class="cm">/* For allocation */</span>
-   <span class="c1">//....
-</span><span class="c1"></span><span class="p">}</span> <span class="n">PyTypeObject</span><span class="p">;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#6272a4">//object.h
+</span><span style="color:#6272a4"></span><span style="color:#ff79c6">typedef</span> <span style="color:#ff79c6">struct</span> _typeobject {
+    PyObject_VAR_HEAD
+    <span style="color:#ff79c6">const</span> <span style="color:#8be9fd">char</span> <span style="color:#ff79c6">*</span>tp_name; <span style="color:#6272a4">/* For printing, in format &#34;&lt;module&gt;.&lt;name&gt;&#34; */</span>
+    Py_ssize_t tp_basicsize, tp_itemsize; <span style="color:#6272a4">/* For allocation */</span>
+   <span style="color:#6272a4">//....
+</span><span style="color:#6272a4"></span>} PyTypeObject;
 
-<span class="cp">#define PyObject_VAR_HEAD      PyVarObject ob_base;
-</span><span class="cp"></span>
-<span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
-    <span class="n">PyObject</span> <span class="n">ob_base</span><span class="p">;</span>  
-    <span class="n">Py_ssize_t</span> <span class="n">ob_size</span><span class="p">;</span> <span class="c1">//对象长度
-</span><span class="c1"></span><span class="p">}</span> <span class="n">PyVarObject</span><span class="p">;</span></code></pre></div>
+<span style="color:#ff79c6">#define PyObject_VAR_HEAD      PyVarObject ob_base;
+</span><span style="color:#ff79c6"></span>
+<span style="color:#ff79c6">typedef</span> <span style="color:#ff79c6">struct</span> {
+    PyObject ob_base;  
+    Py_ssize_t ob_size; <span style="color:#6272a4">//对象长度
+</span><span style="color:#6272a4"></span>} PyVarObject;</code></pre></div>
 <p><code>PyVarObject</code> 是一种可变长度对象，是在 <code>PyObject</code> 基础上加上了对象的长度。而开始的内存包括了 ob_base 这个 <code>PyObject</code>，就代表可以用 <code>PyObject</code> 指针进行引用。所以可以说，结构体中刚开始的部分是一个 <code>PyObject</code> 对象，在 Python 中引用就是一个对象。那么 <code>PyTypeObject</code> 开头是一个 <code>PyVarObject</code>，也就是一个对象。也就是说，Python 里的 Class，也是一个对象。</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="c1">#在python中生成一个Class</span>
-<span class="n">MyClass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s1">&#39;MyClass&#39;</span><span class="p">,</span> <span class="p">(),</span> <span class="p">{})</span>           </code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#6272a4">#在python中生成一个Class</span>
+MyClass <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">type</span>(<span style="color:#f1fa8c">&#39;MyClass&#39;</span>, (), {})           </code></pre></div>
 <p>先看看 Python 里面的 type 关键字是什么。</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">//bltinmodule.c
-</span><span class="c1"></span><span class="n">SETBUILTIN</span><span class="p">(</span><span class="s">&#34;type&#34;</span><span class="p">,</span>                  <span class="o">&amp;</span><span class="n">PyType_Type</span><span class="p">);</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">//typeobject.c
-</span><span class="c1"></span><span class="n">PyTypeObject</span> <span class="n">PyType_Type</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="n">PyVarObject_HEAD_INIT</span><span class="p">(</span><span class="o">&amp;</span><span class="n">PyType_Type</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="s">&#34;type&#34;</span><span class="p">,</span>                                     <span class="cm">/* tp_name */</span>
-    <span class="c1">//.....
-</span><span class="c1"></span>    <span class="n">type_init</span><span class="p">,</span>                                  <span class="cm">/* tp_init */</span>
-	<span class="c1">//....                                
-</span><span class="c1"></span>    <span class="n">type_new</span><span class="p">,</span>                                   <span class="cm">/* tp_new */</span>
-	<span class="c1">//....
-</span><span class="c1"></span><span class="p">};</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#6272a4">//bltinmodule.c
+</span><span style="color:#6272a4"></span>SETBUILTIN(<span style="color:#f1fa8c">&#34;type&#34;</span>,                  <span style="color:#ff79c6">&amp;</span>PyType_Type);</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#6272a4">//typeobject.c
+</span><span style="color:#6272a4"></span>PyTypeObject PyType_Type <span style="color:#ff79c6">=</span> {
+    PyVarObject_HEAD_INIT(<span style="color:#ff79c6">&amp;</span>PyType_Type, <span style="color:#bd93f9">0</span>)
+    <span style="color:#f1fa8c">&#34;type&#34;</span>,                                     <span style="color:#6272a4">/* tp_name */</span>
+    <span style="color:#6272a4">//.....
+</span><span style="color:#6272a4"></span>    type_init,                                  <span style="color:#6272a4">/* tp_init */</span>
+	<span style="color:#6272a4">//....                                
+</span><span style="color:#6272a4"></span>    type_new,                                   <span style="color:#6272a4">/* tp_new */</span>
+	<span style="color:#6272a4">//....
+</span><span style="color:#6272a4"></span>};</code></pre></div>
 <p>可以发现 type 关键字是 PyType_Type 的一个引用，而 PyType_Type 是返回一个 <code>PyTypeObject</code>，生成类的对象。而 PyVarObject_HEAD_INIT 递归引用了自己（PyType_Type）作为它的 type，所以可以得知 <code>type(class) == type</code> 。也就是说，Python 中类的 isa 指针指向 type，也就说 type 其实就是 MetaClass，而同时 <code>type(type) ==  type</code>，也就是 type 的 isa 指针指向 type 自身。那么 Python 的对象链就如下图。</p>
 
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fjjgbu36h1j30go0amjrz.jpg" alt="86fbc69def5f2afddd652a5d83e69456_b" /></p>
@@ -377,7 +388,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>681</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>682</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -404,18 +415,61 @@
       
     
   </section>
-  <footer class="site-footer">
+  
+<footer class="site-footer">
   <p>© 2017-2019 Nemocdz&#39;s Blog</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>
 
 
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
 
-<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
-<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
 
 
 

@@ -9,113 +9,150 @@
 
   
   
-
-
-
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
 
   
-  <meta name="author" content="Nemocdz" />
+
+  
+  
   <meta name="description" content="[TOC]
 在 OC 中 Foundation 框架中的常用容器类（NSSet，NSDictionary，NSArray）及其可变子类在加入元素时，均会对元素进行强引用。有的时候（比如持有多个 Delegate 对象时），希望有对应的弱引用容器使用。
-" />
+">
 
   
   
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@Nemocdz" />
-    <meta name="twitter:title" content="Objective-C 弱引用容器实现方案总结" />
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="Objective-C 弱引用容器实现方案总结">
     <meta name="twitter:description" content="[TOC]
 在 OC 中 Foundation 框架中的常用容器类（NSSet，NSDictionary，NSArray）及其可变子类在加入元素时，均会对元素进行强引用。有的时候（比如持有多个 Delegate 对象时），希望有对应的弱引用容器使用。
-" />
-    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+">
+    <meta name="twitter:image" content="/images/avatar.png">
   
 
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Objective-C 弱引用容器实现方案总结">
+  <meta property="og:description" content="[TOC]
+在 OC 中 Foundation 框架中的常用容器类（NSSet，NSDictionary，NSArray）及其可变子类在加入元素时，均会对元素进行强引用。有的时候（比如持有多个 Delegate 对象时），希望有对应的弱引用容器使用。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">
+  <meta property="og:image" content="/images/avatar.png">
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+
+<meta name="generator" content="Hugo 0.55.6">
 
 
-<link rel="canonical" href="https://nemocdz.github.io/post/objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/" />
-<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+<link rel="canonical" href="https://nemocdz.github.io/post/objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
 
 
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
-<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
-<meta name="baidu-site-verification" content="iVpH4VhHBT" />
-<meta name="sogou_site_verification" content="YPqjjJgiSh" />
-<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
 
 
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
-<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
 
 
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
 
-<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
 
 
   
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
 
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
-  <![endif]-->
-
-
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
-
-
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
 
 
 </head>
   <body>
-    
     <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
       
         
-        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
         
       
     </div>
     
     
   <header class="site-header">
-  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
   
-  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
   
-  <p class="subtitle">iOS&amp;Android Dev</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
   </button>
+
   <nav class="site-menu collapsed">
     <h2 class="offscreen">Main Menu</h2>
     <ul class="menu-list">
@@ -123,79 +160,53 @@
       
       
       
-        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/">首页</a>
+        </li>
       
-        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
       
     </ul>
   </nav>
   <nav class="social-menu collapsed">
     <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-      <li class="social-item">
-        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
-      </li>
-
-      
-      <li class="social-item">
-        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
-      </li>
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
-      </li>
-
-      
-
-      <li class="social-item">
-        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
   </nav>
 </header>
 
@@ -227,24 +238,24 @@
 <ul>
 <li>Memory Options（内存语义管理选项）</li>
 </ul>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c">  <span class="n">NSPointerFunctionsStrongMemory</span> <span class="c1">// 和 strong 一样，默认
-</span><span class="c1"></span>  <span class="n">NSPointerFunctionsOpaqueMemory</span> <span class="c1">// 在指针去除时不做任何动作
-</span><span class="c1"></span>  <span class="n">NSPointerFunctionsMallocMemory</span> <span class="c1">// 去除时调用 free() , 加入时calloc()
-</span><span class="c1"></span>  <span class="n">NSPointerFunctionsMachVirtualMemory</span> <span class="c1">//使用可执行文件的虚拟内存
-</span><span class="c1"></span>  <span class="n">NSPointerFunctionsWeakMemory</span> <span class="o">//</span><span class="err">和</span> <span class="k">weak</span> <span class="err">一样</span>         </code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">  NSPointerFunctionsStrongMemory <span style="color:#6272a4">// 和 strong 一样，默认
+</span><span style="color:#6272a4"></span>  NSPointerFunctionsOpaqueMemory <span style="color:#6272a4">// 在指针去除时不做任何动作
+</span><span style="color:#6272a4"></span>  NSPointerFunctionsMallocMemory <span style="color:#6272a4">// 去除时调用 free() , 加入时calloc()
+</span><span style="color:#6272a4"></span>  NSPointerFunctionsMachVirtualMemory <span style="color:#6272a4">//使用可执行文件的虚拟内存
+</span><span style="color:#6272a4"></span>  NSPointerFunctionsWeakMemory <span style="color:#ff79c6">//</span>和 <span style="color:#ff79c6">weak</span> 一样         </code></pre></div>
 <ul>
 <li>Personaility Options(对象处理选项-如何进行哈希算法，判定等同性，描述)</li>
 </ul>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c">  <span class="n">NSPointerFunctionsObjectPersonality</span> <span class="c1">//使用 NSObject 的 hash、isEqual、description，默认
-</span><span class="c1"></span>  <span class="n">NSPointerFunctionsOpaquePersonality</span> <span class="c1">//使用偏移后指针，进行 hash 和直接比较等同性
-</span><span class="c1"></span>  <span class="n">NSPointerFunctionsObjectPointerPersonality</span> <span class="c1">//和上一个相同，多了 description 方法	  
-</span><span class="c1"></span>  <span class="n">NSPointerFunctionsCStringPersonality</span> <span class="c1">//使用 C 字符串的 hash 和 strcmp 比较，%s 作为 decription
-</span><span class="c1"></span>  <span class="n">NSPointerFunctionsStructPersonality</span> <span class="c1">// 使用内存的 hash 和 memcmp 
-</span><span class="c1"></span>  <span class="n">NSPointerFunctionsIntegerPersonality</span> <span class="o">//</span><span class="err">使用偏移量作为</span> <span class="n">hash</span> <span class="err">和等同性判断</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">  NSPointerFunctionsObjectPersonality <span style="color:#6272a4">//使用 NSObject 的 hash、isEqual、description，默认
+</span><span style="color:#6272a4"></span>  NSPointerFunctionsOpaquePersonality <span style="color:#6272a4">//使用偏移后指针，进行 hash 和直接比较等同性
+</span><span style="color:#6272a4"></span>  NSPointerFunctionsObjectPointerPersonality <span style="color:#6272a4">//和上一个相同，多了 description 方法	  
+</span><span style="color:#6272a4"></span>  NSPointerFunctionsCStringPersonality <span style="color:#6272a4">//使用 C 字符串的 hash 和 strcmp 比较，%s 作为 decription
+</span><span style="color:#6272a4"></span>  NSPointerFunctionsStructPersonality <span style="color:#6272a4">// 使用内存的 hash 和 memcmp 
+</span><span style="color:#6272a4"></span>  NSPointerFunctionsIntegerPersonality <span style="color:#ff79c6">//</span>使用偏移量作为 hash 和等同性判断</code></pre></div>
 <ul>
 <li>Copy Options（对象拷贝选项）</li>
 </ul>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c">  <span class="n">NSPointerFunctionsCopyIn</span><span class="o">//</span><span class="err">通过</span> <span class="n">NSCopying</span> <span class="err">方法，复制后存入</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">  NSPointerFunctionsCopyIn<span style="color:#ff79c6">//</span>通过 NSCopying 方法，复制后存入</code></pre></div>
 <p>另外，文档还强调，<strong>每种类别的选项互斥，只能每种类别选择一个</strong>。</p>
 
 <p>当然，这三种容器还提供了快捷实例化类方法，含有 weakObjects 字样。</p>
@@ -267,10 +278,10 @@
 <h4 id="2-用-cffoundation-框架里对应容器类自定义内存管理选项在初始化时-使用-cffoundation-里的容器类实现后转成-foundation-对象">2.用 CFFoundation 框架里对应容器类自定义内存管理选项在初始化时，使用 CFFoundation 里的容器类实现后转成 Foundation 对象</h4>
 
 <p>以 <code>NSMutableSet</code> 为例，可以增加一个新的分类，自定义一个实例化方法</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">+</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">cdz_weakSet</span><span class="p">{</span>
-    <span class="n">CFSetCallBacks</span> <span class="n">callbacks</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">CFCopyDescription</span><span class="p">,</span> <span class="n">CFEqual</span><span class="p">,</span> <span class="n">CFHash</span><span class="p">};</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">NSMutableSet</span> <span class="o">*</span><span class="p">)</span><span class="n">CFBridgingRelease</span><span class="p">(</span><span class="n">CFSetCreateMutable</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">callbacks</span><span class="p">));</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">+ (<span style="color:#8be9fd">instancetype</span>)<span style="color:#50fa7b">cdz_weakSet</span>{
+    CFSetCallBacks callbacks <span style="color:#ff79c6">=</span> {<span style="color:#bd93f9">0</span>, <span style="color:#8be9fd;font-style:italic">NULL</span>, <span style="color:#8be9fd;font-style:italic">NULL</span>, CFCopyDescription, CFEqual, CFHash};
+    <span style="color:#ff79c6">return</span> (NSMutableSet <span style="color:#ff79c6">*</span>)CFBridgingRelease(CFSetCreateMutable(<span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">0</span>, <span style="color:#ff79c6">&amp;</span>callbacks));
+}</code></pre></div>
 <p>建立容器类的步骤</p>
 
 <h5 id="1-生成-callbacks-结构体">1.生成 CallBacks 结构体</h5>
@@ -278,14 +289,14 @@
 <p>结构体中的对象其实就是一些描述容器的选项</p>
 
 <p>同样以 <code>CFSetCallBacks</code> 为例，其结构体定义如下</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
-    <span class="n">CFIndex</span>				<span class="n">version</span><span class="p">;</span>
-    <span class="n">CFSetRetainCallBack</span>			<span class="k">retain</span><span class="p">;</span>
-    <span class="n">CFSetReleaseCallBack</span>		<span class="k">release</span><span class="p">;</span>
-    <span class="n">CFSetCopyDescriptionCallBack</span>	<span class="n">copyDescription</span><span class="p">;</span>
-    <span class="n">CFSetEqualCallBack</span>			<span class="n">equal</span><span class="p">;</span>
-    <span class="n">CFSetHashCallBack</span>			<span class="n">hash</span><span class="p">;</span>
-<span class="p">}</span> <span class="n">CFSetCallBacks</span><span class="p">;</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">typedef</span> <span style="color:#ff79c6">struct</span> {
+    CFIndex				version;
+    CFSetRetainCallBack			<span style="color:#ff79c6">retain</span>;
+    CFSetReleaseCallBack		<span style="color:#ff79c6">release</span>;
+    CFSetCopyDescriptionCallBack	copyDescription;
+    CFSetEqualCallBack			equal;
+    CFSetHashCallBack			hash;
+} CFSetCallBacks;</code></pre></div>
 <p>version 暂时不管它，看下剩下变量类型名字，是否感觉比较熟悉</p>
 
 <p>其实和之前 <code>NSPointerFunctionsOptions</code> 类似，还是分三种，retain 和 release 是内存管理，equal 和 hash 和是对象处理，copyDescription 是复制处理。</p>
@@ -312,10 +323,10 @@
 </ol>
 
 <p>例子中使用第二种，在分类中新增一个方法</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">mrc_weakAddObject:</span><span class="p">(</span><span class="n">NSObject</span> <span class="o">*</span><span class="p">)</span><span class="nv">object</span><span class="p">{</span>
-    <span class="p">[</span><span class="nb">self</span> <span class="nl">addObject</span><span class="p">:</span><span class="n">object</span><span class="p">];</span>
-    <span class="n">CFRelease</span><span class="p">((</span><span class="k">__bridge</span> <span class="n">CFTypeRef</span><span class="p">)(</span><span class="n">object</span><span class="p">));</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">mrc_weakAddObject:</span>(NSObject <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">object</span>{
+    [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">addObject</span>:object];
+    CFRelease((<span style="color:#ff79c6">__bridge</span> CFTypeRef)(object));
+}</code></pre></div>
 <p><strong>注意！！</strong></p>
 
 <p>在使用这种方法后，这个容器将变得极其不安全，必须搭配一整套 API 来操作容器，包括 add/remove/objectOfxxx，而不搭配使用的话，将可能将引用计数变得混乱，甚至导致崩溃。</p>
@@ -341,29 +352,29 @@
 <p>这个方法会弱引用这个 object。</p>
 
 <p>取的时候用 value 的 nonretainedObjectValue 属性</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="n">NSValue</span> <span class="o">*</span><span class="n">weakObject</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSValue</span> <span class="nl">valueWithNonretainedObject</span><span class="p">:</span><span class="n">object</span><span class="p">];</span>
-<span class="n">weakObject</span><span class="p">.</span><span class="n">nonretainedObjectValue</span><span class="p">;</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">NSValue <span style="color:#ff79c6">*</span>weakObject <span style="color:#ff79c6">=</span> [NSValue <span style="color:#8be9fd;font-style:italic">valueWithNonretainedObject</span>:object];
+weakObject.nonretainedObjectValue;</code></pre></div>
 <h4 id="2-使用-block">2.使用 block</h4>
 
 <p>先对 object 加上 <code>weak</code> 修饰符，再包在 block 中就可以了。</p>
 
 <p>使用时可搭配以下简便方法</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">typedef</span> <span class="nf">id</span><span class="p">(</span><span class="o">^</span><span class="n">CDZWeakObjectBlock</span><span class="p">)();</span>
-<span class="n">CDZWeakObjectBlock</span> <span class="nf">blockOfObjcet</span> <span class="p">(</span><span class="kt">id</span> <span class="n">object</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">__weak</span> <span class="kt">id</span> <span class="n">weakObjcet</span> <span class="o">=</span> <span class="n">object</span><span class="p">;</span>
-    <span class="k">return</span> <span class="o">^</span><span class="p">{</span>
-        <span class="k">return</span> <span class="n">weakObjcet</span><span class="p">;</span>
-    <span class="p">};</span>
-<span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">typedef</span> <span style="color:#50fa7b">id</span>(<span style="color:#ff79c6">^</span>CDZWeakObjectBlock)();
+CDZWeakObjectBlock <span style="color:#50fa7b">blockOfObjcet</span> (<span style="color:#8be9fd">id</span> object) {
+    <span style="color:#ff79c6">__weak</span> <span style="color:#8be9fd">id</span> weakObjcet <span style="color:#ff79c6">=</span> object;
+    <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">^</span>{
+        <span style="color:#ff79c6">return</span> weakObjcet;
+    };
+}
 
-<span class="kt">id</span> <span class="nf">objectOfBlock</span> <span class="p">(</span><span class="n">CDZWeakObjectBlock</span> <span class="n">block</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="n">block</span><span class="p">();</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span style="color:#8be9fd">id</span> <span style="color:#50fa7b">objectOfBlock</span> (CDZWeakObjectBlock block) {
+    <span style="color:#ff79c6">if</span> (block) {
+        <span style="color:#ff79c6">return</span> block();
+    }
+    <span style="color:#ff79c6">else</span> {
+        <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">nil</span>;
+    }
+}</code></pre></div>
 <p>当然也可以实现自定义对象进行持有，而缺点就是，<strong>没办法使用容器的泛型进行约束和警告</strong>，差异值被抹去了。</p>
 
 <h3 id="最终方案">最终方案</h3>
@@ -428,7 +439,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>735</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>736</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -455,18 +466,61 @@
       
     
   </section>
-  <footer class="site-footer">
+  
+<footer class="site-footer">
   <p>© 2017-2019 Nemocdz&#39;s Blog</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>
 
 
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
 
-<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
-<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
 
 
 

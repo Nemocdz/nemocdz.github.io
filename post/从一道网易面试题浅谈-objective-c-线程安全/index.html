@@ -9,113 +9,150 @@
 
   
   
-
-
-
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
 
   
-  <meta name="author" content="Nemocdz" />
+
+  
+  
   <meta name="description" content="[TOC]
 今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？
-" />
+">
 
   
   
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@Nemocdz" />
-    <meta name="twitter:title" content="从一道网易面试题浅谈 Objective-C 线程安全" />
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="从一道网易面试题浅谈 Objective-C 线程安全">
     <meta name="twitter:description" content="[TOC]
 今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？
-" />
-    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+">
+    <meta name="twitter:image" content="/images/avatar.png">
   
 
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="从一道网易面试题浅谈 Objective-C 线程安全">
+  <meta property="og:description" content="[TOC]
+今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/%E4%BB%8E%E4%B8%80%E9%81%93%E7%BD%91%E6%98%93%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B5%85%E8%B0%88-objective-c-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/">
+  <meta property="og:image" content="/images/avatar.png">
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+
+<meta name="generator" content="Hugo 0.55.6">
 
 
-<link rel="canonical" href="https://nemocdz.github.io/post/%E4%BB%8E%E4%B8%80%E9%81%93%E7%BD%91%E6%98%93%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B5%85%E8%B0%88-objective-c-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/" />
-<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+<link rel="canonical" href="https://nemocdz.github.io/post/%E4%BB%8E%E4%B8%80%E9%81%93%E7%BD%91%E6%98%93%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B5%85%E8%B0%88-objective-c-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
 
 
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
-<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
-<meta name="baidu-site-verification" content="iVpH4VhHBT" />
-<meta name="sogou_site_verification" content="YPqjjJgiSh" />
-<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
 
 
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
-<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
 
 
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
 
-<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
 
 
   
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
 
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
-  <![endif]-->
-
-
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
-
-
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
 
 
 </head>
   <body>
-    
     <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
       
         
-        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
         
       
     </div>
     
     
   <header class="site-header">
-  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
   
-  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
   
-  <p class="subtitle">iOS&amp;Android Dev</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
   </button>
+
   <nav class="site-menu collapsed">
     <h2 class="offscreen">Main Menu</h2>
     <ul class="menu-list">
@@ -123,79 +160,53 @@
       
       
       
-        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/">首页</a>
+        </li>
       
-        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
       
     </ul>
   </nav>
   <nav class="social-menu collapsed">
     <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-      <li class="social-item">
-        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
-      </li>
-
-      
-      <li class="social-item">
-        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
-      </li>
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
-      </li>
-
-      
-
-      <li class="social-item">
-        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
   </nav>
 </header>
 
@@ -208,15 +219,15 @@
 
 <p>今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？</p>
 
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">strong</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">target</span><span class="p">;</span>
-<span class="c1">//....
-</span><span class="c1"></span>
-<span class="n">dispatch_queue_t</span> <span class="n">queue</span> <span class="o">=</span> <span class="n">dispatch_queue_create</span><span class="p">(</span><span class="s">&#34;parallel&#34;</span><span class="p">,</span> <span class="n">DISPATCH_QUEUE_CONCURRENT</span><span class="p">);</span>
-<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">1000000</span> <span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-	<span class="n">dispatch_async</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
-     	<span class="nb">self</span><span class="p">.</span><span class="n">target</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSString</span> <span class="nl">stringWithFormat</span><span class="p">:</span><span class="s">@&#34;ksddkjalkjd%d&#34;</span><span class="p">,</span><span class="n">i</span><span class="p">];</span>
-	<span class="p">});</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">strong</span>) NSString <span style="color:#ff79c6">*</span>target;
+<span style="color:#6272a4">//....
+</span><span style="color:#6272a4"></span>
+dispatch_queue_t queue <span style="color:#ff79c6">=</span> dispatch_queue_create(<span style="color:#f1fa8c">&#34;parallel&#34;</span>, DISPATCH_QUEUE_CONCURRENT);
+<span style="color:#ff79c6">for</span> (<span style="color:#8be9fd">int</span> i <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; i <span style="color:#ff79c6">&lt;</span> <span style="color:#bd93f9">1000000</span> ; i<span style="color:#ff79c6">++</span>) {
+	dispatch_async(queue, <span style="color:#ff79c6">^</span>{
+     	<span style="color:#8be9fd;font-style:italic">self</span>.target <span style="color:#ff79c6">=</span> [NSString <span style="color:#8be9fd;font-style:italic">stringWithFormat</span>:<span style="color:#f1fa8c">@&#34;ksddkjalkjd%d&#34;</span>,i];
+	});
+}</code></pre></div>
 <p>当时我把自定义的队列看成了串行队列，然后回答：“没错呀”。后来一运行崩溃了……</p>
 
 <p>面试后，我就仔细回想，敲了 Demo，看看崩溃原因是啥。</p>
@@ -236,69 +247,69 @@
 <p>我又留意到，这个对象是 Strong 修饰的，或许可以从 Strong 和 Setter 方法的源码入手看看。</p>
 
 <p>下面源码基于 <a href="https://opensource.apple.com/tarballs/objc4/">Runtime-709</a> 分析，首先找到属性设置方法。</p>
-<div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="c1">//objc_class.mm
-</span><span class="c1"></span><span class="kt">void</span> <span class="nf">object_setIvar</span><span class="p">(</span><span class="n">id</span> <span class="n">obj</span><span class="p">,</span> <span class="n">Ivar</span> <span class="n">ivar</span><span class="p">,</span> <span class="n">id</span> <span class="n">value</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">return</span> <span class="n">_object_setIvar</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ivar</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="nb">false</span> <span class="cm">/*not strong default*/</span><span class="p">);</span>
-<span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#6272a4">//objc_class.mm
+</span><span style="color:#6272a4"></span><span style="color:#8be9fd">void</span> <span style="color:#50fa7b">object_setIvar</span>(id obj, Ivar ivar, id value)
+{
+    <span style="color:#ff79c6">return</span> _object_setIvar(obj, ivar, value, <span style="color:#8be9fd;font-style:italic">false</span> <span style="color:#6272a4">/*not strong default*/</span>);
+}
 
 
-<span class="k">static</span> <span class="n">ALWAYS_INLINE</span> 
-<span class="kt">void</span> <span class="nf">_object_setIvar</span><span class="p">(</span><span class="n">id</span> <span class="n">obj</span><span class="p">,</span> <span class="n">Ivar</span> <span class="n">ivar</span><span class="p">,</span> <span class="n">id</span> <span class="n">value</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">assumeStrong</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="c1">//判断是否是 TaggedPointer
-</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">obj</span>  <span class="o">||</span>  <span class="o">!</span><span class="n">ivar</span>  <span class="o">||</span>  <span class="n">obj</span><span class="o">-&gt;</span><span class="n">isTaggedPointer</span><span class="p">())</span> <span class="k">return</span><span class="p">;</span>
+<span style="color:#ff79c6">static</span> ALWAYS_INLINE 
+<span style="color:#8be9fd">void</span> <span style="color:#50fa7b">_object_setIvar</span>(id obj, Ivar ivar, id value, <span style="color:#8be9fd">bool</span> assumeStrong)
+{
+    <span style="color:#6272a4">//判断是否是 TaggedPointer
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>obj  <span style="color:#ff79c6">||</span>  <span style="color:#ff79c6">!</span>ivar  <span style="color:#ff79c6">||</span>  obj<span style="color:#ff79c6">-&gt;</span>isTaggedPointer()) <span style="color:#ff79c6">return</span>;
 
-    <span class="n">ptrdiff_t</span> <span class="n">offset</span><span class="p">;</span>
-    <span class="n">objc_ivar_memory_management_t</span> <span class="n">memoryManagement</span><span class="p">;</span>
-    <span class="c1">//找对应的内存管理语义和属性偏移值
-</span><span class="c1"></span>    <span class="n">_class_lookUpIvar</span><span class="p">(</span><span class="n">obj</span><span class="o">-&gt;</span><span class="n">ISA</span><span class="p">(),</span> <span class="n">ivar</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">memoryManagement</span><span class="p">);</span>
+    ptrdiff_t offset;
+    objc_ivar_memory_management_t memoryManagement;
+    <span style="color:#6272a4">//找对应的内存管理语义和属性偏移值
+</span><span style="color:#6272a4"></span>    _class_lookUpIvar(obj<span style="color:#ff79c6">-&gt;</span>ISA(), ivar, offset, memoryManagement);
 
-    <span class="c1">//如果找不到默认是否为 Strong，不然为 unsafe_unretained
-</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">memoryManagement</span> <span class="o">==</span> <span class="n">objc_ivar_memoryUnknown</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">assumeStrong</span><span class="p">)</span> <span class="n">memoryManagement</span> <span class="o">=</span> <span class="n">objc_ivar_memoryStrong</span><span class="p">;</span>
-        <span class="k">else</span> <span class="n">memoryManagement</span> <span class="o">=</span> <span class="n">objc_ivar_memoryUnretained</span><span class="p">;</span>
-    <span class="p">}</span>
+    <span style="color:#6272a4">//如果找不到默认是否为 Strong，不然为 unsafe_unretained
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (memoryManagement <span style="color:#ff79c6">==</span> objc_ivar_memoryUnknown) {
+        <span style="color:#ff79c6">if</span> (assumeStrong) memoryManagement <span style="color:#ff79c6">=</span> objc_ivar_memoryStrong;
+        <span style="color:#ff79c6">else</span> memoryManagement <span style="color:#ff79c6">=</span> objc_ivar_memoryUnretained;
+    }
 
-    <span class="c1">//根据偏移值找到属性对应位置
-</span><span class="c1"></span>    <span class="n">id</span> <span class="o">*</span><span class="n">location</span> <span class="o">=</span> <span class="p">(</span><span class="n">id</span> <span class="o">*</span><span class="p">)((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="n">obj</span> <span class="o">+</span> <span class="n">offset</span><span class="p">);</span>
+    <span style="color:#6272a4">//根据偏移值找到属性对应位置
+</span><span style="color:#6272a4"></span>    id <span style="color:#ff79c6">*</span>location <span style="color:#ff79c6">=</span> (id <span style="color:#ff79c6">*</span>)((<span style="color:#8be9fd">char</span> <span style="color:#ff79c6">*</span>)obj <span style="color:#ff79c6">+</span> offset);
     
-    <span class="c1">//判断不同的内存管理语义，调用方法
-</span><span class="c1"></span>    <span class="k">switch</span> <span class="p">(</span><span class="n">memoryManagement</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">case</span> <span class="nl">objc_ivar_memoryWeak</span><span class="p">:</span>       <span class="n">objc_storeWeak</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
-    <span class="k">case</span> <span class="nl">objc_ivar_memoryStrong</span><span class="p">:</span>     <span class="n">objc_storeStrong</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
-    <span class="k">case</span> <span class="nl">objc_ivar_memoryUnretained</span><span class="p">:</span> <span class="o">*</span><span class="n">location</span> <span class="o">=</span> <span class="n">value</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
-    <span class="k">case</span> <span class="nl">objc_ivar_memoryUnknown</span><span class="p">:</span>    <span class="n">_objc_fatal</span><span class="p">(</span><span class="s">&#34;impossible&#34;</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="c1">//NSObject.mm
-</span><span class="c1"></span><span class="kt">void</span>
-<span class="nf">objc_storeStrong</span><span class="p">(</span><span class="n">id</span> <span class="o">*</span><span class="n">location</span><span class="p">,</span> <span class="n">id</span> <span class="n">obj</span><span class="p">)</span>
-<span class="p">{</span>   
-    <span class="c1">//如果新值指针和旧值一样，则不更新，直接 return
-</span><span class="c1"></span>    <span class="n">id</span> <span class="n">prev</span> <span class="o">=</span> <span class="o">*</span><span class="n">location</span><span class="p">;</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">obj</span> <span class="o">==</span> <span class="n">prev</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="c1">//先对新值 retain
-</span><span class="c1"></span>    <span class="n">objc_retain</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span>
-    <span class="c1">//再赋值
-</span><span class="c1"></span>    <span class="o">*</span><span class="n">location</span> <span class="o">=</span> <span class="n">obj</span><span class="p">;</span>
-    <span class="c1">//最后对旧值 release
-</span><span class="c1"></span>    <span class="n">objc_release</span><span class="p">(</span><span class="n">prev</span><span class="p">);</span>
-<span class="p">}</span>
+    <span style="color:#6272a4">//判断不同的内存管理语义，调用方法
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">switch</span> (memoryManagement) {
+    <span style="color:#ff79c6">case</span> <span style="color:#8be9fd;font-style:italic">objc_ivar_memoryWeak</span>:       objc_storeWeak(location, value); <span style="color:#ff79c6">break</span>;
+    <span style="color:#ff79c6">case</span> <span style="color:#8be9fd;font-style:italic">objc_ivar_memoryStrong</span>:     objc_storeStrong(location, value); <span style="color:#ff79c6">break</span>;
+    <span style="color:#ff79c6">case</span> <span style="color:#8be9fd;font-style:italic">objc_ivar_memoryUnretained</span>: <span style="color:#ff79c6">*</span>location <span style="color:#ff79c6">=</span> value; <span style="color:#ff79c6">break</span>;
+    <span style="color:#ff79c6">case</span> <span style="color:#8be9fd;font-style:italic">objc_ivar_memoryUnknown</span>:    _objc_fatal(<span style="color:#f1fa8c">&#34;impossible&#34;</span>);
+    }
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#6272a4">//NSObject.mm
+</span><span style="color:#6272a4"></span><span style="color:#8be9fd">void</span>
+<span style="color:#50fa7b">objc_storeStrong</span>(id <span style="color:#ff79c6">*</span>location, id obj)
+{   
+    <span style="color:#6272a4">//如果新值指针和旧值一样，则不更新，直接 return
+</span><span style="color:#6272a4"></span>    id prev <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">*</span>location;
+    <span style="color:#ff79c6">if</span> (obj <span style="color:#ff79c6">==</span> prev) {
+        <span style="color:#ff79c6">return</span>;
+    }
+    <span style="color:#6272a4">//先对新值 retain
+</span><span style="color:#6272a4"></span>    objc_retain(obj);
+    <span style="color:#6272a4">//再赋值
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">*</span>location <span style="color:#ff79c6">=</span> obj;
+    <span style="color:#6272a4">//最后对旧值 release
+</span><span style="color:#6272a4"></span>    objc_release(prev);
+}
 </code></pre></div>
 <p>那么他的 Setter 方法在 MRC 上就相当于</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setTarget:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">target</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">target</span> <span class="o">==</span> <span class="n">_target</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-    <span class="kt">id</span> <span class="n">pre</span> <span class="o">=</span> <span class="n">_target</span><span class="p">;</span>
-    <span class="c1">//1.先保留新值
-</span><span class="c1"></span>    <span class="p">[</span><span class="n">target</span> <span class="k">retain</span><span class="p">];</span>
-    <span class="c1">//2.再进行赋值
-</span><span class="c1"></span>    <span class="n">_target</span> <span class="o">=</span> <span class="n">target</span><span class="p">;</span>
-    <span class="c1">//3.释放旧值
-</span><span class="c1"></span>    <span class="p">[</span><span class="n">pre</span> <span class="k">release</span><span class="p">];</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">setTarget:</span>(NSString <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">target</span> {
+    <span style="color:#ff79c6">if</span> (target <span style="color:#ff79c6">==</span> _target) <span style="color:#ff79c6">return</span>;
+    <span style="color:#8be9fd">id</span> pre <span style="color:#ff79c6">=</span> _target;
+    <span style="color:#6272a4">//1.先保留新值
+</span><span style="color:#6272a4"></span>    [target <span style="color:#ff79c6">retain</span>];
+    <span style="color:#6272a4">//2.再进行赋值
+</span><span style="color:#6272a4"></span>    _target <span style="color:#ff79c6">=</span> target;
+    <span style="color:#6272a4">//3.释放旧值
+</span><span style="color:#6272a4"></span>    [pre <span style="color:#ff79c6">release</span>];
+}</code></pre></div>
 <p>什么时候会导致过多调用 release 呢？注意这是个并发队列+异步。</p>
 
 <p>那么假如并发队列里调度的线程 A 执行到步骤 1，还没到步骤 2 时，线程 B 执行到步骤 3，那么当线程 A 再执行步骤 3 时，旧值就会被过度释放，导致向已释放内存对象发送消息而崩溃。</p>
@@ -346,7 +357,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>702</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>703</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -373,18 +384,61 @@
       
     
   </section>
-  <footer class="site-footer">
+  
+<footer class="site-footer">
   <p>© 2017-2019 Nemocdz&#39;s Blog</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>
 
 
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
 
-<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
-<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
 
 
 

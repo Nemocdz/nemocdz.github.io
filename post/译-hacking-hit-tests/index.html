@@ -9,117 +9,156 @@
 
   
   
-
-
-
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
 
   
-  <meta name="author" content="Nemocdz" />
+
+  
+  
   <meta name="description" content=" 作者：Soroush Khanlou
 原文链接：Hacking Hit Tests
 原文日期：2018-09-07
  回想 Crusty 教我们使用面向协议编程之前的日子，我们大多使用继承来共享代码的实现。通常在 UIKit 编程中，你可能会用 UIView 的子类去添加一些子视图，重写 -layoutSubviews，然后重复这些工作。也许你还会重写 -drawRect。但当你需要做一些特别的事情时，就需要看看 UIView 中其他可以被重写的方法。
-" />
+">
 
   
   
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@Nemocdz" />
-    <meta name="twitter:title" content="[译] Hacking Hit Tests" />
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="[译] Hacking Hit Tests">
     <meta name="twitter:description" content=" 作者：Soroush Khanlou
 原文链接：Hacking Hit Tests
 原文日期：2018-09-07
  回想 Crusty 教我们使用面向协议编程之前的日子，我们大多使用继承来共享代码的实现。通常在 UIKit 编程中，你可能会用 UIView 的子类去添加一些子视图，重写 -layoutSubviews，然后重复这些工作。也许你还会重写 -drawRect。但当你需要做一些特别的事情时，就需要看看 UIView 中其他可以被重写的方法。
-" />
-    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+">
+    <meta name="twitter:image" content="/images/avatar.png">
   
 
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="[译] Hacking Hit Tests">
+  <meta property="og:description" content=" 作者：Soroush Khanlou
+原文链接：Hacking Hit Tests
+原文日期：2018-09-07
+ 回想 Crusty 教我们使用面向协议编程之前的日子，我们大多使用继承来共享代码的实现。通常在 UIKit 编程中，你可能会用 UIView 的子类去添加一些子视图，重写 -layoutSubviews，然后重复这些工作。也许你还会重写 -drawRect。但当你需要做一些特别的事情时，就需要看看 UIView 中其他可以被重写的方法。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/%E8%AF%91-hacking-hit-tests/">
+  <meta property="og:image" content="/images/avatar.png">
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+
+<meta name="generator" content="Hugo 0.55.6">
 
 
-<link rel="canonical" href="https://nemocdz.github.io/post/%E8%AF%91-hacking-hit-tests/" />
-<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+<link rel="canonical" href="https://nemocdz.github.io/post/%E8%AF%91-hacking-hit-tests/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
 
 
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
-<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
-<meta name="baidu-site-verification" content="iVpH4VhHBT" />
-<meta name="sogou_site_verification" content="YPqjjJgiSh" />
-<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
 
 
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
-<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
 
 
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
 
-<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
 
 
   
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
 
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
-  <![endif]-->
-
-
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
-
-
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
 
 
 </head>
   <body>
-    
     <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
       
         
-        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
         
       
     </div>
     
     
   <header class="site-header">
-  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
   
-  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
   
-  <p class="subtitle">iOS&amp;Android Dev</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
   </button>
+
   <nav class="site-menu collapsed">
     <h2 class="offscreen">Main Menu</h2>
     <ul class="menu-list">
@@ -127,79 +166,53 @@
       
       
       
-        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/">首页</a>
+        </li>
       
-        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
       
     </ul>
   </nav>
   <nav class="social-menu collapsed">
     <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-      <li class="social-item">
-        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
-      </li>
-
-      
-      <li class="social-item">
-        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
-      </li>
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
-      </li>
-
-      
-
-      <li class="social-item">
-        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
   </nav>
 </header>
 
@@ -223,9 +236,9 @@
 <p><code>-pointInside:</code> 会告诉调用者给定点是否包含在指定的视图区域中。而 <code>-hitTest:</code> 用 <code>pointInside:</code> 这个方法来告诉调用者哪个子视图（如果有的话）是当前触摸在给定点的接收者。现在我比较感兴趣的是后面这个方法。</p>
 
 <p>苹果的文档勉强能够让你理解怎么重新实现这个方法。在你学会怎么重新实现方法之前，你都不能改变它的功能。接下来让我们看一遍 <a href="https://developer.apple.com/documentation/uikit/uiview/1622469-hittest?language=objc">文档</a>，并尝试重写这个函数。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kr">override</span> <span class="kd">func</span> <span class="nf">hitTest</span><span class="p">(</span><span class="kc">_</span> <span class="n">point</span><span class="p">:</span> <span class="n">CGPoint</span><span class="p">,</span> <span class="n">with</span> <span class="n">event</span><span class="p">:</span> <span class="n">UIEvent</span><span class="p">?)</span> <span class="p">-&gt;</span> <span class="n">UIView</span><span class="p">?</span> <span class="p">{</span>
-	<span class="c1">// ...</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#ff79c6">override</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">hitTest</span>(<span style="color:#ff79c6">_</span> point: CGPoint, with event: UIEvent?) -&gt; UIView? {
+	<span style="color:#6272a4">// ...</span>
+}</code></pre></div>
 <p>首先，让我们从文档的第二段开始吧：</p>
 
 <blockquote>
@@ -233,7 +246,7 @@
 </blockquote>
 
 <p>让我们通过一些 <code>gurad</code> 语句来快速预处理这些前提条件。</p>
-<div class="highlight"><pre class="chroma"><code class="language-:bride_with_veil:" data-lang=":bride_with_veil:">override func hitTest(_ point: CGPoint, with event: UIEvent?) -&gt; UIView? {
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-:bride_with_veil:" data-lang=":bride_with_veil:">override func hitTest(_ point: CGPoint, with event: UIEvent?) -&gt; UIView? {
 
 	guard isUserInteractionEnabled else { return nil }
 	
@@ -251,7 +264,7 @@
 <p>逐字阅读文档后，感觉 <code>-pointInside:</code> 会在每一个子视图里被调用（用一个 for 循环），但这并不是完全正确的。</p>
 
 <p>感谢这个 <a href="https://twitter.com/an0/status/1038254836016394240">读者</a>。通过他在 <code>-hitTest:</code> 和 <code>-pointInside:</code> 中放置了断点的试验，我们知道 <code>-pointInside:</code> 会在 <code>self</code> 中调用（在有上面那些 guard 的情况下），而不是在每一个子视图中。 所以应该添加另外的 guard 语句，像下面这行代码一样：</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="k">guard</span> <span class="kc">self</span><span class="p">.</span><span class="n">point</span><span class="p">(</span><span class="n">inside</span><span class="p">:</span> <span class="n">point</span><span class="p">,</span> <span class="n">with</span><span class="p">:</span> <span class="n">event</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">nil</span> <span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#ff79c6">guard</span> <span style="color:#ff79c6">self</span>.point(inside: point, with: event) <span style="color:#ff79c6">else</span> { <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span> }</code></pre></div>
 <p><code>-pointInside:</code> 是 <code>UIView</code> 另一个需要重写的方法。它的默认实现会检查传入的某个点是否包含在视图的 <code>bounds</code> 中。如果调用 <code>-pointInside</code> 返回 true，那么意味着触摸事件发生在它的 bounds 中。</p>
 
 <p>理解完这个小小的差别后，我们可以继续阅读文档了：</p>
@@ -263,49 +276,49 @@
 <p>所以，从这里知道我们需要遍历视图树。这意味着循环遍历所有的视图，并调用 <code>-hitTest:</code> 在它们每一个上去找到合适的子视图。在这种情况下，这个方法是递归的。</p>
 
 <p>为了遍历视图层级，我们需要一个循环。然而，这个方法其中一个更反人类的是需要反向遍历视图。子视图数组中尾部的视图反而会处在 Z 轴中*更高*的位置，所以它们应该被最先检验。（如果没有这篇 <a href="http://smnh.me/hit-testing-in-ios/">文章</a>，我可记不起这个点。）</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="c1">// ...</span>
-<span class="k">for</span> <span class="n">subview</span> <span class="k">in</span> <span class="n">subviews</span><span class="p">.</span><span class="n">reversed</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// ...</span>
+<span style="color:#ff79c6">for</span> subview <span style="color:#ff79c6">in</span> subviews.reversed() {
 
-<span class="p">}</span>
-<span class="c1">// ...</span></code></pre></div>
+}
+<span style="color:#6272a4">// ...</span></code></pre></div>
 <p>传入的坐标点会转换到*当前*视图的坐标系中，而非我们关心子视图中。幸运的是，UIKit 给了一个处理函数，去转换坐标点的参考系到其他任何的视图的 frame 的参考系中。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="c1">// ...</span>
-<span class="k">for</span> <span class="n">subview</span> <span class="k">in</span> <span class="n">subviews</span><span class="p">.</span><span class="n">reversed</span><span class="p">()</span> <span class="p">{</span>
-	<span class="kd">let</span> <span class="nv">convertedPoint</span> <span class="p">=</span> <span class="n">subview</span><span class="p">.</span><span class="n">convert</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">from</span><span class="p">:</span> <span class="kc">self</span><span class="p">)</span>
-	<span class="c1">// ...</span>
-<span class="p">}</span>
-<span class="c1">// ...</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// ...</span>
+<span style="color:#ff79c6">for</span> subview <span style="color:#ff79c6">in</span> subviews.reversed() {
+	<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">convertedPoint</span> = subview.convert(point, from: <span style="color:#ff79c6">self</span>)
+	<span style="color:#6272a4">// ...</span>
+}
+<span style="color:#6272a4">// ...</span></code></pre></div>
 <p>一旦有了转换后的坐标点，我们就可以很简单地询问每一个子视图该点的目标视图。需要注意的是，如果点处于该视图外部（也就是说，<code>-pointInside:</code> 返回 *false*），<code>-hitTest</code> 会返回 nil。这时就应该检查层级里的下一个子视图。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="c1">// ...</span>
-<span class="kd">let</span> <span class="nv">convertedPoint</span> <span class="p">=</span> <span class="n">subview</span><span class="p">.</span><span class="n">convert</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">from</span><span class="p">:</span> <span class="kc">self</span><span class="p">)</span>
-<span class="k">if</span> <span class="kd">let</span> <span class="nv">candidate</span> <span class="p">=</span> <span class="n">subview</span><span class="p">.</span><span class="n">hitTest</span><span class="p">(</span><span class="n">convertedPoint</span><span class="p">,</span> <span class="n">with</span><span class="p">:</span> <span class="n">event</span><span class="p">)</span> <span class="p">{</span>
-	<span class="k">return</span> <span class="n">candidate</span>
-<span class="p">}</span>
-<span class="c1">//...</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// ...</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">convertedPoint</span> = subview.convert(point, from: <span style="color:#ff79c6">self</span>)
+<span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">candidate</span> = subview.hitTest(convertedPoint, with: event) {
+	<span style="color:#ff79c6">return</span> candidate
+}
+<span style="color:#6272a4">//...</span></code></pre></div>
 <p>一旦我们有了合适的循环语句，最后一件需要做的事是 <code>return self</code>。如果视图是可被点击（被我们的 <code>guard</code> 语句断言过的情况），但却没有子视图想要处理这个触摸的话，意味着当前视图，也就是 <code>self</code>，是这个触摸正确的目标。</p>
 
 <p>这是完整的算法：</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kr">override</span> <span class="kd">func</span> <span class="nf">hitTest</span><span class="p">(</span><span class="kc">_</span> <span class="n">point</span><span class="p">:</span> <span class="n">CGPoint</span><span class="p">,</span> <span class="n">with</span> <span class="n">event</span><span class="p">:</span> <span class="n">UIEvent</span><span class="p">?)</span> <span class="p">-&gt;</span> <span class="n">UIView</span><span class="p">?</span> <span class="p">{</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#ff79c6">override</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">hitTest</span>(<span style="color:#ff79c6">_</span> point: CGPoint, with event: UIEvent?) -&gt; UIView? {
 	
-	<span class="k">guard</span> <span class="n">isUserInteractionEnabled</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">nil</span> <span class="p">}</span>
+	<span style="color:#ff79c6">guard</span> isUserInteractionEnabled <span style="color:#ff79c6">else</span> { <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span> }
 	
-	<span class="k">guard</span> <span class="o">!</span><span class="n">isHidden</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">nil</span> <span class="p">}</span>
+	<span style="color:#ff79c6">guard</span> <span style="color:#ff79c6">!</span>isHidden <span style="color:#ff79c6">else</span> { <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span> }
 	
-	<span class="k">guard</span> <span class="n">alpha</span> <span class="o">&gt;=</span> <span class="mf">0.01</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">nil</span> <span class="p">}</span>
+	<span style="color:#ff79c6">guard</span> alpha <span style="color:#ff79c6">&gt;=</span> <span style="color:#bd93f9">0.01</span> <span style="color:#ff79c6">else</span> { <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span> }
 	
-	<span class="k">guard</span> <span class="kc">self</span><span class="p">.</span><span class="n">point</span><span class="p">(</span><span class="n">inside</span><span class="p">:</span> <span class="n">point</span><span class="p">,</span> <span class="n">with</span><span class="p">:</span> <span class="n">event</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">nil</span> <span class="p">}</span>	
+	<span style="color:#ff79c6">guard</span> <span style="color:#ff79c6">self</span>.point(inside: point, with: event) <span style="color:#ff79c6">else</span> { <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span> }	
 	
-	<span class="k">for</span> <span class="n">subview</span> <span class="k">in</span> <span class="n">subviews</span><span class="p">.</span><span class="n">reversed</span><span class="p">()</span> <span class="p">{</span>
-		<span class="kd">let</span> <span class="nv">convertedPoint</span> <span class="p">=</span> <span class="n">subview</span><span class="p">.</span><span class="n">convert</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">from</span><span class="p">:</span> <span class="kc">self</span><span class="p">)</span>
-		<span class="k">if</span> <span class="kd">let</span> <span class="nv">candidate</span> <span class="p">=</span> <span class="n">subview</span><span class="p">.</span><span class="n">hitTest</span><span class="p">(</span><span class="n">convertedPoint</span><span class="p">,</span> <span class="n">with</span><span class="p">:</span> <span class="n">event</span><span class="p">)</span> <span class="p">{</span>
-			<span class="k">return</span> <span class="n">candidate</span>
-		<span class="p">}</span>
-	<span class="p">}</span>
-	<span class="k">return</span> <span class="kc">self</span>
-<span class="p">}</span></code></pre></div>
+	<span style="color:#ff79c6">for</span> subview <span style="color:#ff79c6">in</span> subviews.reversed() {
+		<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">convertedPoint</span> = subview.convert(point, from: <span style="color:#ff79c6">self</span>)
+		<span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">candidate</span> = subview.hitTest(convertedPoint, with: event) {
+			<span style="color:#ff79c6">return</span> candidate
+		}
+	}
+	<span style="color:#ff79c6">return</span> <span style="color:#ff79c6">self</span>
+}</code></pre></div>
 <p>现在我们有了一个参考的实现，可以开始修改它来实现具体的行为。</p>
 
-<p>在之前的这篇播客<a href="http://khanlou.com/2013/04/changing-the-size-of-a-paging-scroll-view/">《Changing the size of a paging scroll view》</a>中，我就已经讨论过其中一种行为。我谈到一种“落后并该被废弃”的方法来产生这种效果。本质上，你必须：</p>
+<p>在之前的这篇播客 <a href="http://khanlou.com/2013/04/changing-the-size-of-a-paging-scroll-view/">《Changing the size of a paging scroll view》</a> 中，我就已经讨论过其中一种行为。我谈到一种“落后并该被废弃”的方法来产生这种效果。本质上，你必须：</p>
 
 <ol>
 <li>关掉 <code>clipsToBounds</code></li>
@@ -317,35 +330,35 @@
 
 <p>让我们看一下另一个例子。如果你已经用过 <a href="http://beacon.party/">Beacon</a> 今年的版本，你会注意到滑动删除事件行为的物理效果感觉上和其他用原生系统实现的效果有点不一样。这是因为用系统的途径不能完全获得我们想要的表现，所以需要自己重新实现这个功能。</p>
 
-<p>如你所想，重写滑动和反弹物理效果不需要那么复杂，所以我们用一个 <code>UIScrollView</code> 和将 <code>pagingEnabled</code> 设为 true 来获得尽可能自由的反弹力。用和<a href="http://khanlou.com/2013/04/changing-the-size-of-a-paging-scroll-view/">这篇旧博客</a>里说的类似的技术，将滑动的视图的 <code>bounds</code> 设置得更小一些并将 <code>panGestureRecognizer</code> 移到事件的 cell 顶层的一个覆盖视图中，来设置一个自定义页面大小。</p>
+<p>如你所想，重写滑动和反弹物理效果不需要那么复杂，所以我们用一个 <code>UIScrollView</code> 和将 <code>pagingEnabled</code> 设为 true 来获得尽可能自由的反弹力。用和 <a href="http://khanlou.com/2013/04/changing-the-size-of-a-paging-scroll-view/">这篇旧博客</a> 里说的类似的技术，将滑动的视图的 <code>bounds</code> 设置得更小一些并将 <code>panGestureRecognizer</code> 移到事件的 cell 顶层的一个覆盖视图中，来设置一个自定义页面大小。</p>
 
 <p>然而，当覆盖视图正确的传递触摸事件到 scroll view 时，那里会有覆盖视图不能正确拦截的其他事件。cell 包含着按钮，像 “join event” 按钮和 “delete event” 按钮，都需要接收触摸。有几种自定义实现在 <code>-hitTest:</code> 中可以处理这种情况，其中一种实现就是直接检查这两个按钮的子视图：</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kr">override</span> <span class="kd">func</span> <span class="nf">hitTest</span><span class="p">(</span><span class="kc">_</span> <span class="n">point</span><span class="p">:</span> <span class="n">CGPoint</span><span class="p">,</span> <span class="n">with</span> <span class="n">event</span><span class="p">:</span> <span class="n">UIEvent</span><span class="p">?)</span> <span class="p">-&gt;</span> <span class="n">UIView</span><span class="p">?</span> <span class="p">{</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#ff79c6">override</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">hitTest</span>(<span style="color:#ff79c6">_</span> point: CGPoint, with event: UIEvent?) -&gt; UIView? {
 
-	<span class="k">guard</span> <span class="n">isUserInteractionEnabled</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">nil</span> <span class="p">}</span>
+	<span style="color:#ff79c6">guard</span> isUserInteractionEnabled <span style="color:#ff79c6">else</span> { <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span> }
 	
-	<span class="k">guard</span> <span class="o">!</span><span class="n">isHidden</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">nil</span> <span class="p">}</span>
+	<span style="color:#ff79c6">guard</span> <span style="color:#ff79c6">!</span>isHidden <span style="color:#ff79c6">else</span> { <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span> }
 	
-	<span class="k">guard</span> <span class="n">alpha</span> <span class="o">&gt;=</span> <span class="mf">0.01</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">nil</span> <span class="p">}</span>
+	<span style="color:#ff79c6">guard</span> alpha <span style="color:#ff79c6">&gt;=</span> <span style="color:#bd93f9">0.01</span> <span style="color:#ff79c6">else</span> { <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span> }
 
-	<span class="k">guard</span> <span class="kc">self</span><span class="p">.</span><span class="n">point</span><span class="p">(</span><span class="n">inside</span><span class="p">:</span> <span class="n">point</span><span class="p">,</span> <span class="n">with</span><span class="p">:</span> <span class="n">event</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">nil</span> <span class="p">}</span>
+	<span style="color:#ff79c6">guard</span> <span style="color:#ff79c6">self</span>.point(inside: point, with: event) <span style="color:#ff79c6">else</span> { <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span> }
 
-	<span class="k">if</span> <span class="n">joinButton</span><span class="p">.</span><span class="n">point</span><span class="p">(</span><span class="n">inside</span><span class="p">:</span> <span class="n">convert</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">to</span><span class="p">:</span> <span class="n">joinButton</span><span class="p">),</span> <span class="n">with</span><span class="p">:</span> <span class="n">event</span><span class="p">)</span> <span class="p">{</span>
-		<span class="k">return</span> <span class="n">joinButton</span>
-	<span class="p">}</span>
+	<span style="color:#ff79c6">if</span> joinButton.point(inside: convert(point, to: joinButton), with: event) {
+		<span style="color:#ff79c6">return</span> joinButton
+	}
 	
-	<span class="k">if</span> <span class="n">isDeleteButtonOpen</span> <span class="o">&amp;&amp;</span> <span class="n">deleteButton</span><span class="p">.</span><span class="n">point</span><span class="p">(</span><span class="n">inside</span><span class="p">:</span> <span class="n">convert</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">to</span><span class="p">:</span> <span class="n">deleteButton</span><span class="p">),</span> <span class="n">with</span><span class="p">:</span> <span class="n">event</span><span class="p">)</span> <span class="p">{</span>
-		<span class="k">return</span> <span class="n">deleteButton</span>
-	<span class="p">}</span>
-	<span class="k">return</span> <span class="kc">super</span><span class="p">.</span><span class="n">hitTest</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">with</span><span class="p">:</span> <span class="n">event</span><span class="p">)</span>
-<span class="p">}</span></code></pre></div>
+	<span style="color:#ff79c6">if</span> isDeleteButtonOpen <span style="color:#ff79c6">&amp;&amp;</span> deleteButton.point(inside: convert(point, to: deleteButton), with: event) {
+		<span style="color:#ff79c6">return</span> deleteButton
+	}
+	<span style="color:#ff79c6">return</span> <span style="color:#ff79c6">super</span>.hitTest(point, with: event)
+}</code></pre></div>
 <p>这种方法会正确地传递正确的点击事件到正确的的按钮中，而且不用打断显示删除按钮的滑动表现。（你可以尝试只忽略 <code>deletionOverlay</code>，不过它不会正确的传递滑动事件。）</p>
 
 <p><code>-hitTest:</code> 是视图中一个很少重写的地方，但是在需要时，可以提供其他工具很难做到的行为。理解如何自己实现有助于随意替换它。你可以用这个技术去扩大点击的目标区域，去除触摸处理中的某些子视图，而不用把它们从可见的层级中去掉，又或是用一个视图作为另一个将响应触摸的视图的兜底。所有东西都是可能的。</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>213</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>214</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -372,18 +385,61 @@
       
     
   </section>
-  <footer class="site-footer">
+  
+<footer class="site-footer">
   <p>© 2017-2019 Nemocdz&#39;s Blog</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>
 
 
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
 
-<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
-<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
 
 
 

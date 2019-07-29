@@ -9,113 +9,150 @@
 
   
   
-
-
-
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
 
   
-  <meta name="author" content="Nemocdz" />
+
+  
+  
   <meta name="description" content="[TOC]
 去年年底写了一个自定义的 PickerView，文章 在这里。当时对 Block 和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的 Picker，前几天还看到评论有人给我提了些建议，便花了一天时间做了些升级，做了多列联动的实现。多列联动的 Picker 很常见，比如用在地址选择，如省-市-区中。网上搜索的例子要不是只写死指定的列数，要不然就是指定数据格式严格而复杂。我的强迫症又犯了，要写，就写一个，简单而且，能无限列联动的。
-" />
+">
 
   
   
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@Nemocdz" />
-    <meta name="twitter:title" content="iOS 中实现多列联动的 PickerView" />
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="iOS 中实现多列联动的 PickerView">
     <meta name="twitter:description" content="[TOC]
 去年年底写了一个自定义的 PickerView，文章 在这里。当时对 Block 和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的 Picker，前几天还看到评论有人给我提了些建议，便花了一天时间做了些升级，做了多列联动的实现。多列联动的 Picker 很常见，比如用在地址选择，如省-市-区中。网上搜索的例子要不是只写死指定的列数，要不然就是指定数据格式严格而复杂。我的强迫症又犯了，要写，就写一个，简单而且，能无限列联动的。
-" />
-    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+">
+    <meta name="twitter:image" content="/images/avatar.png">
   
 
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="iOS 中实现多列联动的 PickerView">
+  <meta property="og:description" content="[TOC]
+去年年底写了一个自定义的 PickerView，文章 在这里。当时对 Block 和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的 Picker，前几天还看到评论有人给我提了些建议，便花了一天时间做了些升级，做了多列联动的实现。多列联动的 Picker 很常见，比如用在地址选择，如省-市-区中。网上搜索的例子要不是只写死指定的列数，要不然就是指定数据格式严格而复杂。我的强迫症又犯了，要写，就写一个，简单而且，能无限列联动的。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A4%9A%E5%88%97%E8%81%94%E5%8A%A8%E7%9A%84-pickerview/">
+  <meta property="og:image" content="/images/avatar.png">
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+
+<meta name="generator" content="Hugo 0.55.6">
 
 
-<link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A4%9A%E5%88%97%E8%81%94%E5%8A%A8%E7%9A%84-pickerview/" />
-<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+<link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A4%9A%E5%88%97%E8%81%94%E5%8A%A8%E7%9A%84-pickerview/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
 
 
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
-<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
-<meta name="baidu-site-verification" content="iVpH4VhHBT" />
-<meta name="sogou_site_verification" content="YPqjjJgiSh" />
-<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
 
 
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
-<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
 
 
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
 
-<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
 
 
   
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
 
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
-  <![endif]-->
-
-
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
-
-
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
 
 
 </head>
   <body>
-    
     <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
       
         
-        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
         
       
     </div>
     
     
   <header class="site-header">
-  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
   
-  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
   
-  <p class="subtitle">iOS&amp;Android Dev</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
   </button>
+
   <nav class="site-menu collapsed">
     <h2 class="offscreen">Main Menu</h2>
     <ul class="menu-list">
@@ -123,79 +160,53 @@
       
       
       
-        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/">首页</a>
+        </li>
       
-        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
       
     </ul>
   </nav>
   <nav class="social-menu collapsed">
     <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-      <li class="social-item">
-        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
-      </li>
-
-      
-      <li class="social-item">
-        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
-      </li>
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
-      </li>
-
-      
-
-      <li class="social-item">
-        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
   </nav>
 </header>
 
@@ -219,18 +230,18 @@
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tKfTcgy1fi1a6r35ztj30m60e6wgr.jpg" alt="" /></p>
 
 <p>而对于文件的目录结构的获取，由于之前在公司开发过日志模块的相关组件，还残存着记忆。主要思路就是遍历+递归。那么构建数据结构时，就很清晰了。新建一个 [NSObject] 的子类 CDZPickerComponetObject，那么这个 Model 需要有些啥呢，就如文件夹一般，需要名字，用于显示在 Picker 上。还需要一个可以存放自身的数组，存放自己“文件夹”里的“文件夹”。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">strong</span><span class="p">)</span> <span class="n">NSMutableArray</span><span class="o">&lt;</span><span class="n">CDZPickerComponentObject</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">subArray</span><span class="p">;</span>
-<span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">copy</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">text</span><span class="p">;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">strong</span>) NSMutableArray<span style="color:#ff79c6">&lt;</span>CDZPickerComponentObject <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>subArray;
+<span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">copy</span>) NSString <span style="color:#ff79c6">*</span>text;
 
-<span class="p">-</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">initWithText:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">text</span> <span class="nf">subArray:</span><span class="p">(</span><span class="n">NSMutableArray</span> <span class="o">*</span><span class="p">)</span><span class="nv">array</span><span class="p">;</span>
-<span class="p">-</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">initWithText:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">text</span><span class="p">;</span></code></pre></div>
+- (<span style="color:#8be9fd">instancetype</span>)<span style="color:#50fa7b">initWithText:</span>(NSString <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">text</span> <span style="color:#50fa7b">subArray:</span>(NSMutableArray <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">array</span>;
+- (<span style="color:#8be9fd">instancetype</span>)<span style="color:#50fa7b">initWithText:</span>(NSString <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">text</span>;</code></pre></div>
 <p>而对于外界，只要传入一个 <code>NSArray&lt;CDZPickerComponentObject *&gt; *componetArray;</code> 就可以里，这里面的 object，想怎么嵌套怎么嵌套，比如</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c">   <span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="n">guangdong</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZPickerComponentObject</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithText</span><span class="p">:</span><span class="s">@&#34;广东省&#34;</span><span class="p">];</span>
-    <span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="n">guangzhou</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZPickerComponentObject</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithText</span><span class="p">:</span><span class="s">@&#34;广州市&#34;</span><span class="p">];</span>
-    <span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="n">chaozhou</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZPickerComponentObject</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithText</span><span class="p">:</span><span class="s">@&#34;潮州市&#34;</span><span class="p">];</span>
-    <span class="n">guangdong</span><span class="p">.</span><span class="n">subArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="nl">arrayWithArray</span><span class="p">:</span><span class="l">@[</span><span class="n">guangzhou</span><span class="p">,</span> <span class="n">chaozhou</span><span class="l">]</span><span class="p">];</span>
-    <span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="n">haizhu</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZPickerComponentObject</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithText</span><span class="p">:</span><span class="s">@&#34;海珠区&#34;</span><span class="p">];</span>
-    <span class="n">guangzhou</span><span class="p">.</span><span class="n">subArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="nl">arrayWithObject</span><span class="p">:</span><span class="n">haizhu</span><span class="p">];</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">   CDZPickerComponentObject <span style="color:#ff79c6">*</span>guangdong <span style="color:#ff79c6">=</span> [[CDZPickerComponentObject alloc]<span style="color:#8be9fd;font-style:italic">initWithText</span>:<span style="color:#f1fa8c">@&#34;广东省&#34;</span>];
+    CDZPickerComponentObject <span style="color:#ff79c6">*</span>guangzhou <span style="color:#ff79c6">=</span> [[CDZPickerComponentObject alloc]<span style="color:#8be9fd;font-style:italic">initWithText</span>:<span style="color:#f1fa8c">@&#34;广州市&#34;</span>];
+    CDZPickerComponentObject <span style="color:#ff79c6">*</span>chaozhou <span style="color:#ff79c6">=</span> [[CDZPickerComponentObject alloc]<span style="color:#8be9fd;font-style:italic">initWithText</span>:<span style="color:#f1fa8c">@&#34;潮州市&#34;</span>];
+    guangdong.subArray <span style="color:#ff79c6">=</span> [NSMutableArray <span style="color:#8be9fd;font-style:italic">arrayWithArray</span>:@[guangzhou, chaozhou]];
+    CDZPickerComponentObject <span style="color:#ff79c6">*</span>haizhu <span style="color:#ff79c6">=</span> [[CDZPickerComponentObject alloc]<span style="color:#8be9fd;font-style:italic">initWithText</span>:<span style="color:#f1fa8c">@&#34;海珠区&#34;</span>];
+    guangzhou.subArray <span style="color:#ff79c6">=</span> [NSMutableArray <span style="color:#8be9fd;font-style:italic">arrayWithObject</span>:haizhu];</code></pre></div>
 <h2 id="实现-picker-的几个关键方法">实现 Picker 的几个关键方法</h2>
 
 <p>在上篇 <a href="https://nemocdz.github.io/post/ios%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89pickerview/">文章</a> 里也提过，[UIPickerView] 主要是实现其 Delegate 和 DataSource 的几个方法。</p>
@@ -240,76 +251,76 @@
 <p>这个方法返回的是列数，列数是什么，其实就是“文件夹”嵌套的层级，而我们只要对 CDZPickerComponetObject 取自身的任意一个数据，再重复操作并进行计数，取到没有 subArray 为止，便可以得到列数了。</p>
 
 <p>先实现一个取自身数据的方法如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="p">)</span><span class="nf">objectAtIndex:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">index</span> <span class="nf">inObject:</span><span class="p">(</span><span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="p">)</span><span class="nv">object</span><span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">object</span><span class="p">.</span><span class="n">subArray</span><span class="p">.</span><span class="n">count</span> <span class="o">&gt;</span> <span class="n">index</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="n">object</span><span class="p">.</span><span class="n">subArray</span><span class="p">[</span><span class="n">index</span><span class="p">];</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (CDZPickerComponentObject <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">objectAtIndex:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">index</span> <span style="color:#50fa7b">inObject:</span>(CDZPickerComponentObject <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">object</span>{
+    <span style="color:#ff79c6">if</span> (object.subArray.count <span style="color:#ff79c6">&gt;</span> index) {
+        <span style="color:#ff79c6">return</span> object.subArray[index];
+    }
+    <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">nil</span>;
+}</code></pre></div>
 <p>循环操作即可，得到 index 即为列数，也就是树的深度。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="n">object</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">componetArray</span><span class="p">.</span><span class="n">firstObject</span><span class="p">;</span>
-<span class="k">for</span> <span class="p">(</span><span class="n">_numberOfComponents</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;;</span> <span class="n">_numberOfComponents</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-	<span class="n">object</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">objectAtIndex</span><span class="p">:</span><span class="mi">0</span> <span class="nl">inObject</span><span class="p">:</span><span class="n">object</span><span class="p">];</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">object</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">break</span><span class="p">;</span>
-       <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">CDZPickerComponentObject <span style="color:#ff79c6">*</span>object <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.componetArray.firstObject;
+<span style="color:#ff79c6">for</span> (_numberOfComponents <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span>;; _numberOfComponents<span style="color:#ff79c6">++</span>) {
+	object <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">objectAtIndex</span>:<span style="color:#bd93f9">0</span> <span style="color:#8be9fd;font-style:italic">inObject</span>:object];
+    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>object) {
+        <span style="color:#ff79c6">break</span>;
+       }
+}</code></pre></div>
 <p>接下来是 <code>- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component</code> 先从第一行列考虑，第一列的行数，其实就是 componetArray 的个数，而其它列的行数呢，依赖于当前上一列选择的行数，所以我们需要先考虑所选择的行数。也就是，前面列的行数的组合，决定了当前列的数据个数。所以重要的是，前面列的组合，有了组合，当前列的情况就被确定下来了。而前面的组合那么多种，怎么确定呢？ <code>- (NSInteger)selectedRowInComponent:(NSInteger)component;</code> 这个 API i可以根据列数得到列数选择的行数，知道列数的组合后，我们就可以一层层找到每列的数组的个数，也就是行数。那每次获取行数都要一层层遍历么？我们可以把每列的数组，存放起来，也就是一个二维的数组，行数和列数，而每次改变某一列时，只要改变当列对应的数组，这样就不用每次遍历了。新增一个二维数组 rowsArray。</p>
 
 <p><code>@property (nonatomic, strong) NSMutableArray&lt;NSMutableArray &lt;CDZPickerComponentObject *&gt; *&gt; *rowsArray;</code></p>
 
 <p>而这个二维数组会在什么时候改变呢？当然是 <code>- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component</code> 中了，改变这一列的行数，其实改变的是下一列的数组，通过这一列的行数对应的 object 对应的 subArray，就是下一列的数组。还要注意，当我们选中第一列的数据时，第二列应该根据第一列的数据变化，也就是，当这一列选中时，我们应该调用下一列并默认选中他的第一行，先调用选择第一行，再调用第一行的回调 didSelectRow 并重新加载那一列的数据。方法里的代码如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"> <span class="k">if</span> <span class="p">(</span><span class="n">component</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">_numberOfComponents</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
- 	 <span class="n">NSMutableArray</span><span class="o">&lt;</span><span class="n">CDZPickerComponentObject</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">tmp</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">rowsArray</span><span class="p">[</span><span class="n">component</span><span class="p">];</span>
-     <span class="k">if</span> <span class="p">(</span><span class="n">tmp</span><span class="p">.</span><span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">tmp</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="n">row</span><span class="p">].</span><span class="n">subArray</span><span class="p">;</span>
-     <span class="p">}</span>
-     <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">rowsArray</span> <span class="nl">setObject</span><span class="p">:((</span><span class="n">tmp</span><span class="p">.</span><span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nl">tmp</span> <span class="p">:</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="n">array</span><span class="p">])</span>  <span class="nl">atIndexedSubscript</span><span class="p">:</span><span class="n">component</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
-     <span class="p">[</span><span class="nb">self</span> <span class="nl">pickerView</span><span class="p">:</span><span class="n">pickerView</span> <span class="nl">didSelectRow</span><span class="p">:</span><span class="mi">0</span> <span class="nl">inComponent</span><span class="p">:</span><span class="n">component</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
-     <span class="p">[</span><span class="n">pickerView</span> <span class="nl">selectRow</span><span class="p">:</span><span class="mi">0</span> <span class="nl">inComponent</span><span class="p">:</span><span class="n">component</span> <span class="o">+</span> <span class="mi">1</span> <span class="nl">animated</span><span class="p">:</span><span class="nb">NO</span><span class="p">];</span>
- <span class="p">}</span>
- <span class="p">[</span><span class="n">pickerView</span> <span class="nl">reloadComponent</span><span class="p">:</span><span class="n">component</span><span class="p">];</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"> <span style="color:#ff79c6">if</span> (component <span style="color:#ff79c6">&lt;</span> (_numberOfComponents <span style="color:#ff79c6">-</span> <span style="color:#bd93f9">1</span>)) {
+ 	 NSMutableArray<span style="color:#ff79c6">&lt;</span>CDZPickerComponentObject <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>tmp <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.rowsArray[component];
+     <span style="color:#ff79c6">if</span> (tmp.count <span style="color:#ff79c6">&gt;</span> <span style="color:#bd93f9">0</span>) {
+        tmp <span style="color:#ff79c6">=</span> tmp[row].subArray;
+     }
+     [<span style="color:#8be9fd;font-style:italic">self</span>.rowsArray <span style="color:#8be9fd;font-style:italic">setObject</span>:((tmp.count <span style="color:#ff79c6">&gt;</span> <span style="color:#bd93f9">0</span>) <span style="color:#ff79c6">?</span> <span style="color:#8be9fd;font-style:italic">tmp</span> : [NSMutableArray array])  <span style="color:#8be9fd;font-style:italic">atIndexedSubscript</span>:component <span style="color:#ff79c6">+</span> <span style="color:#bd93f9">1</span>];
+     [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">pickerView</span>:pickerView <span style="color:#8be9fd;font-style:italic">didSelectRow</span>:<span style="color:#bd93f9">0</span> <span style="color:#8be9fd;font-style:italic">inComponent</span>:component <span style="color:#ff79c6">+</span> <span style="color:#bd93f9">1</span>];
+     [pickerView <span style="color:#8be9fd;font-style:italic">selectRow</span>:<span style="color:#bd93f9">0</span> <span style="color:#8be9fd;font-style:italic">inComponent</span>:component <span style="color:#ff79c6">+</span> <span style="color:#bd93f9">1</span> <span style="color:#8be9fd;font-style:italic">animated</span>:<span style="color:#8be9fd;font-style:italic">NO</span>];
+ }
+ [pickerView <span style="color:#8be9fd;font-style:italic">reloadComponent</span>:component];</code></pre></div>
 <p>这个二维数组的初始值也就是都是第一行对应的数组们，可以在之前的循环里顺便生成。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="n">_rowsArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="n">array</span><span class="p">];</span>
-<span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="n">object</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">componetArray</span><span class="p">.</span><span class="n">firstObject</span><span class="p">;</span>
-<span class="p">[</span><span class="n">_rowsArray</span> <span class="nl">setObject</span><span class="p">:[</span><span class="n">NSMutableArray</span> <span class="nl">arrayWithArray</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">componetArray</span><span class="p">]</span> <span class="nl">atIndexedSubscript</span><span class="p">:</span><span class="mi">0</span><span class="p">];</span>
-<span class="k">for</span> <span class="p">(</span><span class="n">_numberOfComponents</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;;</span> <span class="n">_numberOfComponents</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-    <span class="p">[</span><span class="n">_rowsArray</span> <span class="nl">setObject</span><span class="p">:</span><span class="n">object</span><span class="p">.</span><span class="n">subArray</span> <span class="nl">atIndexedSubscript</span><span class="p">:</span><span class="n">_numberOfComponents</span><span class="p">];</span>
-     <span class="n">object</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">objectAtIndex</span><span class="p">:</span><span class="mi">0</span> <span class="nl">inObject</span><span class="p">:</span><span class="n">object</span><span class="p">];</span>
-     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">object</span><span class="p">)</span> <span class="p">{</span>
-         <span class="k">break</span><span class="p">;</span>
-      <span class="p">}</span>
- <span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">_rowsArray <span style="color:#ff79c6">=</span> [NSMutableArray array];
+CDZPickerComponentObject <span style="color:#ff79c6">*</span>object <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.componetArray.firstObject;
+[_rowsArray <span style="color:#8be9fd;font-style:italic">setObject</span>:[NSMutableArray <span style="color:#8be9fd;font-style:italic">arrayWithArray</span>:<span style="color:#8be9fd;font-style:italic">self</span>.componetArray] <span style="color:#8be9fd;font-style:italic">atIndexedSubscript</span>:<span style="color:#bd93f9">0</span>];
+<span style="color:#ff79c6">for</span> (_numberOfComponents <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span>;; _numberOfComponents<span style="color:#ff79c6">++</span>) {
+    [_rowsArray <span style="color:#8be9fd;font-style:italic">setObject</span>:object.subArray <span style="color:#8be9fd;font-style:italic">atIndexedSubscript</span>:_numberOfComponents];
+     object <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">objectAtIndex</span>:<span style="color:#bd93f9">0</span> <span style="color:#8be9fd;font-style:italic">inObject</span>:object];
+     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>object) {
+         <span style="color:#ff79c6">break</span>;
+      }
+ }</code></pre></div>
 <p>剩下就是 <code>- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view</code> 了，也就是找到二维数组对应的 object。</p>
 
 <p>很简单</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="n">NSArray</span><span class="o">&lt;</span><span class="n">CDZPickerComponentObject</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">tmp</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">rowsArray</span><span class="p">[</span><span class="n">component</span><span class="p">];</span>
-<span class="k">if</span> <span class="p">(</span><span class="n">tmp</span><span class="p">.</span><span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">genderLabel</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="n">row</span><span class="p">].</span><span class="n">text</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">NSArray<span style="color:#ff79c6">&lt;</span>CDZPickerComponentObject <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>tmp <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.rowsArray[component];
+<span style="color:#ff79c6">if</span> (tmp.count <span style="color:#ff79c6">&gt;</span> <span style="color:#bd93f9">0</span>) {
+    genderLabel.text <span style="color:#ff79c6">=</span> tmp[row].text;
+}</code></pre></div>
 <p>剩下的就是，在 block 里回调数据了，把每行选中的值，返回一个字符串数组就好了，这样方便行之间的数据分开。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">for</span> <span class="p">(</span><span class="n">NSInteger</span> <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="n">_numberOfComponents</span><span class="p">;</span> <span class="n">index</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-	<span class="n">NSInteger</span> <span class="n">indexRow</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">pickerView</span> <span class="nl">selectedRowInComponent</span><span class="p">:</span><span class="n">index</span><span class="p">];</span>
-	<span class="n">NSMutableArray</span><span class="o">&lt;</span><span class="n">CDZPickerComponentObject</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">tmp</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">rowsArray</span><span class="p">[</span><span class="n">index</span><span class="p">];</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">tmp</span><span class="p">.</span><span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-		<span class="p">[</span><span class="n">resultArray</span> <span class="nl">addObject</span><span class="p">:</span><span class="n">tmp</span><span class="p">[</span><span class="n">indexRow</span><span class="p">].</span><span class="n">text</span><span class="p">];</span>
-	<span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">for</span> (NSInteger index <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; index <span style="color:#ff79c6">&lt;</span> _numberOfComponents; index<span style="color:#ff79c6">++</span>) {
+	NSInteger indexRow <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span>.pickerView <span style="color:#8be9fd;font-style:italic">selectedRowInComponent</span>:index];
+	NSMutableArray<span style="color:#ff79c6">&lt;</span>CDZPickerComponentObject <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>tmp <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.rowsArray[index];
+	<span style="color:#ff79c6">if</span> (tmp.count <span style="color:#ff79c6">&gt;</span> <span style="color:#bd93f9">0</span>) {
+		[resultArray <span style="color:#8be9fd;font-style:italic">addObject</span>:tmp[indexRow].text];
+	}
+}</code></pre></div>
 <h2 id="实现多行不联动">实现多行不联动</h2>
 
 <p>那就更简单了，传入一个二维数组。新建一个属性 <code>@property (nonatomic, strong) NSArray&lt;NSArray &lt;NSString*&gt; *&gt; *stringArrays;</code> 然后其它方法，<code>- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView</code> 的返回值是字符串数组的个数，<code>- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component</code> 是数组里第 componet 个数组的个数。<code>- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view</code> 里很简单</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="n">NSArray</span><span class="o">&lt;</span><span class="n">NSString</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">tmp</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">stringArrays</span><span class="p">[</span><span class="n">component</span><span class="p">];</span>
-<span class="k">if</span> <span class="p">(</span><span class="n">tmp</span><span class="p">.</span><span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-	<span class="n">genderLabel</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="n">row</span><span class="p">];</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">NSArray<span style="color:#ff79c6">&lt;</span>NSString <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>tmp <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.stringArrays[component];
+<span style="color:#ff79c6">if</span> (tmp.count <span style="color:#ff79c6">&gt;</span> <span style="color:#bd93f9">0</span>) {
+	genderLabel.text <span style="color:#ff79c6">=</span> tmp[row];
+}</code></pre></div>
 <p>回调的 stringArray 也很简单</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">for</span> <span class="p">(</span><span class="n">NSInteger</span> <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="n">_numberOfComponents</span><span class="p">;</span> <span class="n">index</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-	<span class="n">NSInteger</span> <span class="n">indexRow</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">pickerView</span> <span class="nl">selectedRowInComponent</span><span class="p">:</span><span class="n">index</span><span class="p">];</span>
-	<span class="n">NSArray</span><span class="o">&lt;</span><span class="n">NSString</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">tmp</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">stringArrays</span><span class="p">[</span><span class="n">index</span><span class="p">];</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">tmp</span><span class="p">.</span><span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-		<span class="p">[</span><span class="n">resultArray</span> <span class="nl">addObject</span><span class="p">:</span><span class="n">tmp</span><span class="p">[</span><span class="n">indexRow</span><span class="p">]];</span>
-	<span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">for</span> (NSInteger index <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; index <span style="color:#ff79c6">&lt;</span> _numberOfComponents; index<span style="color:#ff79c6">++</span>) {
+	NSInteger indexRow <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span>.pickerView <span style="color:#8be9fd;font-style:italic">selectedRowInComponent</span>:index];
+	NSArray<span style="color:#ff79c6">&lt;</span>NSString <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>tmp <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.stringArrays[index];
+	<span style="color:#ff79c6">if</span> (tmp.count <span style="color:#ff79c6">&gt;</span> <span style="color:#bd93f9">0</span>) {
+		[resultArray <span style="color:#8be9fd;font-style:italic">addObject</span>:tmp[indexRow]];
+	}
+}</code></pre></div>
 <p>单行的也很简单，转换成一行的去思考就可以了。</p>
 
 <h2 id="使用方法">使用方法</h2>
@@ -321,54 +332,54 @@
 </ul>
 
 <p>传入一个字符串数组即可</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">[</span><span class="n">CDZPicker</span> <span class="nl">showPickerInView</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">view</span> <span class="nl">withStrings</span><span class="p">:</span><span class="l">@[</span><span class="s">@&#34;objective-c&#34;</span><span class="p">,</span><span class="s">@&#34;java&#34;</span><span class="p">,</span><span class="s">@&#34;python&#34;</span><span class="p">,</span><span class="s">@&#34;php&#34;</span><span class="l">]</span> <span class="nl">confirm</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">NSArray</span><span class="o">&lt;</span><span class="n">NSString</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">stringArray</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">self</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">stringArray</span><span class="p">.</span><span class="n">firstObject</span><span class="p">;</span>
-<span class="p">}</span><span class="nl">cancel</span><span class="p">:</span><span class="o">^</span><span class="p">{</span>
-    <span class="c1">//your code
-</span><span class="c1"></span> <span class="p">}];</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">[CDZPicker <span style="color:#8be9fd;font-style:italic">showPickerInView</span>:<span style="color:#8be9fd;font-style:italic">self</span>.view <span style="color:#8be9fd;font-style:italic">withStrings</span>:@[<span style="color:#f1fa8c">@&#34;objective-c&#34;</span>,<span style="color:#f1fa8c">@&#34;java&#34;</span>,<span style="color:#f1fa8c">@&#34;python&#34;</span>,<span style="color:#f1fa8c">@&#34;php&#34;</span>] <span style="color:#8be9fd;font-style:italic">confirm</span>:<span style="color:#ff79c6">^</span>(NSArray<span style="color:#ff79c6">&lt;</span>NSString <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>stringArray) {
+    <span style="color:#8be9fd;font-style:italic">self</span>.label.text <span style="color:#ff79c6">=</span> stringArray.firstObject;
+}<span style="color:#8be9fd;font-style:italic">cancel</span>:<span style="color:#ff79c6">^</span>{
+    <span style="color:#6272a4">//your code
+</span><span style="color:#6272a4"></span> }];</code></pre></div>
 <ul>
 <li>多列不联动：</li>
 </ul>
 
 <p>传入多个字符串数组的数组即可</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">[</span><span class="n">CDZPicker</span> <span class="nl">showPickerInView</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">view</span> <span class="nl">withStringArrays</span><span class="p">:</span><span class="l">@[@[</span><span class="s">@&#34;MacOS&#34;</span><span class="p">,</span><span class="s">@&#34;Windows&#34;</span><span class="p">,</span><span class="s">@&#34;Linux&#34;</span><span class="p">,</span><span class="s">@&#34;Ubuntu&#34;</span><span class="l">]</span><span class="p">,</span><span class="l">@[</span><span class="s">@&#34;Xcode&#34;</span><span class="p">,</span><span class="s">@&#34;VSCode&#34;</span><span class="p">,</span><span class="s">@&#34;Sublime&#34;</span><span class="p">,</span><span class="s">@&#34;Atom&#34;</span><span class="l">]]</span> <span class="nl">confirm</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">NSArray</span><span class="o">&lt;</span><span class="n">NSString</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">stringArray</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">self</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="p">[</span><span class="n">stringArray</span> <span class="nl">componentsJoinedByString</span><span class="p">:</span><span class="s">@&#34;+&#34;</span><span class="p">];</span>
-<span class="p">}</span> <span class="nl">cancel</span><span class="p">:</span><span class="o">^</span><span class="p">{</span>
-    <span class="c1">// your code
-</span><span class="c1"></span> <span class="p">}];</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">[CDZPicker <span style="color:#8be9fd;font-style:italic">showPickerInView</span>:<span style="color:#8be9fd;font-style:italic">self</span>.view <span style="color:#8be9fd;font-style:italic">withStringArrays</span>:@[@[<span style="color:#f1fa8c">@&#34;MacOS&#34;</span>,<span style="color:#f1fa8c">@&#34;Windows&#34;</span>,<span style="color:#f1fa8c">@&#34;Linux&#34;</span>,<span style="color:#f1fa8c">@&#34;Ubuntu&#34;</span>],@[<span style="color:#f1fa8c">@&#34;Xcode&#34;</span>,<span style="color:#f1fa8c">@&#34;VSCode&#34;</span>,<span style="color:#f1fa8c">@&#34;Sublime&#34;</span>,<span style="color:#f1fa8c">@&#34;Atom&#34;</span>]] <span style="color:#8be9fd;font-style:italic">confirm</span>:<span style="color:#ff79c6">^</span>(NSArray<span style="color:#ff79c6">&lt;</span>NSString <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>stringArray) {
+    <span style="color:#8be9fd;font-style:italic">self</span>.label.text <span style="color:#ff79c6">=</span> [stringArray <span style="color:#8be9fd;font-style:italic">componentsJoinedByString</span>:<span style="color:#f1fa8c">@&#34;+&#34;</span>];
+} <span style="color:#8be9fd;font-style:italic">cancel</span>:<span style="color:#ff79c6">^</span>{
+    <span style="color:#6272a4">// your code
+</span><span style="color:#6272a4"></span> }];</code></pre></div>
 <ul>
 <li>多列联动：</li>
 </ul>
 
 <p>先建立数据之间的嵌套关系</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="n">haizhu</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZPickerComponentObject</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithText</span><span class="p">:</span><span class="s">@&#34;海珠区&#34;</span><span class="p">];</span>
-<span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="n">yuexiu</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZPickerComponentObject</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithText</span><span class="p">:</span><span class="s">@&#34;越秀区&#34;</span><span class="p">];</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">CDZPickerComponentObject <span style="color:#ff79c6">*</span>haizhu <span style="color:#ff79c6">=</span> [[CDZPickerComponentObject alloc]<span style="color:#8be9fd;font-style:italic">initWithText</span>:<span style="color:#f1fa8c">@&#34;海珠区&#34;</span>];
+CDZPickerComponentObject <span style="color:#ff79c6">*</span>yuexiu <span style="color:#ff79c6">=</span> [[CDZPickerComponentObject alloc]<span style="color:#8be9fd;font-style:italic">initWithText</span>:<span style="color:#f1fa8c">@&#34;越秀区&#34;</span>];
     
-<span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="n">guangzhou</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZPickerComponentObject</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithText</span><span class="p">:</span><span class="s">@&#34;广州市&#34;</span><span class="p">];</span>
-<span class="n">guangzhou</span><span class="p">.</span><span class="n">subArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="nl">arrayWithObjects</span><span class="p">:</span><span class="n">haizhu</span><span class="p">,</span><span class="n">yuexiu</span><span class="p">,</span> <span class="nb">nil</span><span class="p">];</span>
+CDZPickerComponentObject <span style="color:#ff79c6">*</span>guangzhou <span style="color:#ff79c6">=</span> [[CDZPickerComponentObject alloc]<span style="color:#8be9fd;font-style:italic">initWithText</span>:<span style="color:#f1fa8c">@&#34;广州市&#34;</span>];
+guangzhou.subArray <span style="color:#ff79c6">=</span> [NSMutableArray <span style="color:#8be9fd;font-style:italic">arrayWithObjects</span>:haizhu,yuexiu, <span style="color:#8be9fd;font-style:italic">nil</span>];
     
-<span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="n">xiangqiao</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZPickerComponentObject</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithText</span><span class="p">:</span><span class="s">@&#34;湘桥区&#34;</span><span class="p">];</span>
-<span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="n">chaozhou</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZPickerComponentObject</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithText</span><span class="p">:</span><span class="s">@&#34;潮州市&#34;</span><span class="p">];</span>
-<span class="n">chaozhou</span><span class="p">.</span><span class="n">subArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="nl">arrayWithObjects</span><span class="p">:</span><span class="n">xiangqiao</span><span class="p">,</span> <span class="nb">nil</span><span class="p">];</span>
+CDZPickerComponentObject <span style="color:#ff79c6">*</span>xiangqiao <span style="color:#ff79c6">=</span> [[CDZPickerComponentObject alloc]<span style="color:#8be9fd;font-style:italic">initWithText</span>:<span style="color:#f1fa8c">@&#34;湘桥区&#34;</span>];
+CDZPickerComponentObject <span style="color:#ff79c6">*</span>chaozhou <span style="color:#ff79c6">=</span> [[CDZPickerComponentObject alloc]<span style="color:#8be9fd;font-style:italic">initWithText</span>:<span style="color:#f1fa8c">@&#34;潮州市&#34;</span>];
+chaozhou.subArray <span style="color:#ff79c6">=</span> [NSMutableArray <span style="color:#8be9fd;font-style:italic">arrayWithObjects</span>:xiangqiao, <span style="color:#8be9fd;font-style:italic">nil</span>];
     
-<span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="n">guangdong</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZPickerComponentObject</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithText</span><span class="p">:</span><span class="s">@&#34;广东省&#34;</span><span class="p">];</span>
-<span class="n">guangdong</span><span class="p">.</span><span class="n">subArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="nl">arrayWithObjects</span><span class="p">:</span><span class="n">guangzhou</span><span class="p">,</span><span class="n">chaozhou</span><span class="p">,</span> <span class="nb">nil</span><span class="p">];</span>
+CDZPickerComponentObject <span style="color:#ff79c6">*</span>guangdong <span style="color:#ff79c6">=</span> [[CDZPickerComponentObject alloc]<span style="color:#8be9fd;font-style:italic">initWithText</span>:<span style="color:#f1fa8c">@&#34;广东省&#34;</span>];
+guangdong.subArray <span style="color:#ff79c6">=</span> [NSMutableArray <span style="color:#8be9fd;font-style:italic">arrayWithObjects</span>:guangzhou,chaozhou, <span style="color:#8be9fd;font-style:italic">nil</span>];
     
-<span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="n">pixian</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZPickerComponentObject</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithText</span><span class="p">:</span><span class="s">@&#34;郫县&#34;</span><span class="p">];</span>
+CDZPickerComponentObject <span style="color:#ff79c6">*</span>pixian <span style="color:#ff79c6">=</span> [[CDZPickerComponentObject alloc]<span style="color:#8be9fd;font-style:italic">initWithText</span>:<span style="color:#f1fa8c">@&#34;郫县&#34;</span>];
 
-<span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="n">chengdu</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZPickerComponentObject</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithText</span><span class="p">:</span><span class="s">@&#34;成都市&#34;</span><span class="p">];</span>
-<span class="n">chengdu</span><span class="p">.</span><span class="n">subArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="nl">arrayWithObjects</span><span class="p">:</span><span class="n">pixian</span><span class="p">,</span> <span class="nb">nil</span><span class="p">];</span>
+CDZPickerComponentObject <span style="color:#ff79c6">*</span>chengdu <span style="color:#ff79c6">=</span> [[CDZPickerComponentObject alloc]<span style="color:#8be9fd;font-style:italic">initWithText</span>:<span style="color:#f1fa8c">@&#34;成都市&#34;</span>];
+chengdu.subArray <span style="color:#ff79c6">=</span> [NSMutableArray <span style="color:#8be9fd;font-style:italic">arrayWithObjects</span>:pixian, <span style="color:#8be9fd;font-style:italic">nil</span>];
     
-<span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="n">leshan</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZPickerComponentObject</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithText</span><span class="p">:</span><span class="s">@&#34;乐山市&#34;</span><span class="p">];</span>
+CDZPickerComponentObject <span style="color:#ff79c6">*</span>leshan <span style="color:#ff79c6">=</span> [[CDZPickerComponentObject alloc]<span style="color:#8be9fd;font-style:italic">initWithText</span>:<span style="color:#f1fa8c">@&#34;乐山市&#34;</span>];
     
-<span class="n">CDZPickerComponentObject</span> <span class="o">*</span><span class="n">sichuan</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CDZPickerComponentObject</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithText</span><span class="p">:</span><span class="s">@&#34;四川省&#34;</span><span class="p">];</span>
-<span class="n">sichuan</span><span class="p">.</span><span class="n">subArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="nl">arrayWithObjects</span><span class="p">:</span><span class="n">chengdu</span><span class="p">,</span><span class="n">leshan</span><span class="p">,</span> <span class="nb">nil</span><span class="p">];</span></code></pre></div>
+CDZPickerComponentObject <span style="color:#ff79c6">*</span>sichuan <span style="color:#ff79c6">=</span> [[CDZPickerComponentObject alloc]<span style="color:#8be9fd;font-style:italic">initWithText</span>:<span style="color:#f1fa8c">@&#34;四川省&#34;</span>];
+sichuan.subArray <span style="color:#ff79c6">=</span> [NSMutableArray <span style="color:#8be9fd;font-style:italic">arrayWithObjects</span>:chengdu,leshan, <span style="color:#8be9fd;font-style:italic">nil</span>];</code></pre></div>
 <p>然后在传进去就可以了</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">[</span><span class="n">CDZPicker</span> <span class="nl">showPickerInView</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">view</span> <span class="nl">withComponents</span><span class="p">:</span><span class="l">@[</span><span class="n">guangdong</span><span class="p">,</span><span class="n">sichuan</span><span class="l">]</span> <span class="nl">confirm</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">NSArray</span><span class="o">&lt;</span><span class="n">NSString</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">stringArray</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nb">self</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="p">[</span><span class="n">stringArray</span> <span class="nl">componentsJoinedByString</span><span class="p">:</span><span class="s">@&#34;,&#34;</span><span class="p">];</span>
-<span class="p">}</span><span class="nl">cancel</span><span class="p">:</span><span class="o">^</span><span class="p">{</span>
-	 <span class="c1">//your code
-</span><span class="c1"></span> <span class="p">}];</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">[CDZPicker <span style="color:#8be9fd;font-style:italic">showPickerInView</span>:<span style="color:#8be9fd;font-style:italic">self</span>.view <span style="color:#8be9fd;font-style:italic">withComponents</span>:@[guangdong,sichuan] <span style="color:#8be9fd;font-style:italic">confirm</span>:<span style="color:#ff79c6">^</span>(NSArray<span style="color:#ff79c6">&lt;</span>NSString <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>stringArray) {
+	<span style="color:#8be9fd;font-style:italic">self</span>.label.text <span style="color:#ff79c6">=</span> [stringArray <span style="color:#8be9fd;font-style:italic">componentsJoinedByString</span>:<span style="color:#f1fa8c">@&#34;,&#34;</span>];
+}<span style="color:#8be9fd;font-style:italic">cancel</span>:<span style="color:#ff79c6">^</span>{
+	 <span style="color:#6272a4">//your code
+</span><span style="color:#6272a4"></span> }];</code></pre></div>
 <h2 id="最后">最后</h2>
 
 <p>所有源码和 <a href="https://github.com/Nemocdz/CDZPicker">Demo</a>
@@ -376,7 +387,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>851</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>852</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -403,18 +414,61 @@
       
     
   </section>
-  <footer class="site-footer">
+  
+<footer class="site-footer">
   <p>© 2017-2019 Nemocdz&#39;s Blog</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>
 
 
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
 
-<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
-<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
 
 
 

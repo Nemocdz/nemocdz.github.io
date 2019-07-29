@@ -9,115 +9,153 @@
 
   
   
-
-
-
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
 
   
-  <meta name="author" content="Nemocdz" />
+
+  
+  
   <meta name="description" content="[TOC]
 之前写了一篇 文章 总结了 OC 中弱引用容器实现，在小米面试中提到其中 CFFoundation 的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现 Weak 特质，也就是没有在销毁后置 nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。
 所以看了 Runtime 源码和文章后，订正弱引用容器的一些实现方法。
-" />
+">
 
   
   
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@Nemocdz" />
-    <meta name="twitter:title" content="再谈 Objective-C 弱引用容器的实现-关联对象实现 weak" />
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="再谈 Objective-C 弱引用容器的实现-关联对象实现 weak">
     <meta name="twitter:description" content="[TOC]
 之前写了一篇 文章 总结了 OC 中弱引用容器实现，在小米面试中提到其中 CFFoundation 的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现 Weak 特质，也就是没有在销毁后置 nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。
 所以看了 Runtime 源码和文章后，订正弱引用容器的一些实现方法。
-" />
-    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+">
+    <meta name="twitter:image" content="/images/avatar.png">
   
 
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="再谈 Objective-C 弱引用容器的实现-关联对象实现 weak">
+  <meta property="og:description" content="[TOC]
+之前写了一篇 文章 总结了 OC 中弱引用容器实现，在小米面试中提到其中 CFFoundation 的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现 Weak 特质，也就是没有在销毁后置 nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。
+所以看了 Runtime 源码和文章后，订正弱引用容器的一些实现方法。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88-objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/">
+  <meta property="og:image" content="/images/avatar.png">
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+
+<meta name="generator" content="Hugo 0.55.6">
 
 
-<link rel="canonical" href="https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88-objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/" />
-<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+<link rel="canonical" href="https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88-objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
 
 
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
-<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
-<meta name="baidu-site-verification" content="iVpH4VhHBT" />
-<meta name="sogou_site_verification" content="YPqjjJgiSh" />
-<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
 
 
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
-<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
 
 
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
 
-<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
 
 
   
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
 
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
-  <![endif]-->
-
-
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
-
-
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
 
 
 </head>
   <body>
-    
     <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
       
         
-        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
         
       
     </div>
     
     
   <header class="site-header">
-  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
   
-  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
   
-  <p class="subtitle">iOS&amp;Android Dev</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
   </button>
+
   <nav class="site-menu collapsed">
     <h2 class="offscreen">Main Menu</h2>
     <ul class="menu-list">
@@ -125,79 +163,53 @@
       
       
       
-        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/">首页</a>
+        </li>
       
-        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
       
     </ul>
   </nav>
   <nav class="social-menu collapsed">
     <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-      <li class="social-item">
-        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
-      </li>
-
-      
-      <li class="social-item">
-        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
-      </li>
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
-      </li>
-
-      
-
-      <li class="social-item">
-        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
   </nav>
 </header>
 
@@ -215,85 +227,85 @@
 <h2 id="runtime-源码的-weak-关键字实现">Runtime 源码的 weak 关键字实现</h2>
 
 <p>源码基于 <a href="https://opensource.apple.com/tarballs/objc4/">Runtime-709 </a>分析，当我们使用 <code>__weak</code> 关键字时，实际上调用的是 NSObject.mm 中的 <code>objc_initWeak()</code> 方法，然后进入核心方法 <code>storeWeak</code>，传入核心参数是 location（弱引用指针的地址）和 newobj（弱引用指针应该指向的）核心方法源码如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="k">template</span> <span class="o">&lt;</span><span class="n">HaveOld</span> <span class="n">haveOld</span><span class="p">,</span> <span class="n">HaveNew</span> <span class="n">haveNew</span><span class="p">,</span>
-          <span class="n">CrashIfDeallocating</span> <span class="n">crashIfDeallocating</span><span class="o">&gt;</span>
-<span class="c1">//template 关键字类似于泛型，传入三个参数其实都是 bool 类型，为各种情况提供组合优化
-</span><span class="c1"></span><span class="k">static</span> <span class="n">id</span> <span class="c1">//返回 id 类型
-</span><span class="c1"></span><span class="n">storeWeak</span><span class="p">(</span><span class="n">id</span> <span class="o">*</span><span class="n">location</span><span class="p">,</span> <span class="n">objc_object</span> <span class="o">*</span><span class="n">newObj</span><span class="p">)</span>
-<span class="p">{</span>   
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#ff79c6">template</span> <span style="color:#ff79c6">&lt;</span>HaveOld haveOld, HaveNew haveNew,
+          CrashIfDeallocating crashIfDeallocating<span style="color:#ff79c6">&gt;</span>
+<span style="color:#6272a4">//template 关键字类似于泛型，传入三个参数其实都是 bool 类型，为各种情况提供组合优化
+</span><span style="color:#6272a4"></span><span style="color:#ff79c6">static</span> id <span style="color:#6272a4">//返回 id 类型
+</span><span style="color:#6272a4"></span>storeWeak(id <span style="color:#ff79c6">*</span>location, objc_object <span style="color:#ff79c6">*</span>newObj)
+{   
     
-    <span class="n">assert</span><span class="p">(</span><span class="n">haveOld</span>  <span class="o">||</span>  <span class="n">haveNew</span><span class="p">);</span>
-    <span class="c1">//新值没有的情况应该被上层的方法拦截，所以这里有个断言
-</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">haveNew</span><span class="p">)</span> <span class="n">assert</span><span class="p">(</span><span class="n">newObj</span> <span class="o">==</span> <span class="n">nil</span><span class="p">);</span>
+    assert(haveOld  <span style="color:#ff79c6">||</span>  haveNew);
+    <span style="color:#6272a4">//新值没有的情况应该被上层的方法拦截，所以这里有个断言
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>haveNew) assert(newObj <span style="color:#ff79c6">==</span> nil);
     
     
-    <span class="n">Class</span> <span class="n">previouslyInitializedClass</span> <span class="o">=</span> <span class="n">nil</span><span class="p">;</span>
-    <span class="n">id</span> <span class="n">oldObj</span><span class="p">;</span>
-    <span class="c1">//SideTable 结构是引用计数表，记录着对象的 weak 表，目的就是为了获取 weak 表
-</span><span class="c1"></span>    <span class="n">SideTable</span> <span class="o">*</span><span class="n">oldTable</span><span class="p">;</span>
-    <span class="n">SideTable</span> <span class="o">*</span><span class="n">newTable</span><span class="p">;</span>
+    Class previouslyInitializedClass <span style="color:#ff79c6">=</span> nil;
+    id oldObj;
+    <span style="color:#6272a4">//SideTable 结构是引用计数表，记录着对象的 weak 表，目的就是为了获取 weak 表
+</span><span style="color:#6272a4"></span>    SideTable <span style="color:#ff79c6">*</span>oldTable;
+    SideTable <span style="color:#ff79c6">*</span>newTable;
 
- <span class="nl">retry</span><span class="p">:</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">haveOld</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">oldObj</span> <span class="o">=</span> <span class="o">*</span><span class="n">location</span><span class="p">;</span><span class="c1">//因为是个指向地址的指针，用 * 解引用返回地址的对象
-</span><span class="c1"></span>        <span class="n">oldTable</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">SideTables</span><span class="p">()[</span><span class="n">oldObj</span><span class="p">];</span><span class="c1">//获得旧值对象所在的表的指针
-</span><span class="c1"></span>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="n">oldTable</span> <span class="o">=</span> <span class="n">nil</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">haveNew</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">newTable</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">SideTables</span><span class="p">()[</span><span class="n">newObj</span><span class="p">];</span><span class="c1">//获得新值对象生意所在的表的指针
-</span><span class="c1"></span>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="n">newTable</span> <span class="o">=</span> <span class="n">nil</span><span class="p">;</span>
-    <span class="p">}</span>
+ <span style="color:#8be9fd;font-style:italic">retry</span>:
+    <span style="color:#ff79c6">if</span> (haveOld) {
+        oldObj <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">*</span>location;<span style="color:#6272a4">//因为是个指向地址的指针，用 * 解引用返回地址的对象
+</span><span style="color:#6272a4"></span>        oldTable <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>SideTables()[oldObj];<span style="color:#6272a4">//获得旧值对象所在的表的指针
+</span><span style="color:#6272a4"></span>    } <span style="color:#ff79c6">else</span> {
+        oldTable <span style="color:#ff79c6">=</span> nil;
+    }
+    <span style="color:#ff79c6">if</span> (haveNew) {
+        newTable <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>SideTables()[newObj];<span style="color:#6272a4">//获得新值对象生意所在的表的指针
+</span><span style="color:#6272a4"></span>    } <span style="color:#ff79c6">else</span> {
+        newTable <span style="color:#ff79c6">=</span> nil;
+    }
     
-    <span class="c1">//加锁
-</span><span class="c1"></span>    <span class="n">SideTable</span><span class="o">::</span><span class="n">lockTwo</span><span class="o">&lt;</span><span class="n">haveOld</span><span class="p">,</span> <span class="n">haveNew</span><span class="o">&gt;</span><span class="p">(</span><span class="n">oldTable</span><span class="p">,</span> <span class="n">newTable</span><span class="p">);</span>
-    <span class="c1">//再次确认保证线程安全
-</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">haveOld</span>  <span class="o">&amp;&amp;</span>  <span class="o">*</span><span class="n">location</span> <span class="o">!=</span> <span class="n">oldObj</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">SideTable</span><span class="o">::</span><span class="n">unlockTwo</span><span class="o">&lt;</span><span class="n">haveOld</span><span class="p">,</span> <span class="n">haveNew</span><span class="o">&gt;</span><span class="p">(</span><span class="n">oldTable</span><span class="p">,</span> <span class="n">newTable</span><span class="p">);</span>
-        <span class="k">goto</span> <span class="n">retry</span><span class="p">;</span>
-    <span class="p">}</span>
+    <span style="color:#6272a4">//加锁
+</span><span style="color:#6272a4"></span>    SideTable<span style="color:#ff79c6">::</span>lockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
+    <span style="color:#6272a4">//再次确认保证线程安全
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (haveOld  <span style="color:#ff79c6">&amp;&amp;</span>  <span style="color:#ff79c6">*</span>location <span style="color:#ff79c6">!=</span> oldObj) {
+        SideTable<span style="color:#ff79c6">::</span>unlockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
+        <span style="color:#ff79c6">goto</span> retry;
+    }
 
-    <span class="c1">// 防止弱引用机制的死锁并用 init 构造保证弱引用的 isa 指针非空
-</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">haveNew</span>  <span class="o">&amp;&amp;</span>  <span class="n">newObj</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">Class</span> <span class="n">cls</span> <span class="o">=</span> <span class="n">newObj</span><span class="o">-&gt;</span><span class="n">getIsa</span><span class="p">();</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">cls</span> <span class="o">!=</span> <span class="n">previouslyInitializedClass</span>  <span class="o">&amp;&amp;</span>  
-            <span class="o">!</span><span class="p">((</span><span class="n">objc_class</span> <span class="o">*</span><span class="p">)</span><span class="n">cls</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">isInitialized</span><span class="p">())</span> 
-        <span class="p">{</span>
-            <span class="n">SideTable</span><span class="o">::</span><span class="n">unlockTwo</span><span class="o">&lt;</span><span class="n">haveOld</span><span class="p">,</span> <span class="n">haveNew</span><span class="o">&gt;</span><span class="p">(</span><span class="n">oldTable</span><span class="p">,</span> <span class="n">newTable</span><span class="p">);</span>
-            <span class="n">_class_initialize</span><span class="p">(</span><span class="n">_class_getNonMetaClass</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="n">newObj</span><span class="p">));</span>
-            <span class="n">previouslyInitializedClass</span> <span class="o">=</span> <span class="n">cls</span><span class="p">;</span>
-            <span class="k">goto</span> <span class="n">retry</span><span class="p">;</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+    <span style="color:#6272a4">// 防止弱引用机制的死锁并用 init 构造保证弱引用的 isa 指针非空
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (haveNew  <span style="color:#ff79c6">&amp;&amp;</span>  newObj) {
+        Class cls <span style="color:#ff79c6">=</span> newObj<span style="color:#ff79c6">-&gt;</span>getIsa();
+        <span style="color:#ff79c6">if</span> (cls <span style="color:#ff79c6">!=</span> previouslyInitializedClass  <span style="color:#ff79c6">&amp;&amp;</span>  
+            <span style="color:#ff79c6">!</span>((objc_class <span style="color:#ff79c6">*</span>)cls)<span style="color:#ff79c6">-&gt;</span>isInitialized()) 
+        {
+            SideTable<span style="color:#ff79c6">::</span>unlockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
+            _class_initialize(_class_getNonMetaClass(cls, (id)newObj));
+            previouslyInitializedClass <span style="color:#ff79c6">=</span> cls;
+            <span style="color:#ff79c6">goto</span> retry;
+        }
+    }
 
-    <span class="c1">//清除旧址
-</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">haveOld</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">//在 weakTable 中反注册
-</span><span class="c1"></span>        <span class="n">weak_unregister_no_lock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">oldTable</span><span class="o">-&gt;</span><span class="n">weak_table</span><span class="p">,</span> <span class="n">oldObj</span><span class="p">,</span> <span class="n">location</span><span class="p">);</span>
-    <span class="p">}</span>
+    <span style="color:#6272a4">//清除旧址
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (haveOld) {
+        <span style="color:#6272a4">//在 weakTable 中反注册
+</span><span style="color:#6272a4"></span>        weak_unregister_no_lock(<span style="color:#ff79c6">&amp;</span>oldTable<span style="color:#ff79c6">-&gt;</span>weak_table, oldObj, location);
+    }
 
-    <span class="c1">//分配新值
-</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">haveNew</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">//在 weakTable 中注册新值并返回对象
-</span><span class="c1"></span>        <span class="n">newObj</span> <span class="o">=</span> <span class="p">(</span><span class="n">objc_object</span> <span class="o">*</span><span class="p">)</span>
-            <span class="n">weak_register_no_lock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">newTable</span><span class="o">-&gt;</span><span class="n">weak_table</span><span class="p">,</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="n">newObj</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> 
-                                  <span class="n">crashIfDeallocating</span><span class="p">);</span>
+    <span style="color:#6272a4">//分配新值
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (haveNew) {
+        <span style="color:#6272a4">//在 weakTable 中注册新值并返回对象
+</span><span style="color:#6272a4"></span>        newObj <span style="color:#ff79c6">=</span> (objc_object <span style="color:#ff79c6">*</span>)
+            weak_register_no_lock(<span style="color:#ff79c6">&amp;</span>newTable<span style="color:#ff79c6">-&gt;</span>weak_table, (id)newObj, location, 
+                                  crashIfDeallocating);
 
 
-        <span class="c1">// 对 TaggedPointer 的优化
-</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">newObj</span>  <span class="o">&amp;&amp;</span>  <span class="o">!</span><span class="n">newObj</span><span class="o">-&gt;</span><span class="n">isTaggedPointer</span><span class="p">())</span> <span class="p">{</span>
-            <span class="n">newObj</span><span class="o">-&gt;</span><span class="n">setWeaklyReferenced_nolock</span><span class="p">();</span>
-        <span class="p">}</span>
+        <span style="color:#6272a4">// 对 TaggedPointer 的优化
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">if</span> (newObj  <span style="color:#ff79c6">&amp;&amp;</span>  <span style="color:#ff79c6">!</span>newObj<span style="color:#ff79c6">-&gt;</span>isTaggedPointer()) {
+            newObj<span style="color:#ff79c6">-&gt;</span>setWeaklyReferenced_nolock();
+        }
 
-        <span class="o">*</span><span class="n">location</span> <span class="o">=</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="n">newObj</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="p">{</span>
-    <span class="p">}</span>
-    <span class="n">SideTable</span><span class="o">::</span><span class="n">unlockTwo</span><span class="o">&lt;</span><span class="n">haveOld</span><span class="p">,</span> <span class="n">haveNew</span><span class="o">&gt;</span><span class="p">(</span><span class="n">oldTable</span><span class="p">,</span> <span class="n">newTable</span><span class="p">);</span>
+        <span style="color:#ff79c6">*</span>location <span style="color:#ff79c6">=</span> (id)newObj;
+    }
+    <span style="color:#ff79c6">else</span> {
+    }
+    SideTable<span style="color:#ff79c6">::</span>unlockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
 
-    <span class="k">return</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="n">newObj</span><span class="p">;</span>
-<span class="p">}</span>
+    <span style="color:#ff79c6">return</span> (id)newObj;
+}
 </code></pre></div>
 <p>而 WeakTable 是一个 Hash 表设计，以对象的地址为 key，value 是所有指向这个对象的 weak 指针的地址集合。通过这种设计，在废弃对象时，可以通过 weak 表快速找到 value 即所有 weak 指针并统一设置为 nil 并删除该记录。</p>
 
@@ -317,55 +329,55 @@
 <p>在它 <code>dealloc</code> 时置我们需要的指针为 nil 是合适的选择，因为之后的时机指向的对象也会被销毁，销毁之前置 nil 刚刚好。</p>
 
 <p>为了保证关联对象的引用指针为 1，在 weak 赋值时只要创建一次就好了。由于我们需要置 nil 这个操作，关联对象的 dealloc 跑一个 block 是灵活性最大的选择了，也就是由关联对象持有一个 block，并在 <code>weak</code> 赋值时顺便告诉这个 block 里面执行什么。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@interface</span> <span class="nc">CDZDeallocObserver</span> : <span class="nc">NSObject</span>
-<span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">copy</span><span class="p">)</span> <span class="kt">void</span> <span class="p">(</span><span class="o">^</span><span class="n">block</span><span class="p">)(</span><span class="kt">void</span><span class="p">);</span>
-<span class="k">@end</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@interface</span> <span style="color:#50fa7b">CDZDeallocObserver</span> : <span style="color:#50fa7b">NSObject</span>
+<span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">copy</span>) <span style="color:#8be9fd">void</span> (<span style="color:#ff79c6">^</span>block)(<span style="color:#8be9fd">void</span>);
+<span style="color:#ff79c6">@end</span>
 
-<span class="k">@implementation</span> <span class="nc">CDZDeallocObserver</span>
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">dealloc</span><span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">block</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">block</span><span class="p">();</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-<span class="k">@end</span></code></pre></div>
+<span style="color:#ff79c6">@implementation</span> <span style="color:#50fa7b">CDZDeallocObserver</span>
+- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">dealloc</span>{
+    <span style="color:#ff79c6">if</span> (<span style="color:#8be9fd;font-style:italic">self</span>.block) {
+        <span style="color:#8be9fd;font-style:italic">self</span>.block();
+    }
+}
+<span style="color:#ff79c6">@end</span></code></pre></div>
 <p>用分类实现一个 setBlock 的方法，拓展给 <code>NSObject</code> 类。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">CDZDellocBlockKey</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">CDZDellocBlockKey</span><span class="p">;</span>
-<span class="k">@implementation</span> <span class="nc">NSObject</span> <span class="nl">(DeallocBlock)</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">const</span> <span style="color:#8be9fd">void</span> <span style="color:#ff79c6">*</span>CDZDellocBlockKey <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>CDZDellocBlockKey;
+<span style="color:#ff79c6">@implementation</span> <span style="color:#50fa7b">NSObject</span> <span style="color:#8be9fd;font-style:italic">(DeallocBlock)</span>
 
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">cdz_deallocBlock:</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">^</span><span class="p">)(</span><span class="kt">void</span><span class="p">))</span><span class="nv">block</span><span class="p">{</span>
-    <span class="n">CDZDeallocObserver</span> <span class="o">*</span><span class="n">observer</span> <span class="o">=</span> <span class="n">objc_getAssociatedObject</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">CDZDellocBlockKey</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">observer</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">observer</span> <span class="o">=</span> <span class="p">[</span><span class="n">CDZDeallocObserver</span> <span class="n">new</span><span class="p">];</span>
-        <span class="n">objc_setAssociatedObject</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">CDZDellocBlockKey</span><span class="p">,</span> <span class="n">observer</span><span class="p">,</span> <span class="n">OBJC_ASSOCIATION_RETAIN</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="n">observer</span><span class="p">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">block</span><span class="p">;</span>
-<span class="p">}</span>
-<span class="k">@end</span></code></pre></div>
+- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">cdz_deallocBlock:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)(<span style="color:#8be9fd">void</span>))<span style="color:#8be9fd;font-style:italic">block</span>{
+    CDZDeallocObserver <span style="color:#ff79c6">*</span>observer <span style="color:#ff79c6">=</span> objc_getAssociatedObject(<span style="color:#8be9fd;font-style:italic">self</span>, CDZDellocBlockKey);
+    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>observer) {
+        observer <span style="color:#ff79c6">=</span> [CDZDeallocObserver new];
+        objc_setAssociatedObject(<span style="color:#8be9fd;font-style:italic">self</span>, CDZDellocBlockKey, observer, OBJC_ASSOCIATION_RETAIN);
+    }
+    observer.block <span style="color:#ff79c6">=</span> block;
+}
+<span style="color:#ff79c6">@end</span></code></pre></div>
 <h2 id="弱引用容器的拓展">弱引用容器的拓展</h2>
 
 <p>之前我们知道 CoreFoundation 和 MRC 法都可以使引用计数不变，那么其实我们只要在 Add 的时候顺便关联上释放时移除对象即可，因为保留一堆 nil 指针在容器内并不是一个好的选择。置 nil 其实更希望是表示这个元素不存在了。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="c1">//与 CoreFoundation 配套的 add 方法，用 unsafe_unretain 是不希望被置 nil，系统置 nil 的时机可能比实际 dealloc 的时机早
-</span><span class="c1"></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">cf_addObject:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">object</span><span class="p">{</span>
-    <span class="p">[</span><span class="nb">self</span> <span class="nl">addObject</span><span class="p">:</span><span class="n">object</span><span class="p">];</span>
-    <span class="n">__unsafe_unretained</span> <span class="k">typeof</span> <span class="p">(</span><span class="n">object</span><span class="p">)</span> <span class="n">unRetainObject</span> <span class="o">=</span> <span class="n">object</span><span class="p">;</span>
-    <span class="k">__weak</span> <span class="k">typeof</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="n">weakSelf</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
-    <span class="p">[</span><span class="n">object</span> <span class="nl">cdz_deallocBlock</span><span class="p">:</span><span class="o">^</span><span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">unRetainObject</span><span class="p">)</span> <span class="p">{</span>
-            <span class="p">[</span><span class="n">weakSelf</span> <span class="nl">removeObject</span><span class="p">:</span><span class="n">unRetainObject</span><span class="p">];</span>
-        <span class="p">}</span>
-    <span class="p">}];</span>
-<span class="p">}</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="c1">//跟 mrc 配套的
-</span><span class="c1"></span><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">mrc_addObject:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">object</span><span class="p">{</span>
-    <span class="p">[</span><span class="nb">self</span> <span class="nl">addObject</span><span class="p">:</span><span class="n">object</span><span class="p">];</span>
-    <span class="n">__unsafe_unretained</span> <span class="k">typeof</span> <span class="p">(</span><span class="n">object</span><span class="p">)</span> <span class="n">unRetainObject</span> <span class="o">=</span> <span class="n">object</span><span class="p">;</span>
-    <span class="k">__weak</span> <span class="k">typeof</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="n">weakSelf</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
-    <span class="p">[</span><span class="n">object</span> <span class="nl">cdz_deallocBlock</span><span class="p">:</span><span class="o">^</span><span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">unRetainObject</span><span class="p">)</span> <span class="p">{</span>
-            <span class="p">[</span><span class="n">weakSelf</span> <span class="nl">removeObject</span><span class="p">:</span><span class="n">unRetainObject</span><span class="p">];</span>
-        <span class="p">}</span>
-    <span class="p">}];</span>
-    <span class="n">CFRelease</span><span class="p">((</span><span class="k">__bridge</span> <span class="n">CFTypeRef</span><span class="p">)(</span><span class="n">object</span><span class="p">));</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#6272a4">//与 CoreFoundation 配套的 add 方法，用 unsafe_unretain 是不希望被置 nil，系统置 nil 的时机可能比实际 dealloc 的时机早
+</span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">cf_addObject:</span>(<span style="color:#8be9fd">id</span>)<span style="color:#8be9fd;font-style:italic">object</span>{
+    [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">addObject</span>:object];
+    __unsafe_unretained <span style="color:#ff79c6">typeof</span> (object) unRetainObject <span style="color:#ff79c6">=</span> object;
+    <span style="color:#ff79c6">__weak</span> <span style="color:#ff79c6">typeof</span>(<span style="color:#8be9fd;font-style:italic">self</span>) weakSelf <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>;
+    [object <span style="color:#8be9fd;font-style:italic">cdz_deallocBlock</span>:<span style="color:#ff79c6">^</span>{
+        <span style="color:#ff79c6">if</span> (unRetainObject) {
+            [weakSelf <span style="color:#8be9fd;font-style:italic">removeObject</span>:unRetainObject];
+        }
+    }];
+}</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#6272a4">//跟 mrc 配套的
+</span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">mrc_addObject:</span>(<span style="color:#8be9fd">id</span>)<span style="color:#8be9fd;font-style:italic">object</span>{
+    [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">addObject</span>:object];
+    __unsafe_unretained <span style="color:#ff79c6">typeof</span> (object) unRetainObject <span style="color:#ff79c6">=</span> object;
+    <span style="color:#ff79c6">__weak</span> <span style="color:#ff79c6">typeof</span>(<span style="color:#8be9fd;font-style:italic">self</span>) weakSelf <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>;
+    [object <span style="color:#8be9fd;font-style:italic">cdz_deallocBlock</span>:<span style="color:#ff79c6">^</span>{
+        <span style="color:#ff79c6">if</span> (unRetainObject) {
+            [weakSelf <span style="color:#8be9fd;font-style:italic">removeObject</span>:unRetainObject];
+        }
+    }];
+    CFRelease((<span style="color:#ff79c6">__bridge</span> CFTypeRef)(object));
+}</code></pre></div>
 <p>这样才能保证后续在对象销毁时，用容器获取的对象是正确的（置 nil 或被移除）。</p>
 
 <h2 id="最后">最后</h2>
@@ -384,7 +396,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>694</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>695</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -411,18 +423,61 @@
       
     
   </section>
-  <footer class="site-footer">
+  
+<footer class="site-footer">
   <p>© 2017-2019 Nemocdz&#39;s Blog</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>
 
 
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
 
-<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
-<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
 
 
 

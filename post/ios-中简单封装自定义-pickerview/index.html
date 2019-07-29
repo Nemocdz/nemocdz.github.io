@@ -9,113 +9,150 @@
 
   
   
-
-
-
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
 
   
-  <meta name="author" content="Nemocdz" />
+
+  
+  
   <meta name="description" content="[TOC]
 UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。
-" />
+">
 
   
   
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@Nemocdz" />
-    <meta name="twitter:title" content="iOS 中简单封装自定义 PickerView" />
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="iOS 中简单封装自定义 PickerView">
     <meta name="twitter:description" content="[TOC]
 UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。
-" />
-    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+">
+    <meta name="twitter:image" content="/images/avatar.png">
   
 
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="iOS 中简单封装自定义 PickerView">
+  <meta property="og:description" content="[TOC]
+UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/ios-%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89-pickerview/">
+  <meta property="og:image" content="/images/avatar.png">
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+
+<meta name="generator" content="Hugo 0.55.6">
 
 
-<link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89-pickerview/" />
-<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+<link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89-pickerview/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
 
 
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
-<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
-<meta name="baidu-site-verification" content="iVpH4VhHBT" />
-<meta name="sogou_site_verification" content="YPqjjJgiSh" />
-<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
 
 
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
-<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
 
 
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
 
-<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
 
 
   
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
 
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
-  <![endif]-->
-
-
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
-
-
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
 
 
 </head>
   <body>
-    
     <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
       
         
-        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
         
       
     </div>
     
     
   <header class="site-header">
-  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
   
-  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
   
-  <p class="subtitle">iOS&amp;Android Dev</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
   </button>
+
   <nav class="site-menu collapsed">
     <h2 class="offscreen">Main Menu</h2>
     <ul class="menu-list">
@@ -123,86 +160,60 @@ UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动�
       
       
       
-        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/">首页</a>
+        </li>
       
-        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
       
     </ul>
   </nav>
   <nav class="social-menu collapsed">
     <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-      <li class="social-item">
-        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
-      </li>
-
-      
-      <li class="social-item">
-        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
-      </li>
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
-      </li>
-
-      
-
-      <li class="social-item">
-        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
   </nav>
 </header>
 
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">iOS 中简单封装自定义 PickerView</h1>
-      <p class="post-meta">@Nemocdz · Nov 19, 2016 · 3 min read</p>
+      <p class="post-meta">@Nemocdz · Nov 19, 2016 · 2 min read</p>
     </header>
     <article class="post-content"><p>[TOC]</p>
 
@@ -211,12 +222,12 @@ UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动�
 <p>点击 Button 弹出 Picker，并改变指定 Label 的值，效果如下图所示。
 <img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gw1f9wp3v4z00g30ku112agf.gif" alt="" />
 最终目的是在 ViewController 中 Button 的 Event Reponse 中调用封装好的库的方法进行传值及操作。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objectivec" data-lang="objectivec"><span class="p">-</span> <span class="p">(</span><span class="kt">IBAction</span><span class="p">)</span><span class="nf">showPicker:</span><span class="p">(</span><span class="n">UIButton</span> <span class="o">*</span><span class="p">)</span><span class="nv">sender</span> <span class="p">{</span>
-    <span class="n">NSArray</span> <span class="o">*</span><span class="n">array</span> <span class="o">=</span> <span class="l">@[</span><span class="s">@&#34;电子科技大学&#34;</span><span class="p">,</span><span class="s">@&#34;清华大学&#34;</span><span class="p">,</span><span class="s">@&#34;四川大学&#34;</span><span class="p">,</span><span class="s">@&#34;华中科技大学&#34;</span><span class="p">,</span><span class="s">@&#34;西安电子科技大学&#34;</span><span class="l">]</span><span class="p">;</span>
-    <span class="p">[</span><span class="n">CDZPicker</span> <span class="nl">showPickerInView</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">view</span> <span class="nl">withObjectsArray</span><span class="p">:</span><span class="n">array</span> <span class="nl">withlastString</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">text</span> <span class="nl">withStringBlock</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="n">string</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">string</span><span class="p">;</span>
-    <span class="p">}];</span>
-    <span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objectivec" data-lang="objectivec">- (<span style="color:#8be9fd">IBAction</span>)<span style="color:#50fa7b">showPicker:</span>(UIButton <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">sender</span> {
+    NSArray <span style="color:#ff79c6">*</span>array <span style="color:#ff79c6">=</span> @[<span style="color:#f1fa8c">@&#34;电子科技大学&#34;</span>,<span style="color:#f1fa8c">@&#34;清华大学&#34;</span>,<span style="color:#f1fa8c">@&#34;四川大学&#34;</span>,<span style="color:#f1fa8c">@&#34;华中科技大学&#34;</span>,<span style="color:#f1fa8c">@&#34;西安电子科技大学&#34;</span>];
+    [CDZPicker <span style="color:#8be9fd;font-style:italic">showPickerInView</span>:<span style="color:#8be9fd;font-style:italic">self</span>.view <span style="color:#8be9fd;font-style:italic">withObjectsArray</span>:array <span style="color:#8be9fd;font-style:italic">withlastString</span>:<span style="color:#8be9fd;font-style:italic">self</span>.label.text <span style="color:#8be9fd;font-style:italic">withStringBlock</span>:<span style="color:#ff79c6">^</span>(NSString <span style="color:#ff79c6">*</span>string) {
+        <span style="color:#8be9fd;font-style:italic">self</span>.label.text <span style="color:#ff79c6">=</span> string;
+    }];
+    }</code></pre></div>
 <p>实现思路从数据，视图，按钮处理三个方面说</p>
 
 <h2 id="1-数据">1.数据</h2>
@@ -234,14 +245,13 @@ UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动�
 <p><code>typedef void (^CDZStringResultBlock)(NSString *string);</code></p>
 
 <p>.m 中增加以下属性</p>
-<div class="highlight"><pre class="chroma"><code class="language-objectivec" data-lang="objectivec"><span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span><span class="k">strong</span><span class="p">)</span> <span class="n">NSArray</span> <span class="o">*</span><span class="n">dataArray</span><span class="p">;</span>
-<span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span><span class="k">strong</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">lastString</span><span class="p">;</span>
-<span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span>  <span class="k">copy</span><span class="p">)</span> <span class="n">CDZStringResultBlock</span> <span class="n">block</span><span class="p">;</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objectivec" data-lang="objectivec"><span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>,<span style="color:#ff79c6">strong</span>) NSArray <span style="color:#ff79c6">*</span>dataArray;
+<span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>,<span style="color:#ff79c6">strong</span>) NSString <span style="color:#ff79c6">*</span>lastString;
+<span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>,  <span style="color:#ff79c6">copy</span>) CDZStringResultBlock block;</code></pre></div>
 <p>实现 Pickerview 的 Delegate 和 DataSource 协议
  <code>&lt;UIPickerViewDelegate,UIPickerViewDataSource&gt;</code>
 实现 Pickerview 的 Delegate 和 DataSource 相关方法</p>
-
-<pre><code>#pragma mark - PickerDataSource
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">#pragma mark - PickerDataSource
 //返回 picker 列数
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView{
     return 1;
@@ -250,10 +260,7 @@ UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动�
 //picker 行数
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
     return self.dataArray.count;
-}
-</code></pre>
-
-<pre><code>#pragma mark - PickerDelegate
+}</pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">#pragma mark - PickerDelegate
 //返回每行高度
 - (CGFloat)pickerView:(UIPickerView *)pickerView rowHeightForComponent:(NSInteger)component{
     return 44;
@@ -281,9 +288,7 @@ UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动�
     genderLabel.textColor = [UIColor blackColor];
 
     return genderLabel;
-}
-</code></pre>
-
+}</pre></div>
 <p>另外有一点要注意
  <code>-(UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view</code>
 这个方法的优先级比
@@ -294,30 +299,26 @@ UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动�
 
 <p>视图上，由一个压黑背景的 View 上面加上一个包含确定和取消两个按钮和 pickerview 的 containview 组成。
 先在最开始进行一些颜色，屏幕大小的宏定义和全局静态变量定义，方便使用</p>
-
-<pre><code>#define SCREEN_WIDTH ([UIScreen mainScreen].bounds.size.width)
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">#define SCREEN_WIDTH ([UIScreen mainScreen].bounds.size.width)
 #define SCREEN_HEIGHT ([UIScreen mainScreen].bounds.size.height)
 #define BACKGROUND_BLACK_COLOR [UIColor colorWithRed:0.412 green:0.412 blue:0.412 alpha:0.7]
 static const int pickerViewHeight = 228;
-static const int toolBarHeight = 44;
-</code></pre>
-
+static const int toolBarHeight = 44;</pre></div>
 <p>进行 view 的布局，增加 button 点击动作等，pickerview 要指定 datasource 和 delegate 为 self</p>
-
-<pre><code>- (void)initView{
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">- (void)initView{
     UIView *containerView = [[UIView alloc]initWithFrame:CGRectMake(0, SCREEN_HEIGHT - pickerViewHeight, SCREEN_WIDTH, pickerViewHeight)];
     containerView.backgroundColor = [UIColor whiteColor];
     
     UIButton *btnOK = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH -70, 5, 40, 30)];
     btnOK.titleLabel.font = [UIFont systemFontOfSize:18.0];
-    [btnOK setTitle:@&quot;确定&quot; forState:UIControlStateNormal];
+    [btnOK setTitle:@&#34;确定&#34; forState:UIControlStateNormal];
     [btnOK setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
     [btnOK addTarget:self action:@selector(pickerViewBtnOk:) forControlEvents:UIControlEventTouchUpInside];
     [containerView addSubview:btnOK];
     
     UIButton *btnCancel = [[UIButton alloc] initWithFrame:CGRectMake(30, 5, 40, 30)];
     btnCancel.titleLabel.font = [UIFont systemFontOfSize:18.0];
-    [btnCancel setTitle:@&quot;取消&quot; forState:UIControlStateNormal];
+    [btnCancel setTitle:@&#34;取消&#34; forState:UIControlStateNormal];
     [btnCancel setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
     [btnCancel addTarget:self action:@selector(pickerViewBtnCancel:) forControlEvents:UIControlEventTouchUpInside];
     [containerView addSubview:btnCancel];
@@ -330,14 +331,11 @@ static const int toolBarHeight = 44;
     
     self.backgroundColor = BACKGROUND_BLACK_COLOR;
     [self addSubview:containerView];
-}
-</code></pre>
-
+}</pre></div>
 <h2 id="3-响应按钮点击事件">3.响应按钮点击事件</h2>
 
 <p>很简单，见代码即可。取消的话把传进来的 lastString 传回去即可。</p>
-
-<pre><code>#pragma mark - event response
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">#pragma mark - event response
 - (void)pickerViewBtnOk:(UIButton *)btn{
     [self removeFromSuperview];
 }
@@ -345,12 +343,9 @@ static const int toolBarHeight = 44;
 - (void)pickerViewBtnCancel:(UIButton *)btn{
     self.block (self.lastString);
     [self removeFromSuperview];
-}
-</code></pre>
-
+}</pre></div>
 <h2 id="4-封装成工厂方法">4.封装成工厂方法</h2>
-
-<pre><code>+ (void)showPickerInView:(UIView *)view
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">+ (void)showPickerInView:(UIView *)view
         withObjectsArray:(NSArray *)array
           withlastString:(NSString *)string
          withStringBlock:(CDZStringResultBlock)stringBlock{
@@ -361,9 +356,7 @@ static const int toolBarHeight = 44;
     pickerView.block(array[0]);//未滑动的话默认为第一个数据
     [pickerView initView];
     [view addSubview:pickerView];
-}
-</code></pre>
-
+}</pre></div>
 <h2 id="最后">最后</h2>
 
 <p>所有源码和 <a href="https://github.com/Nemocdz/CDZPickerViewDemo">Demo</a>
@@ -373,7 +366,7 @@ static const int toolBarHeight = 44;
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>981</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>982</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -400,18 +393,61 @@ static const int toolBarHeight = 44;
       
     
   </section>
-  <footer class="site-footer">
+  
+<footer class="site-footer">
   <p>© 2017-2019 Nemocdz&#39;s Blog</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>
 
 
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
 
-<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
-<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
 
 
 

@@ -9,113 +9,150 @@
 
   
   
-
-
-
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
 
   
-  <meta name="author" content="Nemocdz" />
+
+  
+  
   <meta name="description" content="[TOC]
 在很多电商，外卖，餐饮型应用里，都会在商品结束后评价中有一个星星组件。核心思路就是用 UIControl 并自定义实现其中的 trackTouch 的几个方法。而显示不到一个的星星，比如半个星星的思路是根据分数切割星星的图像并显示其中一部分。实现后效果如下。
-" />
+">
 
   
   
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@Nemocdz" />
-    <meta name="twitter:title" content="iOS 中实现支持小数的星星评分组件" />
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="iOS 中实现支持小数的星星评分组件">
     <meta name="twitter:description" content="[TOC]
 在很多电商，外卖，餐饮型应用里，都会在商品结束后评价中有一个星星组件。核心思路就是用 UIControl 并自定义实现其中的 trackTouch 的几个方法。而显示不到一个的星星，比如半个星星的思路是根据分数切割星星的图像并显示其中一部分。实现后效果如下。
-" />
-    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+">
+    <meta name="twitter:image" content="/images/avatar.png">
   
 
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="iOS 中实现支持小数的星星评分组件">
+  <meta property="og:description" content="[TOC]
+在很多电商，外卖，餐饮型应用里，都会在商品结束后评价中有一个星星组件。核心思路就是用 UIControl 并自定义实现其中的 trackTouch 的几个方法。而显示不到一个的星星，比如半个星星的思路是根据分数切割星星的图像并显示其中一部分。实现后效果如下。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81%E5%B0%8F%E6%95%B0%E7%9A%84%E6%98%9F%E6%98%9F%E8%AF%84%E5%88%86%E7%BB%84%E4%BB%B6/">
+  <meta property="og:image" content="/images/avatar.png">
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+
+<meta name="generator" content="Hugo 0.55.6">
 
 
-<link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81%E5%B0%8F%E6%95%B0%E7%9A%84%E6%98%9F%E6%98%9F%E8%AF%84%E5%88%86%E7%BB%84%E4%BB%B6/" />
-<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+<link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81%E5%B0%8F%E6%95%B0%E7%9A%84%E6%98%9F%E6%98%9F%E8%AF%84%E5%88%86%E7%BB%84%E4%BB%B6/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
 
 
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
-<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
-<meta name="baidu-site-verification" content="iVpH4VhHBT" />
-<meta name="sogou_site_verification" content="YPqjjJgiSh" />
-<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
 
 
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
-<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
 
 
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
 
-<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
 
 
   
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
 
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
-  <![endif]-->
-
-
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
-
-
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
 
 
 </head>
   <body>
-    
     <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
       
         
-        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
         
       
     </div>
     
     
   <header class="site-header">
-  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
   
-  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
   
-  <p class="subtitle">iOS&amp;Android Dev</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
   </button>
+
   <nav class="site-menu collapsed">
     <h2 class="offscreen">Main Menu</h2>
     <ul class="menu-list">
@@ -123,79 +160,53 @@
       
       
       
-        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/">首页</a>
+        </li>
       
-        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
       
     </ul>
   </nav>
   <nav class="social-menu collapsed">
     <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-      <li class="social-item">
-        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
-      </li>
-
-      
-      <li class="social-item">
-        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
-      </li>
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
-      </li>
-
-      
-
-      <li class="social-item">
-        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
   </nav>
 </header>
 
@@ -217,40 +228,40 @@
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fft5yrflcoj30dl06c3za.jpg" alt="屏幕快照 2017-05-21 下午6.32.58" /></p>
 
 <p>之后，我们就可以按百分比裁剪图片</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">+</span> <span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="nf">croppedImage:</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="nv">image</span> <span class="nf">fraction:</span><span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nv">fractonPart</span><span class="p">{</span>
-    <span class="n">CGFloat</span> <span class="n">width</span> <span class="o">=</span> <span class="n">image</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">width</span> <span class="o">*</span> <span class="n">fractonPart</span> <span class="o">*</span> <span class="n">image</span><span class="p">.</span><span class="n">scale</span><span class="p">;</span>
-    <span class="n">CGRect</span> <span class="n">newFrame</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">width</span> <span class="p">,</span> <span class="n">image</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">height</span> <span class="o">*</span> <span class="n">image</span><span class="p">.</span><span class="n">scale</span><span class="p">);</span>
-    <span class="n">CGImageRef</span> <span class="n">resultImage</span> <span class="o">=</span> <span class="n">CGImageCreateWithImageInRect</span><span class="p">(</span><span class="n">image</span><span class="p">.</span><span class="n">CGImage</span><span class="p">,</span> <span class="n">newFrame</span><span class="p">);</span>
-    <span class="n">UIImage</span> <span class="o">*</span><span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIImage</span> <span class="nl">imageWithCGImage</span><span class="p">:</span><span class="n">resultImage</span> <span class="nl">scale</span><span class="p">:</span><span class="n">image</span><span class="p">.</span><span class="n">scale</span> <span class="nl">orientation</span><span class="p">:</span><span class="n">image</span><span class="p">.</span><span class="n">imageOrientation</span><span class="p">];</span>
-    <span class="n">CGImageRelease</span><span class="p">(</span><span class="n">resultImage</span><span class="p">);</span>
-    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">+ (UIImage <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">croppedImage:</span>(UIImage <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">image</span> <span style="color:#50fa7b">fraction:</span>(CGFloat)<span style="color:#8be9fd;font-style:italic">fractonPart</span>{
+    CGFloat width <span style="color:#ff79c6">=</span> image.size.width <span style="color:#ff79c6">*</span> fractonPart <span style="color:#ff79c6">*</span> image.scale;
+    CGRect newFrame <span style="color:#ff79c6">=</span> CGRectMake(<span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">0</span>, width , image.size.height <span style="color:#ff79c6">*</span> image.scale);
+    CGImageRef resultImage <span style="color:#ff79c6">=</span> CGImageCreateWithImageInRect(image.CGImage, newFrame);
+    UIImage <span style="color:#ff79c6">*</span>result <span style="color:#ff79c6">=</span> [UIImage <span style="color:#8be9fd;font-style:italic">imageWithCGImage</span>:resultImage <span style="color:#8be9fd;font-style:italic">scale</span>:image.scale <span style="color:#8be9fd;font-style:italic">orientation</span>:image.imageOrientation];
+    CGImageRelease(resultImage);
+    <span style="color:#ff79c6">return</span> result;
+}</code></pre></div>
 <p>并在 BackgroundImage 设置为灰色的星星图像，设置为 Button 的 highlighted 状态</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setFractionPart:</span><span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nv">fractionPart</span><span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">fractionPart</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="n">UIImage</span> <span class="o">*</span><span class="n">image</span> <span class="o">=</span> <span class="p">[</span><span class="n">CDZStarButton</span> <span class="nl">croppedImage</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">highlightedImage</span> <span class="nl">fraction</span><span class="p">:</span><span class="n">fractionPart</span><span class="p">];</span>
-    <span class="nb">self</span><span class="p">.</span><span class="n">imageView</span><span class="p">.</span><span class="n">contentMode</span> <span class="o">=</span> <span class="n">UIViewContentModeScaleAspectFit</span><span class="p">;</span>
-    <span class="nb">self</span><span class="p">.</span><span class="n">contentHorizontalAlignment</span> <span class="o">=</span> <span class="n">UIControlContentHorizontalAlignmentLeft</span><span class="p">;</span>
-    <span class="nb">self</span><span class="p">.</span><span class="n">contentVerticalAlignment</span> <span class="o">=</span> <span class="n">UIControlContentVerticalAlignmentFill</span><span class="p">;</span>
-    <span class="p">[</span><span class="nb">self</span> <span class="nl">setImage</span><span class="p">:</span><span class="n">image</span> <span class="nl">forState</span><span class="p">:</span><span class="n">UIControlStateHighlighted</span><span class="p">];</span>
-    <span class="p">[</span><span class="nb">self</span> <span class="nl">setBackgroundImage</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">normalImage</span> <span class="nl">forState</span><span class="p">:</span><span class="n">UIControlStateHighlighted</span><span class="p">];</span>
-    <span class="nb">self</span><span class="p">.</span><span class="n">selected</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span>
-    <span class="nb">self</span><span class="p">.</span><span class="n">highlighted</span> <span class="o">=</span> <span class="nb">YES</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">setFractionPart:</span>(CGFloat)<span style="color:#8be9fd;font-style:italic">fractionPart</span>{
+    <span style="color:#ff79c6">if</span> (fractionPart <span style="color:#ff79c6">==</span> <span style="color:#bd93f9">0</span>) {
+        <span style="color:#ff79c6">return</span>;
+    }
+    UIImage <span style="color:#ff79c6">*</span>image <span style="color:#ff79c6">=</span> [CDZStarButton <span style="color:#8be9fd;font-style:italic">croppedImage</span>:<span style="color:#8be9fd;font-style:italic">self</span>.highlightedImage <span style="color:#8be9fd;font-style:italic">fraction</span>:fractionPart];
+    <span style="color:#8be9fd;font-style:italic">self</span>.imageView.contentMode <span style="color:#ff79c6">=</span> UIViewContentModeScaleAspectFit;
+    <span style="color:#8be9fd;font-style:italic">self</span>.contentHorizontalAlignment <span style="color:#ff79c6">=</span> UIControlContentHorizontalAlignmentLeft;
+    <span style="color:#8be9fd;font-style:italic">self</span>.contentVerticalAlignment <span style="color:#ff79c6">=</span> UIControlContentVerticalAlignmentFill;
+    [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">setImage</span>:image <span style="color:#8be9fd;font-style:italic">forState</span>:UIControlStateHighlighted];
+    [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">setBackgroundImage</span>:<span style="color:#8be9fd;font-style:italic">self</span>.normalImage <span style="color:#8be9fd;font-style:italic">forState</span>:UIControlStateHighlighted];
+    <span style="color:#8be9fd;font-style:italic">self</span>.selected <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
+    <span style="color:#8be9fd;font-style:italic">self</span>.highlighted <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
+}</code></pre></div>
 <p>而全高亮的状态可以设置为 <code>UIButton</code> 的点击态</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setHighlightedImage:</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="nv">highlightedImage</span><span class="p">{</span>
-    <span class="n">_highlightedImage</span> <span class="o">=</span> <span class="p">[</span><span class="n">CDZStarButton</span> <span class="nl">reSizeImage</span><span class="p">:</span><span class="n">highlightedImage</span> <span class="nl">toSize</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">];</span>
-    <span class="p">[</span><span class="nb">self</span> <span class="nl">setImage</span><span class="p">:</span><span class="n">_highlightedImage</span> <span class="nl">forState</span><span class="p">:</span><span class="n">UIControlStateSelected</span><span class="p">];</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">setHighlightedImage:</span>(UIImage <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">highlightedImage</span>{
+    _highlightedImage <span style="color:#ff79c6">=</span> [CDZStarButton <span style="color:#8be9fd;font-style:italic">reSizeImage</span>:highlightedImage <span style="color:#8be9fd;font-style:italic">toSize</span>:<span style="color:#8be9fd;font-style:italic">self</span>.frame.size];
+    [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">setImage</span>:_highlightedImage <span style="color:#8be9fd;font-style:italic">forState</span>:UIControlStateSelected];
+}</code></pre></div>
 <p>而点击事件交由给上层的 <code>UIControl</code> 去处理，因为点击的时候，除了点击的星星本身，之前的星星也应该处于完全高亮状态。在上层初始化按钮的时候把其 userInteractionEnabled 属性设置为 NO 即可，这样触摸事件就会忽略传递到 Button 去做事件处理，从而从响应者链传递上去交由父视图的 <code>UIControl</code> 处理。</p>
 
 <p>如果点击到星星的一半，我们应该把点击点转换成小数部分给上层。C 语言的 <code>round</code> 函数可以四舍五入，这里的 10 代表保留一位小数，可以根据实际情况保留位数，一般评分很少需要更高精度的。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nf">fractionPartOfPoint:</span><span class="p">(</span><span class="n">CGPoint</span><span class="p">)</span><span class="nv">point</span><span class="p">{</span>
-    <span class="n">CGFloat</span> <span class="n">fractionPart</span> <span class="o">=</span>  <span class="p">(</span><span class="n">point</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="p">;</span>
-    <span class="k">return</span> <span class="n">round</span><span class="p">(</span><span class="n">fractionPart</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (CGFloat)<span style="color:#50fa7b">fractionPartOfPoint:</span>(CGPoint)<span style="color:#8be9fd;font-style:italic">point</span>{
+    CGFloat fractionPart <span style="color:#ff79c6">=</span>  (point.x <span style="color:#ff79c6">-</span> <span style="color:#8be9fd;font-style:italic">self</span>.frame.origin.x) <span style="color:#ff79c6">/</span> <span style="color:#8be9fd;font-style:italic">self</span>.frame.size.width;
+    <span style="color:#ff79c6">return</span> round(fractionPart <span style="color:#ff79c6">*</span> <span style="color:#bd93f9">10</span>) <span style="color:#ff79c6">/</span> <span style="color:#bd93f9">10</span>;
+}</code></pre></div>
 <p>到这里一个可以显示分数的星星按钮就完成了，接下来就是在上层的 <code>UIControl</code> 去处理触摸事件的响应。</p>
 
 <h2 id="uicontrol-部分的实现">UIControl 部分的实现</h2>
@@ -260,88 +271,88 @@
 <h3 id="布局">布局</h3>
 
 <p>首先根据星星的数量一个个添加上视图，用 <code>UIView</code> 的 tag 来表示对应第几个星星按钮。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setupView</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="n">NSInteger</span> <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">self</span><span class="p">.</span><span class="n">numberOfStars</span><span class="p">;</span> <span class="n">index</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">CDZStarButton</span> <span class="o">*</span><span class="n">starButton</span> <span class="o">=</span> <span class="p">[</span><span class="n">CDZStarButton</span><span class="p">.</span><span class="n">alloc</span> <span class="nl">initWithSize</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">starSize</span><span class="p">];</span>
-        <span class="n">starButton</span><span class="p">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">index</span><span class="p">;</span>
-        <span class="n">starButton</span><span class="p">.</span><span class="n">normalImage</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">normalStarImage</span><span class="p">;</span>
-        <span class="n">starButton</span><span class="p">.</span><span class="n">highlightedImage</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">highlightedStarImage</span><span class="p">;</span>
-	    <span class="n">starButton</span><span class="p">.</span><span class="n">userInteractionEnabled</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span><span class="c1">//关闭事件响应，交由UIControl本身处理
-</span><span class="c1"></span>        <span class="p">[</span><span class="nb">self</span> <span class="nl">addSubview</span><span class="p">:</span><span class="n">starButton</span><span class="p">];</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">setupView</span> {
+    <span style="color:#ff79c6">for</span> (NSInteger index <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; index <span style="color:#ff79c6">&lt;</span> <span style="color:#8be9fd;font-style:italic">self</span>.numberOfStars; index<span style="color:#ff79c6">++</span>) {
+        CDZStarButton <span style="color:#ff79c6">*</span>starButton <span style="color:#ff79c6">=</span> [CDZStarButton.alloc <span style="color:#8be9fd;font-style:italic">initWithSize</span>:<span style="color:#8be9fd;font-style:italic">self</span>.starSize];
+        starButton.tag <span style="color:#ff79c6">=</span> index;
+        starButton.normalImage <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.normalStarImage;
+        starButton.highlightedImage <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.highlightedStarImage;
+	    starButton.userInteractionEnabled <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">NO</span>;<span style="color:#6272a4">//关闭事件响应，交由UIControl本身处理
+</span><span style="color:#6272a4"></span>        [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">addSubview</span>:starButton];
+    }
+}</code></pre></div>
 <p>然后是计算每个星星的位置，计算间隔和上下边距并 Layout。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">layoutSubviews</span> <span class="p">{</span>
-    <span class="p">[</span><span class="nb">super</span> <span class="n">layoutSubviews</span><span class="p">];</span>
-    <span class="k">for</span> <span class="p">(</span><span class="n">NSInteger</span> <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">self</span><span class="p">.</span><span class="n">numberOfStars</span><span class="p">;</span> <span class="n">index</span> <span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">CDZStarButton</span> <span class="o">*</span><span class="n">starButton</span> <span class="o">=</span>  <span class="p">[</span><span class="nb">self</span> <span class="nl">starForTag</span><span class="p">:</span><span class="n">index</span><span class="p">];</span>
-        <span class="n">CGFloat</span> <span class="n">newY</span> <span class="o">=</span> <span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">height</span> <span class="o">-</span> <span class="nb">self</span><span class="p">.</span><span class="n">starSize</span><span class="p">.</span><span class="n">height</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
-        <span class="n">CGFloat</span> <span class="n">margin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">numberOfStars</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">margin</span> <span class="o">=</span> <span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">width</span> <span class="o">-</span> <span class="nb">self</span><span class="p">.</span><span class="n">starSize</span><span class="p">.</span><span class="n">width</span> <span class="o">*</span> <span class="nb">self</span><span class="p">.</span><span class="n">numberOfStars</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">numberOfStars</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="n">starButton</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">((</span><span class="nb">self</span><span class="p">.</span><span class="n">starSize</span><span class="p">.</span><span class="n">width</span> <span class="o">+</span> <span class="n">margin</span><span class="p">)</span> <span class="o">*</span> <span class="n">index</span><span class="p">,</span> <span class="n">newY</span><span class="p">,</span> <span class="nb">self</span><span class="p">.</span><span class="n">starSize</span><span class="p">.</span><span class="n">width</span><span class="p">,</span> <span class="nb">self</span><span class="p">.</span><span class="n">starSize</span><span class="p">.</span><span class="n">height</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">layoutSubviews</span> {
+    [<span style="color:#8be9fd;font-style:italic">super</span> layoutSubviews];
+    <span style="color:#ff79c6">for</span> (NSInteger index <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; index <span style="color:#ff79c6">&lt;</span> <span style="color:#8be9fd;font-style:italic">self</span>.numberOfStars; index <span style="color:#ff79c6">++</span>) {
+        CDZStarButton <span style="color:#ff79c6">*</span>starButton <span style="color:#ff79c6">=</span>  [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">starForTag</span>:index];
+        CGFloat newY <span style="color:#ff79c6">=</span> (<span style="color:#8be9fd;font-style:italic">self</span>.frame.size.height <span style="color:#ff79c6">-</span> <span style="color:#8be9fd;font-style:italic">self</span>.starSize.height) <span style="color:#ff79c6">/</span> <span style="color:#bd93f9">2</span>;
+        CGFloat margin <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>;
+        <span style="color:#ff79c6">if</span> (<span style="color:#8be9fd;font-style:italic">self</span>.numberOfStars <span style="color:#ff79c6">&gt;</span> <span style="color:#bd93f9">1</span>) {
+            margin <span style="color:#ff79c6">=</span> (<span style="color:#8be9fd;font-style:italic">self</span>.frame.size.width <span style="color:#ff79c6">-</span> <span style="color:#8be9fd;font-style:italic">self</span>.starSize.width <span style="color:#ff79c6">*</span> <span style="color:#8be9fd;font-style:italic">self</span>.numberOfStars) <span style="color:#ff79c6">/</span> (<span style="color:#8be9fd;font-style:italic">self</span>.numberOfStars <span style="color:#ff79c6">-</span> <span style="color:#bd93f9">1</span>);
+        }
+        starButton.frame <span style="color:#ff79c6">=</span> CGRectMake((<span style="color:#8be9fd;font-style:italic">self</span>.starSize.width <span style="color:#ff79c6">+</span> margin) <span style="color:#ff79c6">*</span> index, newY, <span style="color:#8be9fd;font-style:italic">self</span>.starSize.width, <span style="color:#8be9fd;font-style:italic">self</span>.starSize.height);
+    }
+}</code></pre></div>
 <p>这时，我们可以加上两个方法去找到对应的星星 Button，根据 tag 和根据点击的 <code>CGPoint</code></p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">CDZStarButton</span> <span class="o">*</span><span class="p">)</span><span class="nf">starForPoint:</span><span class="p">(</span><span class="n">CGPoint</span><span class="p">)</span><span class="nv">point</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="n">NSInteger</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">self</span><span class="p">.</span><span class="n">numberOfStars</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">CDZStarButton</span> <span class="o">*</span><span class="n">starButton</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">starForTag</span><span class="p">:</span><span class="n">i</span><span class="p">];</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">CGRectContainsPoint</span><span class="p">(</span><span class="n">starButton</span><span class="p">.</span><span class="n">frame</span><span class="p">,</span> <span class="n">point</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="n">starButton</span><span class="p">;</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
-<span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (CDZStarButton <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">starForPoint:</span>(CGPoint)<span style="color:#8be9fd;font-style:italic">point</span> {
+    <span style="color:#ff79c6">for</span> (NSInteger i <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; i <span style="color:#ff79c6">&lt;</span> <span style="color:#8be9fd;font-style:italic">self</span>.numberOfStars; i<span style="color:#ff79c6">++</span>) {
+        CDZStarButton <span style="color:#ff79c6">*</span>starButton <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">starForTag</span>:i];
+        <span style="color:#ff79c6">if</span> (CGRectContainsPoint(starButton.frame, point)) {
+            <span style="color:#ff79c6">return</span> starButton;
+        }
+    }
+    <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">nil</span>;
+}
 
-<span class="p">-</span> <span class="p">(</span><span class="n">CDZStarButton</span> <span class="o">*</span><span class="p">)</span><span class="nf">starForTag:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">tag</span> <span class="p">{</span>
-    <span class="k">__block</span> <span class="n">UIView</span> <span class="o">*</span><span class="n">target</span><span class="p">;</span>
-    <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">subviews</span> <span class="nl">enumerateObjectsUsingBlock</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">__kindof</span> <span class="n">UIView</span> <span class="o">*</span> <span class="n">_Nonnull</span> <span class="n">obj</span><span class="p">,</span> <span class="n">NSUInteger</span> <span class="n">idx</span><span class="p">,</span> <span class="kt">BOOL</span> <span class="o">*</span> <span class="n">_Nonnull</span> <span class="n">stop</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">tag</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">target</span> <span class="o">=</span> <span class="n">obj</span><span class="p">;</span>
-            <span class="o">*</span><span class="n">stop</span> <span class="o">=</span> <span class="nb">YES</span><span class="p">;</span>
-        <span class="p">}</span>
-    <span class="p">}];</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">CDZStarButton</span> <span class="o">*</span><span class="p">)</span><span class="n">target</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+- (CDZStarButton <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">starForTag:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">tag</span> {
+    <span style="color:#ff79c6">__block</span> UIView <span style="color:#ff79c6">*</span>target;
+    [<span style="color:#8be9fd;font-style:italic">self</span>.subviews <span style="color:#8be9fd;font-style:italic">enumerateObjectsUsingBlock</span>:<span style="color:#ff79c6">^</span>(__kindof UIView <span style="color:#ff79c6">*</span> _Nonnull obj, NSUInteger idx, <span style="color:#8be9fd">BOOL</span> <span style="color:#ff79c6">*</span> _Nonnull stop) {
+        <span style="color:#ff79c6">if</span> (obj.tag <span style="color:#ff79c6">==</span> tag) {
+            target <span style="color:#ff79c6">=</span> obj;
+            <span style="color:#ff79c6">*</span>stop <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
+        }
+    }];
+    <span style="color:#ff79c6">return</span> (CDZStarButton <span style="color:#ff79c6">*</span>)target;
+}</code></pre></div>
 <h3 id="处理触摸事件">处理触摸事件</h3>
 
 <p>我们先加上两个方法。一个是从第一个到某个星星开始从左到右依次点亮，一个是从最后一个星星到某个星星从右到左依次熄灭。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">starsDownToIndex:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">index</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="n">NSInteger</span> <span class="n">i</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">numberOfStars</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">index</span><span class="p">;</span> <span class="o">--</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">CDZStarButton</span> <span class="o">*</span><span class="n">starButton</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">starForTag</span><span class="p">:</span><span class="n">i</span><span class="p">];</span>
-        <span class="n">starButton</span><span class="p">.</span><span class="n">selected</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span>
-        <span class="n">starButton</span><span class="p">.</span><span class="n">highlighted</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">starsDownToIndex:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">index</span> {
+    <span style="color:#ff79c6">for</span> (NSInteger i <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.numberOfStars; i <span style="color:#ff79c6">&gt;</span> index; <span style="color:#ff79c6">--</span>i) {
+        CDZStarButton <span style="color:#ff79c6">*</span>starButton <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">starForTag</span>:i];
+        starButton.selected <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
+        starButton.highlighted <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
+    }
+}
 
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">starsUpToIndex:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">index</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="n">NSInteger</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">index</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">CDZStarButton</span> <span class="o">*</span><span class="n">starButton</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">starForTag</span><span class="p">:</span><span class="n">i</span><span class="p">];</span>
-        <span class="n">starButton</span><span class="p">.</span><span class="n">selected</span> <span class="o">=</span> <span class="nb">YES</span><span class="p">;</span>
-        <span class="n">starButton</span><span class="p">.</span><span class="n">highlighted</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">starsUpToIndex:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">index</span> {
+    <span style="color:#ff79c6">for</span> (NSInteger i <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; i <span style="color:#ff79c6">&lt;=</span> index; i<span style="color:#ff79c6">++</span>) {
+        CDZStarButton <span style="color:#ff79c6">*</span>starButton <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">starForTag</span>:i];
+        starButton.selected <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
+        starButton.highlighted <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
+    }
+}</code></pre></div>
 <p>然后设置一个评分的属性，重写其 setter 方法。allowFraction，用来判断组件是否需要分数表示，<code>floor</code> 函数是取最大整数，相当于直接去除小数点后面的数字。判断评分的整数部分是否已经亮着，亮着那么说明从左到右最后一个亮着的右边，反之在左边，分别调用从右到左依次熄灭，或从左到右依次点亮的方法，最后再设置分数部分。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setScore:</span><span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span><span class="nv">score</span><span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">_score</span> <span class="o">==</span> <span class="n">score</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="n">_score</span> <span class="o">=</span> <span class="n">score</span><span class="p">;</span>
-    <span class="n">NSInteger</span> <span class="n">index</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">score</span><span class="p">);</span>
-    <span class="n">CGFloat</span> <span class="n">fractionPart</span> <span class="o">=</span> <span class="n">score</span> <span class="o">-</span> <span class="n">index</span><span class="p">;;</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">self</span><span class="p">.</span><span class="n">isAllowFraction</span> <span class="o">||</span> <span class="n">fractionPart</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">index</span> <span class="o">-=</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="n">CDZStarButton</span> <span class="o">*</span><span class="n">starButton</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">starForTag</span><span class="p">:</span><span class="n">index</span><span class="p">];</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">starButton</span><span class="p">.</span><span class="n">selected</span><span class="p">)</span> <span class="p">{</span>
-        <span class="p">[</span><span class="nb">self</span> <span class="nl">starsDownToIndex</span><span class="p">:</span><span class="n">index</span><span class="p">];</span>
-    <span class="p">}</span>
-    <span class="k">else</span><span class="p">{</span>
-        <span class="p">[</span><span class="nb">self</span> <span class="nl">starsUpToIndex</span><span class="p">:</span><span class="n">index</span><span class="p">];</span>
-    <span class="p">}</span>
-    <span class="n">starButton</span><span class="p">.</span><span class="n">fractionPart</span> <span class="o">=</span> <span class="n">fractionPart</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">setScore:</span>(CGFloat)<span style="color:#8be9fd;font-style:italic">score</span>{
+    <span style="color:#ff79c6">if</span> (_score <span style="color:#ff79c6">==</span> score) {
+        <span style="color:#ff79c6">return</span>;
+    }
+    _score <span style="color:#ff79c6">=</span> score;
+    NSInteger index <span style="color:#ff79c6">=</span> floor(score);
+    CGFloat fractionPart <span style="color:#ff79c6">=</span> score <span style="color:#ff79c6">-</span> index;;
+    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span><span style="color:#8be9fd;font-style:italic">self</span>.isAllowFraction <span style="color:#ff79c6">||</span> fractionPart <span style="color:#ff79c6">==</span> <span style="color:#bd93f9">0</span>) {
+        index <span style="color:#ff79c6">-=</span> <span style="color:#bd93f9">1</span>;
+    }
+    CDZStarButton <span style="color:#ff79c6">*</span>starButton <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">starForTag</span>:index];
+    <span style="color:#ff79c6">if</span> (starButton.selected) {
+        [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">starsDownToIndex</span>:index];
+    }
+    <span style="color:#ff79c6">else</span>{
+        [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">starsUpToIndex</span>:index];
+    }
+    starButton.fractionPart <span style="color:#ff79c6">=</span> fractionPart;
+}</code></pre></div>
 <p>主要用到 <code>UIControl</code> 的四个方法</p>
 
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fft5y5gq92j30vt02475g.jpg" alt="屏幕快照 2017-05-21 下午6.31.56" /></p>
@@ -349,94 +360,94 @@
 <p>第一个是开始点击的时候的事件处理，第二个是手指未抬起在屏幕上继续移动的事件处理，第三个是离开屏幕，第四个是因为别的特殊情况事件被结束的处理。</p>
 
 <p>点击时候只要确定点击的星星，确定其小数部分，然后调用评分属性的 setter 方法就好了。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nf">beginTrackingWithTouch:</span><span class="p">(</span><span class="n">UITouch</span> <span class="o">*</span><span class="p">)</span><span class="nv">touch</span> <span class="nf">withEvent:</span><span class="p">(</span><span class="n">UIEvent</span> <span class="o">*</span><span class="p">)</span><span class="nv">event</span> <span class="p">{</span>
-    <span class="n">CGPoint</span> <span class="n">point</span> <span class="o">=</span> <span class="p">[</span><span class="n">touch</span> <span class="nl">locationInView</span><span class="p">:</span><span class="nb">self</span><span class="p">];</span>
-    <span class="n">CDZStarButton</span> <span class="o">*</span><span class="n">pressedStar</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">starForPoint</span><span class="p">:</span><span class="n">point</span><span class="p">];</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">pressedStar</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">currentStar</span> <span class="o">=</span> <span class="n">pressedStar</span><span class="p">;</span>
-        <span class="n">NSInteger</span> <span class="n">index</span> <span class="o">=</span> <span class="n">pressedStar</span><span class="p">.</span><span class="n">tag</span><span class="p">;</span>
-        <span class="n">CGFloat</span> <span class="n">fractionPart</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">isAllowFraction</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">fractionPart</span> <span class="o">=</span> <span class="p">[</span><span class="n">pressedStar</span> <span class="nl">fractionPartOfPoint</span><span class="p">:</span><span class="n">point</span><span class="p">];</span>
-        <span class="p">}</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">index</span> <span class="o">+</span> <span class="n">fractionPart</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nb">YES</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">BOOL</span>)<span style="color:#50fa7b">beginTrackingWithTouch:</span>(UITouch <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">touch</span> <span style="color:#50fa7b">withEvent:</span>(UIEvent <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">event</span> {
+    CGPoint point <span style="color:#ff79c6">=</span> [touch <span style="color:#8be9fd;font-style:italic">locationInView</span>:<span style="color:#8be9fd;font-style:italic">self</span>];
+    CDZStarButton <span style="color:#ff79c6">*</span>pressedStar <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">starForPoint</span>:point];
+    <span style="color:#ff79c6">if</span> (pressedStar) {
+        <span style="color:#8be9fd;font-style:italic">self</span>.currentStar <span style="color:#ff79c6">=</span> pressedStar;
+        NSInteger index <span style="color:#ff79c6">=</span> pressedStar.tag;
+        CGFloat fractionPart <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span>;
+        <span style="color:#ff79c6">if</span> (<span style="color:#8be9fd;font-style:italic">self</span>.isAllowFraction) {
+            fractionPart <span style="color:#ff79c6">=</span> [pressedStar <span style="color:#8be9fd;font-style:italic">fractionPartOfPoint</span>:point];
+        }
+        <span style="color:#8be9fd;font-style:italic">self</span>.score <span style="color:#ff79c6">=</span> index <span style="color:#ff79c6">+</span> fractionPart;
+    }
+    <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
+}</code></pre></div>
 <p>移动处理除了和点击一样的判断逻辑，还要注意手指移开了星星之外的地方，分为所在星星的左边（当前星星熄灭），右边（当前星星完全点亮）两种。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nf">continueTrackingWithTouch:</span><span class="p">(</span><span class="n">UITouch</span> <span class="o">*</span><span class="p">)</span><span class="nv">touch</span> <span class="nf">withEvent:</span><span class="p">(</span><span class="n">UIEvent</span> <span class="o">*</span><span class="p">)</span><span class="nv">event</span> <span class="p">{</span>
-    <span class="n">CGPoint</span> <span class="n">point</span> <span class="o">=</span> <span class="p">[</span><span class="n">touch</span> <span class="nl">locationInView</span><span class="p">:</span><span class="nb">self</span><span class="p">];</span>
-    <span class="n">CDZStarButton</span> <span class="o">*</span><span class="n">pressedStar</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">starForPoint</span><span class="p">:</span><span class="n">point</span><span class="p">];</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">pressedStar</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">currentStar</span> <span class="o">=</span> <span class="n">pressedStar</span><span class="p">;</span>
-        <span class="n">NSInteger</span> <span class="n">index</span> <span class="o">=</span> <span class="n">pressedStar</span><span class="p">.</span><span class="n">tag</span><span class="p">;</span>
-        <span class="n">CGFloat</span> <span class="n">fractionPart</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">isAllowFraction</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">fractionPart</span> <span class="o">=</span> <span class="p">[</span><span class="n">pressedStar</span> <span class="nl">fractionPartOfPoint</span><span class="p">:</span><span class="n">point</span><span class="p">];</span>
-        <span class="p">}</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">index</span> <span class="o">+</span> <span class="n">fractionPart</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">else</span><span class="p">{</span>
-      	<span class="c1">//移到了当前星星的左边
-</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">point</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;</span> <span class="nb">self</span><span class="p">.</span><span class="n">currentStar</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nb">self</span><span class="p">.</span><span class="n">score</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">currentStar</span><span class="p">.</span><span class="n">tag</span><span class="p">;</span>
-        <span class="p">}</span>
-      	<span class="c1">//移到了当前星星的右边
-</span><span class="c1"></span>        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">point</span><span class="p">.</span><span class="n">x</span> <span class="o">&gt;</span> <span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">currentStar</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="nb">self</span><span class="p">.</span><span class="n">currentStar</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="p">)){</span>
-            <span class="nb">self</span><span class="p">.</span><span class="n">score</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">currentStar</span><span class="p">.</span><span class="n">tag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nb">YES</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">BOOL</span>)<span style="color:#50fa7b">continueTrackingWithTouch:</span>(UITouch <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">touch</span> <span style="color:#50fa7b">withEvent:</span>(UIEvent <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">event</span> {
+    CGPoint point <span style="color:#ff79c6">=</span> [touch <span style="color:#8be9fd;font-style:italic">locationInView</span>:<span style="color:#8be9fd;font-style:italic">self</span>];
+    CDZStarButton <span style="color:#ff79c6">*</span>pressedStar <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">starForPoint</span>:point];
+    <span style="color:#ff79c6">if</span> (pressedStar) {
+        <span style="color:#8be9fd;font-style:italic">self</span>.currentStar <span style="color:#ff79c6">=</span> pressedStar;
+        NSInteger index <span style="color:#ff79c6">=</span> pressedStar.tag;
+        CGFloat fractionPart <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span>;
+        <span style="color:#ff79c6">if</span> (<span style="color:#8be9fd;font-style:italic">self</span>.isAllowFraction) {
+            fractionPart <span style="color:#ff79c6">=</span> [pressedStar <span style="color:#8be9fd;font-style:italic">fractionPartOfPoint</span>:point];
+        }
+        <span style="color:#8be9fd;font-style:italic">self</span>.score <span style="color:#ff79c6">=</span> index <span style="color:#ff79c6">+</span> fractionPart;
+    }
+    <span style="color:#ff79c6">else</span>{
+      	<span style="color:#6272a4">//移到了当前星星的左边
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">if</span> (point.x <span style="color:#ff79c6">&lt;</span> <span style="color:#8be9fd;font-style:italic">self</span>.currentStar.frame.origin.x) {
+            <span style="color:#8be9fd;font-style:italic">self</span>.score <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.currentStar.tag;
+        }
+      	<span style="color:#6272a4">//移到了当前星星的右边
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> (point.x <span style="color:#ff79c6">&gt;</span> (<span style="color:#8be9fd;font-style:italic">self</span>.currentStar.frame.origin.x <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">self</span>.currentStar.frame.size.width)){
+            <span style="color:#8be9fd;font-style:italic">self</span>.score <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.currentStar.tag <span style="color:#ff79c6">+</span> <span style="color:#bd93f9">1</span>;
+        }
+    }
+    <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
+}</code></pre></div>
 <p>而完成触摸操作时，我们就可以用一个回调将当前的评分传给外界。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="k">@protocol</span> <span class="nc">CDZStarsControlDelegate</span><span class="o">&lt;</span><span class="n">NSObject</span><span class="o">&gt;</span>
-<span class="k">@optional</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@protocol</span> <span style="color:#50fa7b">CDZStarsControlDelegate</span><span style="color:#ff79c6">&lt;</span>NSObject<span style="color:#ff79c6">&gt;</span>
+<span style="color:#ff79c6">@optional</span>
 
-<span class="cm">/**
-</span><span class="cm"> 回调星星改变后的分数
-</span><span class="cm">
-</span><span class="cm"> @param starsControl 星星组件
-</span><span class="cm"> @param score 分数
-</span><span class="cm"> */</span>
-<span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">starsControl</span><span class="p">:(</span><span class="n">CDZStarsControl</span> <span class="o">*</span><span class="p">)</span><span class="n">starsControl</span> <span class="nl">didChangeScore</span><span class="p">:(</span><span class="n">CGFloat</span><span class="p">)</span><span class="n">score</span><span class="p">;</span>
-<span class="k">@end</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">endTrackingWithTouch:</span><span class="p">(</span><span class="n">UITouch</span> <span class="o">*</span><span class="p">)</span><span class="nv">touch</span> <span class="nf">withEvent:</span><span class="p">(</span><span class="n">UIEvent</span> <span class="o">*</span><span class="p">)</span><span class="nv">event</span> <span class="p">{</span>
-    <span class="p">[</span><span class="nb">super</span> <span class="nl">endTrackingWithTouch</span><span class="p">:</span><span class="n">touch</span> <span class="nl">withEvent</span><span class="p">:</span><span class="n">event</span><span class="p">];</span>
-    <span class="k">if</span> <span class="p">([</span><span class="nb">self</span><span class="p">.</span><span class="n">delegate</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">starsControl</span><span class="p">:</span><span class="nl">didChangeScore</span><span class="p">:)])</span> <span class="p">{</span>
-        <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">delegate</span> <span class="nl">starsControl</span><span class="p">:</span><span class="nb">self</span> <span class="nl">didChangeScore</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">score</span><span class="p">];</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+<span style="color:#6272a4">/**
+</span><span style="color:#6272a4"> 回调星星改变后的分数
+</span><span style="color:#6272a4">
+</span><span style="color:#6272a4"> @param starsControl 星星组件
+</span><span style="color:#6272a4"> @param score 分数
+</span><span style="color:#6272a4"> */</span>
+<span style="color:#ff79c6">-</span> (<span style="color:#8be9fd">void</span>)<span style="color:#8be9fd;font-style:italic">starsControl</span>:(CDZStarsControl <span style="color:#ff79c6">*</span>)starsControl <span style="color:#8be9fd;font-style:italic">didChangeScore</span>:(CGFloat)score;
+<span style="color:#ff79c6">@end</span></code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">endTrackingWithTouch:</span>(UITouch <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">touch</span> <span style="color:#50fa7b">withEvent:</span>(UIEvent <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">event</span> {
+    [<span style="color:#8be9fd;font-style:italic">super</span> <span style="color:#8be9fd;font-style:italic">endTrackingWithTouch</span>:touch <span style="color:#8be9fd;font-style:italic">withEvent</span>:event];
+    <span style="color:#ff79c6">if</span> ([<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">starsControl</span>:<span style="color:#8be9fd;font-style:italic">didChangeScore</span>:)]) {
+        [<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">starsControl</span>:<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">didChangeScore</span>:<span style="color:#8be9fd;font-style:italic">self</span>.score];
+    }
+}
 
 
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">cancelTrackingWithEvent:</span><span class="p">(</span><span class="n">UIEvent</span> <span class="o">*</span><span class="p">)</span><span class="nv">event</span> <span class="p">{</span>
-    <span class="p">[</span><span class="nb">super</span> <span class="nl">cancelTrackingWithEvent</span><span class="p">:</span><span class="n">event</span><span class="p">];</span>
-    <span class="k">if</span> <span class="p">([</span><span class="nb">self</span><span class="p">.</span><span class="n">delegate</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">starsControl</span><span class="p">:</span><span class="nl">didChangeScore</span><span class="p">:)])</span> <span class="p">{</span>
-        <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">delegate</span> <span class="nl">starsControl</span><span class="p">:</span><span class="nb">self</span> <span class="nl">didChangeScore</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">score</span><span class="p">];</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">cancelTrackingWithEvent:</span>(UIEvent <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">event</span> {
+    [<span style="color:#8be9fd;font-style:italic">super</span> <span style="color:#8be9fd;font-style:italic">cancelTrackingWithEvent</span>:event];
+    <span style="color:#ff79c6">if</span> ([<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">starsControl</span>:<span style="color:#8be9fd;font-style:italic">didChangeScore</span>:)]) {
+        [<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">starsControl</span>:<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">didChangeScore</span>:<span style="color:#8be9fd;font-style:italic">self</span>.score];
+    }
+}</code></pre></div>
 <h2 id="封装">封装</h2>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">initWithFrame:</span><span class="p">(</span><span class="n">CGRect</span><span class="p">)</span><span class="nv">frame</span>
-                        <span class="nf">stars:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">number</span>
-                     <span class="nf">starSize:</span><span class="p">(</span><span class="n">CGSize</span><span class="p">)</span><span class="nv">size</span>
-              <span class="nf">noramlStarImage:</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="nv">normalImage</span>
-         <span class="nf">highlightedStarImage:</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="nv">highlightedImage</span><span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nb">self</span> <span class="o">=</span> <span class="p">[</span><span class="nb">super</span> <span class="nl">initWithFrame</span><span class="p">:</span><span class="n">frame</span><span class="p">])</span> <span class="p">{</span>
-        <span class="n">_numberOfStars</span> <span class="o">=</span> <span class="n">number</span><span class="p">;</span>
-        <span class="n">_normalStarImage</span> <span class="o">=</span> <span class="n">normalImage</span><span class="p">;</span>
-        <span class="n">_highlightedStarImage</span> <span class="o">=</span> <span class="n">highlightedImage</span><span class="p">;</span>
-        <span class="n">_starSize</span> <span class="o">=</span> <span class="n">size</span><span class="p">;</span>
-        <span class="n">_allowFraction</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">clipsToBounds</span> <span class="o">=</span> <span class="nb">YES</span><span class="p">;</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">backgroundColor</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIColor</span> <span class="n">clearColor</span><span class="p">];</span>
-        <span class="p">[</span><span class="nb">self</span> <span class="n">setupView</span><span class="p">];</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nb">self</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">instancetype</span>)<span style="color:#50fa7b">initWithFrame:</span>(CGRect)<span style="color:#8be9fd;font-style:italic">frame</span>
+                        <span style="color:#50fa7b">stars:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">number</span>
+                     <span style="color:#50fa7b">starSize:</span>(CGSize)<span style="color:#8be9fd;font-style:italic">size</span>
+              <span style="color:#50fa7b">noramlStarImage:</span>(UIImage <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">normalImage</span>
+         <span style="color:#50fa7b">highlightedStarImage:</span>(UIImage <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">highlightedImage</span>{
+    <span style="color:#ff79c6">if</span> (<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">super</span> <span style="color:#8be9fd;font-style:italic">initWithFrame</span>:frame]) {
+        _numberOfStars <span style="color:#ff79c6">=</span> number;
+        _normalStarImage <span style="color:#ff79c6">=</span> normalImage;
+        _highlightedStarImage <span style="color:#ff79c6">=</span> highlightedImage;
+        _starSize <span style="color:#ff79c6">=</span> size;
+        _allowFraction <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
+        <span style="color:#8be9fd;font-style:italic">self</span>.clipsToBounds <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
+        <span style="color:#8be9fd;font-style:italic">self</span>.backgroundColor <span style="color:#ff79c6">=</span> [UIColor clearColor];
+        [<span style="color:#8be9fd;font-style:italic">self</span> setupView];
+    }
+    <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">self</span>;
+}</code></pre></div>
 <p>开放 score 属性和 allowFraction 属性即可。使用起来也很简单。</p>
-<div class="highlight"><pre class="chroma"><code class="language-objective-c" data-lang="objective-c"> <span class="n">CDZStarsControl</span> <span class="o">*</span><span class="n">starsControl</span> <span class="o">=</span> <span class="p">[</span><span class="n">CDZStarsControl</span><span class="p">.</span><span class="n">alloc</span> <span class="nl">initWithFrame</span><span class="p">:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="nb">self</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span> <span class="nl">stars</span><span class="p">:</span><span class="mi">5</span> <span class="nl">starSize</span><span class="p">:</span><span class="n">CGSizeMake</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span> <span class="nl">noramlStarImage</span><span class="p">:[</span><span class="n">UIImage</span> <span class="nl">imageNamed</span><span class="p">:</span><span class="s">@&#34;star_normal&#34;</span><span class="p">]</span> <span class="nl">highlightedStarImage</span><span class="p">:[</span><span class="n">UIImage</span> <span class="nl">imageNamed</span><span class="p">:</span><span class="s">@&#34;star_highlighted&#34;</span><span class="p">]];</span>
-    <span class="n">starsControl</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
-    <span class="n">starsControl</span><span class="p">.</span><span class="n">allowFraction</span> <span class="o">=</span> <span class="nb">YES</span><span class="p">;</span>
-    <span class="n">starsControl</span><span class="p">.</span><span class="n">score</span> <span class="o">=</span> <span class="mf">2.6f</span><span class="p">;</span>
-    <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">view</span> <span class="nl">addSubview</span><span class="p">:</span><span class="n">starsControl</span><span class="p">];</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"> CDZStarsControl <span style="color:#ff79c6">*</span>starsControl <span style="color:#ff79c6">=</span> [CDZStarsControl.alloc <span style="color:#8be9fd;font-style:italic">initWithFrame</span>:CGRectMake(<span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">100</span>, <span style="color:#8be9fd;font-style:italic">self</span>.view.frame.size.width, <span style="color:#bd93f9">50</span>) <span style="color:#8be9fd;font-style:italic">stars</span>:<span style="color:#bd93f9">5</span> <span style="color:#8be9fd;font-style:italic">starSize</span>:CGSizeMake(<span style="color:#bd93f9">50</span>, <span style="color:#bd93f9">50</span>) <span style="color:#8be9fd;font-style:italic">noramlStarImage</span>:[UIImage <span style="color:#8be9fd;font-style:italic">imageNamed</span>:<span style="color:#f1fa8c">@&#34;star_normal&#34;</span>] <span style="color:#8be9fd;font-style:italic">highlightedStarImage</span>:[UIImage <span style="color:#8be9fd;font-style:italic">imageNamed</span>:<span style="color:#f1fa8c">@&#34;star_highlighted&#34;</span>]];
+    starsControl.delegate <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>;
+    starsControl.allowFraction <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
+    starsControl.score <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">2.6f</span>;
+    [<span style="color:#8be9fd;font-style:italic">self</span>.view <span style="color:#8be9fd;font-style:italic">addSubview</span>:starsControl];</code></pre></div>
 <p>然后在 Delegate 里处理分数改变后的操作即可。</p>
 
 <h2 id="最后">最后</h2>
@@ -449,7 +460,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>797</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>798</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -476,18 +487,61 @@
       
     
   </section>
-  <footer class="site-footer">
+  
+<footer class="site-footer">
   <p>© 2017-2019 Nemocdz&#39;s Blog</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>
 
 
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
 
-<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
-<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
 
 
 

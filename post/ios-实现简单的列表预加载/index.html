@@ -9,113 +9,150 @@
 
   
   
-
-
-
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
 
   
-  <meta name="author" content="Nemocdz" />
+
+  
+  
   <meta name="description" content="[TOC]
 在大部分 App 中，在有 feeds 流之类列表的地方，由于后端数据一般采用分页加载，为了用户体验需要做预加载。最简单的加载方式，就是当列表显示的内容达到一定的数量时候，自动请求下一个分页。
-" />
+">
 
   
   
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@Nemocdz" />
-    <meta name="twitter:title" content="iOS 实现简单的列表预加载" />
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="iOS 实现简单的列表预加载">
     <meta name="twitter:description" content="[TOC]
 在大部分 App 中，在有 feeds 流之类列表的地方，由于后端数据一般采用分页加载，为了用户体验需要做预加载。最简单的加载方式，就是当列表显示的内容达到一定的数量时候，自动请求下一个分页。
-" />
-    <meta name="twitter:image" content="https://nemocdz.github.io/img/avatar.jpg" />
+">
+    <meta name="twitter:image" content="/images/avatar.png">
   
 
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="iOS 实现简单的列表预加载">
+  <meta property="og:description" content="[TOC]
+在大部分 App 中，在有 feeds 流之类列表的地方，由于后端数据一般采用分页加载，为了用户体验需要做预加载。最简单的加载方式，就是当列表显示的内容达到一定的数量时候，自动请求下一个分页。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/ios-%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84%E5%88%97%E8%A1%A8%E9%A2%84%E5%8A%A0%E8%BD%BD/">
+  <meta property="og:image" content="/images/avatar.png">
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+
+<meta name="generator" content="Hugo 0.55.6">
 
 
-<link rel="canonical" href="https://nemocdz.github.io/post/ios-%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84%E5%88%97%E8%A1%A8%E9%A2%84%E5%8A%A0%E8%BD%BD/" />
-<link rel="alternative" href="https://nemocdz.github.io/index.xml" title="Nemocdz&#39;s Blog" type="application/atom+xml" />
+<link rel="canonical" href="https://nemocdz.github.io/post/ios-%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84%E5%88%97%E8%A1%A8%E9%A2%84%E5%8A%A0%E8%BD%BD/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
 
 
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw" />
-<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126" />
-<meta name="baidu-site-verification" content="iVpH4VhHBT" />
-<meta name="sogou_site_verification" content="YPqjjJgiSh" />
-<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386" />
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
 
 
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog" />
-<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://nemocdz.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://nemocdz.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://nemocdz.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
 
 
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.1/video-js.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
 
-<link rel="stylesheet" href="https://nemocdz.github.io/css/bundle.css" />
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
 
 
   
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.1/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
 
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/2014.01.31/classList.min.js"></script>
-  <![endif]-->
-
-
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
-
-
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.0/js/smooth-scroll.polyfills.min.js"></script>
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
 
 
 </head>
   <body>
-    
     <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
       
         
-        <a title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment"></span></a>
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
         
       
     </div>
     
     
   <header class="site-header">
-  <img class="avatar" src="https://nemocdz.github.io/img/avatar.png" alt="Avatar">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
   
-  <h2 class="title">Nemocdz&#39;s Blog</h2>
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
   
-  <p class="subtitle">iOS&amp;Android Dev</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
   </button>
+
   <nav class="site-menu collapsed">
     <h2 class="offscreen">Main Menu</h2>
     <ul class="menu-list">
@@ -123,79 +160,53 @@
       
       
       
-        <li class="menu-item  is-active"><a href="https://nemocdz.github.io/">首页</a></li>
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/">首页</a>
+        </li>
       
-        <li class="menu-item "><a href="https://nemocdz.github.io/about/">关于</a></li>
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
       
     </ul>
   </nav>
   <nav class="social-menu collapsed">
     <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-      <li class="social-item">
-        <a href="mailto:nemocdz@gmail.com" title="Email"><span class="icon icon-email"></span></a>
-      </li>
-
-      
-      <li class="social-item">
-        <a href="//github.com/Nemocdz" title="GitHub"><span class="icon icon-github"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="//twitter.com/Nemocdz" title="Twitter"><span class="icon icon-twitter"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//www.instagram.com/Nemocdz" title="Instagram"><span class="icon icon-instagram"></span></a>
-      </li>
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="//weibo.com/Nemocdz" title="Weibo"><span class="icon icon-weibo"></span></a>
-      </li>
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/img/qrcode.jpg" title="Wechat"><span class="icon icon-wechat"></span></a>
-      </li>
-
-      
-
-      <li class="social-item">
-        <a href="//www.zhihu.com/people/nemocdz" title="Zhihu"><span class="icon icon-zhihu"></span></a>
-      </li>
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://nemocdz.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
   </nav>
 </header>
 
@@ -211,10 +222,10 @@
 <h2 id="加载策略">加载策略</h2>
 
 <p>而这其实就是根据总行数，列表总高度，列表当前偏移值这三个数字决定是否要加载的关系式 fx。这里判断加载的策略，是需要自定义的，所以可以定义这样一个 Protocol。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">protocol</span> <span class="nc">ListPrefetcherStrategy</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nv">totalRowsCount</span><span class="p">:</span><span class="nb">Int</span> <span class="p">{</span> <span class="kr">get</span> <span class="kr">set</span> <span class="p">}</span>
-    <span class="kd">func</span> <span class="nf">shouldFetch</span><span class="p">(</span><span class="kc">_</span> <span class="n">totalHeight</span><span class="p">:</span><span class="n">CGFloat</span><span class="p">,</span> <span class="kc">_</span> <span class="n">offsetY</span><span class="p">:</span><span class="n">CGFloat</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nb">Bool</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">ListPrefetcherStrategy</span> {
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">totalRowsCount</span>:<span style="color:#8be9fd;font-style:italic">Int</span> { <span style="color:#ff79c6">get</span> <span style="color:#ff79c6">set</span> }
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">shouldFetch</span>(<span style="color:#ff79c6">_</span> totalHeight:CGFloat, <span style="color:#ff79c6">_</span> offsetY:CGFloat) -&gt; <span style="color:#8be9fd;font-style:italic">Bool</span>
+}</code></pre></div>
 <p>下面给出几种简单的加载策略。</p>
 
 <h3 id="阈值策略">阈值策略</h3>
@@ -224,137 +235,137 @@
 <p>同时要注意的是，这里的阈值应该是每个分页的阈值，总的阈值会随着列表长度增长。比如设置阈值为 70%，每页加载 10 个，第一页在加载到 7 个时进行预加载，第二页在第 17 个时进行预加载，此时阈值为 85%，而如果还是 70%，则会在第 14 个时进行预加载。所以这里的阈值需要动态增长。</p>
 
 <p>假设我们已知目前列表的数据量和目前页数，根据每一页的阈值就可以动态计算总阈值：</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="c1">// 数据总数除以当前页数，算出每一页的数量</span>
-<span class="kd">let</span> <span class="nv">perPageCount</span> <span class="p">=</span> <span class="nb">Double</span><span class="p">(</span><span class="n">totalRowsCount</span><span class="p">)</span> <span class="o">/</span> <span class="nb">Double</span><span class="p">(</span><span class="n">currentPageIndex</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-<span class="c1">// 每页数量乘以页数加上每一页的阈值的和，就是总共需要的数量</span>
-<span class="kd">let</span> <span class="nv">needRowsCount</span> <span class="p">=</span> <span class="n">perPageCount</span> <span class="o">*</span> <span class="p">(</span><span class="nb">Double</span><span class="p">(</span><span class="n">currentPageIndex</span><span class="p">)</span> <span class="o">+</span> <span class="n">threshold</span><span class="p">)</span>
-<span class="c1">// 算出动态的阈值</span>
-<span class="kd">let</span> <span class="nv">actalThreshold</span> <span class="p">=</span> <span class="n">needRowsCount</span> <span class="o">/</span> <span class="nb">Double</span><span class="p">(</span><span class="n">totalRowsCount</span><span class="p">)</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 数据总数除以当前页数，算出每一页的数量</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">perPageCount</span> = <span style="color:#8be9fd;font-style:italic">Double</span>(totalRowsCount) <span style="color:#ff79c6">/</span> <span style="color:#8be9fd;font-style:italic">Double</span>(currentPageIndex <span style="color:#ff79c6">+</span> <span style="color:#bd93f9">1</span>)
+<span style="color:#6272a4">// 每页数量乘以页数加上每一页的阈值的和，就是总共需要的数量</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">needRowsCount</span> = perPageCount <span style="color:#ff79c6">*</span> (<span style="color:#8be9fd;font-style:italic">Double</span>(currentPageIndex) <span style="color:#ff79c6">+</span> threshold)
+<span style="color:#6272a4">// 算出动态的阈值</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">actalThreshold</span> = needRowsCount <span style="color:#ff79c6">/</span> <span style="color:#8be9fd;font-style:italic">Double</span>(totalRowsCount)</code></pre></div>
 <p>这里需要记录当前的页数，笔者这里用了一个比较 trick 的做法，当行数增长时，则认为页数 +1，行数减少时，则认为页数归 0，适用于下拉刷新整个列表清空的情况。可以用属性观察 <code>willSet</code> 来改变页数。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">struct</span> <span class="nc">ThresholdStrategy</span><span class="p">:</span> <span class="n">ListPrefetcherStrategy</span><span class="p">{</span>
-    <span class="kd">func</span> <span class="nf">shouldFetch</span><span class="p">(</span><span class="kc">_</span> <span class="n">totalHeight</span><span class="p">:</span> <span class="n">CGFloat</span><span class="p">,</span> <span class="kc">_</span> <span class="n">offsetY</span><span class="p">:</span> <span class="n">CGFloat</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nb">Bool</span> <span class="p">{</span>
-        <span class="kd">let</span> <span class="nv">viewRatio</span> <span class="p">=</span> <span class="nb">Double</span><span class="p">(</span><span class="n">offsetY</span> <span class="o">/</span> <span class="n">totalHeight</span><span class="p">)</span>
-        <span class="kd">let</span> <span class="nv">perPageCount</span> <span class="p">=</span> <span class="nb">Double</span><span class="p">(</span><span class="n">totalRowsCount</span><span class="p">)</span> <span class="o">/</span> <span class="nb">Double</span><span class="p">(</span><span class="n">currentPageIndex</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="kd">let</span> <span class="nv">needRowsCount</span> <span class="p">=</span> <span class="n">perPageCount</span> <span class="o">*</span> <span class="p">(</span><span class="nb">Double</span><span class="p">(</span><span class="n">currentPageIndex</span><span class="p">)</span> <span class="o">+</span> <span class="n">threshold</span><span class="p">)</span>
-        <span class="kd">let</span> <span class="nv">actalThreshold</span> <span class="p">=</span> <span class="n">needRowsCount</span> <span class="o">/</span> <span class="nb">Double</span><span class="p">(</span><span class="n">totalRowsCount</span><span class="p">)</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">ThresholdStrategy</span>: ListPrefetcherStrategy{
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">shouldFetch</span>(<span style="color:#ff79c6">_</span> totalHeight: CGFloat, <span style="color:#ff79c6">_</span> offsetY: CGFloat) -&gt; <span style="color:#8be9fd;font-style:italic">Bool</span> {
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">viewRatio</span> = <span style="color:#8be9fd;font-style:italic">Double</span>(offsetY <span style="color:#ff79c6">/</span> totalHeight)
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">perPageCount</span> = <span style="color:#8be9fd;font-style:italic">Double</span>(totalRowsCount) <span style="color:#ff79c6">/</span> <span style="color:#8be9fd;font-style:italic">Double</span>(currentPageIndex <span style="color:#ff79c6">+</span> <span style="color:#bd93f9">1</span>)
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">needRowsCount</span> = perPageCount <span style="color:#ff79c6">*</span> (<span style="color:#8be9fd;font-style:italic">Double</span>(currentPageIndex) <span style="color:#ff79c6">+</span> threshold)
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">actalThreshold</span> = needRowsCount <span style="color:#ff79c6">/</span> <span style="color:#8be9fd;font-style:italic">Double</span>(totalRowsCount)
         
-        <span class="k">if</span> <span class="n">viewRatio</span> <span class="o">&gt;=</span> <span class="n">actalThreshold</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">true</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">false</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+        <span style="color:#ff79c6">if</span> viewRatio <span style="color:#ff79c6">&gt;=</span> actalThreshold {
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">true</span>
+        } <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">false</span>
+        }
+    }
     
-    <span class="kd">var</span> <span class="nv">totalRowsCount</span><span class="p">:</span> <span class="nb">Int</span><span class="p">{</span>
-        <span class="kr">willSet</span><span class="p">{</span>
-            <span class="k">if</span> <span class="n">newValue</span> <span class="o">&gt;</span> <span class="n">totalRowsCount</span> <span class="p">{</span>
-                <span class="n">currentPageIndex</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">newValue</span> <span class="o">&lt;</span> <span class="n">totalRowsCount</span> <span class="p">{</span>
-                <span class="n">currentPageIndex</span> <span class="p">=</span> <span class="mi">0</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">totalRowsCount</span>: <span style="color:#8be9fd;font-style:italic">Int</span>{
+        <span style="color:#ff79c6">willSet</span>{
+            <span style="color:#ff79c6">if</span> newValue <span style="color:#ff79c6">&gt;</span> totalRowsCount {
+                currentPageIndex <span style="color:#ff79c6">+=</span> <span style="color:#bd93f9">1</span>
+            } <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> newValue <span style="color:#ff79c6">&lt;</span> totalRowsCount {
+                currentPageIndex = <span style="color:#bd93f9">0</span>
+            }
+        }
+    }
     
-    <span class="kd">let</span> <span class="nv">threshold</span><span class="p">:</span> <span class="nb">Double</span>
-    <span class="kd">var</span> <span class="nv">currentPageIndex</span> <span class="p">=</span> <span class="mi">0</span>
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">threshold</span>: <span style="color:#8be9fd;font-style:italic">Double</span>
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">currentPageIndex</span> = <span style="color:#bd93f9">0</span>
     
-    <span class="kd">public</span> <span class="kd">init</span><span class="p">(</span><span class="n">threshold</span><span class="p">:</span><span class="nb">Double</span> <span class="p">=</span> <span class="mf">0.7</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kc">self</span><span class="p">.</span><span class="n">threshold</span> <span class="p">=</span> <span class="n">threshold</span>
-        <span class="n">totalRowsCount</span> <span class="p">=</span> <span class="mi">0</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>(threshold:<span style="color:#8be9fd;font-style:italic">Double</span> = <span style="color:#bd93f9">0.7</span>) {
+        <span style="color:#ff79c6">self</span>.threshold = threshold
+        totalRowsCount = <span style="color:#bd93f9">0</span>
+    }
+}</code></pre></div>
 <h3 id="剩余策略">剩余策略</h3>
 
 <p>也可以设定当列表剩余未展示行数即将少于某个值时，进行加载。这种适合每次分页数量不一定一致的情况。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">struct</span> <span class="nc">RemainStrategy</span><span class="p">:</span> <span class="n">ListPrefetcherStrategy</span><span class="p">{</span>
-    <span class="kd">func</span> <span class="nf">shouldFetch</span><span class="p">(</span><span class="kc">_</span> <span class="n">totalHeight</span><span class="p">:</span> <span class="n">CGFloat</span><span class="p">,</span> <span class="kc">_</span> <span class="n">offsetY</span><span class="p">:</span> <span class="n">CGFloat</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nb">Bool</span> <span class="p">{</span>
-        <span class="kd">let</span> <span class="nv">rowHeight</span> <span class="p">=</span> <span class="n">totalHeight</span> <span class="o">/</span> <span class="n">CGFloat</span><span class="p">(</span><span class="n">totalRowsCount</span><span class="p">)</span>
-        <span class="kd">let</span> <span class="nv">needOffsetY</span> <span class="p">=</span> <span class="n">rowHeight</span> <span class="o">*</span> <span class="n">CGFloat</span><span class="p">(</span><span class="n">totalRowsCount</span> <span class="o">-</span> <span class="n">remainRowsCount</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">offsetY</span> <span class="o">&gt;</span> <span class="n">needOffsetY</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">true</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">false</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">RemainStrategy</span>: ListPrefetcherStrategy{
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">shouldFetch</span>(<span style="color:#ff79c6">_</span> totalHeight: CGFloat, <span style="color:#ff79c6">_</span> offsetY: CGFloat) -&gt; <span style="color:#8be9fd;font-style:italic">Bool</span> {
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">rowHeight</span> = totalHeight <span style="color:#ff79c6">/</span> CGFloat(totalRowsCount)
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">needOffsetY</span> = rowHeight <span style="color:#ff79c6">*</span> CGFloat(totalRowsCount <span style="color:#ff79c6">-</span> remainRowsCount)
+        <span style="color:#ff79c6">if</span> offsetY <span style="color:#ff79c6">&gt;</span> needOffsetY {
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">true</span>
+        } <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">false</span>
+        }
+    }
     
-    <span class="kd">var</span> <span class="nv">totalRowsCount</span><span class="p">:</span> <span class="nb">Int</span>
-    <span class="kd">let</span> <span class="nv">remainRowsCount</span><span class="p">:</span> <span class="nb">Int</span>
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">totalRowsCount</span>: <span style="color:#8be9fd;font-style:italic">Int</span>
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">remainRowsCount</span>: <span style="color:#8be9fd;font-style:italic">Int</span>
     
     
-    <span class="kd">init</span><span class="p">(</span><span class="n">remainRowsCount</span><span class="p">:</span><span class="nb">Int</span> <span class="p">=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kc">self</span><span class="p">.</span><span class="n">remainRowsCount</span> <span class="p">=</span> <span class="n">remainRowsCount</span>
-        <span class="n">totalRowsCount</span> <span class="p">=</span> <span class="mi">0</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+    <span style="color:#8be9fd;font-style:italic">init</span>(remainRowsCount:<span style="color:#8be9fd;font-style:italic">Int</span> = <span style="color:#bd93f9">1</span>) {
+        <span style="color:#ff79c6">self</span>.remainRowsCount = remainRowsCount
+        totalRowsCount = <span style="color:#bd93f9">0</span>
+    }
+}</code></pre></div>
 <h3 id="除法策略">除法策略</h3>
 
 <p>还可以自己定义除数和余数，当达到余数时，进行加载。当然还要考虑一下实际余数比指定余数小的情况，这里笔者简单的往前面偏移一个除数的量进行判断。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">struct</span> <span class="nc">OffsetStrategy</span><span class="p">:</span> <span class="n">ListPrefetcherStrategy</span> <span class="p">{</span>
-    <span class="kd">func</span> <span class="nf">shouldFetch</span><span class="p">(</span><span class="kc">_</span> <span class="n">totalHeight</span><span class="p">:</span> <span class="n">CGFloat</span><span class="p">,</span> <span class="kc">_</span> <span class="n">offsetY</span><span class="p">:</span> <span class="n">CGFloat</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nb">Bool</span> <span class="p">{</span>
-        <span class="kd">let</span> <span class="nv">rowHeight</span> <span class="p">=</span> <span class="n">totalHeight</span> <span class="o">/</span> <span class="n">CGFloat</span><span class="p">(</span><span class="n">totalRowsCount</span><span class="p">)</span>
-        <span class="kd">let</span> <span class="nv">actalOffset</span> <span class="p">=</span> <span class="n">totalRowsCount</span> <span class="o">%</span> <span class="n">gap</span>
-        <span class="kd">let</span> <span class="nv">needOffsetY</span> <span class="p">=</span> <span class="n">actalOffset</span> <span class="o">&gt;</span> <span class="n">offset</span> <span class="p">?</span> <span class="n">totalHeight</span> <span class="o">-</span> <span class="n">CGFloat</span><span class="p">(</span><span class="n">actalOffset</span> <span class="o">-</span> <span class="n">offset</span><span class="p">)</span> <span class="o">*</span> <span class="n">rowHeight</span> <span class="p">:</span> <span class="n">totalHeight</span> <span class="o">-</span> <span class="n">CGFloat</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">gap</span> <span class="o">+</span> <span class="n">offset</span><span class="p">)</span> <span class="o">*</span> <span class="n">rowHeight</span>
-        <span class="k">if</span> <span class="n">offsetY</span> <span class="o">&gt;</span> <span class="n">needOffsetY</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">true</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">false</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">OffsetStrategy</span>: ListPrefetcherStrategy {
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">shouldFetch</span>(<span style="color:#ff79c6">_</span> totalHeight: CGFloat, <span style="color:#ff79c6">_</span> offsetY: CGFloat) -&gt; <span style="color:#8be9fd;font-style:italic">Bool</span> {
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">rowHeight</span> = totalHeight <span style="color:#ff79c6">/</span> CGFloat(totalRowsCount)
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">actalOffset</span> = totalRowsCount <span style="color:#ff79c6">%</span> gap
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">needOffsetY</span> = actalOffset <span style="color:#ff79c6">&gt;</span> offset ? totalHeight <span style="color:#ff79c6">-</span> CGFloat(actalOffset <span style="color:#ff79c6">-</span> offset) <span style="color:#ff79c6">*</span> rowHeight : totalHeight <span style="color:#ff79c6">-</span> CGFloat(<span style="color:#bd93f9">2</span> <span style="color:#ff79c6">*</span> gap <span style="color:#ff79c6">+</span> offset) <span style="color:#ff79c6">*</span> rowHeight
+        <span style="color:#ff79c6">if</span> offsetY <span style="color:#ff79c6">&gt;</span> needOffsetY {
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">true</span>
+        } <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">false</span>
+        }
+    }
     
-    <span class="kd">var</span> <span class="nv">totalRowsCount</span><span class="p">:</span> <span class="nb">Int</span>
-    <span class="kd">let</span> <span class="nv">gap</span><span class="p">:</span> <span class="nb">Int</span>
-    <span class="kd">let</span> <span class="nv">offset</span><span class="p">:</span> <span class="nb">Int</span>
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">totalRowsCount</span>: <span style="color:#8be9fd;font-style:italic">Int</span>
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">gap</span>: <span style="color:#8be9fd;font-style:italic">Int</span>
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">offset</span>: <span style="color:#8be9fd;font-style:italic">Int</span>
     
-    <span class="kd">init</span><span class="p">(</span><span class="n">gap</span><span class="p">:</span><span class="nb">Int</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span><span class="nb">Int</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kc">self</span><span class="p">.</span><span class="n">gap</span> <span class="p">=</span> <span class="n">gap</span>
-        <span class="kc">self</span><span class="p">.</span><span class="n">offset</span> <span class="p">=</span> <span class="n">offset</span>
-        <span class="n">totalRowsCount</span> <span class="p">=</span> <span class="mi">0</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+    <span style="color:#8be9fd;font-style:italic">init</span>(gap:<span style="color:#8be9fd;font-style:italic">Int</span>, offset:<span style="color:#8be9fd;font-style:italic">Int</span>) {
+        <span style="color:#ff79c6">self</span>.gap = gap
+        <span style="color:#ff79c6">self</span>.offset = offset
+        totalRowsCount = <span style="color:#bd93f9">0</span>
+    }
+}</code></pre></div>
 <h2 id="预加载组件">预加载组件</h2>
 
 <p>组件需要的信息有，scrollView，总行数，以及加载时候的通知外界。</p>
 
 <p>定义一个 delegate 让外界遵循。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">protocol</span> <span class="nc">ListPrefetcherDelegate</span><span class="p">:</span><span class="nb">AnyObject</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nv">totalRowsCount</span><span class="p">:</span><span class="nb">Int</span> <span class="p">{</span> <span class="kr">get</span> <span class="p">}</span>
-    <span class="kd">func</span> <span class="nf">startFetch</span><span class="p">()</span>
-<span class="p">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">ListPrefetcherDelegate</span>:<span style="color:#8be9fd;font-style:italic">AnyObject</span> {
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">totalRowsCount</span>:<span style="color:#8be9fd;font-style:italic">Int</span> { <span style="color:#ff79c6">get</span> }
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">startFetch</span>()
+}</code></pre></div>
 <p>然后用 KVO 监听 scrollView 的 contentSize，当发生变化是，就认为总行数发生改变，就可以将总行数设置给策略。监听 scrollView 的 contentOffset，变化时就是列表滚动，就可以用策略进行判断。</p>
-<div class="highlight"><pre class="chroma"><code class="language-swift" data-lang="swift"><span class="kd">class</span> <span class="nc">ListPrefetcher</span><span class="p">:</span><span class="n">NSObject</span><span class="p">{</span>
-    <span class="kr">@objc</span> <span class="kd">let</span> <span class="nv">scrollView</span><span class="p">:</span><span class="n">UIScrollView</span>
-    <span class="kd">var</span> <span class="nv">contentSizeObserver</span><span class="p">:</span><span class="n">NSKeyValueObservation</span><span class="p">?</span>
-    <span class="kd">var</span> <span class="nv">contentOffsetObserver</span><span class="p">:</span><span class="n">NSKeyValueObservation</span><span class="p">?</span>
-    <span class="kr">weak</span> <span class="kd">var</span> <span class="nv">delegate</span><span class="p">:</span> <span class="n">ListPrefetcherDelegate</span><span class="p">?</span>
-    <span class="kd">var</span> <span class="nv">strategy</span><span class="p">:</span> <span class="n">ListPrefetcherStrategy</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">ListPrefetcher</span>:NSObject{
+    <span style="color:#ff79c6">@objc</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">scrollView</span>:UIScrollView
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">contentSizeObserver</span>:NSKeyValueObservation?
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">contentOffsetObserver</span>:NSKeyValueObservation?
+    <span style="color:#ff79c6">weak</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">delegate</span>: ListPrefetcherDelegate?
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">strategy</span>: ListPrefetcherStrategy
     
-    <span class="kd">public</span> <span class="kd">func</span> <span class="nf">start</span><span class="p">()</span> <span class="p">{</span>
-        <span class="n">contentSizeObserver</span> <span class="p">=</span> <span class="n">observe</span><span class="p">(</span><span class="err">\</span><span class="p">.</span><span class="n">scrollView</span><span class="p">.</span><span class="n">contentSize</span><span class="p">)</span> <span class="p">{</span> <span class="n">object</span><span class="p">,</span> <span class="kc">_</span> <span class="k">in</span>
-            <span class="k">guard</span> <span class="kd">let</span> <span class="nv">delegate</span> <span class="p">=</span> <span class="n">object</span><span class="p">.</span><span class="n">delegate</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
-            <span class="n">object</span><span class="p">.</span><span class="n">strategy</span><span class="p">.</span><span class="n">totalRowsCount</span> <span class="p">=</span> <span class="n">delegate</span><span class="p">.</span><span class="n">totalRowsCount</span>
-        <span class="p">}</span>
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">start</span>() {
+        contentSizeObserver = observe(\.scrollView.contentSize) { object, <span style="color:#ff79c6">_</span> <span style="color:#ff79c6">in</span>
+            <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">delegate</span> = object.delegate <span style="color:#ff79c6">else</span> { <span style="color:#ff79c6">return</span> }
+            object.strategy.totalRowsCount = delegate.totalRowsCount
+        }
         
-        <span class="n">contentOffsetObserver</span> <span class="p">=</span> <span class="n">observe</span><span class="p">(</span><span class="err">\</span><span class="p">.</span><span class="n">scrollView</span><span class="p">.</span><span class="n">contentOffset</span><span class="p">){</span> <span class="n">object</span><span class="p">,</span> <span class="kc">_</span> <span class="k">in</span>
-            <span class="kd">let</span> <span class="nv">offsetY</span> <span class="p">=</span> <span class="n">object</span><span class="p">.</span><span class="n">scrollView</span><span class="p">.</span><span class="n">contentOffset</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">object</span><span class="p">.</span><span class="n">scrollView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">height</span>
-            <span class="kd">let</span> <span class="nv">totalHeight</span> <span class="p">=</span> <span class="n">object</span><span class="p">.</span><span class="n">scrollView</span><span class="p">.</span><span class="n">contentSize</span><span class="p">.</span><span class="n">height</span>
-            <span class="k">guard</span> <span class="n">offsetY</span> <span class="o">&lt;</span> <span class="n">totalHeight</span>  <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
-            <span class="k">if</span> <span class="n">object</span><span class="p">.</span><span class="n">strategy</span><span class="p">.</span><span class="n">shouldFetch</span><span class="p">(</span><span class="n">totalHeight</span><span class="p">,</span> <span class="n">offsetY</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">object</span><span class="p">.</span><span class="n">delegate</span><span class="p">?.</span><span class="n">startFetch</span><span class="p">()</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+        contentOffsetObserver = observe(\.scrollView.contentOffset){ object, <span style="color:#ff79c6">_</span> <span style="color:#ff79c6">in</span>
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">offsetY</span> = object.scrollView.contentOffset.y <span style="color:#ff79c6">+</span> object.scrollView.frame.height
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">totalHeight</span> = object.scrollView.contentSize.height
+            <span style="color:#ff79c6">guard</span> offsetY <span style="color:#ff79c6">&lt;</span> totalHeight  <span style="color:#ff79c6">else</span> { <span style="color:#ff79c6">return</span> }
+            <span style="color:#ff79c6">if</span> object.strategy.shouldFetch(totalHeight, offsetY) {
+                object.delegate?.startFetch()
+            }
+        }
+    }
     
-    <span class="kd">public</span> <span class="kd">func</span> <span class="nf">stop</span><span class="p">()</span> <span class="p">{</span>
-        <span class="n">contentSizeObserver</span><span class="p">?.</span><span class="n">invalidate</span><span class="p">()</span>
-        <span class="n">contentOffsetObserver</span><span class="p">?.</span><span class="n">invalidate</span><span class="p">()</span>
-    <span class="p">}</span>
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">stop</span>() {
+        contentSizeObserver?.invalidate()
+        contentOffsetObserver?.invalidate()
+    }
     
-    <span class="kd">public</span> <span class="kd">init</span><span class="p">(</span><span class="n">strategy</span><span class="p">:</span><span class="n">ListPrefetcherStrategy</span><span class="p">,</span> <span class="n">scrollView</span><span class="p">:</span><span class="n">UIScrollView</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kc">self</span><span class="p">.</span><span class="n">strategy</span> <span class="p">=</span> <span class="n">strategy</span>
-        <span class="kc">self</span><span class="p">.</span><span class="n">scrollView</span> <span class="p">=</span> <span class="n">scrollView</span>
-      	<span class="kc">super</span><span class="p">.</span><span class="kd">init</span><span class="p">()</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>(strategy:ListPrefetcherStrategy, scrollView:UIScrollView) {
+        <span style="color:#ff79c6">self</span>.strategy = strategy
+        <span style="color:#ff79c6">self</span>.scrollView = scrollView
+      	<span style="color:#ff79c6">super</span>.<span style="color:#8be9fd;font-style:italic">init</span>()
+    }
+}</code></pre></div>
 <p>这样外界使用起来只需要提供策略和 scrollView，实现 delegate 的方法，然后在需要的时候(比如 <code>viewDidAppear</code> &amp; <code>viewDidDisAppear</code>) start 和 stop，就可以自动完成预加载的工作了。</p>
 
 <h2 id="最后">最后</h2>
@@ -363,7 +374,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © 2018 NemocdzThis post was published <strong>171</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>171</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -390,18 +401,61 @@
       
     
   </section>
-  <footer class="site-footer">
+  
+<footer class="site-footer">
   <p>© 2017-2019 Nemocdz&#39;s Blog</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank">Nuo</a>.</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>
 
 
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
 
-<script src="//cdn.bootcss.com/video.js/6.2.1/video.min.js"></script>
-<script src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-<script src="https://nemocdz.github.io/js/bundle.js"></script>
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
 
 
 
