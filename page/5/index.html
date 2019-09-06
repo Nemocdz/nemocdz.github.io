@@ -45,7 +45,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/">
@@ -145,10 +145,10 @@
       
       
         <li class="menu-item
-           is-active
+          
           
           ">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -202,12 +202,23 @@
   
    <article class="post-entry">
   <header class="post-header">
+    <h3 class="post-title"><a href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81%E5%B0%8F%E6%95%B0%E7%9A%84%E6%98%9F%E6%98%9F%E8%AF%84%E5%88%86%E7%BB%84%E4%BB%B6/" class="post-link">iOS 中实现支持小数的星星评分组件</a></h3>
+    <p class="post-meta">@Nemocdz · May 21, 2017 · 4 min read</p>
+  </header>
+  
+  <p class="post-summary">在很多电商，外卖，餐饮型应用里，都会在商品结束后评价中有一个星星组件。核心思路就是用 UIControl 并自定义实现其中的 trackTouch 的几个方法。而显示不到一个的星星，比如半个星星的思路是根据分数切割星星的图像并显示其中一部分。实现后效果如下。
+</p>
+  <footer class="post-footer">
+    <a class="read-more" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81%E5%B0%8F%E6%95%B0%E7%9A%84%E6%98%9F%E6%98%9F%E8%AF%84%E5%88%86%E7%BB%84%E4%BB%B6/">Read More →</a>
+  </footer>
+</article>
+  <article class="post-entry">
+  <header class="post-header">
     <h3 class="post-title"><a href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81-cell-%E9%80%9A%E7%94%A8%E7%9A%84-tableviewmanager/" class="post-link">iOS 中实现静态 Cell 通用的 TableViewManager</a></h3>
     <p class="post-meta">@Nemocdz · May 14, 2017 · 3 min read</p>
   </header>
   
-  <p class="post-summary">[TOC]
-在 App 中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态 Cell 构成的 TableView，这些界面的特点是，Cell 种类繁多，Model 种类繁多，点击事件处理分散但单调（页面跳转，编辑 textFiled），重复写 tableViewDelegate 和 datasource 的相关方法，但不会用到一些奇怪的 datasource 和 delegate 方法，而且显示内容一般是固定的，每个页面 Cell 的数量不会很多。
+  <p class="post-summary">在 App 中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态 Cell 构成的 TableView，这些界面的特点是，Cell 种类繁多，Model 种类繁多，点击事件处理分散但单调（页面跳转，编辑 textFiled），重复写 tableViewDelegate 和 datasource 的相关方法，但不会用到一些奇怪的 datasource 和 delegate 方法，而且显示内容一般是固定的，每个页面 Cell 的数量不会很多。
 </p>
   <footer class="post-footer">
     <a class="read-more" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81-cell-%E9%80%9A%E7%94%A8%E7%9A%84-tableviewmanager/">Read More →</a>
@@ -219,8 +230,7 @@
     <p class="post-meta">@Nemocdz · May 14, 2017 · 2 min read</p>
   </header>
   
-  <p class="post-summary">[TOC]
-之前的 文章 是在 ViewController 里实现了原生二维码扫描的功能，后来觉得 VC 太重了，便把功能抽成了一个 View，在抽象的过程中也仔细捉摸了一些没有仔细思考过的问题，特此记录下来。
+  <p class="post-summary">之前的 文章 是在 ViewController 里实现了原生二维码扫描的功能，后来觉得 VC 太重了，便把功能抽成了一个 View，在抽象的过程中也仔细捉摸了一些没有仔细思考过的问题，特此记录下来。
 </p>
   <footer class="post-footer">
     <a class="read-more" href="https://nemocdz.github.io/post/ios-%E5%8E%9F%E7%94%9F%E4%BA%8C%E7%BB%B4%E7%A0%81%E7%95%8C%E9%9D%A2%E7%9A%84%E4%B8%80%E4%BA%9B%E6%B3%A8%E6%84%8F%E7%82%B9/">Read More →</a>
@@ -232,8 +242,7 @@
     <p class="post-meta">@Nemocdz · Apr 21, 2017 · 4 min read</p>
   </header>
   
-  <p class="post-summary">[TOC]
-二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是 Google 出品的 ZXing，其的 OC 的移植版本是 ZXingObjc。但是从 iOS 7 开始，苹果就加入了原生 API 的相机二维码扫描功能，而在 iOS 8 中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。
+  <p class="post-summary">二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是 Google 出品的 ZXing，其的 OC 的移植版本是 ZXingObjc。但是从 iOS 7 开始，苹果就加入了原生 API 的相机二维码扫描功能，而在 iOS 8 中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。
 </p>
   <footer class="post-footer">
     <a class="read-more" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/">Read More →</a>
@@ -245,8 +254,7 @@
     <p class="post-meta">@Nemocdz · Apr 13, 2017 · 3 min read</p>
   </header>
   
-  <p class="post-summary">[TOC]
-Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详情看 官方指南，此篇文章只针对当时 1.0.0 版本下的情况，仅做保存记录。**
+  <p class="post-summary">Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详情看 官方指南，此篇文章只针对当时 1.0.0 版本下的情况，仅做保存记录。**
 </p>
   <footer class="post-footer">
     <a class="read-more" href="https://nemocdz.github.io/post/%E7%94%A8-cocoapods-%E7%AE%A1%E7%90%86%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%A1%AB%E5%9D%91%E4%B9%8B%E6%97%85/">Read More →</a>
@@ -258,24 +266,10 @@ Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详�
     <p class="post-meta">@Nemocdz · Mar 29, 2017 · 3 min read</p>
   </header>
   
-  <p class="post-summary">[TOC]
-去年年底写了一个自定义的 PickerView，文章 在这里。当时对 Block 和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的 Picker，前几天还看到评论有人给我提了些建议，便花了一天时间做了些升级，做了多列联动的实现。多列联动的 Picker 很常见，比如用在地址选择，如省-市-区中。网上搜索的例子要不是只写死指定的列数，要不然就是指定数据格式严格而复杂。我的强迫症又犯了，要写，就写一个，简单而且，能无限列联动的。
+  <p class="post-summary">去年年底写了一个自定义的 PickerView，文章 在这里。当时对 Block 和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的 Picker，前几天还看到评论有人给我提了些建议，便花了一天时间做了些升级，做了多列联动的实现。多列联动的 Picker 很常见，比如用在地址选择，如省-市-区中。网上搜索的例子要不是只写死指定的列数，要不然就是指定数据格式严格而复杂。我的强迫症又犯了，要写，就写一个，简单而且，能无限列联动的。
 </p>
   <footer class="post-footer">
     <a class="read-more" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A4%9A%E5%88%97%E8%81%94%E5%8A%A8%E7%9A%84-pickerview/">Read More →</a>
-  </footer>
-</article>
-  <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://nemocdz.github.io/post/tableview-%E5%92%8C-collectionview-%E9%80%9A%E7%94%A8-datasource-%E5%92%8C-cell/" class="post-link">TableView 和 CollectionView 通用的 DataSource 和 Cell</a></h3>
-    <p class="post-meta">@Nemocdz · Mar 25, 2017 · 3 min read</p>
-  </header>
-  
-  <p class="post-summary">[TOC]
-刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://nemocdz.github.io/post/tableview-%E5%92%8C-collectionview-%E9%80%9A%E7%94%A8-datasource-%E5%92%8C-cell/">Read More →</a>
   </footer>
 </article>
  

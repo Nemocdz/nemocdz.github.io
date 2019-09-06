@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？
+  <meta name="description" content="今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？
 ">
 
   
@@ -35,8 +34,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="从一道网易面试题浅谈 Objective-C 线程安全">
-    <meta name="twitter:description" content="[TOC]
-今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？
+    <meta name="twitter:description" content="今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="从一道网易面试题浅谈 Objective-C 线程安全">
-  <meta property="og:description" content="[TOC]
-今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？
+  <meta property="og:description" content="今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/%E4%BB%8E%E4%B8%80%E9%81%93%E7%BD%91%E6%98%93%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B5%85%E8%B0%88-objective-c-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E4%BB%8E%E4%B8%80%E9%81%93%E7%BD%91%E6%98%93%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B5%85%E8%B0%88-objective-c-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/">
@@ -164,7 +161,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,23 @@
       <h1 class="post-title">从一道网易面试题浅谈 Objective-C 线程安全</h1>
       <p class="post-meta">@Nemocdz · Aug 25, 2017 · 2 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#解决方案">解决方案</a>
+<ul>
+<li><a href="#1-使用串行队列">1. 使用串行队列</a></li>
+<li><a href="#2-使用-atomic">2. 使用 atomic</a></li>
+<li><a href="#3-使用-weak-关键字">3. 使用 weak 关键字</a></li>
+<li><a href="#4-使用-tagged-pointer">4. 使用 Tagged Pointer</a></li>
+</ul></li>
+<li><a href="#参考链接">参考链接</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？</p>
 
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">strong</span>) NSString <span style="color:#ff79c6">*</span>target;
 <span style="color:#6272a4">//....
@@ -357,7 +368,7 @@ dispatch_queue_t queue <span style="color:#ff79c6">=</span> dispatch_queue_creat
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>703</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>742</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

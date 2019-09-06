@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-CALayer UIView = 绘制 &#43; 响应触摸事件
+  <meta name="description" content="CALayer UIView = 绘制 &#43; 响应触摸事件
  负责屏幕和显示，不负责触摸事件响应链 UIView 是其高级封装 和 UIView 层级一一对应 ">
 
   
@@ -35,8 +34,7 @@ CALayer UIView = 绘制 &#43; 响应触摸事件
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="《iOS Core Animation》读书笔记">
-    <meta name="twitter:description" content="[TOC]
-CALayer UIView = 绘制 &#43; 响应触摸事件
+    <meta name="twitter:description" content="CALayer UIView = 绘制 &#43; 响应触摸事件
  负责屏幕和显示，不负责触摸事件响应链 UIView 是其高级封装 和 UIView 层级一一对应 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@ CALayer UIView = 绘制 &#43; 响应触摸事件
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="《iOS Core Animation》读书笔记">
-  <meta property="og:description" content="[TOC]
-CALayer UIView = 绘制 &#43; 响应触摸事件
+  <meta property="og:description" content="CALayer UIView = 绘制 &#43; 响应触摸事件
  负责屏幕和显示，不负责触摸事件响应链 UIView 是其高级封装 和 UIView 层级一一对应 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/ios-core-animation%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@ CALayer UIView = 绘制 &#43; 响应触摸事件
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-core-animation%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
@@ -164,7 +161,7 @@ CALayer UIView = 绘制 &#43; 响应触摸事件
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,36 @@ CALayer UIView = 绘制 &#43; 响应触摸事件
       <h1 class="post-title">《iOS Core Animation》读书笔记</h1>
       <p class="post-meta">@Nemocdz · Jul 13, 2017 · 1 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<h2 id="calayer">CALayer</h2>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#calayer">CALayer</a></li>
+<li><a href="#图形和几何">图形和几何</a></li>
+<li><a href="#视觉效果">视觉效果</a>
+<ul>
+<li><a href="#拉伸过滤">拉伸过滤</a></li>
+</ul></li>
+<li><a href="#cashapelayer">CAShapeLayer</a></li>
+<li><a href="#catextlayer">CATextLayer</a></li>
+<li><a href="#性能调优">性能调优</a>
+<ul>
+<li><a href="#动画发生过程">动画发生过程</a></li>
+<li><a href="#可能影响gpu绘制的情况">可能影响GPU绘制的情况</a></li>
+<li><a href="#可能影响cpu计算的情况">可能影响CPU计算的情况</a></li>
+<li><a href="#图像io">图像IO</a></li>
+<li><a href="#文本">文本</a></li>
+<li><a href="#光栅化">光栅化</a></li>
+<li><a href="#离屏渲染">离屏渲染</a></li>
+<li><a href="#图层混合">图层混合</a></li>
+<li><a href="#颜色格式">颜色格式</a></li>
+<li><a href="#图像大小缩放">图像大小缩放</a></li>
+</ul></li>
+</ul>
+</nav>
+
+    <article class="post-content"><h2 id="calayer">CALayer</h2>
 
 <p><code>UIView</code> = 绘制 + 响应触摸事件</p>
 
@@ -364,7 +388,7 @@ CALayer UIView = 绘制 &#43; 响应触摸事件
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>746</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>785</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

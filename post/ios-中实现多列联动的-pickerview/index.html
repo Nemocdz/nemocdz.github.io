@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-去年年底写了一个自定义的 PickerView，文章 在这里。当时对 Block 和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的 Picker，前几天还看到评论有人给我提了些建议，便花了一天时间做了些升级，做了多列联动的实现。多列联动的 Picker 很常见，比如用在地址选择，如省-市-区中。网上搜索的例子要不是只写死指定的列数，要不然就是指定数据格式严格而复杂。我的强迫症又犯了，要写，就写一个，简单而且，能无限列联动的。
+  <meta name="description" content="去年年底写了一个自定义的 PickerView，文章 在这里。当时对 Block 和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的 Picker，前几天还看到评论有人给我提了些建议，便花了一天时间做了些升级，做了多列联动的实现。多列联动的 Picker 很常见，比如用在地址选择，如省-市-区中。网上搜索的例子要不是只写死指定的列数，要不然就是指定数据格式严格而复杂。我的强迫症又犯了，要写，就写一个，简单而且，能无限列联动的。
 ">
 
   
@@ -35,8 +34,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="iOS 中实现多列联动的 PickerView">
-    <meta name="twitter:description" content="[TOC]
-去年年底写了一个自定义的 PickerView，文章 在这里。当时对 Block 和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的 Picker，前几天还看到评论有人给我提了些建议，便花了一天时间做了些升级，做了多列联动的实现。多列联动的 Picker 很常见，比如用在地址选择，如省-市-区中。网上搜索的例子要不是只写死指定的列数，要不然就是指定数据格式严格而复杂。我的强迫症又犯了，要写，就写一个，简单而且，能无限列联动的。
+    <meta name="twitter:description" content="去年年底写了一个自定义的 PickerView，文章 在这里。当时对 Block 和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的 Picker，前几天还看到评论有人给我提了些建议，便花了一天时间做了些升级，做了多列联动的实现。多列联动的 Picker 很常见，比如用在地址选择，如省-市-区中。网上搜索的例子要不是只写死指定的列数，要不然就是指定数据格式严格而复杂。我的强迫症又犯了，要写，就写一个，简单而且，能无限列联动的。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="iOS 中实现多列联动的 PickerView">
-  <meta property="og:description" content="[TOC]
-去年年底写了一个自定义的 PickerView，文章 在这里。当时对 Block 和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的 Picker，前几天还看到评论有人给我提了些建议，便花了一天时间做了些升级，做了多列联动的实现。多列联动的 Picker 很常见，比如用在地址选择，如省-市-区中。网上搜索的例子要不是只写死指定的列数，要不然就是指定数据格式严格而复杂。我的强迫症又犯了，要写，就写一个，简单而且，能无限列联动的。
+  <meta property="og:description" content="去年年底写了一个自定义的 PickerView，文章 在这里。当时对 Block 和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的 Picker，前几天还看到评论有人给我提了些建议，便花了一天时间做了些升级，做了多列联动的实现。多列联动的 Picker 很常见，比如用在地址选择，如省-市-区中。网上搜索的例子要不是只写死指定的列数，要不然就是指定数据格式严格而复杂。我的强迫症又犯了，要写，就写一个，简单而且，能无限列联动的。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A4%9A%E5%88%97%E8%81%94%E5%8A%A8%E7%9A%84-pickerview/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A4%9A%E5%88%97%E8%81%94%E5%8A%A8%E7%9A%84-pickerview/">
@@ -164,7 +161,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,20 @@
       <h1 class="post-title">iOS 中实现多列联动的 PickerView</h1>
       <p class="post-meta">@Nemocdz · Mar 29, 2017 · 3 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>去年年底写了一个自定义的 PickerView，<a href="https://nemocdz.github.io/post/ios%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89pickerview/">文章</a> 在这里。当时对 Block 和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的 Picker，前几天还看到评论有人给我提了些建议，便花了一天时间做了些升级，做了多列联动的实现。多列联动的 Picker 很常见，比如用在地址选择，如省-市-区中。网上搜索的例子要不是只写死指定的列数，要不然就是指定数据格式严格而复杂。我的强迫症又犯了，要写，就写一个，简单而且，能无限列联动的。</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#类比而来的实现思路">类比而来的实现思路</a></li>
+<li><a href="#实现-picker-的几个关键方法">实现 Picker 的几个关键方法</a></li>
+<li><a href="#实现多行不联动">实现多行不联动</a></li>
+<li><a href="#使用方法">使用方法</a></li>
+<li><a href="#最后">最后</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>去年年底写了一个自定义的 PickerView，<a href="https://nemocdz.github.io/post/ios%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89pickerview/">文章</a> 在这里。当时对 Block 和各种复用思想还理解很浅薄，只是单纯的实现了一个单列数据的 Picker，前几天还看到评论有人给我提了些建议，便花了一天时间做了些升级，做了多列联动的实现。多列联动的 Picker 很常见，比如用在地址选择，如省-市-区中。网上搜索的例子要不是只写死指定的列数，要不然就是指定数据格式严格而复杂。我的强迫症又犯了，要写，就写一个，简单而且，能无限列联动的。</p>
 
 <p>样子如下：</p>
 
@@ -387,7 +395,7 @@ sichuan.subArray <span style="color:#ff79c6">=</span> [NSMutableArray <span styl
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>852</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>891</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

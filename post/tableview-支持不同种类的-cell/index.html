@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-在项目中，偶尔需要让 TableView 里支持不同种类的 Cell，比如微博的原创微博和别人转发的微博，就是两种 Cell。又或是类似支付宝的的 timeline 也有各种类型的 Cell。在同一个 TableView 里实现不同种类的 Cell，一般有两种方法，一种是把所有种类的 Cell 先注册了，再根据不同的 identifer 去加载 Cell，一种是在 init 时创建不同的 identifer 的 Cell。
+  <meta name="description" content="在项目中，偶尔需要让 TableView 里支持不同种类的 Cell，比如微博的原创微博和别人转发的微博，就是两种 Cell。又或是类似支付宝的的 timeline 也有各种类型的 Cell。在同一个 TableView 里实现不同种类的 Cell，一般有两种方法，一种是把所有种类的 Cell 先注册了，再根据不同的 identifer 去加载 Cell，一种是在 init 时创建不同的 identifer 的 Cell。
 ">
 
   
@@ -35,8 +34,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="TableView 支持不同种类的 Cell">
-    <meta name="twitter:description" content="[TOC]
-在项目中，偶尔需要让 TableView 里支持不同种类的 Cell，比如微博的原创微博和别人转发的微博，就是两种 Cell。又或是类似支付宝的的 timeline 也有各种类型的 Cell。在同一个 TableView 里实现不同种类的 Cell，一般有两种方法，一种是把所有种类的 Cell 先注册了，再根据不同的 identifer 去加载 Cell，一种是在 init 时创建不同的 identifer 的 Cell。
+    <meta name="twitter:description" content="在项目中，偶尔需要让 TableView 里支持不同种类的 Cell，比如微博的原创微博和别人转发的微博，就是两种 Cell。又或是类似支付宝的的 timeline 也有各种类型的 Cell。在同一个 TableView 里实现不同种类的 Cell，一般有两种方法，一种是把所有种类的 Cell 先注册了，再根据不同的 identifer 去加载 Cell，一种是在 init 时创建不同的 identifer 的 Cell。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="TableView 支持不同种类的 Cell">
-  <meta property="og:description" content="[TOC]
-在项目中，偶尔需要让 TableView 里支持不同种类的 Cell，比如微博的原创微博和别人转发的微博，就是两种 Cell。又或是类似支付宝的的 timeline 也有各种类型的 Cell。在同一个 TableView 里实现不同种类的 Cell，一般有两种方法，一种是把所有种类的 Cell 先注册了，再根据不同的 identifer 去加载 Cell，一种是在 init 时创建不同的 identifer 的 Cell。
+  <meta property="og:description" content="在项目中，偶尔需要让 TableView 里支持不同种类的 Cell，比如微博的原创微博和别人转发的微博，就是两种 Cell。又或是类似支付宝的的 timeline 也有各种类型的 Cell。在同一个 TableView 里实现不同种类的 Cell，一般有两种方法，一种是把所有种类的 Cell 先注册了，再根据不同的 identifer 去加载 Cell，一种是在 init 时创建不同的 identifer 的 Cell。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/tableview-%E6%94%AF%E6%8C%81%E4%B8%8D%E5%90%8C%E7%A7%8D%E7%B1%BB%E7%9A%84-cell/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/tableview-%E6%94%AF%E6%8C%81%E4%B8%8D%E5%90%8C%E7%A7%8D%E7%B1%BB%E7%9A%84-cell/">
@@ -164,7 +161,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,20 @@
       <h1 class="post-title">TableView 支持不同种类的 Cell</h1>
       <p class="post-meta">@Nemocdz · Jan 8, 2017 · 2 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>在项目中，偶尔需要让 TableView 里支持不同种类的 Cell，比如微博的原创微博和别人转发的微博，就是两种 Cell。又或是类似支付宝的的 timeline 也有各种类型的 Cell。在同一个 TableView 里实现不同种类的 Cell，一般有两种方法，一种是把所有种类的 Cell 先注册了，再根据不同的 identifer 去加载 Cell，一种是在 init 时创建不同的 identifer 的 Cell。</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#准备工作">准备工作</a></li>
+<li><a href="#方法一-先注册-根据-identifer-去加载不同的-cell">方法一：先注册，根据 identifer 去加载不同的 cell</a></li>
+<li><a href="#方法二-在-init-时创建不同-identifer-的-cell">方法二：在 init 时创建不同 identifer 的 Cell</a></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#最后">最后</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>在项目中，偶尔需要让 TableView 里支持不同种类的 Cell，比如微博的原创微博和别人转发的微博，就是两种 Cell。又或是类似支付宝的的 timeline 也有各种类型的 Cell。在同一个 TableView 里实现不同种类的 Cell，一般有两种方法，一种是把所有种类的 Cell 先注册了，再根据不同的 identifer 去加载 Cell，一种是在 init 时创建不同的 identifer 的 Cell。</p>
 
 <p>效果图如下。</p>
 
@@ -286,7 +294,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>932</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>971</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。
+  <meta name="description" content="UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。
 ">
 
   
@@ -35,8 +34,7 @@ UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动�
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="iOS 中简单封装自定义 PickerView">
-    <meta name="twitter:description" content="[TOC]
-UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。
+    <meta name="twitter:description" content="UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@ UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动�
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="iOS 中简单封装自定义 PickerView">
-  <meta property="og:description" content="[TOC]
-UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。
+  <meta property="og:description" content="UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/ios-%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89-pickerview/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@ UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动�
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89-pickerview/">
@@ -164,7 +161,7 @@ UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动�
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,20 @@ UIPickerView 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动�
       <h1 class="post-title">iOS 中简单封装自定义 PickerView</h1>
       <p class="post-meta">@Nemocdz · Nov 19, 2016 · 2 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p><code>UIPickerView</code> 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#1-数据">1.数据</a></li>
+<li><a href="#2-视图">2.视图</a></li>
+<li><a href="#3-响应按钮点击事件">3.响应按钮点击事件</a></li>
+<li><a href="#4-封装成工厂方法">4.封装成工厂方法</a></li>
+<li><a href="#最后">最后</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p><code>UIPickerView</code> 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。</p>
 
 <p>点击 Button 弹出 Picker，并改变指定 Label 的值，效果如下图所示。
 <img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gw1f9wp3v4z00g30ku112agf.gif" alt="" />
@@ -366,7 +374,7 @@ static const int toolBarHeight = 44;</pre></div>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>982</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1021</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

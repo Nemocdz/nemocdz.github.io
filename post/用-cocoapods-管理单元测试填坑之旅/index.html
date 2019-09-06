@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详情看 官方指南，此篇文章只针对当时 1.0.0 版本下的情况，仅做保存记录。**
+  <meta name="description" content="Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详情看 官方指南，此篇文章只针对当时 1.0.0 版本下的情况，仅做保存记录。**
 ">
 
   
@@ -35,8 +34,7 @@ Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详�
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="用 Cocoapods 管理单元测试填坑之旅">
-    <meta name="twitter:description" content="[TOC]
-Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详情看 官方指南，此篇文章只针对当时 1.0.0 版本下的情况，仅做保存记录。**
+    <meta name="twitter:description" content="Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详情看 官方指南，此篇文章只针对当时 1.0.0 版本下的情况，仅做保存记录。**
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@ Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详�
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="用 Cocoapods 管理单元测试填坑之旅">
-  <meta property="og:description" content="[TOC]
-Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详情看 官方指南，此篇文章只针对当时 1.0.0 版本下的情况，仅做保存记录。**
+  <meta property="og:description" content="Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详情看 官方指南，此篇文章只针对当时 1.0.0 版本下的情况，仅做保存记录。**
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/%E7%94%A8-cocoapods-%E7%AE%A1%E7%90%86%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%A1%AB%E5%9D%91%E4%B9%8B%E6%97%85/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@ Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详�
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E7%94%A8-cocoapods-%E7%AE%A1%E7%90%86%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%A1%AB%E5%9D%91%E4%B9%8B%E6%97%85/">
@@ -164,7 +161,7 @@ Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详�
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,20 @@ Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详�
       <h1 class="post-title">用 Cocoapods 管理单元测试填坑之旅</h1>
       <p class="post-meta">@Nemocdz · Apr 13, 2017 · 3 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详情看 <a href="https://guides.cocoapods.org/using/test-specs.html">官方指南</a>，此篇文章只针对当时 1.0.0 版本下的情况，仅做保存记录。**</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#让-pod-的-target-类型变为-xctest">让 Pod 的 target 类型变为 XCTest</a></li>
+<li><a href="#让-pod-识别到别的静态库">让 Pod 识别到别的静态库</a></li>
+<li><a href="#曲线救国解决-test-库编译问题">曲线救国解决 Test 库编译问题</a></li>
+<li><a href="#最后">最后</a></li>
+<li><a href="#参考链接">参考链接</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详情看 <a href="https://guides.cocoapods.org/using/test-specs.html">官方指南</a>，此篇文章只针对当时 1.0.0 版本下的情况，仅做保存记录。**</p>
 
 <p>上周接到了个需求，老大要我把项目代码里某个库覆盖上单元测试。而那个库没 Demo，平时都是集成在工程里开发的。为啥没有 Demo，因为那个库依赖很重，说是个库，实际只是把代码用 Cocoapods 拆分罢了……平时开发的时候，大家都是把库集成在主工程里运行。我想，单测写在主工程的 target 里，这样会显得很杂，给人感觉是给整个工程做单元测试。那能不能弄一个 Pod，专门把单测代码写在里面呢，既能 git 管理，又可以分类管理。殊不知，这个过程，坑如此多。</p>
 
@@ -398,7 +406,7 @@ Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详�
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>837</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>876</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

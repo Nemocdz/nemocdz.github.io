@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI 控件。作为摄影爱好者，而 Google 出品的摄影后期 App，Snapseed 中那个图片选择器，好看又实用，便尝试着仿写了一个。
+  <meta name="description" content="ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI 控件。作为摄影爱好者，而 Google 出品的摄影后期 App，Snapseed 中那个图片选择器，好看又实用，便尝试着仿写了一个。
 ">
 
   
@@ -35,8 +34,7 @@ ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="iOS 中实现仿 Snapseed 的照片选择器">
-    <meta name="twitter:description" content="[TOC]
-ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI 控件。作为摄影爱好者，而 Google 出品的摄影后期 App，Snapseed 中那个图片选择器，好看又实用，便尝试着仿写了一个。
+    <meta name="twitter:description" content="ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI 控件。作为摄影爱好者，而 Google 出品的摄影后期 App，Snapseed 中那个图片选择器，好看又实用，便尝试着仿写了一个。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@ ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="iOS 中实现仿 Snapseed 的照片选择器">
-  <meta property="og:description" content="[TOC]
-ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI 控件。作为摄影爱好者，而 Google 出品的摄影后期 App，Snapseed 中那个图片选择器，好看又实用，便尝试着仿写了一个。
+  <meta property="og:description" content="ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI 控件。作为摄影爱好者，而 Google 出品的摄影后期 App，Snapseed 中那个图片选择器，好看又实用，便尝试着仿写了一个。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BF-snapseed-%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@ ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BF-snapseed-%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/">
@@ -164,7 +161,7 @@ ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,21 @@ ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI
       <h1 class="post-title">iOS 中实现仿 Snapseed 的照片选择器</h1>
       <p class="post-meta">@Nemocdz · Dec 4, 2016 · 6 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI 控件。作为摄影爱好者，而 Google 出品的摄影后期 App，Snapseed 中那个图片选择器，好看又实用，便尝试着仿写了一个。</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#1-功能按钮的-tableview">1.功能按钮的 Tableview</a></li>
+<li><a href="#2-展示照片的-collecionview">2.展示照片的 Collecionview</a></li>
+<li><a href="#3-透明图层-用于实现空白处点击消失">3.透明图层（用于实现空白处点击消失）</a></li>
+<li><a href="#4-收尾-封装">4.收尾&amp;封装</a></li>
+<li><a href="#5-使用方法">5.使用方法</a></li>
+<li><a href="#最后">最后</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI 控件。作为摄影爱好者，而 Google 出品的摄影后期 App，Snapseed 中那个图片选择器，好看又实用，便尝试着仿写了一个。</p>
 
 <p>集成后一行代码即可实现下图效果。
 <img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006y8mN6gw1fae4wlsm89g30ku1121gx.gif" alt="" />
@@ -589,7 +598,7 @@ ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>967</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1006</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

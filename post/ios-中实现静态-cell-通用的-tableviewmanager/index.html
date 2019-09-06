@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-在 App 中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态 Cell 构成的 TableView，这些界面的特点是，Cell 种类繁多，Model 种类繁多，点击事件处理分散但单调（页面跳转，编辑 textFiled），重复写 tableViewDelegate 和 datasource 的相关方法，但不会用到一些奇怪的 datasource 和 delegate 方法，而且显示内容一般是固定的，每个页面 Cell 的数量不会很多。
+  <meta name="description" content="在 App 中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态 Cell 构成的 TableView，这些界面的特点是，Cell 种类繁多，Model 种类繁多，点击事件处理分散但单调（页面跳转，编辑 textFiled），重复写 tableViewDelegate 和 datasource 的相关方法，但不会用到一些奇怪的 datasource 和 delegate 方法，而且显示内容一般是固定的，每个页面 Cell 的数量不会很多。
 ">
 
   
@@ -35,8 +34,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="iOS 中实现静态 Cell 通用的 TableViewManager">
-    <meta name="twitter:description" content="[TOC]
-在 App 中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态 Cell 构成的 TableView，这些界面的特点是，Cell 种类繁多，Model 种类繁多，点击事件处理分散但单调（页面跳转，编辑 textFiled），重复写 tableViewDelegate 和 datasource 的相关方法，但不会用到一些奇怪的 datasource 和 delegate 方法，而且显示内容一般是固定的，每个页面 Cell 的数量不会很多。
+    <meta name="twitter:description" content="在 App 中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态 Cell 构成的 TableView，这些界面的特点是，Cell 种类繁多，Model 种类繁多，点击事件处理分散但单调（页面跳转，编辑 textFiled），重复写 tableViewDelegate 和 datasource 的相关方法，但不会用到一些奇怪的 datasource 和 delegate 方法，而且显示内容一般是固定的，每个页面 Cell 的数量不会很多。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="iOS 中实现静态 Cell 通用的 TableViewManager">
-  <meta property="og:description" content="[TOC]
-在 App 中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态 Cell 构成的 TableView，这些界面的特点是，Cell 种类繁多，Model 种类繁多，点击事件处理分散但单调（页面跳转，编辑 textFiled），重复写 tableViewDelegate 和 datasource 的相关方法，但不会用到一些奇怪的 datasource 和 delegate 方法，而且显示内容一般是固定的，每个页面 Cell 的数量不会很多。
+  <meta property="og:description" content="在 App 中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态 Cell 构成的 TableView，这些界面的特点是，Cell 种类繁多，Model 种类繁多，点击事件处理分散但单调（页面跳转，编辑 textFiled），重复写 tableViewDelegate 和 datasource 的相关方法，但不会用到一些奇怪的 datasource 和 delegate 方法，而且显示内容一般是固定的，每个页面 Cell 的数量不会很多。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81-cell-%E9%80%9A%E7%94%A8%E7%9A%84-tableviewmanager/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81-cell-%E9%80%9A%E7%94%A8%E7%9A%84-tableviewmanager/">
@@ -164,7 +161,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,21 @@
       <h1 class="post-title">iOS 中实现静态 Cell 通用的 TableViewManager</h1>
       <p class="post-meta">@Nemocdz · May 14, 2017 · 3 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>在 App 中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态 Cell 构成的 TableView，这些界面的特点是，Cell 种类繁多，Model 种类繁多，点击事件处理分散但单调（页面跳转，编辑 textFiled），重复写 tableViewDelegate 和 datasource 的相关方法，但不会用到一些奇怪的 datasource 和 delegate 方法，而且显示内容一般是固定的，每个页面 Cell 的数量不会很多。</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#关于-tableviewdatasource-的思考">关于 TableViewDatasource 的思考</a></li>
+<li><a href="#接管-tableviewdelegate">接管 TableViewDelegate</a></li>
+<li><a href="#cell-的协议里有啥">Cell 的协议里有啥</a></li>
+<li><a href="#初始化方法">初始化方法</a></li>
+<li><a href="#item-的一些小技巧">item 的一些小技巧</a></li>
+<li><a href="#最后">最后</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>在 App 中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态 Cell 构成的 TableView，这些界面的特点是，Cell 种类繁多，Model 种类繁多，点击事件处理分散但单调（页面跳转，编辑 textFiled），重复写 tableViewDelegate 和 datasource 的相关方法，但不会用到一些奇怪的 datasource 和 delegate 方法，而且显示内容一般是固定的，每个页面 Cell 的数量不会很多。</p>
 
 <p>像笔者所在的项目里的侧边栏模块，里面有很多 tableView，由于没有使用 StoryBoard 且很久之前写的，充斥着各种if&hellip;else  if 用 model 的某个key值进行判断的逻辑去让 cell 去显示和隐藏某些视图，已经进行点击跳转逻辑，更有甚者，有 <code>if (indexPath == 0)</code> 之类的通过行数判断去处理的逻辑。增加新的cell时，便要在各种地方再加上 else if  的新判断，而做新界面时，也没有很好的方法进行复用。</p>
 
@@ -381,7 +390,7 @@ itemD.tapBlock <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>805</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>844</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

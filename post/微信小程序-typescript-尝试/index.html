@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-自从去年开始在项目里写了一段时间 Javascript 后，感觉没有类型检查的语言还是不太适合我，所以一直想尝试下 TypeScript，然而由于项目庞大，人员协作问题，一时半会没办法切成 TypeScript。正好最近有小程序的需求和小程序去年 11 月开始官方支持了 TypeScript，所以拿来练练手。
+  <meta name="description" content="自从去年开始在项目里写了一段时间 Javascript 后，感觉没有类型检查的语言还是不太适合我，所以一直想尝试下 TypeScript，然而由于项目庞大，人员协作问题，一时半会没办法切成 TypeScript。正好最近有小程序的需求和小程序去年 11 月开始官方支持了 TypeScript，所以拿来练练手。
 ">
 
   
@@ -35,8 +34,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="微信小程序 TypeScript 尝试">
-    <meta name="twitter:description" content="[TOC]
-自从去年开始在项目里写了一段时间 Javascript 后，感觉没有类型检查的语言还是不太适合我，所以一直想尝试下 TypeScript，然而由于项目庞大，人员协作问题，一时半会没办法切成 TypeScript。正好最近有小程序的需求和小程序去年 11 月开始官方支持了 TypeScript，所以拿来练练手。
+    <meta name="twitter:description" content="自从去年开始在项目里写了一段时间 Javascript 后，感觉没有类型检查的语言还是不太适合我，所以一直想尝试下 TypeScript，然而由于项目庞大，人员协作问题，一时半会没办法切成 TypeScript。正好最近有小程序的需求和小程序去年 11 月开始官方支持了 TypeScript，所以拿来练练手。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="微信小程序 TypeScript 尝试">
-  <meta property="og:description" content="[TOC]
-自从去年开始在项目里写了一段时间 Javascript 后，感觉没有类型检查的语言还是不太适合我，所以一直想尝试下 TypeScript，然而由于项目庞大，人员协作问题，一时半会没办法切成 TypeScript。正好最近有小程序的需求和小程序去年 11 月开始官方支持了 TypeScript，所以拿来练练手。
+  <meta property="og:description" content="自从去年开始在项目里写了一段时间 Javascript 后，感觉没有类型检查的语言还是不太适合我，所以一直想尝试下 TypeScript，然而由于项目庞大，人员协作问题，一时半会没办法切成 TypeScript。正好最近有小程序的需求和小程序去年 11 月开始官方支持了 TypeScript，所以拿来练练手。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F-typescript-%E5%B0%9D%E8%AF%95/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F-typescript-%E5%B0%9D%E8%AF%95/">
@@ -164,7 +161,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,27 @@
       <h1 class="post-title">微信小程序 TypeScript 尝试</h1>
       <p class="post-meta">@Nemocdz · Jan 30, 2019 · 2 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>自从去年开始在项目里写了一段时间 Javascript 后，感觉没有类型检查的语言还是不太适合我，所以一直想尝试下 TypeScript，然而由于项目庞大，人员协作问题，一时半会没办法切成 TypeScript。正好最近有小程序的需求和小程序去年 11 月开始官方支持了 TypeScript，所以拿来练练手。</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#why-typescript">Why TypeScript？</a>
+<ul>
+<li><a href="#可选的静态类型">可选的静态类型</a></li>
+<li><a href="#接口">接口</a></li>
+</ul></li>
+<li><a href="#小程序对-typescript-的支持">小程序对 TypeScript 的支持</a>
+<ul>
+<li><a href="#事件">事件</a></li>
+<li><a href="#page-data">Page&amp;Data</a></li>
+<li><a href="#调用-javascript">调用 JavaScript</a></li>
+</ul></li>
+<li><a href="#最后">最后</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>自从去年开始在项目里写了一段时间 Javascript 后，感觉没有类型检查的语言还是不太适合我，所以一直想尝试下 TypeScript，然而由于项目庞大，人员协作问题，一时半会没办法切成 TypeScript。正好最近有小程序的需求和小程序去年 11 月开始官方支持了 TypeScript，所以拿来练练手。</p>
 
 <h2 id="why-typescript">Why TypeScript？</h2>
 
@@ -316,7 +331,7 @@ Page<span style="color:#ff79c6">&lt;</span>IIntroData, IIntroPage<span style="co
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>179</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>218</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

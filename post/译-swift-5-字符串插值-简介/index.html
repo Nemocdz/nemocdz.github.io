@@ -59,7 +59,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E8%AF%91-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC-%E7%AE%80%E4%BB%8B/">
@@ -170,7 +170,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -221,6 +221,17 @@
       <h1 class="post-title">[译] Swift 5 字符串插值-简介</h1>
       <p class="post-meta">@Nemocdz · Apr 22, 2019 · 2 min read</p>
     </header>
+
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#全新的-stringinterpolation-设计">全新的 StringInterpolation 设计</a></li>
+<li><a href="#一个简单的例子">一个简单的例子</a></li>
+<li><a href="#这仅仅只是个开始">这仅仅只是个开始</a></li>
+</ul>
+</nav>
+
     <article class="post-content"><blockquote>
 <p>作者：Olivier Halligon</p>
 
@@ -285,33 +296,34 @@
 
 <li><p>实现 <code>appendInterpolation(issue: Int)</code> 逐个追加用 markdown 表示的 issue 链接</p></li>
 
-<li><p>然后在 <code>GitHubComment</code> 上实现 <code>init(stringInterpolation: StringInterpolation)</code> 将 <code>parts</code> 构造成一个评论</p></li>
-</ul>
+<li><p>然后在 <code>GitHubComment</code> 上实现 <code>init(stringInterpolation: StringInterpolation)</code> 将 <code>parts</code> 构造成一个评论</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">GitHubComment</span>: ExpressibleByStringInterpolation {
-  <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">StringInterpolation</span>: StringInterpolationProtocol {
-    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">parts</span>: [<span style="color:#8be9fd;font-style:italic">String</span>]
-      <span style="color:#8be9fd;font-style:italic">init</span>(literalCapacity: <span style="color:#8be9fd;font-style:italic">Int</span>, interpolationCount: <span style="color:#8be9fd;font-style:italic">Int</span>) {
-      <span style="color:#ff79c6">self</span>.parts = []
-      <span style="color:#6272a4">// - literalCapacity 文本片段的字符数 (L)</span>
-      <span style="color:#6272a4">// - interpolationCount 插值片段数 (I)</span>
-      <span style="color:#6272a4">// 我们预计通常结构会是像 &#34;LILILIL&#34;</span>
-      <span style="color:#6272a4">// — e.g. &#34;Hello \(world, .color(.blue))!&#34; — 因此是 2n+1</span>
-      <span style="color:#ff79c6">self</span>.parts.reserveCapacity(<span style="color:#bd93f9">2</span><span style="color:#ff79c6">*</span>interpolationCount<span style="color:#ff79c6">+</span><span style="color:#bd93f9">1</span>)
-    }
-      <span style="color:#ff79c6">mutating</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">appendLiteral</span>(<span style="color:#ff79c6">_</span> literal: <span style="color:#8be9fd;font-style:italic">String</span>) {
-      <span style="color:#ff79c6">self</span>.parts.append(literal)
-    }
-    <span style="color:#ff79c6">mutating</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">appendInterpolation</span>(user name: <span style="color:#8be9fd;font-style:italic">String</span>) {
-      <span style="color:#ff79c6">self</span>.parts.append(<span style="color:#f1fa8c">&#34;[</span><span style="color:#f1fa8c">\(</span>name<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">](https://github.com/</span><span style="color:#f1fa8c">\(</span>name<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">)&#34;</span>)
-    }
-    <span style="color:#ff79c6">mutating</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">appendInterpolation</span>(issue number: <span style="color:#8be9fd;font-style:italic">Int</span>) {
-      <span style="color:#ff79c6">self</span>.parts.append(<span style="color:#f1fa8c">&#34;[#</span><span style="color:#f1fa8c">\(</span>number<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">](issues/</span><span style="color:#f1fa8c">\(</span>number<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">)&#34;</span>)
-    }
-  }
-  <span style="color:#8be9fd;font-style:italic">init</span>(stringInterpolation: StringInterpolation) {
-    <span style="color:#ff79c6">self</span>.markdown = stringInterpolation.parts.joined()
-  }
-}</code></pre></div>
+<span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">StringInterpolation</span>: StringInterpolationProtocol {
+<span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">parts</span>: [<span style="color:#8be9fd;font-style:italic">String</span>]
+  <span style="color:#8be9fd;font-style:italic">init</span>(literalCapacity: <span style="color:#8be9fd;font-style:italic">Int</span>, interpolationCount: <span style="color:#8be9fd;font-style:italic">Int</span>) {
+  <span style="color:#ff79c6">self</span>.parts = []
+  <span style="color:#6272a4">// - literalCapacity 文本片段的字符数 (L)</span>
+  <span style="color:#6272a4">// - interpolationCount 插值片段数 (I)</span>
+  <span style="color:#6272a4">// 我们预计通常结构会是像 &#34;LILILIL&#34;</span>
+  <span style="color:#6272a4">// — e.g. &#34;Hello \(world, .color(.blue))!&#34; — 因此是 2n+1</span>
+  <span style="color:#ff79c6">self</span>.parts.reserveCapacity(<span style="color:#bd93f9">2</span><span style="color:#ff79c6">*</span>interpolationCount<span style="color:#ff79c6">+</span><span style="color:#bd93f9">1</span>)
+}
+  <span style="color:#ff79c6">mutating</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">appendLiteral</span>(<span style="color:#ff79c6">_</span> literal: <span style="color:#8be9fd;font-style:italic">String</span>) {
+  <span style="color:#ff79c6">self</span>.parts.append(literal)
+}
+<span style="color:#ff79c6">mutating</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">appendInterpolation</span>(user name: <span style="color:#8be9fd;font-style:italic">String</span>) {
+  <span style="color:#ff79c6">self</span>.parts.append(<span style="color:#f1fa8c">&#34;[</span><span style="color:#f1fa8c">\(</span>name<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">](https://github.com/</span><span style="color:#f1fa8c">\(</span>name<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">)&#34;</span>)
+}
+<span style="color:#ff79c6">mutating</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">appendInterpolation</span>(issue number: <span style="color:#8be9fd;font-style:italic">Int</span>) {
+  <span style="color:#ff79c6">self</span>.parts.append(<span style="color:#f1fa8c">&#34;[#</span><span style="color:#f1fa8c">\(</span>number<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">](issues/</span><span style="color:#f1fa8c">\(</span>number<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">)&#34;</span>)
+}
+}
+<span style="color:#8be9fd;font-style:italic">init</span>(stringInterpolation: StringInterpolation) {
+<span style="color:#ff79c6">self</span>.markdown = stringInterpolation.parts.joined()
+}
+}</code></pre></div></li>
+</ul>
+
 <p>这就完事了！我们成功了！</p>
 
 <p>注意，因为那些我们实现了的 <code>appendInterpolation</code> 方法签名，我们允许使用 <code>Hello \(user: &quot;alisoftware&quot;)</code> 但不能使用 <code>Hello \(user: 123)</code>，因为 <code>appendInterpolation(user:)</code> 期望一个 <code>String</code> 作为形参。类似的是，在你的字符串中 <code>\(issue: 123)</code> 只能允许一个 <code>Int</code> 因为 <code>appendInterpolation(issue:)</code> 采用一个 <code>Int</code> 作为形参。</p>
@@ -341,7 +353,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. 
+        © Nemocdz. This post was published <strong>136</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

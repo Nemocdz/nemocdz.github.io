@@ -59,7 +59,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E8%AF%91-mirror-%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">
@@ -170,7 +170,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -221,6 +221,26 @@
       <h1 class="post-title">[译] Mirror 的工作原理</h1>
       <p class="post-meta">@Nemocdz · Oct 14, 2018 · 8 min read</p>
     </header>
+
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#事先声明">事先声明</a></li>
+<li><a href="#接口">接口</a></li>
+<li><a href="#代码结构">代码结构</a></li>
+<li><a href="#神奇的动态派发">神奇的动态派发</a></li>
+<li><a href="#元组的反射">元组的反射</a></li>
+<li><a href="#swift-getfieldat">swift_getFieldAt</a></li>
+<li><a href="#结构体的反射">结构体的反射</a></li>
+<li><a href="#类的反射">类的反射</a></li>
+<li><a href="#枚举的反射">枚举的反射</a></li>
+<li><a href="#其余种类">其余种类</a></li>
+<li><a href="#swift-侧接口">Swift 侧接口</a></li>
+<li><a href="#结论">结论</a></li>
+</ul>
+</nav>
+
     <article class="post-content"><blockquote>
 <p>作者：<a href="https://twitter.com/mikeash/">Mike Ash</a></p>
 
@@ -253,7 +273,7 @@
 
 <p>举个例子，让我们看下在 <code>ReflectionMirror.swift</code> 中的 <code>_getChildCount</code> 函数：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">@_silgen_name(<span style="color:#f1fa8c">&#34;swift_reflectionMirror_count&#34;</span>)
-<span style="color:#8be9fd;font-style:italic">internal</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">_getChildCount</span>&lt;T<span style="color:#ff79c6">&gt;</span>(<span style="color:#ff79c6">_</span>: T, type: <span style="color:#8be9fd;font-style:italic">Any</span>.<span style="color:#ff79c6">Type</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Int</span></code></pre></div>
+<span style="color:#8be9fd;font-style:italic">internal</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">_getChildCount</span>&lt;T&gt;(<span style="color:#ff79c6">_</span>: T, type: <span style="color:#8be9fd;font-style:italic">Any</span>.<span style="color:#ff79c6">Type</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Int</span></code></pre></div>
 <p><code>@_silgen_name</code> 修饰符会通知 Swift 编译器将这个函数映射成 <code>swift_reflectionMirror_count</code> 符号，而不是 Swift 通常对应到的 <code>_getChildCount</code> 方法名修饰。需要注意的是，最前面的下划线表示这个修饰符是被保留在标准库中的。在 C++ 这边，这个函数是这样的：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">SWIFT_CC(swift) SWIFT_RUNTIME_STDLIB_INTERFACE
 intptr_t swift_reflectionMirror_count(OpaqueValue <span style="color:#ff79c6">*</span>value,
@@ -264,28 +284,28 @@ intptr_t swift_reflectionMirror_count(OpaqueValue <span style="color:#ff79c6">*<
 
 <p><code>Mirror</code> 的在 Swift 和 C++ 之间的全部接口由以下函数组成：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">@_silgen_name(<span style="color:#f1fa8c">&#34;swift_reflectionMirror_normalizedType&#34;</span>)
-<span style="color:#8be9fd;font-style:italic">internal</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">_getNormalizedType</span>&lt;T<span style="color:#ff79c6">&gt;</span>(<span style="color:#ff79c6">_</span>: T, type: <span style="color:#8be9fd;font-style:italic">Any</span>.<span style="color:#ff79c6">Type</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Any</span>.<span style="color:#ff79c6">Type</span>
+<span style="color:#8be9fd;font-style:italic">internal</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">_getNormalizedType</span>&lt;T&gt;(<span style="color:#ff79c6">_</span>: T, type: <span style="color:#8be9fd;font-style:italic">Any</span>.<span style="color:#ff79c6">Type</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Any</span>.<span style="color:#ff79c6">Type</span>
 
 @_silgen_name(<span style="color:#f1fa8c">&#34;swift_reflectionMirror_count&#34;</span>)
-<span style="color:#8be9fd;font-style:italic">internal</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">_getChildCount</span>&lt;T<span style="color:#ff79c6">&gt;</span>(<span style="color:#ff79c6">_</span>: T, type: <span style="color:#8be9fd;font-style:italic">Any</span>.<span style="color:#ff79c6">Type</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Int</span>
+<span style="color:#8be9fd;font-style:italic">internal</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">_getChildCount</span>&lt;T&gt;(<span style="color:#ff79c6">_</span>: T, type: <span style="color:#8be9fd;font-style:italic">Any</span>.<span style="color:#ff79c6">Type</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Int</span>
 
-<span style="color:#8be9fd;font-style:italic">internal</span> <span style="color:#8be9fd;font-style:italic">typealias</span> NameFreeFunc = @convention(c) (<span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">CChar</span><span style="color:#ff79c6">&gt;?</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Void</span>
+<span style="color:#8be9fd;font-style:italic">internal</span> <span style="color:#8be9fd;font-style:italic">typealias</span> NameFreeFunc = @convention(c) (<span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">CChar</span>&gt;?) -&gt; <span style="color:#8be9fd;font-style:italic">Void</span>
 
 @_silgen_name(<span style="color:#f1fa8c">&#34;swift_reflectionMirror_subscript&#34;</span>)
-<span style="color:#8be9fd;font-style:italic">internal</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">_getChild</span>&lt;T<span style="color:#ff79c6">&gt;</span>(
+<span style="color:#8be9fd;font-style:italic">internal</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">_getChild</span>&lt;T&gt;(
   of: T,
   type: <span style="color:#8be9fd;font-style:italic">Any</span>.<span style="color:#ff79c6">Type</span>,
   index: <span style="color:#8be9fd;font-style:italic">Int</span>,
-  outName: <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">CChar</span><span style="color:#ff79c6">&gt;?&gt;</span>,
+  outName: <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">CChar</span>&gt;?<span style="color:#ff79c6">&gt;</span>,
   outFreeFunc: <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;NameFreeFunc?<span style="color:#ff79c6">&gt;</span>
 ) -&gt; <span style="color:#8be9fd;font-style:italic">Any</span>
 
 <span style="color:#6272a4">// Returns &#39;c&#39; (class), &#39;e&#39; (enum), &#39;s&#39; (struct), &#39;t&#39; (tuple), or &#39;\0&#39; (none)</span>
 @_silgen_name(<span style="color:#f1fa8c">&#34;swift_reflectionMirror_displayStyle&#34;</span>)
-<span style="color:#8be9fd;font-style:italic">internal</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">_getDisplayStyle</span>&lt;T<span style="color:#ff79c6">&gt;</span>(<span style="color:#ff79c6">_</span>: T) -&gt; <span style="color:#8be9fd;font-style:italic">CChar</span>
+<span style="color:#8be9fd;font-style:italic">internal</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">_getDisplayStyle</span>&lt;T&gt;(<span style="color:#ff79c6">_</span>: T) -&gt; <span style="color:#8be9fd;font-style:italic">CChar</span>
 
 @_silgen_name(<span style="color:#f1fa8c">&#34;swift_reflectionMirror_quickLookObject&#34;</span>)
-<span style="color:#8be9fd;font-style:italic">internal</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">_getQuickLookObject</span>&lt;T<span style="color:#ff79c6">&gt;</span>(<span style="color:#ff79c6">_</span>: T) -&gt; <span style="color:#8be9fd;font-style:italic">AnyObject</span>?
+<span style="color:#8be9fd;font-style:italic">internal</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">_getQuickLookObject</span>&lt;T&gt;(<span style="color:#ff79c6">_</span>: T) -&gt; <span style="color:#8be9fd;font-style:italic">AnyObject</span>?
 
 @_silgen_name(<span style="color:#f1fa8c">&#34;_swift_stdlib_NSObject_isKindOfClass&#34;</span>)
 <span style="color:#8be9fd;font-style:italic">internal</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">_isImpl</span>(<span style="color:#ff79c6">_</span> object: <span style="color:#8be9fd;font-style:italic">AnyObject</span>, kindOf: <span style="color:#8be9fd;font-style:italic">AnyObject</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Bool</span></code></pre></div>
@@ -805,7 +825,7 @@ intptr_t swift_reflectionMirror_count(OpaqueValue <span style="color:#ff79c6">*<
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>288</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>327</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

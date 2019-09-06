@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-在 iOS 10 上，苹果将原来散落在 UIKit 中各处的用户通知相关的代码进行重构，剥离，打造了一个全新的通知框架 UserNotifications。笔者最近在开发公司通知相关的需求，跟着 WWDC 2016 的视频和官方文档，学习了一下新框架。同时，在学习过程中，和老框架对应 API 进行对比，有了个人的感受和看法。
+  <meta name="description" content="在 iOS 10 上，苹果将原来散落在 UIKit 中各处的用户通知相关的代码进行重构，剥离，打造了一个全新的通知框架 UserNotifications。笔者最近在开发公司通知相关的需求，跟着 WWDC 2016 的视频和官方文档，学习了一下新框架。同时，在学习过程中，和老框架对应 API 进行对比，有了个人的感受和看法。
 ">
 
   
@@ -35,8 +34,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="iOS 10 通知框架 UserNotifications 学习及兼容笔记">
-    <meta name="twitter:description" content="[TOC]
-在 iOS 10 上，苹果将原来散落在 UIKit 中各处的用户通知相关的代码进行重构，剥离，打造了一个全新的通知框架 UserNotifications。笔者最近在开发公司通知相关的需求，跟着 WWDC 2016 的视频和官方文档，学习了一下新框架。同时，在学习过程中，和老框架对应 API 进行对比，有了个人的感受和看法。
+    <meta name="twitter:description" content="在 iOS 10 上，苹果将原来散落在 UIKit 中各处的用户通知相关的代码进行重构，剥离，打造了一个全新的通知框架 UserNotifications。笔者最近在开发公司通知相关的需求，跟着 WWDC 2016 的视频和官方文档，学习了一下新框架。同时，在学习过程中，和老框架对应 API 进行对比，有了个人的感受和看法。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="iOS 10 通知框架 UserNotifications 学习及兼容笔记">
-  <meta property="og:description" content="[TOC]
-在 iOS 10 上，苹果将原来散落在 UIKit 中各处的用户通知相关的代码进行重构，剥离，打造了一个全新的通知框架 UserNotifications。笔者最近在开发公司通知相关的需求，跟着 WWDC 2016 的视频和官方文档，学习了一下新框架。同时，在学习过程中，和老框架对应 API 进行对比，有了个人的感受和看法。
+  <meta property="og:description" content="在 iOS 10 上，苹果将原来散落在 UIKit 中各处的用户通知相关的代码进行重构，剥离，打造了一个全新的通知框架 UserNotifications。笔者最近在开发公司通知相关的需求，跟着 WWDC 2016 的视频和官方文档，学习了一下新框架。同时，在学习过程中，和老框架对应 API 进行对比，有了个人的感受和看法。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/ios-10-%E9%80%9A%E7%9F%A5%E6%A1%86%E6%9E%B6-usernotifications-%E5%AD%A6%E4%B9%A0%E5%8F%8A%E5%85%BC%E5%AE%B9%E7%AC%94%E8%AE%B0/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-10-%E9%80%9A%E7%9F%A5%E6%A1%86%E6%9E%B6-usernotifications-%E5%AD%A6%E4%B9%A0%E5%8F%8A%E5%85%BC%E5%AE%B9%E7%AC%94%E8%AE%B0/">
@@ -164,7 +161,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,50 @@
       <h1 class="post-title">iOS 10 通知框架 UserNotifications 学习及兼容笔记</h1>
       <p class="post-meta">@Nemocdz · Jul 28, 2017 · 5 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>在 iOS 10 上，苹果将原来散落在 UIKit 中各处的用户通知相关的代码进行重构，剥离，打造了一个全新的通知框架 UserNotifications。笔者最近在开发公司通知相关的需求，跟着 WWDC 2016 的视频和官方文档，学习了一下新框架。同时，在学习过程中，和老框架对应 API 进行对比，有了个人的感受和看法。</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#1-申请权限-注册配置">1.申请权限/注册配置</a>
+<ul>
+<li><a href="#配置-category-并注册">配置 Category 并注册</a>
+<ul>
+<li><a href="#uiusernotificationactioncontext">UIUserNotificationActionContext</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#2-发送本地通知">2.发送本地通知</a>
+<ul>
+<li><a href="#unnotificationcontent">UNNotificationContent</a></li>
+<li><a href="#unnotificationtrigger">UNNotificationTrigger</a></li>
+<li><a href="#unnotificationrequest">UNNotificationRequest</a></li>
+</ul></li>
+<li><a href="#3-展示和响应">3.展示和响应</a>
+<ul>
+<li><a href="#收到通知">收到通知</a></li>
+<li><a href="#点击通知本身">点击通知本身</a></li>
+<li><a href="#点击自定义按钮">点击自定义按钮</a></li>
+<li><a href="#通知的收到">通知的收到</a></li>
+<li><a href="#点击通知或按钮的操作响应">点击通知或按钮的操作响应</a></li>
+</ul></li>
+<li><a href="#4-app-extension">4.App Extension</a>
+<ul>
+<li><a href="#notificationservice-extension">NotificationService Extension</a></li>
+<li><a href="#notificationcontent-extension">NotificationContent Extension</a></li>
+</ul></li>
+<li><a href="#ios-11-new">iOS 11 New</a></li>
+<li><a href="#总结">总结</a>
+<ul>
+<li>
+<ul>
+<li><a href="#ios-10-新通知框架和旧框架差异性">iOS 10 新通知框架和旧框架差异性</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#参考链接">参考链接</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>在 iOS 10 上，苹果将原来散落在 UIKit 中各处的用户通知相关的代码进行重构，剥离，打造了一个全新的通知框架 UserNotifications。笔者最近在开发公司通知相关的需求，跟着 WWDC 2016 的视频和官方文档，学习了一下新框架。同时，在学习过程中，和老框架对应 API 进行对比，有了个人的感受和看法。</p>
 
 <p>首先，对于通知框架，其框架功能包括以下四类</p>
 
@@ -823,7 +861,7 @@ UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span st
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>730</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>769</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

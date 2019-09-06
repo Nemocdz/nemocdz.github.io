@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-个人学习总结笔记。
+  <meta name="description" content="个人学习总结笔记。
 ">
 
   
@@ -35,8 +34,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="Cocoa 多线程总结">
-    <meta name="twitter:description" content="[TOC]
-个人学习总结笔记。
+    <meta name="twitter:description" content="个人学习总结笔记。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="Cocoa 多线程总结">
-  <meta property="og:description" content="[TOC]
-个人学习总结笔记。
+  <meta property="og:description" content="个人学习总结笔记。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/cocoa-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%80%BB%E7%BB%93/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/cocoa-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%80%BB%E7%BB%93/">
@@ -164,7 +161,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,57 @@
       <h1 class="post-title">Cocoa 多线程总结</h1>
       <p class="post-meta">@Nemocdz · Jun 28, 2017 · 2 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>个人学习总结笔记。</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#前置知识">前置知识</a>
+<ul>
+<li><a href="#线程">线程</a></li>
+<li><a href="#多元信号量">多元信号量</a></li>
+<li><a href="#死锁">死锁</a></li>
+<li><a href="#并发">并发</a></li>
+<li><a href="#串行与并行">串行与并行</a></li>
+<li><a href="#同步与异步">同步与异步</a></li>
+<li><a href="#多线程技术">多线程技术</a></li>
+</ul></li>
+<li><a href="#ios-开发中的多线程技术">iOS 开发中的多线程技术</a>
+<ul>
+<li><a href="#基础">基础</a></li>
+<li><a href="#方案">方案</a>
+<ul>
+<li><a href="#pthread-posix-threads">pthread（POSIX threads）</a></li>
+<li><a href="#nsthread">NSThread</a></li>
+<li><a href="#gcd-grand-central-dispatch">GCD（Grand Central Dispatch）</a></li>
+<li><a href="#nsoperation-nsoperationqueue">NSOperation+NSOperationQueue</a></li>
+</ul></li>
+<li><a href="#gcd">GCD</a>
+<ul>
+<li><a href="#队列">队列</a></li>
+<li><a href="#执行方式">执行方式</a></li>
+<li><a href="#api">API</a>
+<ul>
+<li><a href="#常用">常用</a></li>
+<li><a href="#非常用">非常用</a></li>
+</ul></li>
+<li><a href="#gcd-中的死锁">GCD 中的死锁</a></li>
+<li><a href="#gcd-的实现原理">GCD 的实现原理</a></li>
+</ul></li>
+<li><a href="#nsoperation">NSOperation</a>
+<ul>
+<li><a href="#标识状态-只读属性">标识状态（只读属性）</a></li>
+<li><a href="#系统子类">系统子类</a></li>
+<li><a href="#nsoperationqueue">NSOperationQueue</a></li>
+<li><a href="#maxconcureentoperationcount">MaxConcureentOperationCount</a></li>
+<li><a href="#与-gcd-比较">与 GCD 比较</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#参考链接">参考链接</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>个人学习总结笔记。</p>
 
 <h2 id="前置知识">前置知识</h2>
 
@@ -481,7 +526,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>761</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>800</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

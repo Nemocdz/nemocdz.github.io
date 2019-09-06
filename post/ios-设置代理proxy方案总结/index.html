@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-最近因为项目需要，需要在打开某个网址时设置 HTTP 代理。所以做了相关的技术方案调研，并总结下来。
+  <meta name="description" content="最近因为项目需要，需要在打开某个网址时设置 HTTP 代理。所以做了相关的技术方案调研，并总结下来。
 在 WebView 设置 Proxy 的方式，就是对请求进行拦截并重新处理。还有一种全局的实现方案，使用 iOS 9 以后才有的 NetworkExtension，但是这种方案会在用户看来像是个微皮恩的 App，不友好且太重了。
 ">
 
@@ -36,8 +35,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="iOS 设置代理（Proxy）方案总结">
-    <meta name="twitter:description" content="[TOC]
-最近因为项目需要，需要在打开某个网址时设置 HTTP 代理。所以做了相关的技术方案调研，并总结下来。
+    <meta name="twitter:description" content="最近因为项目需要，需要在打开某个网址时设置 HTTP 代理。所以做了相关的技术方案调研，并总结下来。
 在 WebView 设置 Proxy 的方式，就是对请求进行拦截并重新处理。还有一种全局的实现方案，使用 iOS 9 以后才有的 NetworkExtension，但是这种方案会在用户看来像是个微皮恩的 App，不友好且太重了。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
@@ -46,8 +44,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="iOS 设置代理（Proxy）方案总结">
-  <meta property="og:description" content="[TOC]
-最近因为项目需要，需要在打开某个网址时设置 HTTP 代理。所以做了相关的技术方案调研，并总结下来。
+  <meta property="og:description" content="最近因为项目需要，需要在打开某个网址时设置 HTTP 代理。所以做了相关的技术方案调研，并总结下来。
 在 WebView 设置 Proxy 的方式，就是对请求进行拦截并重新处理。还有一种全局的实现方案，使用 iOS 9 以后才有的 NetworkExtension，但是这种方案会在用户看来像是个微皮恩的 App，不友好且太重了。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/ios-%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86proxy%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">
@@ -56,7 +53,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86proxy%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">
@@ -167,7 +164,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -218,9 +215,25 @@
       <h1 class="post-title">iOS 设置代理（Proxy）方案总结</h1>
       <p class="post-meta">@Nemocdz · Sep 26, 2018 · 7 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>最近因为项目需要，需要在打开某个网址时设置 HTTP 代理。所以做了相关的技术方案调研，并总结下来。</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#使用-urlprotocol">使用 URLProtocol</a>
+<ul>
+<li><a href="#1-自定义-urlprotocol">1. 自定义 URLProtocol</a></li>
+<li><a href="#2-自定义-urlsessionmanager">2. 自定义 URLSessionManager</a></li>
+<li><a href="#3-wkwebview-的特别处理">3. WKWebView 的特别处理</a></li>
+</ul></li>
+<li><a href="#使用-wkweburlschemehandler-ios-12-2-该方法已失效">使用 WKWebURLSchemeHandler（iOS 12.2 该方法已失效）</a></li>
+<li><a href="#使用-networkextension">使用 NetworkExtension</a></li>
+<li><a href="#最后">最后</a></li>
+<li><a href="#参考链接">参考链接</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>最近因为项目需要，需要在打开某个网址时设置 HTTP 代理。所以做了相关的技术方案调研，并总结下来。</p>
 
 <p>在 WebView 设置 Proxy 的方式，就是对请求进行拦截并重新处理。还有一种全局的实现方案，使用 iOS 9 以后才有的 NetworkExtension，但是这种方案会在用户看来像是个微皮恩的 App，不友好且太重了。</p>
 
@@ -275,7 +288,7 @@
 <span style="color:#6272a4">/// 核心是在 startLoading 中对请求进行重发，将 Proxy 信息设置进 URLSessionConfigration，并生成 URLSession 发送请求</span>
 <span style="color:#ff79c6">override</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">startLoading</span>() {
     <span style="color:#6272a4">// 1. 为请求打上标记</span>
-    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">newRequest</span> = request <span style="color:#ff79c6">as</span><span style="color:#ff79c6">!</span> NSMutableURLRequest
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">newRequest</span> = request <span style="color:#ff79c6">as</span>! NSMutableURLRequest
     type(of:<span style="color:#ff79c6">self</span>).setProperty(<span style="color:#ff79c6">true</span>, forKey: type(of: <span style="color:#ff79c6">self</span>).customKey, <span style="color:#ff79c6">in</span>: newRequest)
         
     <span style="color:#6272a4">// 2. 设置 Proxy 配置</span>
@@ -293,7 +306,7 @@
         
      <span style="color:#6272a4">// 4. 发起请求</span>
      dataTask = defaultSession.dataTask(with:newRequest <span style="color:#ff79c6">as</span> URLRequest)
-     dataTask<span style="color:#ff79c6">!</span>.resume()
+     dataTask!.resume()
 }
 
 <span style="color:#6272a4">/// 在 stopLoading 中 cancel 任务</span>
@@ -317,8 +330,8 @@
 
 <span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">HttpProxyProtocol</span>: URLSessionTaskDelegate{
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">urlSession</span>(<span style="color:#ff79c6">_</span> session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        <span style="color:#ff79c6">if</span> error <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> <span style="color:#ff79c6">&amp;&amp;</span> error<span style="color:#ff79c6">!</span>._code <span style="color:#ff79c6">!=</span> NSURLErrorCancelled {
-            client?.urlProtocol(<span style="color:#ff79c6">self</span>, didFailWithError: error<span style="color:#ff79c6">!</span>)
+        <span style="color:#ff79c6">if</span> error <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> <span style="color:#ff79c6">&amp;&amp;</span> error!._code <span style="color:#ff79c6">!=</span> NSURLErrorCancelled {
+            client?.urlProtocol(<span style="color:#ff79c6">self</span>, didFailWithError: error!)
         } <span style="color:#ff79c6">else</span> {
             client?.urlProtocolDidFinishLoading(<span style="color:#ff79c6">self</span>)
         }
@@ -326,7 +339,7 @@
 }</code></pre></div>
 <p><strong>需要特别注意的是</strong>，在 <code>UIWebView</code> 中使用会出现 JS、CSS、Image 重定向后无法访问的问题。解决方法是在重定向方法中添加如下代码：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">urlSession</span>(<span style="color:#ff79c6">_</span> session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -&gt; <span style="color:#8be9fd;font-style:italic">Void</span>) {
-        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">newRequest</span> = request <span style="color:#ff79c6">as</span><span style="color:#ff79c6">!</span> NSMutableURLRequest
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">newRequest</span> = request <span style="color:#ff79c6">as</span>! NSMutableURLRequest
         type(of: <span style="color:#ff79c6">self</span>).removeProperty(forKey: type(of: <span style="color:#ff79c6">self</span>).customKey, <span style="color:#ff79c6">in</span>: newRequest)
         client?.urlProtocol(<span style="color:#ff79c6">self</span>, wasRedirectedTo: newRequest <span style="color:#ff79c6">as</span> URLRequest, redirectResponse: response)
         dataTask?.cancel()
@@ -365,7 +378,7 @@
             currentSession = URLSession(configuration: config, delegate: <span style="color:#ff79c6">self</span>.sessionDelegate, delegateQueue: <span style="color:#ff79c6">nil</span>)
         }
         
-        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">dataTask</span> = currentSession<span style="color:#ff79c6">!</span>.dataTask(with: request)
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">dataTask</span> = currentSession!.dataTask(with: request)
         <span style="color:#6272a4">/// 保存 Task 对应的 Delegate</span>
         sessionDelegate?[dataTask] = delegate
         <span style="color:#ff79c6">return</span> dataTask
@@ -526,7 +539,7 @@ fileprivate <span style="color:#8be9fd;font-style:italic">let</span> <span style
                     didReceive response: URLResponse,
                     completionHandler: @escaping (URLSession.ResponseDisposition) -&gt; <span style="color:#8be9fd;font-style:italic">Void</span>) {
         <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">delegate</span> = <span style="color:#ff79c6">self</span>[dataTask] <span style="color:#ff79c6">as</span>? URLSessionDataDelegate{
-            delegate.urlSession<span style="color:#ff79c6">!</span>(session, dataTask: dataTask, didReceive: response, completionHandler: completionHandler)
+            delegate.urlSession!(session, dataTask: dataTask, didReceive: response, completionHandler: completionHandler)
         } <span style="color:#ff79c6">else</span> {
             completionHandler(.cancel)
         }
@@ -534,7 +547,7 @@ fileprivate <span style="color:#8be9fd;font-style:italic">let</span> <span style
     
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">urlSession</span>(<span style="color:#ff79c6">_</span> session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">delegate</span> = <span style="color:#ff79c6">self</span>[dataTask] <span style="color:#ff79c6">as</span>? URLSessionDataDelegate{
-            delegate.urlSession<span style="color:#ff79c6">!</span>(session, dataTask: dataTask, didReceive: data)
+            delegate.urlSession!(session, dataTask: dataTask, didReceive: data)
         }
     }
 }
@@ -548,7 +561,7 @@ fileprivate <span style="color:#8be9fd;font-style:italic">let</span> <span style
     
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">urlSession</span>(<span style="color:#ff79c6">_</span> session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">delegate</span> = <span style="color:#ff79c6">self</span>[task] <span style="color:#ff79c6">as</span>? URLSessionTaskDelegate{
-            delegate.urlSession<span style="color:#ff79c6">!</span>(session, task: task, didCompleteWithError: error)
+            delegate.urlSession!(session, task: task, didCompleteWithError: error)
         }
         <span style="color:#ff79c6">self</span>[task] = <span style="color:#ff79c6">nil</span>
     }
@@ -652,7 +665,7 @@ config.setURLSchemeHandler(HttpProxyHandler(), forURLScheme: <span style="color:
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">handler</span> = HttpProxyHandler()
         <span style="color:#6272a4">/// 先设置</span>
         config.setURLSchemeHandler(handler, forURLScheme: <span style="color:#f1fa8c">&#34;dummy&#34;</span>)
-        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">handlers</span> = config.value(forKey: <span style="color:#f1fa8c">&#34;_urlSchemeHandlers&#34;</span>) <span style="color:#ff79c6">as</span><span style="color:#ff79c6">!</span> NSMutableDictionary
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">handlers</span> = config.value(forKey: <span style="color:#f1fa8c">&#34;_urlSchemeHandlers&#34;</span>) <span style="color:#ff79c6">as</span>! NSMutableDictionary
         handlers[<span style="color:#f1fa8c">&#34;http&#34;</span>] = handler
         handlers[<span style="color:#f1fa8c">&#34;https&#34;</span>] = handler
         <span style="color:#ff79c6">return</span> config
@@ -725,7 +738,7 @@ config.setURLSchemeHandler(HttpProxyHandler(), forURLScheme: <span style="color:
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>306</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>345</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

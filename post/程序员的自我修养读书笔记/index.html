@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-线程 线程是程序执行流的最小单元。
+  <meta name="description" content="线程 线程是程序执行流的最小单元。
 各个线程之间共享程序的内存空间和进程级资源。
 ">
 
@@ -36,8 +35,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="《程序员的自我修养》读书笔记">
-    <meta name="twitter:description" content="[TOC]
-线程 线程是程序执行流的最小单元。
+    <meta name="twitter:description" content="线程 线程是程序执行流的最小单元。
 各个线程之间共享程序的内存空间和进程级资源。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
@@ -46,8 +44,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="《程序员的自我修养》读书笔记">
-  <meta property="og:description" content="[TOC]
-线程 线程是程序执行流的最小单元。
+  <meta property="og:description" content="线程 线程是程序执行流的最小单元。
 各个线程之间共享程序的内存空间和进程级资源。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
@@ -56,7 +53,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
@@ -167,7 +164,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -218,9 +215,97 @@
       <h1 class="post-title">《程序员的自我修养》读书笔记</h1>
       <p class="post-meta">@Nemocdz · Jul 20, 2017 · 2 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<h2 id="线程">线程</h2>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#线程">线程</a>
+<ul>
+<li><a href="#组成">组成</a></li>
+<li><a href="#拥有自己的空间">拥有自己的空间</a></li>
+<li><a href="#线程之间共享">线程之间共享</a></li>
+<li><a href="#调度中状态">调度中状态</a></li>
+<li><a href="#线程优先级改变">线程优先级改变</a></li>
+<li><a href="#线程安全">线程安全</a></li>
+<li><a href="#锁">锁</a></li>
+<li><a href="#多线程模型">多线程模型</a></li>
+<li><a href="#多线程的优点">多线程的优点</a></li>
+</ul></li>
+<li><a href="#编译">编译</a>
+<ul>
+<li><a href="#编译器的过程">编译器的过程</a></li>
+<li><a href="#abi">ABI</a></li>
+<li><a href="#api">API</a></li>
+</ul></li>
+<li><a href="#目标文件">目标文件</a>
+<ul>
+<li><a href="#elf">ELF</a></li>
+</ul></li>
+<li><a href="#静态链接">静态链接</a>
+<ul>
+<li><a href="#空间分配">空间分配</a>
+<ul>
+<li><a href="#装载与进程">装载与进程</a></li>
+<li><a href="#pae">PAE</a></li>
+<li><a href="#动态载入">动态载入</a></li>
+<li><a href="#进程创建">进程创建</a></li>
+<li><a href="#vma">VMA</a></li>
+<li><a href="#页错误处理">页错误处理</a></li>
+<li><a href="#elf文件中段的权限">ELF文件中段的权限</a>
+<ul>
+<li><a href="#section">Section</a></li>
+<li><a href="#segment">Segment</a></li>
+</ul></li>
+<li><a href="#进程的vma种类">进程的VMA种类</a></li>
+</ul></li>
+<li><a href="#重定位">重定位</a>
+<ul>
+<li><a href="#重定位表">重定位表</a></li>
+<li><a href="#符号解析">符号解析</a></li>
+<li><a href="#ar">Ar</a></li>
+<li><a href="#bfd库">BFD库</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#动态链接">动态链接</a>
+<ul>
+<li><a href="#解决绝对地址引用的方法">解决绝对地址引用的方法</a></li>
+<li><a href="#地址引用方式">地址引用方式</a></li>
+<li><a href="#pie">PIE</a></li>
+<li><a href="#plt">PLT</a></li>
+<li><a href="#动态链接过程">动态链接过程</a></li>
+<li><a href="#动态链接器">动态链接器</a></li>
+</ul></li>
+<li><a href="#内存">内存</a>
+<ul>
+<li><a href="#内存区域">内存区域</a></li>
+<li><a href="#栈">栈</a>
+<ul>
+<li><a href="#函数调用惯例">函数调用惯例</a></li>
+</ul></li>
+<li><a href="#堆">堆</a>
+<ul>
+<li><a href="#堆分配算法">堆分配算法</a>
+<ul>
+<li><a href="#空闲链表">空闲链表</a></li>
+<li><a href="#位图">位图</a></li>
+<li><a href="#对象池">对象池</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="#运行库">运行库</a>
+<ul>
+<li><a href="#程序开始运行">程序开始运行</a></li>
+</ul></li>
+<li><a href="#系统调用">系统调用</a>
+<ul>
+<li><a href="#操作系统特权等级">操作系统特权等级</a></li>
+<li><a href="#中断">中断</a></li>
+</ul></li>
+</ul>
+</nav>
+
+    <article class="post-content"><h2 id="线程">线程</h2>
 
 <p>线程是程序执行流的最小单元。</p>
 
@@ -582,7 +667,7 @@ delete 实现：运行析构函数 -&gt; 释放堆空间</p>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>739</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>778</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

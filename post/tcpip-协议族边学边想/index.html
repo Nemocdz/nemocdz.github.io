@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。
+  <meta name="description" content="最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。
 ">
 
   
@@ -35,8 +34,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="TCP/IP 协议族边学边想">
-    <meta name="twitter:description" content="[TOC]
-最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。
+    <meta name="twitter:description" content="最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="TCP/IP 协议族边学边想">
-  <meta property="og:description" content="[TOC]
-最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。
+  <meta property="og:description" content="最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/tcpip-%E5%8D%8F%E8%AE%AE%E6%97%8F%E8%BE%B9%E5%AD%A6%E8%BE%B9%E6%83%B3/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/tcpip-%E5%8D%8F%E8%AE%AE%E6%97%8F%E8%BE%B9%E5%AD%A6%E8%BE%B9%E6%83%B3/">
@@ -164,7 +161,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,58 @@
       <h1 class="post-title">TCP/IP 协议族边学边想</h1>
       <p class="post-meta">@Nemocdz · Aug 22, 2017 · 3 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#网络基础">网络基础</a></li>
+<li><a href="#网络层">网络层</a>
+<ul>
+<li><a href="#ip-internet-protocol">IP（Internet Protocol）</a>
+<ul>
+<li><a href="#ip-寻址">IP 寻址</a></li>
+<li><a href="#路由控制">路由控制</a></li>
+<li><a href="#ip-包的分割和重组">IP 包的分割和重组</a>
+<ul>
+<li><a href="#路径-mtu-发现">路径 MTU 发现</a></li>
+</ul></li>
+<li><a href="#ipv6">IPv6</a></li>
+</ul></li>
+<li><a href="#dns-domain-name-system">DNS（Domain Name System）</a></li>
+<li><a href="#arp-address-resolution-protocol">ARP（Address Resolution Protocol）</a></li>
+<li><a href="#icmp-internet-control-message-protocol">ICMP（Internet Control Message Protocol）</a></li>
+<li><a href="#dhcp-dynamic-host-configuratin-protocol">DHCP（Dynamic Host Configuratin Protocol）</a></li>
+<li><a href="#nat-network-address-translator">NAT（Network Address Translator）</a></li>
+<li><a href="#ip-隧道">IP 隧道</a></li>
+</ul></li>
+<li><a href="#传输层">传输层</a>
+<ul>
+<li><a href="#udp-user-datagram-protocol">UDP（User Datagram Protocol）</a></li>
+<li><a href="#tcp-transmission-control-protocol">TCP（Transmission Control Protocol）</a>
+<ul>
+<li><a href="#tcp-连接建立和断开">TCP 连接建立和断开</a></li>
+</ul></li>
+<li><a href="#tcp-窗口">TCP 窗口</a>
+<ul>
+<li><a href="#窗口大小控制">窗口大小控制</a></li>
+<li><a href="#拥塞控制">拥塞控制</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#应用层">应用层</a>
+<ul>
+<li><a href="#www基本概念">WWW基本概念</a></li>
+<li><a href="#http">HTTP</a>
+<ul>
+<li><a href="#cookie-session">Cookie &amp; Session</a></li>
+</ul></li>
+<li><a href="#https">HTTPS</a></li>
+</ul></li>
+<li><a href="#最后">最后</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。</p>
 
 <h2 id="网络基础">网络基础</h2>
 
@@ -563,7 +609,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>706</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>745</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

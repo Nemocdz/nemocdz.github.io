@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-这篇文章源于美团面试官问的我一个问题，为什么 Objective-C 中有 Class 和 MetaClass 这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有 MetaClass 而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么 Objective-C 中有 MetaClass 这个设计？
+  <meta name="description" content="这篇文章源于美团面试官问的我一个问题，为什么 Objective-C 中有 Class 和 MetaClass 这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有 MetaClass 而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么 Objective-C 中有 MetaClass 这个设计？
 ">
 
   
@@ -35,8 +34,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="Why is MetaClass in Objective-C？">
-    <meta name="twitter:description" content="[TOC]
-这篇文章源于美团面试官问的我一个问题，为什么 Objective-C 中有 Class 和 MetaClass 这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有 MetaClass 而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么 Objective-C 中有 MetaClass 这个设计？
+    <meta name="twitter:description" content="这篇文章源于美团面试官问的我一个问题，为什么 Objective-C 中有 Class 和 MetaClass 这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有 MetaClass 而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么 Objective-C 中有 MetaClass 这个设计？
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="Why is MetaClass in Objective-C？">
-  <meta property="og:description" content="[TOC]
-这篇文章源于美团面试官问的我一个问题，为什么 Objective-C 中有 Class 和 MetaClass 这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有 MetaClass 而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么 Objective-C 中有 MetaClass 这个设计？
+  <meta property="og:description" content="这篇文章源于美团面试官问的我一个问题，为什么 Objective-C 中有 Class 和 MetaClass 这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有 MetaClass 而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么 Objective-C 中有 MetaClass 这个设计？
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/why-is-metaclass-in-objective-c/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/why-is-metaclass-in-objective-c/">
@@ -164,7 +161,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,21 @@
       <h1 class="post-title">Why is MetaClass in Objective-C？</h1>
       <p class="post-meta">@Nemocdz · Sep 15, 2017 · 3 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>这篇文章源于美团面试官问的我一个问题，为什么 Objective-C 中有 Class 和 MetaClass 这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有 MetaClass 而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么 Objective-C 中有 MetaClass 这个设计？</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#前置知识">前置知识</a></li>
+<li><a href="#python-中的-metaclass">Python 中的 MetaClass</a></li>
+<li><a href="#smalltalk-面向对象的前辈">Smalltalk-面向对象的前辈</a></li>
+<li><a href="#从-smalltalk-重新认识面向对象">从 Smalltalk 重新认识面向对象</a></li>
+<li><a href="#最后">最后</a></li>
+<li><a href="#参考链接">参考链接</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>这篇文章源于美团面试官问的我一个问题，为什么 Objective-C 中有 Class 和 MetaClass 这种设计？去掉是否可以？当时的我并没有深入思考过这个问题，而网上搜索的结果都是在阐述有 MetaClass 而简略的解释了原因。我认为这个问题是个很关键的问题，花了大概两周时间查阅资料，查看源码。这篇文章试图展开探讨一个问题，为什么 Objective-C 中有 MetaClass 这个设计？</p>
 
 <h2 id="前置知识">前置知识</h2>
 
@@ -388,7 +397,7 @@ MyClass <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-sty
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>682</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>721</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

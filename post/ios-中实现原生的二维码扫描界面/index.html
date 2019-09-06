@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是 Google 出品的 ZXing，其的 OC 的移植版本是 ZXingObjc。但是从 iOS 7 开始，苹果就加入了原生 API 的相机二维码扫描功能，而在 iOS 8 中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。
+  <meta name="description" content="二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是 Google 出品的 ZXing，其的 OC 的移植版本是 ZXingObjc。但是从 iOS 7 开始，苹果就加入了原生 API 的相机二维码扫描功能，而在 iOS 8 中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。
 ">
 
   
@@ -35,8 +34,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="iOS 中实现原生的二维码扫描界面">
-    <meta name="twitter:description" content="[TOC]
-二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是 Google 出品的 ZXing，其的 OC 的移植版本是 ZXingObjc。但是从 iOS 7 开始，苹果就加入了原生 API 的相机二维码扫描功能，而在 iOS 8 中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。
+    <meta name="twitter:description" content="二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是 Google 出品的 ZXing，其的 OC 的移植版本是 ZXingObjc。但是从 iOS 7 开始，苹果就加入了原生 API 的相机二维码扫描功能，而在 iOS 8 中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="iOS 中实现原生的二维码扫描界面">
-  <meta property="og:description" content="[TOC]
-二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是 Google 出品的 ZXing，其的 OC 的移植版本是 ZXingObjc。但是从 iOS 7 开始，苹果就加入了原生 API 的相机二维码扫描功能，而在 iOS 8 中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。
+  <meta property="og:description" content="二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是 Google 出品的 ZXing，其的 OC 的移植版本是 ZXingObjc。但是从 iOS 7 开始，苹果就加入了原生 API 的相机二维码扫描功能，而在 iOS 8 中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/">
@@ -164,7 +161,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,21 @@
       <h1 class="post-title">iOS 中实现原生的二维码扫描界面</h1>
       <p class="post-meta">@Nemocdz · Apr 21, 2017 · 4 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是 Google 出品的 <a href="https://github.com/zxing/zxing">ZXing</a>，其的 OC 的移植版本是 <a href="https://github.com/TheLevelUp/ZXingObjC">ZXingObjc</a>。但是从 iOS 7 开始，苹果就加入了原生 API 的相机二维码扫描功能，而在 iOS 8 中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#相机扫描二维码部分">相机扫描二维码部分</a></li>
+<li><a href="#识别相册图片中二维码">识别相册图片中二维码</a></li>
+<li><a href="#增加非相机识别区域的压暗层">增加非相机识别区域的压暗层</a></li>
+<li><a href="#权限检查管理">权限检查管理</a></li>
+<li><a href="#封装接口">封装接口</a></li>
+<li><a href="#最后">最后</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是 Google 出品的 <a href="https://github.com/zxing/zxing">ZXing</a>，其的 OC 的移植版本是 <a href="https://github.com/TheLevelUp/ZXingObjC">ZXingObjc</a>。但是从 iOS 7 开始，苹果就加入了原生 API 的相机二维码扫描功能，而在 iOS 8 中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。</p>
 
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1feuhsfjbrsj30ku112q66.jpg" alt="IMG_0811" /></p>
 
@@ -399,36 +408,38 @@
 <li>相机是否正常</li>
 <li>相机权限</li>
 <li>相册权限</li>
-<li>图片中无二维码</li>
-</ul>
+
+<li><p>图片中无二维码</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#6272a4">//相机是否存在，比如早期 iPad，模拟器，itouch
 </span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">BOOL</span>)<span style="color:#50fa7b">isCameraAvailable</span>{
-    <span style="color:#ff79c6">return</span> [UIImagePickerController <span style="color:#8be9fd;font-style:italic">isSourceTypeAvailable</span>:UIImagePickerControllerSourceTypeCamera];
+<span style="color:#ff79c6">return</span> [UIImagePickerController <span style="color:#8be9fd;font-style:italic">isSourceTypeAvailable</span>:UIImagePickerControllerSourceTypeCamera];
 }
 <span style="color:#6272a4">//前置摄像头是否正常
 </span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">BOOL</span>)<span style="color:#50fa7b">isFrontCameraAvailable</span>{
-    <span style="color:#ff79c6">return</span> [UIImagePickerController <span style="color:#8be9fd;font-style:italic">isCameraDeviceAvailable</span>:UIImagePickerControllerCameraDeviceFront];
+<span style="color:#ff79c6">return</span> [UIImagePickerController <span style="color:#8be9fd;font-style:italic">isCameraDeviceAvailable</span>:UIImagePickerControllerCameraDeviceFront];
 }
 <span style="color:#6272a4">//后置摄像头是否正常
 </span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">BOOL</span>)<span style="color:#50fa7b">isRearCameraAvailable</span>{
-    <span style="color:#ff79c6">return</span> [UIImagePickerController <span style="color:#8be9fd;font-style:italic">isCameraDeviceAvailable</span>:UIImagePickerControllerCameraDeviceRear];
+<span style="color:#ff79c6">return</span> [UIImagePickerController <span style="color:#8be9fd;font-style:italic">isCameraDeviceAvailable</span>:UIImagePickerControllerCameraDeviceRear];
 }
 <span style="color:#6272a4">//相机权限是否正常
 </span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">BOOL</span>)<span style="color:#50fa7b">isCameraAuthStatusCorrect</span>{
-    AVAuthorizationStatus authStatus <span style="color:#ff79c6">=</span> [AVCaptureDevice <span style="color:#8be9fd;font-style:italic">authorizationStatusForMediaType</span>:AVMediaTypeVideo];
-    <span style="color:#ff79c6">if</span> (authStatus <span style="color:#ff79c6">==</span> AVAuthorizationStatusAuthorized <span style="color:#ff79c6">||</span> authStatus <span style="color:#ff79c6">==</span> AVAuthorizationStatusNotDetermined) {
-        <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
-    }
-    <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
+AVAuthorizationStatus authStatus <span style="color:#ff79c6">=</span> [AVCaptureDevice <span style="color:#8be9fd;font-style:italic">authorizationStatusForMediaType</span>:AVMediaTypeVideo];
+<span style="color:#ff79c6">if</span> (authStatus <span style="color:#ff79c6">==</span> AVAuthorizationStatusAuthorized <span style="color:#ff79c6">||</span> authStatus <span style="color:#ff79c6">==</span> AVAuthorizationStatusNotDetermined) {
+    <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
+}
+<span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
 }
 <span style="color:#6272a4">//相册权限是否正常，需要导入 Photos 框架
 </span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">BOOL</span>)<span style="color:#50fa7b">isLibaryAuthStatusCorrect</span>{
-    PHAuthorizationStatus authStatus <span style="color:#ff79c6">=</span> [PHPhotoLibrary authorizationStatus];
-    <span style="color:#ff79c6">if</span> (authStatus <span style="color:#ff79c6">==</span> PHAuthorizationStatusNotDetermined <span style="color:#ff79c6">||</span> authStatus <span style="color:#ff79c6">==</span> PHAuthorizationStatusAuthorized) {
-        <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
-    }
-    <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
-}</code></pre></div>
+PHAuthorizationStatus authStatus <span style="color:#ff79c6">=</span> [PHPhotoLibrary authorizationStatus];
+<span style="color:#ff79c6">if</span> (authStatus <span style="color:#ff79c6">==</span> PHAuthorizationStatusNotDetermined <span style="color:#ff79c6">||</span> authStatus <span style="color:#ff79c6">==</span> PHAuthorizationStatusAuthorized) {
+    <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
+}
+<span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
+}</code></pre></div></li>
+</ul>
+
 <p>当然在 iOS 10 上，相机和相册权限还需要在 infoPlist 里添加对应的 key 值。</p>
 
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1feuhsf3m30j30ri028t9e.jpg" alt="屏幕快照 2017-04-21 下午6.00.42" /></p>
@@ -540,7 +551,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>828</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>867</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

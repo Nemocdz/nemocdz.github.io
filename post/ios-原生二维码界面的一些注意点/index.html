@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-之前的 文章 是在 ViewController 里实现了原生二维码扫描的功能，后来觉得 VC 太重了，便把功能抽成了一个 View，在抽象的过程中也仔细捉摸了一些没有仔细思考过的问题，特此记录下来。
+  <meta name="description" content="之前的 文章 是在 ViewController 里实现了原生二维码扫描的功能，后来觉得 VC 太重了，便把功能抽成了一个 View，在抽象的过程中也仔细捉摸了一些没有仔细思考过的问题，特此记录下来。
 ">
 
   
@@ -35,8 +34,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="iOS 原生二维码界面开发的一些注意点">
-    <meta name="twitter:description" content="[TOC]
-之前的 文章 是在 ViewController 里实现了原生二维码扫描的功能，后来觉得 VC 太重了，便把功能抽成了一个 View，在抽象的过程中也仔细捉摸了一些没有仔细思考过的问题，特此记录下来。
+    <meta name="twitter:description" content="之前的 文章 是在 ViewController 里实现了原生二维码扫描的功能，后来觉得 VC 太重了，便把功能抽成了一个 View，在抽象的过程中也仔细捉摸了一些没有仔细思考过的问题，特此记录下来。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="iOS 原生二维码界面开发的一些注意点">
-  <meta property="og:description" content="[TOC]
-之前的 文章 是在 ViewController 里实现了原生二维码扫描的功能，后来觉得 VC 太重了，便把功能抽成了一个 View，在抽象的过程中也仔细捉摸了一些没有仔细思考过的问题，特此记录下来。
+  <meta property="og:description" content="之前的 文章 是在 ViewController 里实现了原生二维码扫描的功能，后来觉得 VC 太重了，便把功能抽成了一个 View，在抽象的过程中也仔细捉摸了一些没有仔细思考过的问题，特此记录下来。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/ios-%E5%8E%9F%E7%94%9F%E4%BA%8C%E7%BB%B4%E7%A0%81%E7%95%8C%E9%9D%A2%E7%9A%84%E4%B8%80%E4%BA%9B%E6%B3%A8%E6%84%8F%E7%82%B9/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E5%8E%9F%E7%94%9F%E4%BA%8C%E7%BB%B4%E7%A0%81%E7%95%8C%E9%9D%A2%E7%9A%84%E4%B8%80%E4%BA%9B%E6%B3%A8%E6%84%8F%E7%82%B9/">
@@ -164,7 +161,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,21 @@
       <h1 class="post-title">iOS 原生二维码界面开发的一些注意点</h1>
       <p class="post-meta">@Nemocdz · May 14, 2017 · 2 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>之前的 <a href="https://nemocdz.github.io/post/ios%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/">文章</a> 是在 ViewController 里实现了原生二维码扫描的功能，后来觉得 VC 太重了，便把功能抽成了一个 View，在抽象的过程中也仔细捉摸了一些没有仔细思考过的问题，特此记录下来。</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#1-扫描区域的扫描线动画">1.扫描区域的扫描线动画</a></li>
+<li><a href="#2-扫描线的渐变色拖尾">2.扫描线的渐变色拖尾</a></li>
+<li><a href="#3-设置-avfoundation-原生二维码类的一些容易崩溃的地方">3.设置 AVFoundation 原生二维码类的一些容易崩溃的地方</a></li>
+<li><a href="#4-关于扫描区域的正确计算方法">4.关于扫描区域的正确计算方法</a></li>
+<li><a href="#5-耗时操作放在异步并发线程中处理">5.耗时操作放在异步并发线程中处理</a></li>
+<li><a href="#最后">最后</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>之前的 <a href="https://nemocdz.github.io/post/ios%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/">文章</a> 是在 ViewController 里实现了原生二维码扫描的功能，后来觉得 VC 太重了，便把功能抽成了一个 View，在抽象的过程中也仔细捉摸了一些没有仔细思考过的问题，特此记录下来。</p>
 
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNbRwly1ffk93o9dj4j30ku112afv.jpg" alt="IMG_1130" /></p>
 
@@ -298,7 +307,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>806</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>845</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

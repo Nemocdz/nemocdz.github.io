@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-在 OC 中 Foundation 框架中的常用容器类（NSSet，NSDictionary，NSArray）及其可变子类在加入元素时，均会对元素进行强引用。有的时候（比如持有多个 Delegate 对象时），希望有对应的弱引用容器使用。
+  <meta name="description" content="在 OC 中 Foundation 框架中的常用容器类（NSSet，NSDictionary，NSArray）及其可变子类在加入元素时，均会对元素进行强引用。有的时候（比如持有多个 Delegate 对象时），希望有对应的弱引用容器使用。
 ">
 
   
@@ -35,8 +34,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="Objective-C 弱引用容器实现方案总结">
-    <meta name="twitter:description" content="[TOC]
-在 OC 中 Foundation 框架中的常用容器类（NSSet，NSDictionary，NSArray）及其可变子类在加入元素时，均会对元素进行强引用。有的时候（比如持有多个 Delegate 对象时），希望有对应的弱引用容器使用。
+    <meta name="twitter:description" content="在 OC 中 Foundation 框架中的常用容器类（NSSet，NSDictionary，NSArray）及其可变子类在加入元素时，均会对元素进行强引用。有的时候（比如持有多个 Delegate 对象时），希望有对应的弱引用容器使用。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="Objective-C 弱引用容器实现方案总结">
-  <meta property="og:description" content="[TOC]
-在 OC 中 Foundation 框架中的常用容器类（NSSet，NSDictionary，NSArray）及其可变子类在加入元素时，均会对元素进行强引用。有的时候（比如持有多个 Delegate 对象时），希望有对应的弱引用容器使用。
+  <meta property="og:description" content="在 OC 中 Foundation 框架中的常用容器类（NSSet，NSDictionary，NSArray）及其可变子类在加入元素时，均会对元素进行强引用。有的时候（比如持有多个 Delegate 对象时），希望有对应的弱引用容器使用。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">
@@ -164,7 +161,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,44 @@
       <h1 class="post-title">Objective-C 弱引用容器实现方案总结</h1>
       <p class="post-meta">@Nemocdz · Jul 23, 2017 · 3 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>在 OC 中 Foundation 框架中的常用容器类（<code>NSSet</code>，<code>NSDictionary</code>，<code>NSArray</code>）及其可变子类在加入元素时，均会对元素进行强引用。有的时候（比如持有多个 Delegate 对象时），希望有对应的弱引用容器使用。</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#实现思路">实现思路</a>
+<ul>
+<li><a href="#容器本身支持弱引用对象">容器本身支持弱引用对象</a>
+<ul>
+<li><a href="#1-foundation-框架支持弱引用的容器类">1.Foundation 框架支持弱引用的容器类</a></li>
+<li><a href="#2-用-cffoundation-框架里对应容器类自定义内存管理选项在初始化时-使用-cffoundation-里的容器类实现后转成-foundation-对象">2.用 CFFoundation 框架里对应容器类自定义内存管理选项在初始化时，使用 CFFoundation 里的容器类实现后转成 Foundation 对象</a>
+<ul>
+<li><a href="#1-生成-callbacks-结构体">1.生成 CallBacks 结构体</a></li>
+<li><a href="#2-使用-creatmutable-生成可变容器">2.使用 CreatMutable 生成可变容器</a></li>
+<li><a href="#3-在对象销毁时移除出容器或置-nil">3.在对象销毁时移除出容器或置 nil</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#加入容器时不引用">加入容器时不引用</a></li>
+<li><a href="#使对象变得可被弱引用">使对象变得可被弱引用</a>
+<ul>
+<li><a href="#1-使用-nsvalue">1.使用 NSValue</a></li>
+<li><a href="#2-使用-block">2.使用 block</a></li>
+</ul></li>
+<li><a href="#最终方案">最终方案</a></li>
+</ul></li>
+<li><a href="#总结">总结</a>
+<ul>
+<li><a href="#foundation-中的弱引用容器类-nshashtable-nsmaptable-nspointerarray">Foundation 中的弱引用容器类 NSHashTable/NSMaptable/NSPointerArray</a></li>
+<li><a href="#cffoundation-实现容器">CFFoundation 实现容器</a></li>
+<li><a href="#操作容器时实现引用计数修正">操作容器时实现引用计数修正</a></li>
+<li><a href="#使用新对象持有弱引用对象">使用新对象持有弱引用对象</a></li>
+</ul></li>
+<li><a href="#最后">最后</a></li>
+<li><a href="#参考链接">参考链接</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>在 OC 中 Foundation 框架中的常用容器类（<code>NSSet</code>，<code>NSDictionary</code>，<code>NSArray</code>）及其可变子类在加入元素时，均会对元素进行强引用。有的时候（比如持有多个 Delegate 对象时），希望有对应的弱引用容器使用。</p>
 
 <h2 id="实现思路">实现思路</h2>
 
@@ -236,26 +268,25 @@
 <p>本身都是可变的，没有不可变父类。其共同点是 <code>addObject</code> 方法参数声明为 <code>nullable</code> 即不用判断是否为 nil 来避免崩溃，且都拥有初始化方法 <code>- (instancetype)initWithOptions:(NSPointerFunctionsOptions)options</code> 而参数 options 代表其所支持的放入对象的指针管理选项。根据苹果官方文档显示，这些枚举值被分为三类。</p>
 
 <ul>
-<li>Memory Options（内存语义管理选项）</li>
+<li><p>Memory Options（内存语义管理选项）</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">NSPointerFunctionsStrongMemory <span style="color:#6272a4">// 和 strong 一样，默认
+</span><span style="color:#6272a4"></span>NSPointerFunctionsOpaqueMemory <span style="color:#6272a4">// 在指针去除时不做任何动作
+</span><span style="color:#6272a4"></span>NSPointerFunctionsMallocMemory <span style="color:#6272a4">// 去除时调用 free() , 加入时calloc()
+</span><span style="color:#6272a4"></span>NSPointerFunctionsMachVirtualMemory <span style="color:#6272a4">//使用可执行文件的虚拟内存
+</span><span style="color:#6272a4"></span>NSPointerFunctionsWeakMemory <span style="color:#ff79c6">//</span>和 <span style="color:#ff79c6">weak</span> 一样         </code></pre></div></li>
+
+<li><p>Personaility Options(对象处理选项-如何进行哈希算法，判定等同性，描述)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">NSPointerFunctionsObjectPersonality <span style="color:#6272a4">//使用 NSObject 的 hash、isEqual、description，默认
+</span><span style="color:#6272a4"></span>NSPointerFunctionsOpaquePersonality <span style="color:#6272a4">//使用偏移后指针，进行 hash 和直接比较等同性
+</span><span style="color:#6272a4"></span>NSPointerFunctionsObjectPointerPersonality <span style="color:#6272a4">//和上一个相同，多了 description 方法	  
+</span><span style="color:#6272a4"></span>NSPointerFunctionsCStringPersonality <span style="color:#6272a4">//使用 C 字符串的 hash 和 strcmp 比较，%s 作为 decription
+</span><span style="color:#6272a4"></span>NSPointerFunctionsStructPersonality <span style="color:#6272a4">// 使用内存的 hash 和 memcmp 
+</span><span style="color:#6272a4"></span>NSPointerFunctionsIntegerPersonality <span style="color:#ff79c6">//</span>使用偏移量作为 hash 和等同性判断</code></pre></div></li>
+
+<li><p>Copy Options（对象拷贝选项）</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">NSPointerFunctionsCopyIn<span style="color:#ff79c6">//</span>通过 NSCopying 方法，复制后存入</code></pre></div></li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">  NSPointerFunctionsStrongMemory <span style="color:#6272a4">// 和 strong 一样，默认
-</span><span style="color:#6272a4"></span>  NSPointerFunctionsOpaqueMemory <span style="color:#6272a4">// 在指针去除时不做任何动作
-</span><span style="color:#6272a4"></span>  NSPointerFunctionsMallocMemory <span style="color:#6272a4">// 去除时调用 free() , 加入时calloc()
-</span><span style="color:#6272a4"></span>  NSPointerFunctionsMachVirtualMemory <span style="color:#6272a4">//使用可执行文件的虚拟内存
-</span><span style="color:#6272a4"></span>  NSPointerFunctionsWeakMemory <span style="color:#ff79c6">//</span>和 <span style="color:#ff79c6">weak</span> 一样         </code></pre></div>
-<ul>
-<li>Personaility Options(对象处理选项-如何进行哈希算法，判定等同性，描述)</li>
-</ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">  NSPointerFunctionsObjectPersonality <span style="color:#6272a4">//使用 NSObject 的 hash、isEqual、description，默认
-</span><span style="color:#6272a4"></span>  NSPointerFunctionsOpaquePersonality <span style="color:#6272a4">//使用偏移后指针，进行 hash 和直接比较等同性
-</span><span style="color:#6272a4"></span>  NSPointerFunctionsObjectPointerPersonality <span style="color:#6272a4">//和上一个相同，多了 description 方法	  
-</span><span style="color:#6272a4"></span>  NSPointerFunctionsCStringPersonality <span style="color:#6272a4">//使用 C 字符串的 hash 和 strcmp 比较，%s 作为 decription
-</span><span style="color:#6272a4"></span>  NSPointerFunctionsStructPersonality <span style="color:#6272a4">// 使用内存的 hash 和 memcmp 
-</span><span style="color:#6272a4"></span>  NSPointerFunctionsIntegerPersonality <span style="color:#ff79c6">//</span>使用偏移量作为 hash 和等同性判断</code></pre></div>
-<ul>
-<li>Copy Options（对象拷贝选项）</li>
-</ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">  NSPointerFunctionsCopyIn<span style="color:#ff79c6">//</span>通过 NSCopying 方法，复制后存入</code></pre></div>
+
 <p>另外，文档还强调，<strong>每种类别的选项互斥，只能每种类别选择一个</strong>。</p>
 
 <p>当然，这三种容器还提供了快捷实例化类方法，含有 weakObjects 字样。</p>
@@ -439,7 +470,7 @@ CDZWeakObjectBlock <span style="color:#50fa7b">blockOfObjcet</span> (<span style
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>736</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>775</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

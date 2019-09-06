@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-最近重读了 AFNetworking 源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被 AFNetworking 作者的对细节，舒服，整洁的追求所折服。把一些个人觉得写的漂亮的用法总结下来，本文不在于探讨 AFNetworking 源码的具体业余实现，尽量从代码本身和设计角度进行总结（源码解析推荐 AFNetworking 到底做了什么？ 这篇文章）。
+  <meta name="description" content="最近重读了 AFNetworking 源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被 AFNetworking 作者的对细节，舒服，整洁的追求所折服。把一些个人觉得写的漂亮的用法总结下来，本文不在于探讨 AFNetworking 源码的具体业余实现，尽量从代码本身和设计角度进行总结（源码解析推荐 AFNetworking 到底做了什么？ 这篇文章）。
 ">
 
   
@@ -35,8 +34,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="AFNetworking 的漂亮细节">
-    <meta name="twitter:description" content="[TOC]
-最近重读了 AFNetworking 源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被 AFNetworking 作者的对细节，舒服，整洁的追求所折服。把一些个人觉得写的漂亮的用法总结下来，本文不在于探讨 AFNetworking 源码的具体业余实现，尽量从代码本身和设计角度进行总结（源码解析推荐 AFNetworking 到底做了什么？ 这篇文章）。
+    <meta name="twitter:description" content="最近重读了 AFNetworking 源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被 AFNetworking 作者的对细节，舒服，整洁的追求所折服。把一些个人觉得写的漂亮的用法总结下来，本文不在于探讨 AFNetworking 源码的具体业余实现，尽量从代码本身和设计角度进行总结（源码解析推荐 AFNetworking 到底做了什么？ 这篇文章）。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="AFNetworking 的漂亮细节">
-  <meta property="og:description" content="[TOC]
-最近重读了 AFNetworking 源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被 AFNetworking 作者的对细节，舒服，整洁的追求所折服。把一些个人觉得写的漂亮的用法总结下来，本文不在于探讨 AFNetworking 源码的具体业余实现，尽量从代码本身和设计角度进行总结（源码解析推荐 AFNetworking 到底做了什么？ 这篇文章）。
+  <meta property="og:description" content="最近重读了 AFNetworking 源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被 AFNetworking 作者的对细节，舒服，整洁的追求所折服。把一些个人觉得写的漂亮的用法总结下来，本文不在于探讨 AFNetworking 源码的具体业余实现，尽量从代码本身和设计角度进行总结（源码解析推荐 AFNetworking 到底做了什么？ 这篇文章）。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/afnetworking-%E7%9A%84%E6%BC%82%E4%BA%AE%E7%BB%86%E8%8A%82/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/afnetworking-%E7%9A%84%E6%BC%82%E4%BA%AE%E7%BB%86%E8%8A%82/">
@@ -164,7 +161,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,29 @@
       <h1 class="post-title">AFNetworking 的漂亮细节</h1>
       <p class="post-meta">@Nemocdz · Aug 16, 2017 · 4 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>最近重读了 AFNetworking 源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被 AFNetworking 作者的对细节，舒服，整洁的追求所折服。把一些个人觉得写的漂亮的用法总结下来，本文不在于探讨 AFNetworking 源码的具体业余实现，尽量从代码本身和设计角度进行总结（源码解析推荐 <a href="http://www.jianshu.com/p/856f0e26279d">AFNetworking 到底做了什么？</a> 这篇文章）。</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#1-dispatch-once-方法声明-c-语言变量方法">1.Dispatch_once 方法声明 C 语言变量方法</a></li>
+<li><a href="#2-使用反射机制来确定-keypath">2.使用反射机制来确定 KeyPath</a></li>
+<li><a href="#3-用-unused-修饰符修饰不用的-delegate-中的变量">3.用 __unused 修饰符修饰不用的 Delegate 中的变量</a></li>
+<li><a href="#4-避开-cocoa-类族的坑">4.避开 Cocoa 类族的坑</a></li>
+<li><a href="#5-增加方法到类中再进行-method-swizzling">5.增加方法到类中再进行 Method Swizzling</a></li>
+<li><a href="#6-用-gcd-的同步方法来封装代码块">6.用 GCD 的同步方法来封装代码块</a></li>
+<li><a href="#7-重写-respondstoselector-更改-delegate-实现的判断依据">7.重写 respondsToSelector 更改 Delegate 实现的判断依据</a></li>
+<li><a href="#8-dynamic-关键字实现默认调用父类-setter-getter">8.@dynamic 关键字实现默认调用父类 setter&amp;getter</a></li>
+<li><a href="#9-kvo-用-context-区分父类与子类">9.KVO 用 Context 区分父类与子类</a></li>
+<li><a href="#10-用-gcd-实现同步属性">10.用 GCD 实现同步属性</a></li>
+<li><a href="#11-对-nsstream-类的操作">11.对 NSStream 类的操作</a></li>
+<li><a href="#12-category-中实现属性懒加载">12.Category 中实现属性懒加载</a></li>
+<li><a href="#13-头文件明确声明-nonull-和-nullable">13.头文件明确声明 Nonull 和 Nullable</a></li>
+<li><a href="#最后">最后</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>最近重读了 AFNetworking 源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被 AFNetworking 作者的对细节，舒服，整洁的追求所折服。把一些个人觉得写的漂亮的用法总结下来，本文不在于探讨 AFNetworking 源码的具体业余实现，尽量从代码本身和设计角度进行总结（源码解析推荐 <a href="http://www.jianshu.com/p/856f0e26279d">AFNetworking 到底做了什么？</a> 这篇文章）。</p>
 
 <h2 id="1-dispatch-once-方法声明-c-语言变量方法">1.Dispatch_once 方法声明 C 语言变量方法</h2>
 
@@ -443,7 +460,7 @@ NS_ASSUME_NONNULL_END</code></pre></div>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>712</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>751</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。
+  <meta name="description" content="使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。
 ">
 
   
@@ -35,8 +34,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="给 Cocoa 的系统 Protocol 提供默认实现">
-    <meta name="twitter:description" content="[TOC]
-使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。
+    <meta name="twitter:description" content="使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="给 Cocoa 的系统 Protocol 提供默认实现">
-  <meta property="og:description" content="[TOC]
-使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。
+  <meta property="og:description" content="使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/%E7%BB%99-cocoa-%E7%9A%84%E7%B3%BB%E7%BB%9F-protocol-%E6%8F%90%E4%BE%9B%E9%BB%98%E8%AE%A4%E5%AE%9E%E7%8E%B0/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E7%BB%99-cocoa-%E7%9A%84%E7%B3%BB%E7%BB%9F-protocol-%E6%8F%90%E4%BE%9B%E9%BB%98%E8%AE%A4%E5%AE%9E%E7%8E%B0/">
@@ -164,7 +161,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,19 @@
       <h1 class="post-title">给 Cocoa 的系统 Protocol 提供默认实现</h1>
       <p class="post-meta">@Nemocdz · Feb 6, 2019 · 2 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#objective-c-的消息转发">Objective-C 的消息转发</a></li>
+<li><a href="#实现-protocolproxy">实现 ProtocolProxy</a></li>
+<li><a href="#tableview-的实际使用">TableView 的实际使用</a></li>
+<li><a href="#最后">最后</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。</p>
 
 <p>但为 Protocol 提供默认实现在某些时候是很实用的。比如 iOS 开发中，Cocoa 框架里常用的 <code>UITableView</code> 使用时一般需要实现 <code>UITableViewDataSouce</code> 和 <code>UITableViewDelegate</code>。而 <code>UITableViewDelegate</code> 和 <code>UITableViewDataSource</code> 里面的一部分方法，又是可以抽离的，但剩下的一部分方法，使用得很少，且一般用起来都是有自定义的需要。那么有没有一种方法可以为一部分方法提供默认通用的实现，而又不影响其余的方法呢？</p>
 
@@ -240,11 +247,11 @@
     <span style="color:#ff79c6">weak</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">customImp</span>: <span style="color:#8be9fd;font-style:italic">AnyObject</span>?
     <span style="color:#ff79c6">weak</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">defaultImp</span>: <span style="color:#8be9fd;font-style:italic">AnyObject</span>?
     
-    <span style="color:#ff79c6">override</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">responds</span>(to aSelector: <span style="color:#8be9fd;font-style:italic">Selector</span><span style="color:#ff79c6">!</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Bool</span> {
+    <span style="color:#ff79c6">override</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">responds</span>(to aSelector: <span style="color:#8be9fd;font-style:italic">Selector</span>!) -&gt; <span style="color:#8be9fd;font-style:italic">Bool</span> {
         <span style="color:#ff79c6">return</span> defaultImp?.responds(to: aSelector) == <span style="color:#ff79c6">true</span> <span style="color:#ff79c6">||</span> customImp?.responds(to:aSelector) == <span style="color:#ff79c6">true</span>
     }
     
-    <span style="color:#ff79c6">override</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">forwardingTarget</span>(<span style="color:#ff79c6">for</span> aSelector: <span style="color:#8be9fd;font-style:italic">Selector</span><span style="color:#ff79c6">!</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Any</span>? {
+    <span style="color:#ff79c6">override</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">forwardingTarget</span>(<span style="color:#ff79c6">for</span> aSelector: <span style="color:#8be9fd;font-style:italic">Selector</span>!) -&gt; <span style="color:#8be9fd;font-style:italic">Any</span>? {
         <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">rawObject</span> = customImp, rawObject.responds(to: aSelector) {
             <span style="color:#ff79c6">return</span> rawObject
         } <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">defualtObject</span> = defaultImp, defualtObject.responds(to: aSelector) {
@@ -328,7 +335,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>172</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>211</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

@@ -26,8 +26,7 @@
 
   
   
-  <meta name="description" content="[TOC]
-刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。
+  <meta name="description" content="刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。
 ">
 
   
@@ -35,8 +34,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="TableView 和 CollectionView 通用的 DataSource 和 Cell">
-    <meta name="twitter:description" content="[TOC]
-刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。
+    <meta name="twitter:description" content="刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -44,8 +42,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="TableView 和 CollectionView 通用的 DataSource 和 Cell">
-  <meta property="og:description" content="[TOC]
-刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。
+  <meta property="og:description" content="刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/tableview-%E5%92%8C-collectionview-%E9%80%9A%E7%94%A8-datasource-%E5%92%8C-cell/">
   <meta property="og:image" content="/images/avatar.png">
@@ -53,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6">
+<meta name="generator" content="Hugo 0.58.0">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/tableview-%E5%92%8C-collectionview-%E9%80%9A%E7%94%A8-datasource-%E5%92%8C-cell/">
@@ -164,7 +161,7 @@
           
           
            is-active">
-          <a href="https://nemocdz.github.io/">首页</a>
+          <a href="https://nemocdz.github.io/post">首页</a>
         </li>
       
         <li class="menu-item
@@ -215,9 +212,19 @@
       <h1 class="post-title">TableView 和 CollectionView 通用的 DataSource 和 Cell</h1>
       <p class="post-meta">@Nemocdz · Mar 25, 2017 · 3 min read</p>
     </header>
-    <article class="post-content"><p>[TOC]</p>
 
-<p>刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。</p>
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#打造一个通用性更强的-datasource">打造一个通用性更强的 DataSource</a></li>
+<li><a href="#使用方法">使用方法</a></li>
+<li><a href="#collecitonviewdatasource-其实也类似">CollecitonViewDatasource 其实也类似</a></li>
+<li><a href="#最后">最后</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。</p>
 
 <p>先从 Tableview 讲起，Tableview 都很熟悉，一般就是由 datasource，delegate，cell，cellitem 这几部分组成。</p>
 
@@ -355,7 +362,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>855</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>894</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
