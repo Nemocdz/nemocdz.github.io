@@ -24,7 +24,7 @@
 
 &lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;
 
-&lt;p&gt;Combine 是 WWDC2019 推出的异步编程框架，在上篇&lt;a href=&#34;https://xiaozhuanlan.com/topic/9683417052&#34;&gt;文章&lt;/a&gt;中，介绍了 Combine 的基本概念。在这篇文章中，着重介绍一些 Combine 的实际应用。&lt;/p&gt;</description>
+&lt;p&gt;Combine 是 WWDC2019 推出的异步编程框架，在上篇 &lt;a href=&#34;https://nemocdz.github.io/post/apple-官方异步编程框架swift-combine-简介/&#34;&gt;文章&lt;/a&gt; 中，介绍了 Combine 的基本概念。在这篇文章中，着重介绍一些 Combine 的实际应用。&lt;/p&gt;</description>
     </item>
     
     <item>
