@@ -7,7 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>© Nemocdz. </copyright>
-    <lastBuildDate>Thu, 05 Sep 2019 11:13:13 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 23 Sep 2019 01:09:13 +0800</lastBuildDate>
     
 	<atom:link href="https://nemocdz.github.io/index.xml" rel="self" type="application/rss+xml" />
     
@@ -24,6 +24,31 @@
 参与 The Swift Programming Language 中文版 ，Google Swift Style Guide 中文版 翻译及维护。
 目前就职于鹅厂，算个业余摄影师。
 联系方式  QQ：757765420 Email：nemocdz@gmail.com Lofter 图虫 简书  </description>
+    </item>
+    
+    <item>
+      <title>[译] 图像优化</title>
+      <link>https://nemocdz.github.io/post/%E8%AF%91-%E5%9B%BE%E5%83%8F%E4%BC%98%E5%8C%96/</link>
+      <pubDate>Mon, 23 Sep 2019 01:09:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/post/%E8%AF%91-%E5%9B%BE%E5%83%8F%E4%BC%98%E5%8C%96/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;作者：Jordan Morgan&lt;/p&gt;
+
+&lt;p&gt;原文链接：&lt;a href=&#34;https://www.swiftjectivec.com/optimizing-images/&#34;&gt;Optimizing Images&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;原文日期：2018-12-11&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;俗话说得好，最好的相机是你身边的那个。那么毫无疑问 - iPhone 可以说是这个星球最重要的的相机。而这在业界也已经达成共识。&lt;/p&gt;
+
+&lt;p&gt;在度假？不偷偷拍几张记录在你的 Instagram 故事里？不存在的。&lt;/p&gt;
+
+&lt;p&gt;出现爆炸新闻？查看 Twitter，就可以知道是哪些媒体正在报道，通过他们揭露事件的实时照片。&lt;/p&gt;
+
+&lt;p&gt;等等……&lt;/p&gt;
+
+&lt;p&gt;正因为图像在平台上无处不在，如果管理不当，很容易出现性能和内存问题。稍微了解下 UIKit，搞清楚它处理图像的机制，可以节省大量时间，避免做无用功。&lt;/p&gt;</description>
     </item>
     
     <item>
