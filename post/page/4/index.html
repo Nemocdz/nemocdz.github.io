@@ -207,6 +207,49 @@
       
         <article class="post-entry">
   <header class="post-header">
+    <h3 class="post-title"><a href="https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88-objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/" class="post-link">再谈 Objective-C 弱引用容器的实现-关联对象实现 weak</a></h3>
+    <p class="post-meta">@Nemocdz · Sep 2, 2017 · 3 min read</p>
+  </header>
+  
+  <p class="post-summary">之前写了一篇 文章 总结了 OC 中弱引用容器实现，在小米面试中提到其中 CFFoundation 的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现 Weak 特质，也就是没有在销毁后置 nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。
+所以看了 Runtime 源码和文章后，订正弱引用容器的一些实现方法。
+</p>
+  <footer class="post-footer">
+    <a class="read-more" href="https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88-objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
+    <h3 class="post-title"><a href="https://nemocdz.github.io/post/%E4%BB%8E%E4%B8%80%E9%81%93%E7%BD%91%E6%98%93%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B5%85%E8%B0%88-objective-c-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/" class="post-link">从一道网易面试题浅谈 Objective-C 线程安全</a></h3>
+    <p class="post-meta">@Nemocdz · Aug 25, 2017 · 2 min read</p>
+  </header>
+  
+  <p class="post-summary">今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？
+</p>
+  <footer class="post-footer">
+    <a class="read-more" href="https://nemocdz.github.io/post/%E4%BB%8E%E4%B8%80%E9%81%93%E7%BD%91%E6%98%93%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B5%85%E8%B0%88-objective-c-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
+    <h3 class="post-title"><a href="https://nemocdz.github.io/post/tcpip-%E5%8D%8F%E8%AE%AE%E6%97%8F%E8%BE%B9%E5%AD%A6%E8%BE%B9%E6%83%B3/" class="post-link">TCP/IP 协议族边学边想</a></h3>
+    <p class="post-meta">@Nemocdz · Aug 22, 2017 · 3 min read</p>
+  </header>
+  
+  <p class="post-summary">最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。
+</p>
+  <footer class="post-footer">
+    <a class="read-more" href="https://nemocdz.github.io/post/tcpip-%E5%8D%8F%E8%AE%AE%E6%97%8F%E8%BE%B9%E5%AD%A6%E8%BE%B9%E6%83%B3/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
     <h3 class="post-title"><a href="https://nemocdz.github.io/post/%E5%BE%81%E6%9C%8D-c-%E6%8C%87%E9%92%88%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" class="post-link">《征服 C 指针》读书笔记</a></h3>
     <p class="post-meta">@Nemocdz · Aug 21, 2017 · 1 min read</p>
   </header>
@@ -245,49 +288,6 @@
 </p>
   <footer class="post-footer">
     <a class="read-more" href="https://nemocdz.github.io/post/ios-10-%E9%80%9A%E7%9F%A5%E6%A1%86%E6%9E%B6-usernotifications-%E5%AD%A6%E4%B9%A0%E5%8F%8A%E5%85%BC%E5%AE%B9%E7%AC%94%E8%AE%B0/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://nemocdz.github.io/post/objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/" class="post-link">Objective-C 弱引用容器实现方案总结</a></h3>
-    <p class="post-meta">@Nemocdz · Jul 23, 2017 · 3 min read</p>
-  </header>
-  
-  <p class="post-summary">在 OC 中 Foundation 框架中的常用容器类（NSSet，NSDictionary，NSArray）及其可变子类在加入元素时，均会对元素进行强引用。有的时候（比如持有多个 Delegate 对象时），希望有对应的弱引用容器使用。
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://nemocdz.github.io/post/objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://nemocdz.github.io/post/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" class="post-link">《程序员的自我修养》读书笔记</a></h3>
-    <p class="post-meta">@Nemocdz · Jul 20, 2017 · 2 min read</p>
-  </header>
-  
-  <p class="post-summary">线程 线程是程序执行流的最小单元。
-各个线程之间共享程序的内存空间和进程级资源。
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://nemocdz.github.io/post/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://nemocdz.github.io/post/ios-core-animation%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" class="post-link">《iOS Core Animation》读书笔记</a></h3>
-    <p class="post-meta">@Nemocdz · Jul 13, 2017 · 1 min read</p>
-  </header>
-  
-  <p class="post-summary">CALayer UIView = 绘制 &#43; 响应触摸事件
- 负责屏幕和显示，不负责触摸事件响应链 UIView 是其高级封装 和 UIView 层级一一对应 </p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://nemocdz.github.io/post/ios-core-animation%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">Read More →</a>
   </footer>
 </article>
 

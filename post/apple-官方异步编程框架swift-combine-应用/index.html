@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>Apple 官方异步编程框架：Swift Combine 应用</title>
+
+  
+  
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
+
+  
+
+  
+  
+  <meta name="description" content=" WWDC 2019 Session 721 - Combine in Practice
+ 引言 Combine 是 WWDC2019 推出的异步编程框架，在上篇文章中，介绍了 Combine 的基本概念。在这篇文章中，着重介绍一些 Combine 的实际应用。
+">
+
+  
+  
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="Apple 官方异步编程框架：Swift Combine 应用">
+    <meta name="twitter:description" content=" WWDC 2019 Session 721 - Combine in Practice
+ 引言 Combine 是 WWDC2019 推出的异步编程框架，在上篇文章中，介绍了 Combine 的基本概念。在这篇文章中，着重介绍一些 Combine 的实际应用。
+">
+    <meta name="twitter:image" content="/images/avatar.png">
+  
+
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Apple 官方异步编程框架：Swift Combine 应用">
+  <meta property="og:description" content=" WWDC 2019 Session 721 - Combine in Practice
+ 引言 Combine 是 WWDC2019 推出的异步编程框架，在上篇文章中，介绍了 Combine 的基本概念。在这篇文章中，着重介绍一些 Combine 的实际应用。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E5%BA%94%E7%94%A8/">
+  <meta property="og:image" content="/images/avatar.png">
+
+
+
+
+<meta name="generator" content="Hugo 0.58.0">
+
+
+<link rel="canonical" href="https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E5%BA%94%E7%94%A8/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
+
+
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
+
+
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
+
+
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
+
+
+  
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
+
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
+
+
+</head>
+  <body>
+    <div class="suspension">
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
+      
+        
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
+  
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
+  
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
+  </button>
+
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/post">首页</a>
+        </li>
+      
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">Apple 官方异步编程框架：Swift Combine 应用</h1>
+      <p class="post-meta">@Nemocdz · Sep 23, 2019 · 6 min read</p>
+    </header>
+
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#引言">引言</a></li>
+<li><a href="#发布者-publisher">发布者（Publisher）</a>
+<ul>
+<li>
+<ul>
+<li><a href="#map">map</a></li>
+<li><a href="#trymap">tryMap</a></li>
+<li><a href="#decode">decode</a></li>
+<li><a href="#assertnofailure">assertNoFailure</a></li>
+<li><a href="#catch">catch</a></li>
+<li><a href="#flatmap">flatMap</a></li>
+<li><a href="#valueforkey">valueForKey</a></li>
+<li><a href="#debounce">debounce</a></li>
+<li><a href="#receive-on">receive(on:)</a></li>
+<li><a href="#published">@Published</a></li>
+<li><a href="#future">Future</a></li>
+<li><a href="#anypublisher">AnyPublisher</a></li>
+</ul></li>
+<li><a href="#总结">总结</a></li>
+</ul></li>
+<li><a href="#订阅者-subscriber">订阅者（Subscriber）</a>
+<ul>
+<li><a href="#规则">规则</a>
+<ul>
+<li><a href="#assign">Assign</a></li>
+<li><a href="#sinks">Sinks</a></li>
+<li><a href="#subject">Subject</a>
+<ul>
+<li><a href="#passthrough">Passthrough</a></li>
+<li><a href="#currentvalue">CurrentValue</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#swiftui-中的发布者">SwiftUI 中的发布者</a>
+<ul>
+<li><a href="#bindableobject">BindableObject</a></li>
+</ul></li>
+<li><a href="#cancellation">Cancellation</a></li>
+<li><a href="#复杂的例子">复杂的例子</a></li>
+</ul></li>
+<li><a href="#总结-1">总结</a></li>
+<li><a href="#延伸阅读">延伸阅读</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><blockquote>
+<p>WWDC 2019 Session 721 - <a href="https://developer.apple.com/videos/play/wwdc2019/721/">Combine in Practice</a></p>
+</blockquote>
+
+<h2 id="引言">引言</h2>
+
+<p>Combine 是 WWDC2019 推出的异步编程框架，在上篇<a href="https://xiaozhuanlan.com/topic/9683417052">文章</a>中，介绍了 Combine 的基本概念。在这篇文章中，着重介绍一些 Combine 的实际应用。</p>
+
+<h2 id="发布者-publisher">发布者（Publisher）</h2>
+
+<p>假设有一个 <code>MagicTrick</code> 类型的 JSON 数据，这个数据的来源是 <code>NotificationCenter</code>，数据会以 <code>Data</code> 的形式放在 <code>Notification</code> 的 <code>UserInfo</code> 中。让我们使用 Combine 的发布者来改造这个数据的发送。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Notification</span>.Name{
+    <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">newTrickDownloaded</span>:Notification.Name {
+        <span style="color:#ff79c6">return</span> Notification.Name(<span style="color:#f1fa8c">&#34;aa&#34;</span>)
+    }
+}
+
+<span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">MagicTrick</span>:Codable {
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">name</span>:<span style="color:#8be9fd;font-style:italic">String</span> = <span style="color:#f1fa8c">&#34;&#34;</span>
+}
+
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)</code></pre></div>
+<p>由于 <code>NotificationCenter</code> 发布者的 <code>Output</code> 类型是 <code>Notification</code>，需要类型转换。</p>
+
+<h4 id="map">map</h4>
+
+<p>这个操作符可以改变发布者的类型。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
+    .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+    }</code></pre></div>
+<p>这时候 Output 变成了 <code>Data</code> 类型，还不能实际使用。要转换成实际类型，可以用 <code>Codable</code> + <code>JSONDecoder</code> 进行解析，解析时可能会抛出错误，就需要使用 <code>try</code> 关键字。</p>
+
+<h4 id="trymap">tryMap</h4>
+
+<p>这个操作符允许在转换值的闭包内抛出异常。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
+    .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+    }.tryMap { data -&gt; MagicTrick <span style="color:#ff79c6">in</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">decoder</span> = JSONDecoder()
+        <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">try</span> decoder.decode(MagicTrick.<span style="color:#ff79c6">self</span>, from: data)
+    }</code></pre></div>
+<h4 id="decode">decode</h4>
+
+<p>而 Combine 为 <code>Codable</code>，还提供了便捷的 <code>decode</code> 方法。这个操作符允许传入 <code>Decodable</code> 类型和解码器，将解码器支持的上游数据类型解码，发送给下游订阅者。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
+    .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+    }
+    .decode(type: MagicTrick.<span style="color:#ff79c6">self</span>, decoder: JSONDecoder())</code></pre></div>
+<hr />
+
+<p>接下来应该处理解码过程出现的错误了，因为每一个发布者需要描述了他们产生或者允许的错误类型，所以 Combine 中提供了各种各样的错误处理的操作符，对错误做出反应或是从错误中恢复并做一些兜底处理。</p>
+
+<h4 id="assertnofailure">assertNoFailure</h4>
+
+<p>这个操作符可以在你确认上游发布者不会产生错误时使用，会将错误类型转为 <code>Never</code>，但当错误发生时，将会崩溃。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
+    .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+    }
+    .decode(type: MagicTrick.<span style="color:#ff79c6">self</span>, decoder: JSONDecoder())
+    .assertNoFailure()</code></pre></div>
+<h4 id="catch">catch</h4>
+
+<p>这个操作符允许在上游发布者发生错误时，提供一个默认的发布者替换上游的发布者，发送值给下游的订阅者，以便做默认兜底方案。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
+    .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+    }
+    .decode(type: MagicTrick.<span style="color:#ff79c6">self</span>, decoder: JSONDecoder())
+    .<span style="color:#ff79c6">catch</span>{ <span style="color:#ff79c6">_</span> <span style="color:#ff79c6">in</span>
+        <span style="color:#ff79c6">return</span> Publishers.Just(MagicTrick())
+    }</code></pre></div>
+<blockquote>
+<p>Just：是一个很简单的发布者，用需要产生的值进行初始化，就会将该值发送一次给下游订阅者并结束。</p>
+</blockquote>
+
+<hr />
+
+<h4 id="flatmap">flatMap</h4>
+
+<p>上面的例子在错误发生后，生成一个 <code>Just</code> 的发布者作为上游发布者的替代品，但 <code>Just</code> 发布者只会产生一个值就结束了，整个事件流就会结束。但我们需要的是当错误发生时，catch 只处理这次错误，但不替换上游的发布者，也就是上游可以继续产生值。为了不影响上游，我们需要一个新的发布者，能将上游的值用新的发布者发送给下游，<code>catch</code> 只影响这个新的发布者，这个时候就需要 <code>flatMap</code> 了。</p>
+
+<p>Combine 里的 <code>flatMap</code> 和函数式编程高阶函数里的 <code>flatMap</code> 一样，可以将包装的类型进行转换，在这里包装就是发布者，类型就是发布者的 <code>Input</code>，也就是说在 <code>flatMap</code> 里面可以返回一个新 <code>Input</code> 类型的发布者。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
+    .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+    }
+    .flatMap{ data <span style="color:#ff79c6">in</span>
+        <span style="color:#ff79c6">return</span> Publishers.Just(data)
+            .decode(type: MagicTrick.<span style="color:#ff79c6">self</span>, decoder: JSONDecoder())
+            .<span style="color:#ff79c6">catch</span>{ <span style="color:#ff79c6">_</span> <span style="color:#ff79c6">in</span>
+                <span style="color:#ff79c6">return</span> Publishers.Just(MagicTrick())
+        }
+    }</code></pre></div>
+<p>上面例子中，每次 <code>NotificationCenter</code> 的产生的值都在 <code>flatMap</code> 里被生成的 <code>Just</code> 的发布者并发送，当错误发生时，<code>catch</code> 只会替换这个 <code>Just</code> 的发布者，而不会影响 <code>flatMap</code> 上游的发布者，这样就能保证 <code>catch</code> 是对每次错误进行处理的了。</p>
+
+<h4 id="valueforkey">valueForKey</h4>
+
+<p>当只需要发送上游发布者的某一个属性的值时，可以使用 <code>ValueForKey</code> 操作符，它允许使用 Key Path 指定上游的某一个属性。这个操作符的声明式 API 如下（还有对应多个 Key Path 的）：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">publisher</span>&lt;T&gt;(<span style="color:#ff79c6">for</span> keyPath: KeyPath&lt;<span style="color:#ff79c6">Self</span>.Output, T&gt;) -&gt; Publishers.ValueForKey&lt;<span style="color:#ff79c6">Self</span>, T&gt;</code></pre></div>
+<p>使用例子如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
+    .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+    }
+    .flatMap{ data <span style="color:#ff79c6">in</span>
+        <span style="color:#ff79c6">return</span> Publishers.Just(data)
+            .decode(type: MagicTrick.<span style="color:#ff79c6">self</span>, decoder: JSONDecoder())
+            .<span style="color:#ff79c6">catch</span>{ <span style="color:#ff79c6">_</span> <span style="color:#ff79c6">in</span>
+                <span style="color:#ff79c6">return</span> Publishers.Just(MagicTrick())
+        }
+    }
+		.publisher(<span style="color:#ff79c6">for</span>: \.name)</code></pre></div>
+<hr />
+
+<p>当对值的处理完后，我们需要考虑需不需要对发送和接收的调度进行特殊处理。</p>
+
+<h4 id="debounce">debounce</h4>
+
+<p>这个操作符作用是去抖动，也就是只关心在某一段时间间隔里最后的消息结果，比如间隔为 1 秒，那么这一秒内多次从上游接受的值只有最后一个会发送给下游。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
+    .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+    }
+    .flatMap{ data <span style="color:#ff79c6">in</span>
+        <span style="color:#ff79c6">return</span> Publishers.Just(data)
+            .decode(type: MagicTrick.<span style="color:#ff79c6">self</span>, decoder: JSONDecoder())
+            .<span style="color:#ff79c6">catch</span>{ <span style="color:#ff79c6">_</span> <span style="color:#ff79c6">in</span>
+                <span style="color:#ff79c6">return</span> Publishers.Just(MagicTrick())
+        }
+    }
+    .debounce(<span style="color:#ff79c6">for</span>: <span style="color:#bd93f9">0.5</span>, scheduler: RunLoop.main)</code></pre></div>
+<h4 id="receive-on">receive(on:)</h4>
+
+<p>这个操作符作用是指定订阅者使用哪个调度者里接收值，同理还有 <code>subscibe(on:)</code> 用于指定发布者使用哪个调度者发送值。</p>
+
+<blockquote>
+<p>调度者(Scheduler)：定义了什么时候和在哪个上下文中执行，在 Cocoa 框架中，<code>RunLoop</code> 和 <code>DispatchQueue</code> 已经适配了调度者协议，可以很方便的使用</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
+    .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+    }
+    .flatMap{ data <span style="color:#ff79c6">in</span>
+        <span style="color:#ff79c6">return</span> Publishers.Just(data)
+            .decode(type: MagicTrick.<span style="color:#ff79c6">self</span>, decoder: JSONDecoder())
+            .<span style="color:#ff79c6">catch</span>{ <span style="color:#ff79c6">_</span> <span style="color:#ff79c6">in</span>
+                <span style="color:#ff79c6">return</span> Publishers.Just(MagicTrick())
+        }
+    }
+    .receive(on: DispatchQueue.main)</code></pre></div>
+<hr />
+
+<h4 id="published">@Published</h4>
+
+<p>这个注解是一个属性包装器（Property Wrapper），可以方便地为任何属性生成其对应类型的发布者。这个发布者会在属性值发生变化时发送消息。</p>
+
+<blockquote>
+<p>属性包装器(Property Wrapper)：Swift 5.1 的新特性，可以抽象对属性 Set/Get 方法的通用逻辑。可以在<a href="https://github.com/apple/swift-evolution/blob/master/proposals/0258-property-wrappers.md">提案</a>中了解更多。</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">@propertyDelegate <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">Published</span>&lt;Value&gt; : Publisher {
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">typealias</span> Output = Value
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">typealias</span> Failure = Never
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>(initialValue: Value)
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>&lt;S&gt;(subscriber: S) <span style="color:#ff79c6">where</span> Value == S.Input, S : Subscriber, S.Failure == Published&lt;Value&gt;.Failure
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">value</span>: Value
+}</code></pre></div>
+<p>有了这个特性，对已有的代码进行改造接入 Combine 框架就更方便了（截止至 beta2 版本的 Xcode，$ 符号还不能使用）：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">@Published <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">foo</span>:<span style="color:#8be9fd;font-style:italic">String</span> = <span style="color:#f1fa8c">&#34;test&#34;</span>
+
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">subscription</span> = $foo.sink {
+    print(<span style="color:#f1fa8c">&#34;foo is </span><span style="color:#f1fa8c">\(</span><span style="color:#8be9fd;font-style:italic">$0</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">&#34;</span>)
+}</code></pre></div>
+<p>这个关键字其实印证了一点，Combine 和 Swift 语言生态的结合其实是很紧密的，也许将来为了 SwiftUI 和 Combine 这种重量级框架更方便使用，Apple 还会接纳更多社区优秀的提案。</p>
+
+<h4 id="future">Future</h4>
+
+<p>Future 是单次执行的发布者，在闭包中主动产生一个值，之后就结束（和 Javascript 的 Promise，Java 的 Future 类似的设计理念）。初始化闭包会返回一个 excutor 闭包，完成同步/异步操作候，通过主动调用 excutor 闭包（Promise 的 fulfill）将值发送给下游，而在 Combine 框架里这个闭包类型的是 <code>Promise</code> 类型，<code>Promise</code> 类型其实是 <code>(Result&lt;Output, Failure&gt;) -&gt; Void</code> 的别名。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Publishers</span> {
+    <span style="color:#ff79c6">final</span> <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">Future</span>&lt;Output, Failure&gt; : Publisher <span style="color:#ff79c6">where</span> Failure : Error {
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">typealias</span> Promise = (Result&lt;Output, Failure&gt;) -&gt; <span style="color:#8be9fd;font-style:italic">Void</span>
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>(<span style="color:#ff79c6">_</span> attemptToFulfill: @escaping (@escaping Publishers.Future&lt;Output, Failure&gt;.Promise) -&gt; <span style="color:#8be9fd;font-style:italic">Void</span>)
+        <span style="color:#ff79c6">final</span> <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>&lt;S&gt;(subscriber: S) <span style="color:#ff79c6">where</span> Output == S.Input, Failure == S.Failure, S : Subscriber
+    }
+}</code></pre></div>
+<p>通过 <code>Future</code>，可以将任何代码适配 Combine 框架，包括现有的同步，异步代码。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
+    .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+    }
+    .flatMap{ data <span style="color:#ff79c6">in</span>
+        <span style="color:#ff79c6">return</span> Publishers.Future { promise <span style="color:#ff79c6">in</span>
+            DispatchQueue.main.asyncAfter(deadline: .now() <span style="color:#ff79c6">+</span> <span style="color:#bd93f9">0.3</span>) {
+                promise(.success(data))
+            }
+        }
+    }</code></pre></div>
+<h4 id="anypublisher">AnyPublisher</h4>
+
+<p>当我们使用 Combine 框架里的方法来生成发布者时，发布者的实际类型可能千奇百怪，对外暴露或者想进行复用时，内部的实际类型其实是不需要关心的，只需要关心 <code>Output</code> 和错误的类型就可以了。这个时候，通用类型 <code>AnyPublisher</code> 就登场了。Combine 提供了 <code>eraseToAnyPublisher</code> 方法，可以将各种各样的发布者统一转换为 <code>AnyPublisher</code>。同样的，还有 <code>eraseToAnySubscriber</code>，<code>eraseToAnySubject</code> 。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">AnyPublisher</span>&lt;Output, Failure&gt; <span style="color:#ff79c6">where</span> Failure : Error {
+    @inlinable <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>&lt;P&gt;(<span style="color:#ff79c6">_</span> publisher: P) <span style="color:#ff79c6">where</span> Output == P.Output, Failure == P.Failure, P : Publisher
+    @inlinable <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>(<span style="color:#ff79c6">_</span> subscribe: @escaping (AnySubscriber&lt;Output, Failure&gt;) -&gt; <span style="color:#8be9fd;font-style:italic">Void</span>)
+}</code></pre></div>
+<p>建议在最后将发布者转换为 <code>AnyPublisher</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
+    .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+    }
+    .eraseToAnyPublisher()</code></pre></div>
+<h3 id="总结">总结</h3>
+
+<p>发布者有以下的特点</p>
+
+<ul>
+<li>用操作符生成每一小部分的发布者，最后组成事件流</li>
+<li>操作符描述了从当前发布者生成的新发布者</li>
+<li>值和错误是强类型的，在整个过程中</li>
+<li>既可以异步产生值，也可以同步产生值</li>
+<li>可以添加其兼容的订阅者</li>
+</ul>
+
+<h2 id="订阅者-subscriber">订阅者（Subscriber）</h2>
+
+<h3 id="规则">规则</h3>
+
+<ol>
+<li>只会接收到一次订阅通知</li>
+<li>发布者可以产生 0 或多个值，所以订阅者可能收到 0 或多个值</li>
+<li>最多只会接收到一个完成通知</li>
+</ol>
+
+<h4 id="assign">Assign</h4>
+
+<p>这个订阅者提供通过 Key Path 订阅某个类类型对象属性变化的能力。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
+    .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+    }
+    .flatMap{ data <span style="color:#ff79c6">in</span>
+        <span style="color:#ff79c6">return</span> Publishers.Just(data)
+            .decode(type: MagicTrick.<span style="color:#ff79c6">self</span>, decoder: JSONDecoder())
+            .<span style="color:#ff79c6">catch</span> { <span style="color:#ff79c6">_</span> <span style="color:#ff79c6">in</span>
+                <span style="color:#ff79c6">return</span> Publishers.Just(MagicTrick())
+            }
+    }
+    .publisher(<span style="color:#ff79c6">for</span>: \.name)
+
+<span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">test</span> = MagicTrick()
+trickNamePublisher.assign(to: \.name, on: test)</code></pre></div>
+<p>当接受到通知后，发布者就会改变 test 的 name 属性。</p>
+
+<h4 id="sinks">Sinks</h4>
+
+<p>这个订阅者提供了一个简单的从上游订阅数据的能力，错误类型采用上游的错误类型，使用一个闭包执行接收到值的行为，非常简单方便。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = ...<span style="color:#6272a4">// 上个例子里的发布者</span>
+
+trickNamePublisher.sink { value <span style="color:#ff79c6">in</span>
+    print(<span style="color:#f1fa8c">&#34;name is </span><span style="color:#f1fa8c">\(</span>value<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">&#34;</span>)
+}</code></pre></div>
+<h4 id="subject">Subject</h4>
+
+<p>有一些事物，它们同时承担着发布者和订阅者的角色，既可以发送消息，也可以接收消息。在 Combine 中，这类订阅者就是 <code>Subject</code>。它虽然是订阅者，却也有和发布者类似的发送值的能力。这可以让我们在数据流的过程中插入值给下游的订阅者。</p>
+
+<p><code>Subject</code> 是一个协议，定义了给下游的订阅者发送值的的方法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">Subject</span> : <span style="color:#8be9fd;font-style:italic">AnyObject</span>, Publisher {
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">send</span>(<span style="color:#ff79c6">_</span> value: <span style="color:#ff79c6">Self</span>.Output)
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">send</span>(completion: Subscribers.Completion&lt;<span style="color:#ff79c6">Self</span>.Failure&gt;)
+}</code></pre></div>
+<p>而发布者也有对应的方法可以添加 <code>Subject</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Publisher</span> {
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">subscribe</span>&lt;S&gt;(<span style="color:#ff79c6">_</span> subject: S) -&gt; AnyCancellable <span style="color:#ff79c6">where</span> S : Subject, <span style="color:#ff79c6">Self</span>.Failure == S.Failure, <span style="color:#ff79c6">Self</span>.Output == S.Output
+}</code></pre></div>
+<p><code>Subject</code> 有下面两种：</p>
+
+<h5 id="passthrough">Passthrough</h5>
+
+<p>发送订阅操作发生后，上游发送的值才会发送给下游订阅者。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = ...<span style="color:#6272a4">// 上个例子里的发布者</span>
+
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">magicWordsSubject</span> = PassthroughSubject&lt;<span style="color:#8be9fd;font-style:italic">String</span>,Never&gt;()
+
+trickNamePublisher.subscribe(magicWordsSubject)
+
+magicWordsSubject.sink { value <span style="color:#ff79c6">in</span>
+    print(<span style="color:#f1fa8c">&#34;name is </span><span style="color:#f1fa8c">\(</span>value<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">&#34;</span>)
+}
+
+magicWordsSubject.send(<span style="color:#f1fa8c">&#34;magic!&#34;</span>)</code></pre></div>
+<h5 id="currentvalue">CurrentValue</h5>
+
+<p>在订阅时，会将上游发布者发送的值中最新一个发送给下游订阅者，之后和正常一样进行发送值。</p>
+
+<h3 id="swiftui-中的发布者">SwiftUI 中的发布者</h3>
+
+<p>在今年发布的重磅框架 SwiftUI 中，底层的数据流也运用了 Combine 框架。SwiftUI 内部已经拥有订阅者，只需要开发者提供发布者用于描述你的数据在何时，如何变化，剩下的更新操作都有框架内部完成。</p>
+
+<h4 id="bindableobject">BindableObject</h4>
+
+<p>对自定义的数据类型适配，只需要遵循 <code>BindableObject</code> 协议，提供发布者具体类型，并提供一个 <code>didChange</code> 的发布者实例用于在数据改变时能发送消息。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">BindableObject</span> : <span style="color:#8be9fd;font-style:italic">AnyObject</span>, DynamicViewProperty, Identifiable, _BindableObjectViewProperty {
+    associatedtype PublisherType : Publisher <span style="color:#ff79c6">where</span> <span style="color:#ff79c6">Self</span>.PublisherType.Failure == Never
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">didChange</span>: <span style="color:#ff79c6">Self</span>.PublisherType { <span style="color:#ff79c6">get</span> }
+}</code></pre></div>
+<p>举个例子，当 model 被 set 的时候，就会触发属性观察的 <code>didSet</code>，里面调用了 <code>didChange</code> 发布者进行通知的发送(没有发送具体的值)，这个通知会触发 SwiftUI 内部的 UI 更新流程(类似 React 的 setState)，更多具体细节可以在 <a href="https://developer.apple.com/videos/play/wwdc2019/226">Session 226 - Data Flow Through SwiftUI</a> 中找到。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">WizardModel</span>: BindableObject {
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">trick</span>: MagicTrick? { <span style="color:#ff79c6">didSet</span> { didChange.send() }  }
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">didChange</span> = PassthroughSubject&lt;<span style="color:#8be9fd;font-style:italic">Void</span>, Never&gt;()
+}
+
+<span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">TrickView</span>: View {
+    @ObjectBinding <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">model</span>: WizardModel
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">body</span>: some View {
+        Text(model.trick?.name ?? <span style="color:#f1fa8c">&#34;&#34;</span>)
+    }
+}</code></pre></div>
+<h3 id="cancellation">Cancellation</h3>
+
+<p><code>Cancellation</code> 是内置在 Combine 里的一个协议：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">Cancellable</span> {
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">cancel</span>()
+}</code></pre></div>
+<p>里面只定义了一个 <code>cancel</code> 方法，用于提前结束结束订阅。Combine 里还定义了 <code>AnyCancellable</code>，这个类会在 <code>deinit</code> 时自动执行 <code>cancel</code> 方法。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#ff79c6">final</span> <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">AnyCancellable</span> : Cancellable {
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>(<span style="color:#ff79c6">_</span> cancel: @escaping () -&gt; <span style="color:#8be9fd;font-style:italic">Void</span>)
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>&lt;C&gt;(<span style="color:#ff79c6">_</span> canceller: C) <span style="color:#ff79c6">where</span> C : Cancellable
+    <span style="color:#ff79c6">final</span> <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">cancel</span>()
+}</code></pre></div>
+<h3 id="复杂的例子">复杂的例子</h3>
+
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190620143224.png" alt="" /></p>
+
+<p>假设有一个登录界面，里面需要输入用户名和密码，用户名需要经过服务器的检验，密码需要超过 8 个字符且需要和重复密码匹配。用户名和密码都符合要求时，下面的按钮状态将变成可点击状态。用 Combine 来完成这个例子吧！</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 用注解给属性添加发布者</span>
+@Published <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">password</span>: <span style="color:#8be9fd;font-style:italic">String</span> = <span style="color:#f1fa8c">&#34;&#34;</span>
+@Published <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">passwordAgain</span>: <span style="color:#8be9fd;font-style:italic">String</span> = <span style="color:#f1fa8c">&#34;&#34;</span>
+
+<span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">valiatedPassword</span>: AnyPublisher&lt;<span style="color:#8be9fd;font-style:italic">String</span>?, Never&gt; {
+  	<span style="color:#6272a4">// 合并密码和重复密码发布者，当其中一个产生值时检查密码是否符合要求</span>
+    <span style="color:#ff79c6">return</span> Publishers.CombineLatest($password, $passwordAgain) { password, passwordAgain <span style="color:#ff79c6">in</span>
+        <span style="color:#ff79c6">guard</span> password == passwordAgain, password.count <span style="color:#ff79c6">&gt;</span> <span style="color:#bd93f9">8</span> <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+        }
+        <span style="color:#ff79c6">return</span> password
+    }
+  	<span style="color:#6272a4">// 可以判断密码是不是太简单，比如 12345678</span>
+    .map { <span style="color:#8be9fd;font-style:italic">$0</span> == <span style="color:#f1fa8c">&#34;password1&#34;</span> ? <span style="color:#ff79c6">nil</span> : <span style="color:#8be9fd;font-style:italic">$0</span>}
+  	<span style="color:#6272a4">// 转换为 AnyPublisher</span>
+    .eraseToAnyPublisher()
+}
+
+@Published <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">username</span>: <span style="color:#8be9fd;font-style:italic">String</span> = <span style="color:#f1fa8c">&#34;&#34;</span>
+
+<span style="color:#6272a4">// 提交给服务器判断用户名是否合法，网络请求等异步行为</span>
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">usernameAvailable</span>(<span style="color:#ff79c6">_</span> username:<span style="color:#8be9fd;font-style:italic">String</span>, completion:((<span style="color:#8be9fd;font-style:italic">Bool</span>) -&gt; ())) {
+   <span style="color:#6272a4">// ...</span>
+}
+
+<span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">validatedUsername</span>: AnyPublisher&lt;<span style="color:#8be9fd;font-style:italic">String</span>?, Never&gt; {
+  	<span style="color:#6272a4">// 限制产生值的频率</span>
+    <span style="color:#ff79c6">return</span> $username.debounce(<span style="color:#ff79c6">for</span>: <span style="color:#bd93f9">0.5</span>, scheduler: RunLoop.main)
+  			<span style="color:#6272a4">// 去重，重复的不需要再次检验</span>
+        .removeDuplicates()
+  			<span style="color:#6272a4">// 转换成新的发布者</span>
+        .flatMap { username <span style="color:#ff79c6">in</span>
+           	<span style="color:#6272a4">// 使用 Future 适配已有的异步操作</span>
+            <span style="color:#ff79c6">return</span> Publishers.Future { promise <span style="color:#ff79c6">in</span>
+                usernameAvailable(username) { available <span style="color:#ff79c6">in</span>
+                    promise(.success(available ? username : <span style="color:#ff79c6">nil</span>))
+                }
+            }
+        }
+  			<span style="color:#6272a4">// 转换为 AnyPublisher</span>
+        .eraseToAnyPublisher()
+}
+
+<span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">validatedCredentials</span>: AnyPublisher<span style="color:#ff79c6">&lt;</span>(<span style="color:#8be9fd;font-style:italic">String</span>,<span style="color:#8be9fd;font-style:italic">String</span>)?,Never&gt; {
+  	<span style="color:#6272a4">// 合并检验密码和检验用户名发布者，均有合理值时发送</span>
+    <span style="color:#ff79c6">return</span> Publishers.CombineLatest(validatedUsername, valiatedPassword) { username, password -&gt; (<span style="color:#8be9fd;font-style:italic">String</span>, <span style="color:#8be9fd;font-style:italic">String</span>)? <span style="color:#ff79c6">in</span>
+        <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">a</span> = username, <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">b</span> = password <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+        }
+        <span style="color:#ff79c6">return</span> (a, b)
+    }
+    .eraseToAnyPublisher()
+}
+
+<span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">signupButton</span>:UIButton!
+
+<span style="color:#6272a4">// 检查是否有合理的值</span>
+<span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">signupButtonStream</span> = validatedCredentials.map{ <span style="color:#8be9fd;font-style:italic">$0</span> <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> }
+																						<span style="color:#6272a4">// 指定接收的调度者</span>
+                                            .receive(on: RunLoop.main)
+																						<span style="color:#6272a4">// 使用 KVO Assign 订阅者改变 UI 状态</span>
+                                            .assign(to: \.isEnabled, on: signupButton)</code></pre></div>
+<p>总的来说，就是使用组合，将各种小的功能组合成完整的数据流。</p>
+
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/f2e2f58f700e32981157a98cc09e4eb8.png" alt="" /></p>
+
+<h2 id="总结-1">总结</h2>
+
+<p>Apple 官方对接入 Combine 给了以下一些建议：</p>
+
+<ul>
+<li>使用多个自定义发布者将小部分的事情组合起来</li>
+<li>逐步适配，一点点改造</li>
+<li>在属性中优先使用 @Published 注解</li>
+<li>使用 Future 将多个异步回调或者发布者组合起来</li>
+</ul>
+
+<blockquote>
+<p>Use Combine Toady</p>
+</blockquote>
+
+<p>Combine 清晰，易用，还有着苹果爸爸承诺对 Cocoa 框架 buff 加持，为什么不马上试试呢？</p>
+
+<h2 id="延伸阅读">延伸阅读</h2>
+
+<p><a href="https://xiaozhuanlan.com/topic/9683417052">Apple 官方异步编程框架：Swift Combine 简介</a></p>
+
+<p><a href="https://github.com/broadwaylamb/OpenCombine">Combine 的非官方实现</a></p>
+
+<p><a href="https://github.com/sergdort/CombineFeedback">CombineFeedback</a></p>
+
+<p><a href="https://xiaozhuanlan.com/topic/8362954017">WWDC 19 专栏文章目录</a></p></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © Nemocdz. 
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-nemocdz-github-io-my-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  
+<footer class="site-footer">
+  <p>© 2017-2019 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
+  
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
+
+
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+  </body>
+</html>

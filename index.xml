@@ -7,7 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>© Nemocdz. </copyright>
-    <lastBuildDate>Mon, 23 Sep 2019 01:09:13 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 23 Sep 2019 16:18:13 +0800</lastBuildDate>
     
 	<atom:link href="https://nemocdz.github.io/index.xml" rel="self" type="application/rss+xml" />
     
@@ -24,6 +24,56 @@
 参与 The Swift Programming Language 中文版 ，Google Swift Style Guide 中文版 翻译及维护。
 目前就职于鹅厂，算个业余摄影师。
 联系方式  QQ：757765420 Email：nemocdz@gmail.com Lofter 图虫 简书  </description>
+    </item>
+    
+    <item>
+      <title>Apple 官方异步编程框架：Swift Combine 应用</title>
+      <link>https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E5%BA%94%E7%94%A8/</link>
+      <pubDate>Mon, 23 Sep 2019 16:18:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E5%BA%94%E7%94%A8/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;WWDC 2019 Session 721 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2019/721/&#34;&gt;Combine in Practice&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;
+
+&lt;p&gt;Combine 是 WWDC2019 推出的异步编程框架，在上篇&lt;a href=&#34;https://xiaozhuanlan.com/topic/9683417052&#34;&gt;文章&lt;/a&gt;中，介绍了 Combine 的基本概念。在这篇文章中，着重介绍一些 Combine 的实际应用。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Apple 官方异步编程框架：Swift Combine 简介</title>
+      <link>https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Mon, 23 Sep 2019 15:18:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;WWDC 2019 Session 722 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2019/722/&#34;&gt;Introducing Combine&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;
+
+&lt;p&gt;在现代 GUI 编程中，开发者会处理大量事件（包括网络，屏幕输入，系统通知等），根据事件去让界面变化。而对异步事件的处理，会让代码和状态变得复杂。而现有的 Cocoa 框架中，异步编程的接口主要有以下这几种：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Target/Action&lt;/li&gt;
+&lt;li&gt;NotificationCenter&lt;/li&gt;
+&lt;li&gt;KVO&lt;/li&gt;
+&lt;li&gt;Callbacks&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;而在实际情况中，由于不同的第三方库，系统框架，业务代码可能采用不一样的方式处理异步事件，会导致对事件的处理分散且存在差异。苹果为了帮助开发者简化异步编程，发布了 Swift 的异步编程框架 - Combine。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Foundation 框架的新亮点</title>
+      <link>https://nemocdz.github.io/post/foundation-%E6%A1%86%E6%9E%B6%E7%9A%84%E6%96%B0%E4%BA%AE%E7%82%B9md/</link>
+      <pubDate>Mon, 23 Sep 2019 14:18:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/post/foundation-%E6%A1%86%E6%9E%B6%E7%9A%84%E6%96%B0%E4%BA%AE%E7%82%B9md/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;WWDC 2019 Session 723 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2019/723/&#34;&gt;Advances in Foundation&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;</description>
     </item>
     
     <item>

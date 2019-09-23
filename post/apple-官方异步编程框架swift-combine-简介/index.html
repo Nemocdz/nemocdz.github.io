@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>Apple 官方异步编程框架：Swift Combine 简介</title>
+
+  
+  
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
+
+  
+
+  
+  
+  <meta name="description" content=" WWDC 2019 Session 722 - Introducing Combine
+ 引言 在现代 GUI 编程中，开发者会处理大量事件（包括网络，屏幕输入，系统通知等），根据事件去让界面变化。而对异步事件的处理，会让代码和状态变得复杂。而现有的 Cocoa 框架中，异步编程的接口主要有以下这几种：
+ Target/Action NotificationCenter KVO Callbacks  而在实际情况中，由于不同的第三方库，系统框架，业务代码可能采用不一样的方式处理异步事件，会导致对事件的处理分散且存在差异。苹果为了帮助开发者简化异步编程，发布了 Swift 的异步编程框架 - Combine。
+">
+
+  
+  
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="Apple 官方异步编程框架：Swift Combine 简介">
+    <meta name="twitter:description" content=" WWDC 2019 Session 722 - Introducing Combine
+ 引言 在现代 GUI 编程中，开发者会处理大量事件（包括网络，屏幕输入，系统通知等），根据事件去让界面变化。而对异步事件的处理，会让代码和状态变得复杂。而现有的 Cocoa 框架中，异步编程的接口主要有以下这几种：
+ Target/Action NotificationCenter KVO Callbacks  而在实际情况中，由于不同的第三方库，系统框架，业务代码可能采用不一样的方式处理异步事件，会导致对事件的处理分散且存在差异。苹果为了帮助开发者简化异步编程，发布了 Swift 的异步编程框架 - Combine。
+">
+    <meta name="twitter:image" content="/images/avatar.png">
+  
+
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Apple 官方异步编程框架：Swift Combine 简介">
+  <meta property="og:description" content=" WWDC 2019 Session 722 - Introducing Combine
+ 引言 在现代 GUI 编程中，开发者会处理大量事件（包括网络，屏幕输入，系统通知等），根据事件去让界面变化。而对异步事件的处理，会让代码和状态变得复杂。而现有的 Cocoa 框架中，异步编程的接口主要有以下这几种：
+ Target/Action NotificationCenter KVO Callbacks  而在实际情况中，由于不同的第三方库，系统框架，业务代码可能采用不一样的方式处理异步事件，会导致对事件的处理分散且存在差异。苹果为了帮助开发者简化异步编程，发布了 Swift 的异步编程框架 - Combine。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E7%AE%80%E4%BB%8B/">
+  <meta property="og:image" content="/images/avatar.png">
+
+
+
+
+<meta name="generator" content="Hugo 0.58.0">
+
+
+<link rel="canonical" href="https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E7%AE%80%E4%BB%8B/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
+
+
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
+
+
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
+
+
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
+
+
+  
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
+
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
+
+
+</head>
+  <body>
+    <div class="suspension">
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
+      
+        
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
+  
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
+  
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
+  </button>
+
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/post">首页</a>
+        </li>
+      
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">Apple 官方异步编程框架：Swift Combine 简介</h1>
+      <p class="post-meta">@Nemocdz · Sep 23, 2019 · 4 min read</p>
+    </header>
+
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#引言">引言</a></li>
+<li><a href="#what-is-combine">What is Combine</a></li>
+<li><a href="#combine-特性">Combine 特性</a>
+<ul>
+<li><a href="#泛型支持">泛型支持</a></li>
+<li><a href="#类型安全">类型安全</a></li>
+<li><a href="#组合优先">组合优先</a></li>
+<li><a href="#请求驱动">请求驱动</a></li>
+</ul></li>
+<li><a href="#combine-核心">Combine 核心</a>
+<ul>
+<li><a href="#发布者-publisher">发布者(Publisher)</a></li>
+<li><a href="#订阅者-subscriber">订阅者（Subscriber）</a></li>
+<li><a href="#运算符-operator">运算符（Operator）</a>
+<ul>
+<li><a href="#1-函数式转换">1. 函数式转换</a></li>
+<li><a href="#2-列表操作">2. 列表操作</a></li>
+<li><a href="#3-错误处理">3. 错误处理</a></li>
+<li><a href="#4-线程-队列行为">4. 线程/队列行为</a></li>
+<li><a href="#5-调度和时间处理">5. 调度和时间处理</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#combine-设计理念-组合优先">Combine 设计理念 - 组合优先</a>
+<ul>
+<li><a href="#组合多个发布者">组合多个发布者</a>
+<ul>
+<li><a href="#zip">Zip</a></li>
+<li><a href="#combine-lastest">Combine Lastest</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#延伸阅读">延伸阅读</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><blockquote>
+<p>WWDC 2019 Session 722 - <a href="https://developer.apple.com/videos/play/wwdc2019/722/">Introducing Combine</a></p>
+</blockquote>
+
+<h2 id="引言">引言</h2>
+
+<p>在现代 GUI 编程中，开发者会处理大量事件（包括网络，屏幕输入，系统通知等），根据事件去让界面变化。而对异步事件的处理，会让代码和状态变得复杂。而现有的 Cocoa 框架中，异步编程的接口主要有以下这几种：</p>
+
+<ul>
+<li>Target/Action</li>
+<li>NotificationCenter</li>
+<li>KVO</li>
+<li>Callbacks</li>
+</ul>
+
+<p>而在实际情况中，由于不同的第三方库，系统框架，业务代码可能采用不一样的方式处理异步事件，会导致对事件的处理分散且存在差异。苹果为了帮助开发者简化异步编程，发布了 Swift 的异步编程框架 - Combine。</p>
+
+<h2 id="what-is-combine">What is Combine</h2>
+
+<blockquote>
+<p>&ldquo;A unified, declarative API for processing values over time&rdquo;</p>
+</blockquote>
+
+<p><strong>统一、声明式、为处理变化的值而生的 API</strong>。</p>
+
+<p>Combine 作用是将异步事件通过组合<strong>事件处理操作符</strong>进行自定义处理。</p>
+
+<p>关注如何处理变化的值，正是响应式编程所考虑的。也可以说，Combine 是一个苹果官方的 Swift <strong>响应式</strong>框架。</p>
+
+<blockquote>
+<p>响应式编程（Reactive Programming）：面向异步数据流的编程思想。业界比较知名的响应式框架是 ReactiveX 系列。Rx 也有 Swift 版本的 RxSwift。</p>
+</blockquote>
+
+<h2 id="combine-特性">Combine 特性</h2>
+
+<p>由于 Combine 是一个 Swift 编写的框架，所以 Combine 可以受益于 Swift 的一些语言特性。</p>
+
+<h3 id="泛型支持">泛型支持</h3>
+
+<p>Combine 享受 Swift 泛型带来的便利性。泛型可以帮助开发者提取更多模板代码，这也意味着我们可以让异步操作的代码支持泛型，然后适配到各个种类的异步操作中。</p>
+
+<h3 id="类型安全">类型安全</h3>
+
+<p>同样受惠于 Swift，可以让编译器和 Runtime 帮助我们检查类型安全问题。</p>
+
+<h3 id="组合优先">组合优先</h3>
+
+<p>Combine 的主要设计理念，使用组合。组合的优点是可以将核心设计得简单又便于理解，但当放在一起使用时，能产生 <code>1 + 1 &gt; 2</code> 的效果。</p>
+
+<h3 id="请求驱动">请求驱动</h3>
+
+<blockquote>
+<p>请求驱动(Request Driven)：基于请求和响应的设计思想，消费者向生产者请求某个事务的变化，当变化时生产者给消费者对应的响应。</p>
+
+<p>事件驱动(Event Driven)：基于事件通知的设计思想。在事务发生变化时，生产者将通知提交给事件管道进行分发，而不关心谁去消费事件。消费者需要到事件管道中订阅关心的通知。</p>
+</blockquote>
+
+<p>Combine 是基于请求和响应的设计思想的，这允许你更精准的控制 App 的内存使用和性能。(这一块苹果没有详细解释)</p>
+
+<h2 id="combine-核心">Combine 核心</h2>
+
+<p>Combine 框架有三个核心概念</p>
+
+<ul>
+<li>发布者(Publisher)</li>
+<li>订阅者(Subscriber)</li>
+<li>操作符(Operator)</li>
+</ul>
+
+<h3 id="发布者-publisher">发布者(Publisher)</h3>
+
+<p>发布者在 Combine 框架中是一个协议：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">Publisher</span> {
+
+    <span style="color:#6272a4">/// 产生的值的类型</span>
+    associatedtype Output
+
+    <span style="color:#6272a4">/// 失败的错误类型</span>
+    associatedtype Failure : Error
+
+    <span style="color:#6272a4">/// 实现这个方法，将调用 `subscribe(_:)` 订阅的订阅者附加到发布者上</span>
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>&lt;S&gt;(subscriber: S) <span style="color:#ff79c6">where</span> S : Subscriber, <span style="color:#ff79c6">Self</span>.Failure == S.Failure, <span style="color:#ff79c6">Self</span>.Output == S.Input
+}
+
+<span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Publisher</span> {
+    <span style="color:#6272a4">/// 将订阅者附加到发布者上，供外部调用，不直接使用 `receive(_:)` 方法</span>
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">subscribe</span>&lt;S&gt;(<span style="color:#ff79c6">_</span> subscriber: S) <span style="color:#ff79c6">where</span> S : Subscriber, <span style="color:#ff79c6">Self</span>.Failure == S.Failure, <span style="color:#ff79c6">Self</span>.Output == S.Input
+}</code></pre></div>
+<p>发布者定义了<strong>如何描述产生的值和错误</strong>，通过定义关联类型 <code>Output</code> 和 <code>Failure</code> 的实际类型（当发布者不产生错误时，可以使用 <code>Never</code>）。由于发布者不需要实际产生值和错误，所以我们可以用值类型来定义它，也就是 Swift 里的结构体。发布者提供让订阅者注册的能力，通过实现 <code>receive</code> 方法。</p>
+
+<p>发布者可以适配到现有的很多异步操作接口中。</p>
+
+<p>官方 Cocoa 框架中 <code>NotificationCenter</code> 接口适配发布者的例子（<del>截止至 beta1 版本的 Xcode， 此 API 尚未开放</del>beta2 版本已支持）：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">NotificationCenter</span> {
+        <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">Publisher</span>: Combine.Publisher {
+                <span style="color:#8be9fd;font-style:italic">typealias</span> Output = Notification
+                <span style="color:#8be9fd;font-style:italic">typealias</span> Failure = Never
+                <span style="color:#8be9fd;font-style:italic">init</span>(center: NotificationCenter, name: Notification.Name, object: <span style="color:#8be9fd;font-style:italic">Any</span>? = <span style="color:#ff79c6">nil</span>)
+        }
+}</code></pre></div>
+<h3 id="订阅者-subscriber">订阅者（Subscriber）</h3>
+
+<p>和发布者配对的，就是订阅者。同样的，在 Combine 框架中是一个协议：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">Subscriber</span> : CustomCombineIdentifierConvertible {
+
+    <span style="color:#6272a4">/// 接受到的值的类型</span>
+    associatedtype Input
+
+    <span style="color:#6272a4">/// 可能接受到的错误的类型</span>
+    associatedtype Failure : Error
+
+    <span style="color:#6272a4">/// 告诉订阅者，它在发布者上被成功订阅，可以请求值了</span>
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>(subscription: Subscription)
+
+    <span style="color:#6272a4">/// 告诉订阅者，发布者产生值了</span>
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>(<span style="color:#ff79c6">_</span> input: <span style="color:#ff79c6">Self</span>.Input) -&gt; Subscribers.Demand
+
+    <span style="color:#6272a4">/// 告诉订阅者，发布者已经终止产生值了，不管是正常情况还是由于情况</span>
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>(completion: Subscribers.Completion&lt;<span style="color:#ff79c6">Self</span>.Failure&gt;)
+}</code></pre></div>
+<p>订阅者定义了<strong>如何描述接受的值和错误</strong>，类似的，通过定义关联类型 <code>Input</code> 和 <code>Failure</code>。由于订阅者在接受到值之后，经常会影响和修改某些状态，所以我们使用引用类型来定义它，也就是 Swift 里的类类型。</p>
+
+<p>订阅者有三个核心方法：</p>
+
+<ul>
+<li>接收到订阅的消息</li>
+<li>接收到产生的值的消息</li>
+<li>接收到产生已经终止的消息</li>
+</ul>
+
+<blockquote>
+<p>订阅消息(Subsciption):描述如何控制发布者到订阅者的数据流动，用于表达发布者和订阅者之间的连接。</p>
+</blockquote>
+
+<p>官方的提供 <code>Assign</code> 的订阅者例子（可以在文档中找到更详细的定义）：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Subscribers</span> {
+    <span style="color:#ff79c6">final</span> <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">Assign</span>&lt;Root, Input&gt; : Subscriber, Cancellable {
+      
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">typealias</span> Failure = Never
+
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>(object: Root, keyPath: ReferenceWritableKeyPath&lt;Root, Input&gt;)
+			<span style="color:#6272a4">//...</span>
+    }
+}</code></pre></div>
+<h3 id="运算符-operator">运算符（Operator）</h3>
+
+<p>当有了发布者和订阅者后，它们之间是怎么配合起来运作的呢，如下图所示：</p>
+
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014519.png" alt="" /></p>
+
+<ul>
+<li>首先订阅者通过 <code>subsribe</code> 方法附加到发布者上</li>
+<li>发布者发送一个订阅消息给订阅者，订阅者通过 <code>receive</code> 方法响应</li>
+<li>发布者通过定义在订阅消息中的 <code>request</code>方法发送请求需要的值</li>
+<li>当请求的值产生时，发布者将值发送给订阅者，订阅者通过 <code>receive</code> 方法响应</li>
+<li>最后当发布者终止产生值时，发送完成消息给订阅者，订阅者通过 <code>receive</code> 方法响应</li>
+</ul>
+
+<p>看起来一切都配合的很美好，好像这两个概念已经可以实现我们的功能了。当你开开心心敲下这个例子的时候：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">Foo</span> {
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">name</span>:<span style="color:#8be9fd;font-style:italic">String</span>
+    <span style="color:#8be9fd;font-style:italic">init</span>(name:<span style="color:#8be9fd;font-style:italic">String</span>) {
+        <span style="color:#ff79c6">self</span>.name = name
+    }
+}
+
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">object</span> = Foo(name:<span style="color:#f1fa8c">&#34;Test&#34;</span>)
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">publisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: <span style="color:#f1fa8c">&#34;Send&#34;</span>, object: object)
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">subsciber</span> = Subscribers.Assign(object: object, keyPath: \.name)
+
+publisher.subscribe(subsciber)</code></pre></div>
+<p>你会发现编译不过，因为 <code>NotificationCenter</code>  发布者产生的值类型是 <code>Notification</code>，而订阅者需要接受 name 的 <code>String</code> 类型。这时候，操作符就应运而生了。</p>
+
+<p>操作符是一个<strong>桥梁</strong>，定义一些便捷的操作，让发布者和订阅者能搭配使用，而这样就可以让发布者和订阅者的耦合程度降低，通用程度变高。而复用的发布者和订阅者可以通过一到多个操作符进行适配。</p>
+
+<p>操作符定义<strong>如何进行值的转换</strong>。操作符是遵循 Publisher 协议的，从上游的发布者订阅值，生成新的发布者，处理后并发送给下游的订阅者。</p>
+
+<p>官方提供的 Map 操作符的例子：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Publishers</span> {
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">Map</span>&lt;Upstream, Output&gt; : Publisher <span style="color:#ff79c6">where</span> Upstream : Publisher {
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">typealias</span> Failure = Upstream.Failure
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">upstream</span>: Upstream
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">transform</span>: (Upstream.Output) -&gt; Output
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>&lt;S&gt;(subscriber: S) <span style="color:#ff79c6">where</span> Output == S.Input, S : Subscriber, Upstream.Failure == S.Failure
+    }
+}</code></pre></div>
+<p>但在一般使用时，我们不直接生成操作符发布者，而是使用官方提供的<strong>声明式操作符 API</strong>。</p>
+
+<p>比如 Map 操作符的方法如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Publishers</span>.Map {
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">map</span>&lt;T&gt;(<span style="color:#ff79c6">_</span> transform: @escaping (Output) -&gt; T) -&gt; Publishers.Map&lt;Upstream, T&gt;
+}</code></pre></div>
+<p>Combine 框架中，有以下几类声明式操作符 API：</p>
+
+<h4 id="1-函数式转换">1. 函数式转换</h4>
+
+<p>比如 <code>map</code>、<code>filter</code>、<code>reduce</code> 等函数式思想里的常见的高阶函数的操作符。</p>
+
+<h4 id="2-列表操作">2. 列表操作</h4>
+
+<p>比如 <code>first</code>、<code>drop</code>、<code>append</code> 等在产生值序列的中使用便捷方法的操作符。</p>
+
+<h4 id="3-错误处理">3. 错误处理</h4>
+
+<p>比如 <code>catch</code>，<code>retry</code> 等进行错处理的操作符。</p>
+
+<h4 id="4-线程-队列行为">4. 线程/队列行为</h4>
+
+<p>比如 <code>subscribeOn</code>，<code>receiveOn</code> 等对订阅和接受时线程进行指定的操作符。</p>
+
+<h4 id="5-调度和时间处理">5. 调度和时间处理</h4>
+
+<p>比如 <code>delay</code>，<code>debounce</code>（去抖动），<code>throttle</code>(节流) 等操作符。</p>
+
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014532.png" alt="" /></p>
+
+<h2 id="combine-设计理念-组合优先">Combine 设计理念 - 组合优先</h2>
+
+<p>Combine 的设计理念就是优先是使用<strong>组合</strong>。</p>
+
+<p>如果把 Combine 的思想对应到同步编程里面的概念，就是这样下面的图。</p>
+
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014615.png" alt="" /></p>
+
+<p>也就是发布者可以使用的操作符，大部分和 Foundation 框架里 Collection 类型的操作符相似，举个例子：我们知道可以对集合类型进行 <code>filter</code> 操作，那么 Combine 操作符里也有对应的 <code>filter</code> 方法。通过方法链（Method Chaning），组合大量的操作符，可以让异步操作更加统一，代码更加整洁。</p>
+
+<h3 id="组合多个发布者">组合多个发布者</h3>
+
+<p>有时候，我们希望将一些异步操作汇合，并统一处理响应。组合多个发布者有两种方式：<code>Zip</code> 和 <code>CombineLastest</code>。</p>
+
+<h4 id="zip">Zip</h4>
+
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014652.png" alt="" /></p>
+
+<p><code>Zip</code> 在 Combine 框架里面是一个结构体(同时还有 <code>Zip3</code>，<code>Zip4</code>，用于更多数量的组合)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Publishers</span> {
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">Zip</span>&lt;A, B&gt; : Publisher <span style="color:#ff79c6">where</span> A : Publisher, B : Publisher, A.Failure == B.Failure {
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">typealias</span> Output = (A.Output, B.Output)
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">typealias</span> Failure = A.Failure
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">a</span>: A
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">b</span>: B
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>(<span style="color:#ff79c6">_</span> a: A, <span style="color:#ff79c6">_</span> b: B)
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>&lt;S&gt;(subscriber: S) <span style="color:#ff79c6">where</span> S : Subscriber, B.Failure == S.Failure, S.Input == (A.Output, B.Output)
+    }
+}</code></pre></div>
+<p><code>Zip</code> 可以通过传入两个发布者进行初始化，要求多个组合的发布者的的错误类型一致，而输出是多个组合的发布者合并起来的元组。<code>Zip</code> 的意思是，当组合的<strong>每一个</strong>发布者都产生值的时候，才会将值合并成元组发送给订阅者。</p>
+
+<h4 id="combine-lastest">Combine Lastest</h4>
+
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014709.png" alt="" /></p>
+
+<p>类似的是，<code>CombineLastest</code> 在 Combine 框架里面也是一个结构体(同理还有 <code>CombineLatest3</code>，<code>CombineLatest4</code>，用于更多数量的组合)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Publishers</span> {
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">CombineLatest</span>&lt;A, B, Output&gt; : Publisher <span style="color:#ff79c6">where</span> A : Publisher, B : Publisher, A.Failure == B.Failure {
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">typealias</span> Failure = A.Failure
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">a</span>: A
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">b</span>: B
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">transform</span>: (A.Output, B.Output) -&gt; Output
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>(<span style="color:#ff79c6">_</span> a: A, <span style="color:#ff79c6">_</span> b: B, transform: @escaping (A.Output, B.Output) -&gt; Output)
+        <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>&lt;S&gt;(subscriber: S) <span style="color:#ff79c6">where</span> Output == S.Input, S : Subscriber, B.Failure == S.Failure
+    }
+}</code></pre></div>
+<p><code>CombineLatest</code> 使用两个发布者加上一个 <code>transform</code> 的转换闭包(在闭包中将两个产生的值处理并返回)进行初始化(<del>截止目前 beta1 版本的 Xcode，苹果还没将声明公开 init 方法，预计可能还会调整，这一部分来自官方幻灯片中的例子，有待订正</del>beta 2 版本已支持)，同样也要求多个组合发布者的错误类型一致，输出是 <code>transform</code> 闭包里的 <code>Output</code> 类型。<code>CombineLastest</code> 的意思是，当多个发布者中<strong>任意一个</strong>发布者产生值时，都会执行 <code>transform</code> 闭包的操作并将结果发送给订阅者。</p>
+
+<h2 id="总结">总结</h2>
+
+<p>Combine 作为官方出品的响应式框架，无疑是令人惊喜的。整个框架的思想虽然现有的响应式框架(如 RxSwift）差不多，但无论是接口上隐藏掉序列，冷热信号等理解难度较大的概念，还是更方便的事件设计，清晰简洁的命名规范，都觉得 Apple 很用心的在打磨这个框架。同时，最具杀伤力的的是，Apple 可以让他和 Cocoa 框架更紧密的结合，打造出类似 UIKit+Combine，Foundation+Combine 的官方支持，这也意味着 Combine 有望成为类似 JavaScript 里面 Promise 这样的规范特性。如果你错过了 ReactiveCocoa，也错过了 RxSwift，也没使用过响应式编程，那么我强烈建议你了解一下今年的 Combine 框架。而剩下最大的问题，是国内什么时候能够 iOS 13 Only 和迁移到 Swift 了。</p>
+
+<h2 id="延伸阅读">延伸阅读</h2>
+
+<p><a href="https://xiaozhuanlan.com/topic/7956203481">Apple 官方异步编程框架：Swift Combine 应用</a></p>
+
+<p><a href="https://github.com/freak4pc/rxswift-to-combine-cheatsheet">RXSwift 和 Combine 对应关系速查表</a></p>
+
+<p><a href="https://xiaozhuanlan.com/topic/8362954017">WWDC 19 专栏文章目录</a></p></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © Nemocdz. 
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-nemocdz-github-io-my-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  
+<footer class="site-footer">
+  <p>© 2017-2019 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
+  
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
+
+
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+  </body>
+</html>

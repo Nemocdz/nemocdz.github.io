@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>Foundation 框架的新亮点</title>
+
+  
+  
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
+
+  
+
+  
+  
+  <meta name="description" content=" WWDC 2019 Session 723 - Advances in Foundation
+">
+
+  
+  
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="Foundation 框架的新亮点">
+    <meta name="twitter:description" content=" WWDC 2019 Session 723 - Advances in Foundation
+">
+    <meta name="twitter:image" content="/images/avatar.png">
+  
+
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Foundation 框架的新亮点">
+  <meta property="og:description" content=" WWDC 2019 Session 723 - Advances in Foundation
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/foundation-%E6%A1%86%E6%9E%B6%E7%9A%84%E6%96%B0%E4%BA%AE%E7%82%B9md/">
+  <meta property="og:image" content="/images/avatar.png">
+
+
+
+
+<meta name="generator" content="Hugo 0.58.0">
+
+
+<link rel="canonical" href="https://nemocdz.github.io/post/foundation-%E6%A1%86%E6%9E%B6%E7%9A%84%E6%96%B0%E4%BA%AE%E7%82%B9md/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
+
+
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
+
+
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
+
+
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
+
+
+  
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
+
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
+
+
+</head>
+  <body>
+    <div class="suspension">
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
+      
+        
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
+  
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
+  
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
+  </button>
+
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/post">首页</a>
+        </li>
+      
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">Foundation 框架的新亮点</h1>
+      <p class="post-meta">@Nemocdz · Sep 23, 2019 · 3 min read</p>
+    </header>
+
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#有序集合的-diff">有序集合的 Diff</a></li>
+<li><a href="#data">Data</a>
+<ul>
+<li><a href="#连续性">连续性</a>
+<ul>
+<li><a href="#data-是连续的">Data 是连续的</a></li>
+<li><a href="#通用数据协议">通用数据协议</a></li>
+</ul></li>
+<li><a href="#压缩">压缩</a></li>
+</ul></li>
+<li><a href="#units">Units</a>
+<ul>
+<li><a href="#时间-unitduration">时间（UnitDuration）</a></li>
+<li><a href="#频率-unitfrequency">频率（UnitFrequency）</a></li>
+<li><a href="#存储-unitinformationstorage">存储（UnitInformationStorage）</a></li>
+</ul></li>
+<li><a href="#formatter">Formatter</a>
+<ul>
+<li><a href="#相对日期时间格式-relateivedatetimeformatter">相对日期时间格式（RelateiveDateTimeFormatter）</a></li>
+<li><a href="#列表格式-listformatter">列表格式（ListFormatter）</a></li>
+</ul></li>
+<li><a href="#operationqueue">OperationQueue</a>
+<ul>
+<li><a href="#栅栏">栅栏</a></li>
+<li><a href="#进度反馈">进度反馈</a></li>
+</ul></li>
+<li><a href="#ios-上的-usb-和-smb">iOS 上的 USB 和 SMB</a>
+<ul>
+<li><a href="#写入操作">写入操作</a></li>
+<li><a href="#读取操作">读取操作</a></li>
+<li><a href="#测试文件系统能力">测试文件系统能力</a></li>
+</ul></li>
+<li><a href="#foundation-的-swift-api-更新">Foundation 的 Swift API 更新</a>
+<ul>
+<li><a href="#scanner">Scanner</a></li>
+<li><a href="#filehandle">FileHandle</a></li>
+</ul></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#延伸阅读">延伸阅读</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><blockquote>
+<p>WWDC 2019 Session 723 - <a href="https://developer.apple.com/videos/play/wwdc2019/723/">Advances in Foundation</a></p>
+</blockquote>
+
+<h2 id="有序集合的-diff">有序集合的 Diff</h2>
+
+<p>Foudation 框架为有序集合添加了 Diff 能力，用非常简单的方式，就能比对两个集合的差异，也能将差异应用到集合上。</p>
+
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190621154614.png" alt="" /></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">bird</span> = <span style="color:#f1fa8c">&#34;bird&#34;</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">bear</span> = <span style="color:#f1fa8c">&#34;bear&#34;</span>
+
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">diff</span> = bird.difference(from: bear)
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">newBird</span> = bear.applying(diff) <span style="color:#6272a4">// &#34;bird&#34;</span></code></pre></div>
+<h2 id="data">Data</h2>
+
+<h3 id="连续性">连续性</h3>
+
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190623011539.png" alt="" /></p>
+
+<p>磁盘上的数据，比如一张图片，这种数据大多可以很简单在内存里用连续区域表示。另一方面，从网络下载的数据，可能会分成多段的字节流进行传输，并占领一整块连续的内存。在 Swift 5 之前，<code>Data</code> 既可能连续的，又可能是非连续的。这个统一接口虽然用起来很方便，但在访问整个缓冲区时，底层的原始数据需要拷贝到一个连续的区域，这意味着有时候性能会变得不可预测。在实际使用时，磁盘上的连续数据就会在有些时候占用比想象中大的内存。</p>
+
+<h4 id="data-是连续的">Data 是连续的</h4>
+
+<p>从 Swift 5 开始，<code>Data</code> 只用于表达连续的数据。Apple 引入了 <code>ContiguousBytes</code> 协议来表示数据的连续。遵循这个协议表示该类型提供以连续的方式直接访问底层原始数据的能力。<code>Data</code> 是遵守这个协议的，所以以后不需要担心有的时候内存占用会变大。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">ContiguousBytes</span> {
+		<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">withUnsafeBytes</span>&lt;R&gt;(<span style="color:#ff79c6">_</span> body: (UnsafeRawBufferPointer) <span style="color:#ff79c6">throws</span> -&gt; R) <span style="color:#ff79c6">rethrows</span> -&gt; R
+}</code></pre></div>
+<h4 id="通用数据协议">通用数据协议</h4>
+
+<p>那非连续的数据怎么办呢？ Foundation 新引入的通用数据协议，分别有可变和不可变的版本：<code>DataProtocol</code> 和 <code>MutableDataProtocol</code> 。非连续数据可以通过这两个新的协议表达（但这两个协议也可以表达连续数据）。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">DataProtocol</span> : RandomAccessCollection <span style="color:#ff79c6">where</span> <span style="color:#ff79c6">Self</span>.Element == <span style="color:#8be9fd;font-style:italic">UInt8</span>, <span style="color:#ff79c6">Self</span>.SubSequence : DataProtocol {
+
+    associatedtype Regions : BidirectionalCollection <span style="color:#ff79c6">where</span> <span style="color:#ff79c6">Self</span>.Regions.Element : ContiguousBytes, <span style="color:#ff79c6">Self</span>.Regions.Element : DataProtocol, <span style="color:#ff79c6">Self</span>.Regions.Element.SubSequence : ContiguousBytes
+
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">regions</span>: <span style="color:#ff79c6">Self</span>.Regions { <span style="color:#ff79c6">get</span> }
+  
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">firstRange</span>&lt;D, R&gt;(of: D, <span style="color:#ff79c6">in</span>: R) -&gt; <span style="color:#8be9fd;font-style:italic">Range</span>&lt;<span style="color:#ff79c6">Self</span>.Index&gt;? <span style="color:#ff79c6">where</span> D : DataProtocol, R : RangeExpression, <span style="color:#ff79c6">Self</span>.Index == R.Bound
+
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">lastRange</span>&lt;D, R&gt;(of: D, <span style="color:#ff79c6">in</span>: R) -&gt; <span style="color:#8be9fd;font-style:italic">Range</span>&lt;<span style="color:#ff79c6">Self</span>.Index&gt;? <span style="color:#ff79c6">where</span> D : DataProtocol, R : RangeExpression, <span style="color:#ff79c6">Self</span>.Index == R.Bound
+
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">copyBytes</span>(to: UnsafeMutableRawBufferPointer, count: <span style="color:#8be9fd;font-style:italic">Int</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Int</span>
+
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">copyBytes</span>&lt;DestinationType&gt;(to: <span style="color:#8be9fd;font-style:italic">UnsafeMutableBufferPointer</span>&lt;DestinationType&gt;, count: <span style="color:#8be9fd;font-style:italic">Int</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Int</span>
+
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">copyBytes</span>&lt;R&gt;(to: UnsafeMutableRawBufferPointer, from: R) -&gt; <span style="color:#8be9fd;font-style:italic">Int</span> <span style="color:#ff79c6">where</span> R : RangeExpression, <span style="color:#ff79c6">Self</span>.Index == R.Bound
+
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">copyBytes</span>&lt;DestinationType, R&gt;(to: <span style="color:#8be9fd;font-style:italic">UnsafeMutableBufferPointer</span>&lt;DestinationType&gt;, from: R) -&gt; <span style="color:#8be9fd;font-style:italic">Int</span> <span style="color:#ff79c6">where</span> R : RangeExpression, <span style="color:#ff79c6">Self</span>.Index == R.Bound
+}
+
+<span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">MutableDataProtocol</span> : DataProtocol, MutableCollection, RangeReplaceableCollection {
+
+    <span style="color:#ff79c6">mutating</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">resetBytes</span>&lt;R&gt;(<span style="color:#ff79c6">in</span> range: R) <span style="color:#ff79c6">where</span> R : RangeExpression, <span style="color:#ff79c6">Self</span>.Index == R.Bound
+}</code></pre></div>
+<p>以下类型遵循这两个通用数据协议：</p>
+
+<ul>
+<li>Foundation 框架：<code>Data</code></li>
+<li>Swift 标准库里的：<code>[UInt 8]</code></li>
+<li>GCD：<code>DispatchData</code></li>
+</ul>
+
+<p>以后在开发者编写数据处理的接口的时候，尽量使用遵循通用数据协议的泛型参数。</p>
+
+<h3 id="压缩">压缩</h3>
+
+<p>在 App 中，开发者有时候需要对数据进行压缩（比如对老设备优化或者资源需要上传）。Foundation 框架引入了数据压缩的接口来简化开发者的工作（截止至 beta2 版本的 Xcode，相关 API 还没提供）。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">data</span> = <span style="color:#6272a4">// ...数据</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">compressed</span> = <span style="color:#ff79c6">try</span> data.compressed(using: .lzfse)</code></pre></div>
+<p>一共提供了四种压缩算法让开发者选择：</p>
+
+<ul>
+<li>lzfse</li>
+<li>lz4</li>
+<li>lzma</li>
+<li>zlib</li>
+</ul>
+
+<h2 id="units">Units</h2>
+
+<p><code>Unit</code> 是 Foundation 框架在 iOS 10/macOS 10.12 新增的抽象类型，用于表示现实中使用的度量单位。具体介绍可以参考这篇<a href="https://swift.gg/2016/09/22/measurements-and-units/">文章</a>。</p>
+
+<p>这次 <code>Unit</code> 增加了更多种常用的度量单位。</p>
+
+<h3 id="时间-unitduration">时间（UnitDuration）</h3>
+
+<p>时间单位增加了以下几种单位</p>
+
+<ul>
+<li><code>milliseconds</code>：毫秒</li>
+<li><code>microseconds</code>：微秒</li>
+<li><code>nanoseconds</code>：纳秒</li>
+<li><code>picoseconds</code>：皮秒</li>
+</ul>
+
+<h3 id="频率-unitfrequency">频率（UnitFrequency）</h3>
+
+<p>频率单位新增了一种单位</p>
+
+<ul>
+<li><code>framesPerSecond</code>：FPS，每秒帧数</li>
+</ul>
+
+<h3 id="存储-unitinformationstorage">存储（UnitInformationStorage）</h3>
+
+<p>新增了储存单位的类型</p>
+
+<ul>
+<li>拥有 <code>bits</code>（位）、<code>bytes</code>（字节）、<code>nibbles</code>(半字节)这三种基本单位</li>
+<li>拥有带有 SI-前缀(国际单位制，都是1000整数次幂)、二进制前缀(1024 整数次幂)和基本单位组合的单位(比如 KB、GB、TB)</li>
+<li>支持使用 <code>MeasurementFormatter</code> 和 <code>ByteCountFormatter</code> 进行格式化</li>
+</ul>
+
+<h2 id="formatter">Formatter</h2>
+
+<h3 id="相对日期时间格式-relateivedatetimeformatter">相对日期时间格式（RelateiveDateTimeFormatter）</h3>
+
+<p>这个新增的类可以方便的计算出两个时间的相对时间，并返回字符描述（支持多个语言）：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">aDate</span> = <span style="color:#6272a4">// ...两周前</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">formatter</span> = RelativeDateTimeFormatter()
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">dateString</span> = formatter.localizedString(<span style="color:#ff79c6">for</span>: aDate, relativeTo: Date())
+
+<span style="color:#6272a4">// en_US: &#34;2 weeks ago&#34;</span>
+<span style="color:#6272a4">// zh_CN: &#34;2 周前&#34;</span></code></pre></div>
+<h3 id="列表格式-listformatter">列表格式（ListFormatter）</h3>
+
+<p>这个新增的类可以方便的返回列表多个事物的描述：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">string</span> = ListFormatter.localizedString(byJoining: [<span style="color:#f1fa8c">&#34;😀&#34;</span>,<span style="color:#f1fa8c">&#34;😳&#34;</span>,<span style="color:#f1fa8c">&#34;😢&#34;</span>])
+
+<span style="color:#6272a4">// en_US: &#34;😀, 😳, and 😢&#34;</span>
+<span style="color:#6272a4">// zh_CN: &#34;😀、😳和😢&#34;</span></code></pre></div>
+<p>同时，列表格式还可以定义列表里元素的格式(如果有的话)：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">dates</span> = <span style="color:#6272a4">// ...</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">listFormatter</span> = ListFormatter()
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">dateFormatter</span> = DateFormatter()
+dateFormatter.dateStyle = .short
+listFormatter.itemFormatter = dateFormatter
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">string</span> = listFormatter.string(from: dates)
+
+<span style="color:#6272a4">// en_US: &#34;6/7/19, 6/11/19, and 6/21/19&#34;</span>
+<span style="color:#6272a4">// zh_CN: &#34;2019/6/7、2019/6/11和2019/6/21&#34;</span></code></pre></div>
+<h2 id="operationqueue">OperationQueue</h2>
+
+<h3 id="栅栏">栅栏</h3>
+
+<p>有时候我们希望在某一些任务执行完后，执行一个任务，如下图所示：</p>
+
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190621193001.png" alt="" /></p>
+
+<p>如果使用类似上图的代码进行判断，是不正确的。因为在执行判断代码和执行你需要的任务代码的中间时刻，可能有别的任务代码执行。<code>OperationQueue</code> 新增了类似 GCD 栅栏作用的 <code>addBarrierBlock</code> 方法，帮助开发者简单的完成这种需求。</p>
+
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190621193636.png" alt="" /></p>
+
+<h3 id="进度反馈">进度反馈</h3>
+
+<p>有时候我们需要根据任务的完成情况来改变进度，从而改变一些 UI(如进度条)。<code>OperationQueue</code> 新增了 <code>progress</code> 属性，并支持设置总共任务数，这样就可以在任务完成时，就可以通过 <code>progress</code> 来反馈进度情况。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">queue</span> = OperationQueue()
+queue.progress.totalUnitCount = <span style="color:#bd93f9">3</span>
+
+queue.addOperation {
+    task()   <span style="color:#6272a4">// 完成时，进度 1/3</span>
+}
+
+queue.addOperation {
+    task()   <span style="color:#6272a4">// 完成时，进度 2/3</span>
+}
+
+queue.addOperation {
+    task()  <span style="color:#6272a4">// 完成时，进度 3/3</span>
+}</code></pre></div>
+<h2 id="ios-上的-usb-和-smb">iOS 上的 USB 和 SMB</h2>
+
+<p>iOS 的文件系统开始支持 USB 和 SMB 的卷宗了。这也就意味着开发者需要开始准备支持处理其他卷宗中的文件了。</p>
+
+<blockquote>
+<p>SMB(Server Message Block，服务器消息块):一种网络传输协议，能在网络上共享机器上的文件等资源。也就是可以访问网络计算机的卷宗。</p>
+</blockquote>
+
+<h3 id="写入操作">写入操作</h3>
+
+<p>因此在选择新文件的写入路径时，为了保证是原子性的安全保存，建议使用 <code>FileManager.SearchPathDirectory.itemReplacementDirectory</code> 来建立临时路径（因为固定的路径可能会不存在）。想要了解更多可参考 <a href="https://developer.apple.com/documentation/foundation/filemanager/1407693-url">Apple 官方文档</a>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">path</span> = <span style="color:#6272a4">// ...父目录</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">url</span> = FileManager.<span style="color:#ff79c6">default</span>.url(<span style="color:#ff79c6">for</span>: .itemReplacementDirectory, <span style="color:#ff79c6">in</span>: .userDomainMask, appropriateFor: path, create: <span style="color:#ff79c6">true</span>)</code></pre></div>
+<h3 id="读取操作">读取操作</h3>
+
+<p>因为 USB 可能被用户推出，SMB 可能因为网络连接失败而访问丢失，所以开发者要做好卷宗会整个消失的准备。所以在读取 <code>Data</code> 时，要使用 <code>Data.ReadingOptions.mappedIfSafe</code> （允许系统将文件映射到虚拟内存，只当文件存在可被移出的卷宗时生效）。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">url</span> = <span style="color:#6272a4">// ...数据路径</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">data</span> = <span style="color:#ff79c6">try</span> Data(contentsOf: url, options: .mappedIfSafe)</code></pre></div>
+<p>由于访问 USB 或 SMB 上的文件会比访问设备内部的文件明显慢很多，所以建议将访问操作放到非主线程中进行。</p>
+
+<h3 id="测试文件系统能力">测试文件系统能力</h3>
+
+<p>由于有些文件系统能力在设备内部卷宗是存在的，但在外部卷宗不一定存在。比如 NTFS 文件系统上大家都知道的克隆，但在 USB 或者 SMB 上是不存在的，所以开发者需要在使用前对文件系统的能力进行测试并处理错误。具体可以参考 <a href="https://developer.apple.com/documentation/foundation/urlresourcekey/checking_volume_storage_capacity">Apple 官方文档</a>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">fileURL</span> = <span style="color:#6272a4">// .. 文件路径</span>
+<span style="color:#ff79c6">do</span> {
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">values</span> = <span style="color:#ff79c6">try</span> fileURL.resourceValues(forKeys: [.volumeSupportsFileCloningKey])
+    <span style="color:#ff79c6">if</span> values.volumeSupportsFileCloning {
+        print(<span style="color:#f1fa8c">&#34;能力存在&#34;</span>)
+    } <span style="color:#ff79c6">else</span> {
+        print(<span style="color:#f1fa8c">&#34;能力不存在&#34;</span>)
+    }
+} <span style="color:#ff79c6">catch</span> {
+    print(error.localizedDescription)
+}</code></pre></div>
+<p>更多具体细节可以在 <a href="https://developer.apple.com/videos/play/wwdc2019/719/">Session 719 - What’s New in File Management and Quick Look</a> 中找到。</p>
+
+<h2 id="foundation-的-swift-api-更新">Foundation 的 Swift API 更新</h2>
+
+<p>由于 Foundation 框架已经存在很久了，里面很多接口的设计还是 Objective-C 的思想。Apple 一直在改进 Foundation 框架里面的接口，使之更加 Swift 化。</p>
+
+<h3 id="scanner">Scanner</h3>
+
+<p>字符串扫描不再需要使用 Foundation 框架里的 <code>NSString</code>，可以使用 Swift 原生 <code>String</code> 类型，也不需要传入引用，更 Swift，更简单。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// Swift 4</span>
+<span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">string</span>:NSString?
+<span style="color:#ff79c6">if</span> scanner.scanUpToCharacters(from: .newlines, into: &amp;string) {
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">nameString</span> = string! <span style="color:#ff79c6">as</span> <span style="color:#8be9fd;font-style:italic">String</span>
+}
+
+<span style="color:#6272a4">// Swift 5.1</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">nameString</span> = scanner.scanUpToCharacters(from: .newlines)
+
+<span style="color:#6272a4">// 可以使用 String 的特性，比如 Emoji</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">matchString</span> = scanner.scanString(<span style="color:#f1fa8c">&#34;😀, 😳, and 😢&#34;</span>)</code></pre></div>
+<h3 id="filehandle">FileHandle</h3>
+
+<p>以前，当文件描述符操作如果发生潜在的错误，会抛出异常。现在 Apple 提供了带错误接口，所以开发者可以在调用处马上处理错误（截止至 beta2 版本的 Xcode，相关 API 还没提供）。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">fileHandle</span> = FileHandle()
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">data</span> = <span style="color:#ff79c6">try</span> fileHandle.readToEnd()</code></pre></div>
+<p>写入操作的接口，现在支持 <code>DataProtocol</code> 了，同时也会对非连续的数据进行优化（截止至 beta2 版本的 Xcode，相关 API 还没提供）。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">FileHandle</span> {
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">write</span>&lt;T: DataProtocol&gt;(contentsOf data: T) <span style="color:#ff79c6">throws</span> 
+}</code></pre></div>
+<h2 id="总结">总结</h2>
+
+<p>Foundation 框架这次的更新还是诚意十足的，比如 diff、数据压缩、格式化、队列栅栏，都是日常开发中使用频率较高的操作。同时，Apple 也一直在努力推动废弃一些设计不合理或者不符合 Swift 思想的 API，让开发者用起来更加简单，友好，高效。</p>
+
+<h2 id="延伸阅读">延伸阅读</h2>
+
+<p><a href="https://xiaozhuanlan.com/topic/8362954017">WWDC 19 专栏文章目录</a></p></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © Nemocdz. 
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-nemocdz-github-io-my-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  
+<footer class="site-footer">
+  <p>© 2017-2019 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
+  
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
+
+
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+  </body>
+</html>

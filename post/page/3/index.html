@@ -207,6 +207,54 @@
       
         <article class="post-entry">
   <header class="post-header">
+    <h3 class="post-title"><a href="https://nemocdz.github.io/post/2018/" class="post-link">2018</a></h3>
+    <p class="post-meta">@Nemocdz · Jan 1, 2019 · 2 min read</p>
+  </header>
+  
+  <p class="post-summary">今年对我来说是特别的一年，22 岁，从大学顺利毕业，开始工作。
+</p>
+  <footer class="post-footer">
+    <a class="read-more" href="https://nemocdz.github.io/post/2018/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
+    <h3 class="post-title"><a href="https://nemocdz.github.io/post/%E8%AF%91-hacking-hit-tests/" class="post-link">[译] Hacking Hit Tests</a></h3>
+    <p class="post-meta">@Nemocdz · Dec 27, 2018 · 2 min read</p>
+  </header>
+  
+  <p class="post-summary"> 作者：Soroush Khanlou
+原文链接：Hacking Hit Tests
+原文日期：2018-09-07
+ 回想 Crusty 教我们使用面向协议编程之前的日子，我们大多使用继承来共享代码的实现。通常在 UIKit 编程中，你可能会用 UIView 的子类去添加一些子视图，重写 -layoutSubviews，然后重复这些工作。也许你还会重写 -drawRect。但当你需要做一些特别的事情时，就需要看看 UIView 中其他可以被重写的方法。
+</p>
+  <footer class="post-footer">
+    <a class="read-more" href="https://nemocdz.github.io/post/%E8%AF%91-hacking-hit-tests/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
+    <h3 class="post-title"><a href="https://nemocdz.github.io/post/%E8%AF%91-mirror-%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" class="post-link">[译] Mirror 的工作原理</a></h3>
+    <p class="post-meta">@Nemocdz · Oct 14, 2018 · 8 min read</p>
+  </header>
+  
+  <p class="post-summary"> 作者：Mike Ash
+原文链接：How Mirror Works
+原文日期：2018-09-26
+ 尽管 Swift 重心在强调静态类型上，但它同时支持丰富的元数据类型。元数据类型允许代码在运行时检查和操作任意值。这个功能通过 Mirror API 暴露给 Swift 开发者。大家可能会感到困惑，在 Swift 这种如此强调静态类型的语言里，Mirror 这样的特性是怎么工作的？让我们一起来通过这篇文章了解一下。
+</p>
+  <footer class="post-footer">
+    <a class="read-more" href="https://nemocdz.github.io/post/%E8%AF%91-mirror-%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
     <h3 class="post-title"><a href="https://nemocdz.github.io/post/ios-%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86proxy%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/" class="post-link">iOS 设置代理（Proxy）方案总结</a></h3>
     <p class="post-meta">@Nemocdz · Sep 26, 2018 · 7 min read</p>
   </header>
@@ -244,49 +292,6 @@
 </p>
   <footer class="post-footer">
     <a class="read-more" href="https://nemocdz.github.io/post/why-is-metaclass-in-objective-c/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88-objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/" class="post-link">再谈 Objective-C 弱引用容器的实现-关联对象实现 weak</a></h3>
-    <p class="post-meta">@Nemocdz · Sep 2, 2017 · 3 min read</p>
-  </header>
-  
-  <p class="post-summary">之前写了一篇 文章 总结了 OC 中弱引用容器实现，在小米面试中提到其中 CFFoundation 的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现 Weak 特质，也就是没有在销毁后置 nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。
-所以看了 Runtime 源码和文章后，订正弱引用容器的一些实现方法。
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88-objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://nemocdz.github.io/post/%E4%BB%8E%E4%B8%80%E9%81%93%E7%BD%91%E6%98%93%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B5%85%E8%B0%88-objective-c-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/" class="post-link">从一道网易面试题浅谈 Objective-C 线程安全</a></h3>
-    <p class="post-meta">@Nemocdz · Aug 25, 2017 · 2 min read</p>
-  </header>
-  
-  <p class="post-summary">今天去网易面试，面试官出了一道面试题，下面代码会发生什么问题？
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://nemocdz.github.io/post/%E4%BB%8E%E4%B8%80%E9%81%93%E7%BD%91%E6%98%93%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B5%85%E8%B0%88-objective-c-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://nemocdz.github.io/post/tcpip-%E5%8D%8F%E8%AE%AE%E6%97%8F%E8%BE%B9%E5%AD%A6%E8%BE%B9%E6%83%B3/" class="post-link">TCP/IP 协议族边学边想</a></h3>
-    <p class="post-meta">@Nemocdz · Aug 22, 2017 · 3 min read</p>
-  </header>
-  
-  <p class="post-summary">最近读了《图解 TCP/IP》这本书，重新理解了大二囫囵吞枣，应付考试而学习的“计算机网络”和 “TCP/IP” 这两门课中一些未理解的知识，和疑惑的问题。
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://nemocdz.github.io/post/tcpip-%E5%8D%8F%E8%AE%AE%E6%97%8F%E8%BE%B9%E5%AD%A6%E8%BE%B9%E6%83%B3/">Read More →</a>
   </footer>
 </article>
 
