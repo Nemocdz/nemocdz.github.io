@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>SwiftUI 初探</title>
+
+  
+  
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
+
+  
+
+  
+  
+  <meta name="description" content="十月份参加极光黑客马拉松一天时间写了个简单的 火车票 OCR 应用“票夹”，当时由于时间和熟练程度原因，并没有试下今年 WWDC 刚推出的 SwiftUI 框架。最近抽空用了 SwiftUI &#43; Combine 进行重写，顺便感受了一下这两个新框架的魅力。先说个人感受，SwiftUI 看起来挺美好的，但是目前有 Bug 和完善度不高，比较适合用在不关心设计的 Demo 或者个人功能性项目上。Combine 完成度尚可，但 Xcode 对复杂闭包的自动推断经常失效，比较影响编码体验。
+">
+
+  
+  
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="SwiftUI 初探">
+    <meta name="twitter:description" content="十月份参加极光黑客马拉松一天时间写了个简单的 火车票 OCR 应用“票夹”，当时由于时间和熟练程度原因，并没有试下今年 WWDC 刚推出的 SwiftUI 框架。最近抽空用了 SwiftUI &#43; Combine 进行重写，顺便感受了一下这两个新框架的魅力。先说个人感受，SwiftUI 看起来挺美好的，但是目前有 Bug 和完善度不高，比较适合用在不关心设计的 Demo 或者个人功能性项目上。Combine 完成度尚可，但 Xcode 对复杂闭包的自动推断经常失效，比较影响编码体验。
+">
+    <meta name="twitter:image" content="/images/avatar.png">
+  
+
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="SwiftUI 初探">
+  <meta property="og:description" content="十月份参加极光黑客马拉松一天时间写了个简单的 火车票 OCR 应用“票夹”，当时由于时间和熟练程度原因，并没有试下今年 WWDC 刚推出的 SwiftUI 框架。最近抽空用了 SwiftUI &#43; Combine 进行重写，顺便感受了一下这两个新框架的魅力。先说个人感受，SwiftUI 看起来挺美好的，但是目前有 Bug 和完善度不高，比较适合用在不关心设计的 Demo 或者个人功能性项目上。Combine 完成度尚可，但 Xcode 对复杂闭包的自动推断经常失效，比较影响编码体验。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/swift-ui-%E5%88%9D%E6%8E%A2/">
+  <meta property="og:image" content="/images/avatar.png">
+
+
+
+
+<meta name="generator" content="Hugo 0.58.0">
+
+
+<link rel="canonical" href="https://nemocdz.github.io/post/swift-ui-%E5%88%9D%E6%8E%A2/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
+
+
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
+
+
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
+
+
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
+
+
+  
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
+
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
+
+
+</head>
+  <body>
+    <div class="suspension">
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
+      
+        
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
+  
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
+  
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
+  </button>
+
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/post">首页</a>
+        </li>
+      
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">SwiftUI 初探</h1>
+      <p class="post-meta">@Nemocdz · Dec 30, 2019 · 4 min read</p>
+    </header>
+
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#视图的默认行为">视图的默认行为</a></li>
+<li><a href="#数据交互">数据交互</a>
+<ul>
+<li><a href="#state">@State</a></li>
+<li><a href="#binding">@Binding</a></li>
+<li><a href="#environmentobject">@EnvironmentObject</a></li>
+<li><a href="#observedobject-observableobject">@ObservedObject &amp; ObservableObject</a></li>
+</ul></li>
+<li><a href="#实现模态展示视图">实现模态展示视图</a></li>
+<li><a href="#uikit-的适配">UIKit 的适配</a>
+<ul>
+<li><a href="#swiftui-uiview">SwiftUI -&gt; UIView</a></li>
+<li><a href="#uiview-swiftui">UIView -&gt; SwiftUI</a></li>
+</ul></li>
+<li><a href="#接入-combine">接入 Combine</a></li>
+<li><a href="#最后">最后</a></li>
+<li><a href="#参考链接">参考链接</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>十月份参加极光黑客马拉松一天时间写了个简单的 <a href="https://github.com/Nemocdz/TrainTicket-SwiftUI">火车票 OCR 应用“票夹”</a>，当时由于时间和熟练程度原因，并没有试下今年 WWDC 刚推出的 SwiftUI 框架。最近抽空用了 SwiftUI + Combine 进行重写，顺便感受了一下这两个新框架的魅力。先说个人感受，SwiftUI 看起来挺美好的，但是目前有 Bug 和完善度不高，比较适合用在不关心设计的 Demo 或者个人功能性项目上。Combine 完成度尚可，但 Xcode 对复杂闭包的自动推断经常失效，比较影响编码体验。</p>
+
+<p>SwiftUI 总体使用起来和 React 框架很像，都有对应的概念，一般就是 <code>HStack</code> 和 <code>VStack</code> 当作视图层级使用，<code>Spacer</code> 用于自动填充剩余部分，比如在一个水平 <code>HStack</code> 中，A-Spacer-B，那么 A 靠最左，B 靠最右。</p>
+
+<p>在使用 Swift UI 的过程中，碰到了一些问题，分享一下。</p>
+
+<h2 id="视图的默认行为">视图的默认行为</h2>
+
+<ol>
+<li><p>常用的 <code>padding</code> 是有默认值，且不为 0。</p></li>
+
+<li><p><code>List</code> 默认是有分隔线，目前好像没法做到单独去掉，只能用下面的代码进行全局去除，并且是一种非官方做法，毕竟 <code>List</code> 的实现后续可能不一定是 <code>UITableView</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">List([]) {
+<span style="color:#6272a4">//…</span>
+}
+.onAppear {
+  UITableView.appearance().separatorColor = .clear
+}</code></pre></div></li>
+
+<li><p>视图的属性顺序会影响表现，比如下面两段代码</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 1</span>
+HStack {
+  Spacer()
+}
+.frame(height: <span style="color:#bd93f9">300</span>)
+.background(Color.blue)
+.padding(<span style="color:#bd93f9">30</span>)</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 2</span>
+HStack {
+  Spacer()
+}
+.frame(height: <span style="color:#bd93f9">300</span>)
+.padding(<span style="color:#bd93f9">30</span>)
+.background(Color.blue)</code></pre></div></li>
+</ol>
+
+<p>要实现想要的效果，得使用第一种，第二种会是没有边距的蓝色矩形，这个我怀疑是 Bug。</p>
+
+<h2 id="数据交互">数据交互</h2>
+
+<h3 id="state">@State</h3>
+
+<p>这个修饰符和 React 的 State 差不多，就当 State 改变时会触发所有使用了 State 地方的 UI 刷新。比 React 好用的地方是可以用多个修饰符分别修饰多个变量，而不用放在一起，然后也不用调用 <code>setState</code> 进行刷新，只需要正常赋值就会触发刷新。</p>
+
+<h3 id="binding">@Binding</h3>
+
+<p>这个修饰符用于解决数据是从上层传入的，上层数据改变时需要通知下层 UI 的刷新，这个时候下层的数据就应该用 <code>@Binding</code> 修饰，这样不像 <code>@State</code> 修饰的数据会在传递时遵循值语义发生复制，从而导致数据不同步的问题。</p>
+
+<h3 id="environmentobject">@EnvironmentObject</h3>
+
+<p>这个修饰符用于解决多层嵌套时，下层视图想访问上层数据的问题，除了用 <code>@Binding</code> 一层层传递外，通过声明这个修饰符也可以在任意嵌套层级内使用该数据。</p>
+
+<h3 id="observedobject-observableobject">@ObservedObject &amp; ObservableObject</h3>
+
+<p>这个修饰符可以用于在多个视图里共享一份数据模型时使用，可以将已有的数据模型集合进 SwiftUI。遵循 <code>Observable</code> 协议，并在接收数据改变的地方用 <code>@ObservedObject</code> 修饰，这样该 <code>Observable</code> 类型里所有的 <code>Publisher</code> 在发生改变时都会通知 <code>@ObservedObject</code>。对于已经存在的属性，可以加上 <code>@Published</code> 修饰符或者使用自定义的 <code>Publisher</code> 发送通知。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 1.</span>
+<span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">GlobalModel</span>: ObservableObject {
+    @Published <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">name</span> = <span style="color:#f1fa8c">&#34;myName&#34;</span>
+}</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 2.</span>
+<span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">GlobalModel</span>: ObservableObject {
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">didChange</span> = PassthroughSubject&lt;<span style="color:#8be9fd;font-style:italic">Void</span>, Never&gt;()
+  
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">name</span>: = <span style="color:#f1fa8c">&#34;myName&#34;</span> {
+        <span style="color:#ff79c6">didSet</span> {
+            didChange.send()
+        }
+    }
+}</code></pre></div>
+<h2 id="实现模态展示视图">实现模态展示视图</h2>
+
+<p>在 App 开发中，必不可少有需要 Modal 方式弹出 UIViewController 的情况，在 UIKit 中，只需要简单的 <code>vc1.present(vc2, animated: true)</code> 一行代码就能完成，但是在 SwiftUI 中，要完成这个操作却显繁琐。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">ContentView</span>: View {
+    @State <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">isShowModal</span> = <span style="color:#ff79c6">false</span>
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">body</span>: some View {
+        Button(action: {
+            <span style="color:#ff79c6">self</span>.isShowModal = <span style="color:#ff79c6">true</span>
+        }){
+            Text(<span style="color:#f1fa8c">&#34;show&#34;</span>)
+        }
+        .sheet(isPresented: $isShowModal) {
+            ModalView(isShow: <span style="color:#ff79c6">self</span>.$isShowModal)
+        }
+    }
+}
+
+<span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">ModalView</span>: View {
+    @Binding <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">isShow</span>:<span style="color:#8be9fd;font-style:italic">Bool</span>
+    
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">body</span>: some View {
+        Button(action: {
+            <span style="color:#ff79c6">self</span>.isShow = <span style="color:#ff79c6">false</span>
+        }){
+            Text(<span style="color:#f1fa8c">&#34;dismiss&#34;</span>)
+        }
+    }
+}</code></pre></div>
+<p>可以看到，不仅需要传递一个标志位代表是否展示，还需要在需要关闭时改变该状态告诉原始视图让其消失。这样会带来不必要的状态传递和维护。笔者推荐通过定义闭包的方式来进行状态传递，并且方便两个视图之间数据传递。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">ContentView</span>: View {
+    @State <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">isShowModal</span> = <span style="color:#ff79c6">false</span>
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">body</span>: some View {
+        Button(action: {
+            <span style="color:#ff79c6">self</span>.isShowModal = <span style="color:#ff79c6">true</span>
+        }){
+            Text(<span style="color:#f1fa8c">&#34;show&#34;</span>)
+        }
+        .sheet(isPresented: $isShowModal) {
+            ModalView { intent <span style="color:#ff79c6">in</span>
+                <span style="color:#ff79c6">self</span>.isShowModal = <span style="color:#ff79c6">false</span>
+                <span style="color:#6272a4">// intent 处理</span>
+            }
+        }
+    }
+}
+
+<span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">ModalView</span>: View {
+    <span style="color:#8be9fd;font-style:italic">typealias</span> Intent = <span style="color:#8be9fd;font-style:italic">String</span>
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">onViewResult</span>:((Intent?) -&gt; ())
+    
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">body</span>: some View {
+        Button(action: {
+            <span style="color:#ff79c6">self</span>.onViewResult(<span style="color:#ff79c6">nil</span>)
+        }){
+            Text(<span style="color:#f1fa8c">&#34;dismiss&#34;</span>)
+        }
+    }
+}</code></pre></div>
+<h2 id="uikit-的适配">UIKit 的适配</h2>
+
+<p>在现阶段，即便是没有任何历史的新应用，全用 SwiftUI 进行构建也是不太现实的，在某些系统的视图和第三方库没有适配 SwiftUI 之前，继续和 UIKit 打交道是很正常的。</p>
+
+<p>SwiftUI 分别为 UIView 和 UIViewController 提供了 <code>UIViewRepresentable</code> 和 <code>UIViewControllerRepresentable</code> 协议进行适配。这两个协议的要求几乎一致，只需要在某个类型里遵循协议，在要求的方法里处理需要适配的 <code>UIView</code> 或 <code>UIViewController</code>，这个类型就能用于 SwiftUI 的视图中。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">BView</span>: UIView {
+}
+
+<span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">AView</span> {
+}
+
+<span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">AView</span>: UIViewRepresentable {
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">makeUIView</span>(context: UIViewRepresentableContext&lt;AView&gt;) -&gt; BView {
+       	<span style="color:#6272a4">// 初始化 UIView</span>
+        BView()
+    }
+    
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">updateUIView</span>(<span style="color:#ff79c6">_</span> uiView: BView, context: UIViewRepresentableContext&lt;AView&gt;) {
+    }
+}</code></pre></div>
+<p>但是很多时候，UIKit 的视图里面不仅仅 UI 展示，更耦合了数据的变化，这里有两方面的数据流：SwiftUI 数据往 <code>UIView</code> ，<code>UIView</code> 数据往 SwiftUI （<code>UIViewController</code> 也是类似的）。</p>
+
+<h3 id="swiftui-uiview">SwiftUI -&gt; UIView</h3>
+
+<p>蛮简单的，协议里提供了方法。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">BView</span>: UIView {
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">isDark</span>:<span style="color:#8be9fd;font-style:italic">Bool</span> = <span style="color:#ff79c6">false</span> {
+        <span style="color:#ff79c6">didSet</span> {
+            backgroundColor = isDark ? .black : .white
+        }
+    }
+}
+
+<span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">AView</span> {
+    @State <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">isDark</span> = <span style="color:#ff79c6">false</span>
+}
+
+<span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">AView</span>: UIViewRepresentable {
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">makeUIView</span>(context: UIViewRepresentableContext&lt;AView&gt;) -&gt; BView {
+        BView()
+    }
+    
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">updateUIView</span>(<span style="color:#ff79c6">_</span> uiView: BView, context: UIViewRepresentableContext&lt;AView&gt;) {
+      	<span style="color:#6272a4">// 更新 UIView</span>
+        uiView.isDark = isDark
+    }
+}</code></pre></div>
+<h3 id="uiview-swiftui">UIView -&gt; SwiftUI</h3>
+
+<p>这种情况略微复杂，SwiftUI 里面提供了 Coodinator 来处理这种情况，简单来说，Coodinator 就是中间人，用于接收 UIView 变化的实例。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">BView</span>: UIView {
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">isDark</span>:<span style="color:#8be9fd;font-style:italic">Bool</span> = <span style="color:#ff79c6">false</span> {
+        <span style="color:#ff79c6">didSet</span> {
+            didChangeDark?(isDark)
+        }
+    }
+    
+  	<span style="color:#6272a4">// UIKit 常用的数据回调方式，闭包或者代理等</span>
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">didChangeDark</span>:((<span style="color:#8be9fd;font-style:italic">Bool</span>) -&gt; ())?
+}
+
+<span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">AView</span> {
+  	<span style="color:#6272a4">// 需要接收变化的属性</span>
+    @Binding <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">isDark</span>: <span style="color:#8be9fd;font-style:italic">Bool</span>
+    
+  	<span style="color:#6272a4">// 定义 Coordinator，里面持有 AView</span>
+    <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">Coordinator</span> {
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">parent</span>:AView
+        
+        <span style="color:#8be9fd;font-style:italic">init</span>(<span style="color:#ff79c6">_</span> view:AView) {
+            parent = view
+        }
+    }
+}
+
+<span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">AView</span>: UIViewRepresentable {
+    <span style="color:#6272a4">// 实现方法</span>
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">makeCoordinator</span>() -&gt; Coordinator {
+        Coordinator(<span style="color:#ff79c6">self</span>)
+    }
+    
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">makeUIView</span>(context: UIViewRepresentableContext&lt;AView&gt;) -&gt; BView {
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">view</span> = BView()
+        view.didChangeDark = {
+          	<span style="color:#6272a4">// 将改变传递到 context 里面的 coordinator 中</span>
+            context.coordinator.parent.isDark = <span style="color:#8be9fd;font-style:italic">$0</span>
+        }
+        <span style="color:#ff79c6">return</span> view
+    }
+    
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">updateUIView</span>(<span style="color:#ff79c6">_</span> uiView: BView, context: UIViewRepresentableContext&lt;AView&gt;) {
+    }
+}</code></pre></div>
+<h2 id="接入-combine">接入 Combine</h2>
+
+<p>Combine 和 SwiftUI 直接结合还是有点别扭，特别是对于常见的网络请求，建议通过 <code>@ObservedObject</code> 和  <code>ObservableObject</code> 进行中转一下。下面给出了 Combine 和 SwiftUI 直接结合的例子，SwiftUI 只提供了 <code>onReceive</code> 方法进行接收。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">ContentView</span>: View {
+  	<span style="color:#6272a4">// 请求参数</span>
+    @State <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">name</span> = <span style="color:#f1fa8c">&#34;&#34;</span>
+    <span style="color:#6272a4">// 返回结果</span>
+    @State <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">resultCode</span> = <span style="color:#bd93f9">0</span>
+    
+    <span style="color:#6272a4">// 请求操作，如网络请求</span>
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">fetch</span>(<span style="color:#ff79c6">_</span> name:<span style="color:#8be9fd;font-style:italic">String</span>) -&gt; AnyPublisher&lt;<span style="color:#8be9fd;font-style:italic">Int</span>, Error&gt; {
+        Just(name.isEmpty ? <span style="color:#bd93f9">0</span> : <span style="color:#bd93f9">1</span>)
+            .setFailureType(to: Error.<span style="color:#ff79c6">self</span>)
+            .eraseToAnyPublisher()
+    }
+    
+    <span style="color:#6272a4">// 将请求转化为错误 Never 的，处理兜底</span>
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">nameRequest</span>: AnyPublisher&lt;<span style="color:#8be9fd;font-style:italic">Int</span>, Never&gt; {
+        fetch(name)
+        .<span style="color:#ff79c6">catch</span> { <span style="color:#ff79c6">_</span> <span style="color:#ff79c6">in</span>
+            Just(<span style="color:#bd93f9">0</span>)
+                .setFailureType(to: Error.<span style="color:#ff79c6">self</span>)
+        }
+        .assertNoFailure()
+        .eraseToAnyPublisher()
+    }
+    
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">body</span>: some View {
+        VStack {
+            Button(action: {
+                <span style="color:#6272a4">// 触发请求</span>
+                <span style="color:#ff79c6">self</span>.name = <span style="color:#f1fa8c">&#34;Request&#34;</span>
+            }) {
+                Text(<span style="color:#f1fa8c">&#34;send request&#34;</span>)
+            }
+            Text(<span style="color:#f1fa8c">&#34;code is </span><span style="color:#f1fa8c">\(</span>resultCode<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">&#34;</span>)
+        }
+        <span style="color:#6272a4">// 监听请求，错误类型必须为 Never</span>
+        .onReceive(nameRequest) { resultCode <span style="color:#ff79c6">in</span>
+            <span style="color:#ff79c6">self</span>.resultCode = resultCode
+        }
+    }
+}</code></pre></div>
+<h2 id="最后">最后</h2>
+
+<p><a href="https://github.com/Nemocdz/TrainTicket-SwiftUI">“票夹” App</a> 可以识别照片里的火车票并自动整理展示和汇总，用 SwiftUI + Combine 编写，基本不使用第三方库。可以作为 SwiftUI 实际运用的例子参考。</p>
+
+<h2 id="参考链接">参考链接</h2>
+
+<p><a href="https://developer.apple.com/tutorials/swiftui/interfacing-with-uikit">Interfacing with UIKit</a></p>
+
+<p><a href="https://xiaozhuanlan.com/topic/0528764139">SwiftUI 数据流</a></p></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © Nemocdz. 
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-nemocdz-github-io-my-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  
+<footer class="site-footer">
+  <p>© 2017-2019 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
+  
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
+
+
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+  </body>
+</html>

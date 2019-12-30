@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>© Nemocdz. </copyright>
-    <lastBuildDate>Mon, 23 Sep 2019 16:18:13 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 30 Dec 2019 12:08:13 +0800</lastBuildDate>
     
 	<atom:link href="https://nemocdz.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>SwiftUI 初探</title>
+      <link>https://nemocdz.github.io/post/swift-ui-%E5%88%9D%E6%8E%A2/</link>
+      <pubDate>Mon, 30 Dec 2019 12:08:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/post/swift-ui-%E5%88%9D%E6%8E%A2/</guid>
+      <description>&lt;p&gt;十月份参加极光黑客马拉松一天时间写了个简单的 &lt;a href=&#34;https://github.com/Nemocdz/TrainTicket-SwiftUI&#34;&gt;火车票 OCR 应用“票夹”&lt;/a&gt;，当时由于时间和熟练程度原因，并没有试下今年 WWDC 刚推出的 SwiftUI 框架。最近抽空用了 SwiftUI + Combine 进行重写，顺便感受了一下这两个新框架的魅力。先说个人感受，SwiftUI 看起来挺美好的，但是目前有 Bug 和完善度不高，比较适合用在不关心设计的 Demo 或者个人功能性项目上。Combine 完成度尚可，但 Xcode 对复杂闭包的自动推断经常失效，比较影响编码体验。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Apple 官方异步编程框架：Swift Combine 应用</title>
