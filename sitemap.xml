@@ -10,13 +10,19 @@
   
   <url>
     <loc>https://nemocdz.github.io/</loc>
-    <lastmod>2019-12-30T12:08:13+08:00</lastmod>
+    <lastmod>2019-12-31T16:26:00+08:00</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   
   <url>
     <loc>https://nemocdz.github.io/post/</loc>
-    <lastmod>2019-12-30T12:08:13+08:00</lastmod>
+    <lastmod>2019-12-31T16:26:00+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  
+  <url>
+    <loc>https://nemocdz.github.io/post/webrtc-native-%E6%A8%A1%E5%9D%97%E5%8D%95%E7%8B%AC%E7%BC%96%E8%AF%91%E9%9D%99%E6%80%81%E5%BA%93ios/</loc>
+    <lastmod>2019-12-31T16:26:00+08:00</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   

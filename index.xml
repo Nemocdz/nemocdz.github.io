@@ -7,7 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>© Nemocdz. </copyright>
-    <lastBuildDate>Mon, 30 Dec 2019 12:08:13 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 31 Dec 2019 16:26:00 +0800</lastBuildDate>
     
 	<atom:link href="https://nemocdz.github.io/index.xml" rel="self" type="application/rss+xml" />
     
@@ -24,6 +24,15 @@
 参与 The Swift Programming Language 中文版 ，Google Swift Style Guide 中文版 翻译及维护。
 目前就职于鹅厂，算个业余摄影师。
 联系方式  QQ：757765420 Email：nemocdz@gmail.com Lofter 图虫 简书  </description>
+    </item>
+    
+    <item>
+      <title>WebRTC Native 模块单独编译静态库（iOS）</title>
+      <link>https://nemocdz.github.io/post/webrtc-native-%E6%A8%A1%E5%9D%97%E5%8D%95%E7%8B%AC%E7%BC%96%E8%AF%91%E9%9D%99%E6%80%81%E5%BA%93ios/</link>
+      <pubDate>Tue, 31 Dec 2019 16:26:00 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/post/webrtc-native-%E6%A8%A1%E5%9D%97%E5%8D%95%E7%8B%AC%E7%BC%96%E8%AF%91%E9%9D%99%E6%80%81%E5%BA%93ios/</guid>
+      <description>&lt;p&gt;项目里面用到了 WebRTC 某些模块，以前是源码拷贝集成的。这样不仅需要处理平台的宏（WebRTC Native 跨平台），而且升级版本也会涉及依赖等问题，所以探索了一下怎么用编码编译出可用的静态库。&lt;/p&gt;</description>
     </item>
     
     <item>
