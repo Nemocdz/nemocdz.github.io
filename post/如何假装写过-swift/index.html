@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>如何假装写过 Swift</title>
+
+  
+  
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
+
+  
+
+  
+  
+  <meta name="description" content="总结了笔者日常使用 Swift 的一些小 Tips。
+">
+
+  
+  
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="如何假装写过 Swift">
+    <meta name="twitter:description" content="总结了笔者日常使用 Swift 的一些小 Tips。
+">
+    <meta name="twitter:image" content="/images/avatar.png">
+  
+
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="如何假装写过 Swift">
+  <meta property="og:description" content="总结了笔者日常使用 Swift 的一些小 Tips。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/%E5%A6%82%E4%BD%95%E5%81%87%E8%A3%85%E5%86%99%E8%BF%87-swift/">
+  <meta property="og:image" content="/images/avatar.png">
+
+
+
+
+<meta name="generator" content="Hugo 0.58.0">
+
+
+<link rel="canonical" href="https://nemocdz.github.io/post/%E5%A6%82%E4%BD%95%E5%81%87%E8%A3%85%E5%86%99%E8%BF%87-swift/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
+
+
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
+
+<meta name="keywords" content="Swift, iOS" >
+
+<meta name='description' itemprop="description" content="&lt;p&gt;总结了笔者日常使用 Swift 的一些小 Tips。&lt;/p&gt;">
+
+
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
+
+
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
+
+
+  
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
+
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
+
+
+</head>
+  <body>
+    <div class="suspension">
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
+      
+        
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
+  
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
+  
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
+  </button>
+
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/post">首页</a>
+        </li>
+      
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">如何假装写过 Swift</h1>
+      <p class="post-meta">@Nemocdz · Jan 3, 2020 · 4 min read</p>
+    </header>
+
+    
+	
+	<nav id="TableOfContents">
+<ul>
+<li><a href="#safe-fast">Safe &amp; Fast</a>
+<ul>
+<li><a href="#1-能用-let-尽量不用-var">1. 能用 let，尽量不用 var</a></li>
+<li><a href="#2-尽量不用">2.  尽量不用 ！</a></li>
+<li><a href="#3-多定义-struct-少定义-class">3. 多定义 struct，少定义 class</a></li>
+<li><a href="#4-能用-swift-标准库类型-尽量不用对应的-foundation-类型">4. 能用 Swift 标准库类型，尽量不用对应的 Foundation 类型</a></li>
+<li><a href="#5-优先使用内置高阶函数">5. 优先使用内置高阶函数</a></li>
+<li><a href="#6-使用-try-catch-捕获错误">6. 使用 try catch 捕获错误</a></li>
+<li><a href="#7-对-string-判空时优先采用-isempty">7. 对 String 判空时优先采用 isEmpty</a></li>
+</ul></li>
+<li><a href="#clean-code">Clean Code</a>
+<ul>
+<li><a href="#8-文件名字去掉前缀">8. 文件名字去掉前缀</a></li>
+<li><a href="#9-省略-self">9.  省略 self</a></li>
+<li><a href="#10-省略-init">10. 省略 init()</a></li>
+<li><a href="#11-能推导的类型不用显式编写">11. 能推导的类型不用显式编写</a></li>
+<li><a href="#12-使用默认形参-简化接口设计">12. 使用默认形参，简化接口设计</a></li>
+<li><a href="#13-使用-表示不使用的返回值">13. 使用 _ 表示不使用的返回值</a></li>
+<li><a href="#14-使用-来定义和关键字重名的方法和属性">14. 使用 `` 来定义和关键字重名的方法和属性</a></li>
+<li><a href="#15-strong-weak-dance-很简单">15. Strong-Weak Dance 很简单</a></li>
+<li><a href="#16-类型嵌套">16. 类型嵌套</a></li>
+<li><a href="#17-func-嵌套">17. func 嵌套</a></li>
+<li><a href="#18-使用闭包做初始化">18. 使用闭包做初始化</a></li>
+<li><a href="#19-使用更简洁的函数实参和形参">19. 使用更简洁的函数实参和形参</a></li>
+<li><a href="#20-enum-用于命名空间声明">20. Enum 用于命名空间声明</a></li>
+<li><a href="#21-使用-返回默认值">21. 使用 ?? 返回默认值</a></li>
+<li><a href="#22-使用字符串插值">22. 使用字符串插值</a></li>
+</ul></li>
+<li><a href="#syntactic-sugar">Syntactic sugar</a>
+<ul>
+<li><a href="#23-更-pop-protocol-oriented-programming-面向协议编程">23. 更 POP（Protocol Oriented Programming，面向协议编程）</a></li>
+<li><a href="#24-优先使用-guard">24. 优先使用 guard</a></li>
+<li><a href="#25-尝试元组">25. 尝试元组</a></li>
+<li><a href="#26-尝试范型">26. 尝试范型</a></li>
+<li><a href="#27-尝试枚举">27. 尝试枚举</a></li>
+<li><a href="#28-尝试-extension">28. 尝试 Extension</a></li>
+<li><a href="#29-lazy-关键字">29. lazy 关键字</a></li>
+<li><a href="#30-where-关键字">30. where 关键字</a></li>
+<li><a href="#31-typealias-关键字">31. typealias 关键字</a></li>
+<li><a href="#32-result-类型">32. Result 类型</a></li>
+<li><a href="#33-kvo">33. KVO</a></li>
+<li><a href="#34-codable">34. Codable</a></li>
+<li><a href="#35-swiftui-combine">35. SwiftUI&amp;Combine</a></li>
+</ul></li>
+<li><a href="#最后">最后</a></li>
+<li><a href="#参考链接">参考链接</a></li>
+</ul>
+</nav>
+
+    <article class="post-content"><p>总结了笔者日常使用 Swift 的一些小 Tips。</p>
+
+<h2 id="safe-fast">Safe &amp; Fast</h2>
+
+<h3 id="1-能用-let-尽量不用-var">1. 能用 let，尽量不用 var</h3>
+
+<p><del>把代码里的 var 全改成 let，只保留不能编译通过的。</del></p>
+
+<p>ObjC 的 Foundation 层几乎都是继承 <code>NSObject</code> 实现的，平时都在操作指针，所以要区分 Mutable 和 Imutable 的设计，比如 <code>NSString</code> 和 <code>NSMutableString</code>。</p>
+
+<p>Swift 使用了 let 和 var 关键字直接用于区分是否可变。可变会更容易出错，所以尽量采用不可变设计，等到需要改变才改为 var 吧。</p>
+
+<h3 id="2-尽量不用">2.  尽量不用 ！</h3>
+
+<p>！遇到 nil 时会 crash（包括 <code>as!</code> 进行强制转换）。可以使用 <code>if let</code>/<code>guard let</code>/<code>case let</code> 配合 <code>as?</code> 将可选值消化掉。可能返回 nil 的 API，为什么要自己骗自己呢？</p>
+
+<p>当遇到 ObjC 代码暴露给 Swift 使用时，给接口 .h 文件加上 <code>NS_ASSUME_NONNULL_BEGIN</code> 和 <code>NS_ASSUME_NONNULL_END</code> 并检查接口参数是否可以为 nil 吧。</p>
+
+<h3 id="3-多定义-struct-少定义-class">3. 多定义 struct，少定义 class</h3>
+
+<p>struct 是值类型，class 是引用类型。类类型分配在堆区，默认浅拷贝，容易被不经意间被改变，而值类型分配在栈区，默认深拷贝。并且 Swift 还有写时复制（copy on write）。</p>
+
+<p>即使是使用 class 时，也仅在必要时（如桥接到 ObjC，使用 Runtime 一些特性）继承自 <code>NSObject</code>。</p>
+
+<h3 id="4-能用-swift-标准库类型-尽量不用对应的-foundation-类型">4. 能用 Swift 标准库类型，尽量不用对应的 Foundation 类型</h3>
+
+<p>多使用 <code>String</code>、<code>Array</code>、<code>Dictionary</code>、<code>Int</code>、<code>Bool</code>，少使用 Foundation 里面的 <code>NSString</code>、<code>NSArray</code>、<code>NSDictionary</code>、<code>NSNumber</code>。Cocoa Foundation 里面的都是类类型，而 Swift 标准库的是值类型，有很多标准库的方便方法。</p>
+
+<p>还有用 <code>print</code> 代替 <code>NSLog</code>。</p>
+
+<h3 id="5-优先使用内置高阶函数">5. 优先使用内置高阶函数</h3>
+
+<p><code>forEach</code>，<code>map</code>，<code>conpactMap</code>，<code>flatMap</code>，<code>zip</code>，<code>reduce</code> 是好帮手，代替一些使用变量并在循环中处理的例子吧。用上高阶函数，不仅代码更清晰，还能将状态控制在更小的作用域内。</p>
+
+<h3 id="6-使用-try-catch-捕获错误">6. 使用 try catch 捕获错误</h3>
+
+<p>和 ObjC 基本都在函数的回调中返回 <code>NSError</code> 不一样，Swift 函数可以使用 <code>throw</code> 关键字抛出错误。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">test</span>() <span style="color:#ff79c6">throws</span> {
+	 <span style="color:#6272a4">//... </span>
+}
+
+<span style="color:#ff79c6">do</span> {
+  <span style="color:#ff79c6">try</span> test()
+} <span style="color:#ff79c6">catch</span> {
+  print(error)
+}
+
+<span style="color:#6272a4">// 如果对错误不敏感</span>
+<span style="color:#ff79c6">try</span>? test()</code></pre></div>
+<h3 id="7-对-string-判空时优先采用-isempty">7. 对 String 判空时优先采用 isEmpty</h3>
+
+<p>Swift 里面的 <code>String</code> 的 index 和 count 不是一一对应的（兼容 Unicode），所以 <code>stirng.count == 0</code> 的效率不如 <code>string.isEmpty</code>。</p>
+
+<h2 id="clean-code">Clean Code</h2>
+
+<h3 id="8-文件名字去掉前缀">8. 文件名字去掉前缀</h3>
+
+<p>Swift 有着 framework 级别的命名空间，所以命名重复时可以通过 framework 名确定，不用担心重复命名问题。</p>
+
+<p>尽量只有在需要桥接给 ObjC 时，才使用 <code>@objc(前缀 + 类名)</code> 进行别名声明。</p>
+
+<h3 id="9-省略-self">9.  省略 self</h3>
+
+<p>对应访问成员变量，方法时，都不用像 ObjC 那些写 <code>self</code> 了。</p>
+
+<p>只在闭包内、函数实参和成员变量名字相同和方法形参需要自身时使用。闭包内 <code>self</code> 是强制的，并且可以提醒注意循环引用问题。函数调用时实参名和成员变量相同时，函数作用域内会优先使用函数实参，所以访问成员变量是需要 <code>self</code>。</p>
+
+<h3 id="10-省略-init">10. 省略 init()</h3>
+
+<p>直接使用 <code>ClassA()</code>，代替 <code>ClassA.init()</code>，代码更简洁。</p>
+
+<h3 id="11-能推导的类型不用显式编写">11. 能推导的类型不用显式编写</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// no bad</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">flag</span>:<span style="color:#8be9fd;font-style:italic">Bool</span> = <span style="color:#ff79c6">false</span>
+<span style="color:#6272a4">// better</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">flag</span> = <span style="color:#ff79c6">false</span>
+
+<span style="color:#6272a4">// not bad</span>
+view.contentMode = UIView.ContentMode.center
+<span style="color:#6272a4">// better</span>
+view.contentMode = .center</code></pre></div>
+<h3 id="12-使用默认形参-简化接口设计">12. 使用默认形参，简化接口设计</h3>
+
+<p>在设计接口时，不再需要为每一个形参是否需要而编写一个方法了，减少方法数吧。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// not bad</span>
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">test</span>() {
+    <span style="color:#6272a4">//...</span>
+}
+
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">test</span>(param1:<span style="color:#8be9fd;font-style:italic">String</span>) {
+    <span style="color:#6272a4">//...</span>
+}
+
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">test</span>(param2:<span style="color:#8be9fd;font-style:italic">String</span>) {
+    <span style="color:#6272a4">//...</span>
+}
+
+<span style="color:#6272a4">// better</span>
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">test</span>(param1:<span style="color:#8be9fd;font-style:italic">String</span> = <span style="color:#f1fa8c">&#34;&#34;</span>, param2:<span style="color:#8be9fd;font-style:italic">String</span> = <span style="color:#f1fa8c">&#34;&#34;</span>) {
+    <span style="color:#6272a4">//...</span>
+}</code></pre></div>
+<h3 id="13-使用-表示不使用的返回值">13. 使用 _ 表示不使用的返回值</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">_</span> = [<span style="color:#bd93f9">0</span>].removeLast()
+
+[<span style="color:#bd93f9">0</span>].forEach{ <span style="color:#ff79c6">_</span> <span style="color:#ff79c6">in</span> print(<span style="color:#f1fa8c">&#34;hh&#34;</span>)}</code></pre></div>
+<p>而对于自己设计的接口，如果返回值无关紧要，只是附加功能的话，可以使用 <code>@discardableResult</code> 进行标注。</p>
+
+<h3 id="14-使用-来定义和关键字重名的方法和属性">14. 使用 `` 来定义和关键字重名的方法和属性</h3>
+
+<p>比如系统有个 <code>default</code> 关键字，而你也希望使用这个命名时就能派上用场。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> `<span style="color:#ff79c6">default</span>` = A()
+
+<span style="color:#8be9fd;font-style:italic">func</span> `<span style="color:#ff79c6">default</span>`() {}</code></pre></div>
+<h3 id="15-strong-weak-dance-很简单">15. Strong-Weak Dance 很简单</h3>
+
+<p>比起 ObjC 里需要每次需要写</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">__weak</span> <span style="color:#50fa7b">typeof</span>(<span style="color:#8be9fd;font-style:italic">self</span>) weak_self <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>;
+__typeof__(<span style="color:#8be9fd;font-style:italic">self</span>) strong_self <span style="color:#ff79c6">=</span> weak_self;</code></pre></div>
+<p>尽管很多人会采用宏来简化，但重复的宏定义又会冲突，且 ObjC 没有访问权限关键字。</p>
+
+<p>Swift 在闭包中可以使用 <code>weak</code> 和 <code>unowned</code> 指定闭包对值的捕获，配合 <code>guard</code> 就可以实现同样的功能。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">test(){ [<span style="color:#ff79c6">weak</span> <span style="color:#ff79c6">self</span>] <span style="color:#ff79c6">in</span> 
+		<span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">self</span> = <span style="color:#ff79c6">self</span> <span style="color:#ff79c6">else</span> { <span style="color:#ff79c6">return</span> }
+    <span style="color:#6272a4">// self is strong without retain cycle</span>
+}</code></pre></div>
+<h3 id="16-类型嵌套">16. 类型嵌套</h3>
+
+<p>类型嵌套用于在类型里定义类型，让类型的命名空间的精细化程度更高。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">GameService</span> {
+    <span style="color:#8be9fd;font-style:italic">enum</span> <span style="color:#50fa7b">APIError</span> {
+        <span style="color:#8be9fd;font-style:italic">enum</span> <span style="color:#50fa7b">ResultError</span> {
+            <span style="color:#ff79c6">case</span> noResult
+        }
+    }
+  	<span style="color:#6272a4">// use APIError</span>
+}
+<span style="color:#6272a4">// use GameService.APIError</span></code></pre></div>
+<h3 id="17-func-嵌套">17. func 嵌套</h3>
+
+<p>有时候某一块逻辑只需要在方法内复用或者做逻辑分割，可以在方法内定义方法，这样访问域会更清晰。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">big</span>(){
+	<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">small</span>() {
+    <span style="color:#6272a4">//...</span>
+  }
+  small()
+}</code></pre></div>
+<h3 id="18-使用闭包做初始化">18. 使用闭包做初始化</h3>
+
+<p>有时候初始化时一个对象时还需要赋值其中的一些属性，这个时候就可以使用闭包代码块的整合。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">someView</span>: UIView = {
+	<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">view</span> = UIView(frame:.zero)
+  view.backgroundColor = .red
+  <span style="color:#ff79c6">return</span> view
+}()</code></pre></div>
+<h3 id="19-使用更简洁的函数实参和形参">19. 使用更简洁的函数实参和形参</h3>
+
+<p>和 ObjC 不同，有形参实参的 Swift，可以在调用和编写的时候都有更合适简洁的表达。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// not bad</span>
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">updateWithView</span>(view:UIView)
+updateWithView(view:viewA)
+<span style="color:#6272a4">// better</span>
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">updateWithView</span>(<span style="color:#ff79c6">_</span> view:UIView)
+updateWith(view:viewA)
+
+<span style="color:#6272a4">// not bad</span>
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">didSelectAtIndex</span>(index:<span style="color:#8be9fd;font-style:italic">Int</span>)
+didSelectAtIndex(index:<span style="color:#bd93f9">2</span>)
+<span style="color:#6272a4">// better</span>
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">didSelect</span>(at index:<span style="color:#8be9fd;font-style:italic">Int</span>)
+didSelect(at:<span style="color:#bd93f9">2</span>)</code></pre></div>
+<h3 id="20-enum-用于命名空间声明">20. Enum 用于命名空间声明</h3>
+
+<p>定义一些常量时，用命名空间做隔离是最好的，Swift 的 Enum 比较适合用于命名空间的定义，能嵌套，且不存在初始化方法不会被用于其他作用。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">enum</span> <span style="color:#50fa7b">Event</span> {
+    <span style="color:#8be9fd;font-style:italic">enum</span> <span style="color:#50fa7b">Name</span> {
+        <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">login</span> = <span style="color:#f1fa8c">&#34;event.name.login&#34;</span>
+    }
+}
+
+<span style="color:#6272a4">// use </span>
+Event.Name.login
+<span style="color:#6272a4">// not allow</span>
+Event()</code></pre></div>
+<h3 id="21-使用-返回默认值">21. 使用 ?? 返回默认值</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// not bad</span>
+<span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">name</span>:<span style="color:#8be9fd;font-style:italic">String</span>?
+<span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">aName</span> = dic[<span style="color:#f1fa8c">&#34;name&#34;</span>] <span style="color:#ff79c6">as</span>? <span style="color:#8be9fd;font-style:italic">String</span> {
+	name = aName
+} <span style="color:#ff79c6">else</span> {
+  name = <span style="color:#f1fa8c">&#34;&#34;</span>
+}
+
+<span style="color:#6272a4">// better</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">name</span> = dic[<span style="color:#f1fa8c">&#34;name&#34;</span>] <span style="color:#ff79c6">as</span>? <span style="color:#8be9fd;font-style:italic">String</span> ?? <span style="color:#f1fa8c">&#34;&#34;</span></code></pre></div>
+<h3 id="22-使用字符串插值">22. 使用字符串插值</h3>
+
+<p>除了常规的字符串插值，Swift5 还增加了更强大可自定义的字符串插值系统，详情见 [文章]()。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">a</span> = <span style="color:#bd93f9">2</span>
+print(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">\(</span>a<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c"> is 2&#34;</span>)</code></pre></div>
+<h2 id="syntactic-sugar">Syntactic sugar</h2>
+
+<h3 id="23-更-pop-protocol-oriented-programming-面向协议编程">23. 更 POP（Protocol Oriented Programming，面向协议编程）</h3>
+
+<p>Swift 在设计上，为协议做了很多强大的功能。Swift 标准库里大量的方法和类都使用了协议进行抽象。在编写代码时优先考虑使用协议进行逻辑的抽象，详情可以参考 Apple <a href="https://developer.apple.com/videos/play/wwdc2015/408/">WWDC 2015 Session 408 - Protocol-Oriented Programming in Swift</a>。</p>
+
+<h3 id="24-优先使用-guard">24. 优先使用 guard</h3>
+
+<p><code>guard</code> 是 <code>if</code> 的反义词，可以提前将异常情况 return。配合 <code>guard let</code> 使用，可以在正常分支下使用正确的条件。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">a</span> = a <span style="color:#ff79c6">as</span>? <span style="color:#8be9fd;font-style:italic">String</span> <span style="color:#ff79c6">else</span> { <span style="color:#ff79c6">return</span> }
+<span style="color:#6272a4">// 下面的 a 就是 string 并且 non-nil 的了</span></code></pre></div>
+<h3 id="25-尝试元组">25. 尝试元组</h3>
+
+<p>元组（Tuple）是个包含多个值的简单对象，使用元组，可以简单的用来函数返回多参数，也可以在集合类型中存取一对对的值。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">typealias</span> Pair&lt;T&gt; = (T, T)
+
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">pair</span> = Pair(<span style="color:#bd93f9">1</span>, <span style="color:#bd93f9">2</span>)</code></pre></div>
+<h3 id="26-尝试范型">26. 尝试范型</h3>
+
+<p>比起 ObjC 仅支持在集合类型里使用轻量级范型，Swift 的范型更强大，除了集合，还支持类、枚举、协议（Associate Type）。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">View</span> {
+    associatedtype Model
+    
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">update</span>(model:Model)
+}</code></pre></div>
+<h3 id="27-尝试枚举">27. 尝试枚举</h3>
+
+<p>比起 ObjC 那和 C 语言差不多的枚举，Swift 的枚举更强大。Swift 的枚举不一定需要 <code>Int</code> 作为枚举的原始值，可以不需要原始值，也可以使用 <code>String</code>、<code>Float</code>、<code>Boolean</code> 作为原始值。能在枚举值上关联值，实现很多有趣的功能（Rx，Promise 的状态机）。能给枚举编写函数，能给枚举增加 Extension。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">enum</span> <span style="color:#50fa7b">State</span>&lt;Value&gt; {
+    <span style="color:#ff79c6">case</span> pending
+    <span style="color:#ff79c6">case</span> fulfill(value:Value)
+    <span style="color:#ff79c6">case</span> reject(reason:Error)
+    <span style="color:#ff79c6">mutating</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">update</span>(to state:State){
+        <span style="color:#ff79c6">guard</span> <span style="color:#ff79c6">case</span> .pending = <span style="color:#ff79c6">self</span> <span style="color:#ff79c6">else</span> {
+            <span style="color:#ff79c6">return</span>
+        }
+        <span style="color:#ff79c6">self</span> = state
+    }
+}</code></pre></div>
+<h3 id="28-尝试-extension">28. 尝试 Extension</h3>
+
+<p>和 ObjC 的 Categories 类似，拓展可以添加类的方法。Swift 的 Extension 还能拓展值类型，枚举的方法，且不需要新建文件编写和支持权限访问关键字。通过 Extension，还能给 Protocol 增加默认实现。也能在 Extension 中遵循协议，让方法划分更加清晰。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">fileprivate <span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Date</span> {
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">toString</span>: <span style="color:#8be9fd;font-style:italic">String</span> {
+        <span style="color:#6272a4">//...</span>
+    }
+}
+
+Date().toString</code></pre></div>
+<h3 id="29-lazy-关键字">29. lazy 关键字</h3>
+
+<p>懒加载不需要像 ObjC 一样重写 getter 方法，并判空了，在属性前面加上 <code>lazy</code> 关键字就可以实现了。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#ff79c6">lazy</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">view</span> = UIView(frame:.zero)</code></pre></div>
+<h3 id="30-where-关键字">30. where 关键字</h3>
+
+<p><code>where</code> 关键字可以对范围进行限定，详情见这篇 <a href="https://www.avanderlee.com/swift/where-using-swift/">文章</a>。</p>
+
+<h3 id="31-typealias-关键字">31. typealias 关键字</h3>
+
+<p><code>typealias</code> 可以用来命名闭包类型、协议类型、范型类型，还支持组合。更多用法见 <a href="http://appventure.me/posts/2019-5-15-the-usefulness-of-typealiases-in-swift.html">文章</a>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">typealias</span> NewName&lt;D&gt; = ClassA&lt;D&gt;&amp;ProtocolA&amp;ProtocolB</code></pre></div>
+<h3 id="32-result-类型">32. Result 类型</h3>
+
+<p><code>Result</code> 是一个枚举类型，包含成功或者失败的枚举值，并持有相应成功或者失败的值，通过范型确定类型信息。因为成功和失败是互斥的，这样就可以避免多个可选参数返回。</p>
+
+<p>比如对网络请求回调进行改造：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">URLSession.shared.dataTask(with: request) { result <span style="color:#ff79c6">in</span>
+    <span style="color:#ff79c6">switch</span> result {
+    <span style="color:#ff79c6">case</span> .success(<span style="color:#8be9fd;font-style:italic">let</span> (data, <span style="color:#ff79c6">_</span>)):
+        handle(data: data)
+    <span style="color:#ff79c6">case</span> .failure(<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">error</span>):
+        handle(error: error)
+    }
+}</code></pre></div>
+<h3 id="33-kvo">33. KVO</h3>
+
+<p>在 ObjC 中，开发者更习惯用类似 FBKVOController 等第三方库进行 KVO 的监听，那是因为原生的写法太难用了。Swift 为 KVO 增加了闭包的 API，更简洁好用。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">scrollObserver = observe(\.scrollView!.contentOffset, options: [.new], changeHandler: { object, change <span style="color:#ff79c6">in</span>
+     <span style="color:#6272a4">//...</span>
+})</code></pre></div>
+<p>同理，Swift 的 GCD API 也是专门经过 Swift 化的，也更加简洁好用。</p>
+
+<h3 id="34-codable">34. Codable</h3>
+
+<p>在 Swift4 加入 Codable 协议后，JSON 等通用结构转模型，终于有了原生的支持。详情见 <a href="https://www.swiftbysundell.com/basics/codable/">文章</a>。</p>
+
+<h3 id="35-swiftui-combine">35. SwiftUI&amp;Combine</h3>
+
+<p>在 WWDC19 推出的 Swift Only 的库，SwiftUI 有着类似 React 的声明式 UI 开发框架，配合实时调试，在 Demo 和简单页面，跨 Apple 平台应用适配时有一定优势。而 Combine 时类似 RxSwift 的响应式编程框架，能使事件流更统一。</p>
+
+<p>关于 SwiftUI 和 Combine 的介绍，可以参考 WWDC 2019 相关 Session。也可以参考笔者翻译的 <a href="https://nemocdz.github.io/post/apple-官方异步编程框架swift-combine-简介/">文章 1</a>，<a href="https://nemocdz.github.io/post/apple-官方异步编程框架swift-combine-应用/">文章 2</a>。</p>
+
+<h2 id="最后">最后</h2>
+
+<p>如有错误，欢迎交流&amp;指出。</p>
+
+<h2 id="参考链接">参考链接</h2>
+
+<ul>
+<li><a href="https://github.com/JohnSundell/SwiftTips">SwfitTips</a></li>
+</ul></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © Nemocdz. 
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-nemocdz-github-io-my-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  
+<footer class="site-footer">
+  <p>© 2017-2020 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
+  
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
+
+
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+  </body>
+</html>
