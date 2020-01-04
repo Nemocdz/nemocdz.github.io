@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.58.1">
+<meta name="generator" content="Hugo 0.62.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81-cell-%E9%80%9A%E7%94%A8%E7%9A%84-tableviewmanager/">
@@ -220,26 +220,21 @@
     
 	
 	<nav id="TableOfContents">
-<ul>
-<li><a href="#关于-tableviewdatasource-的思考">关于 TableViewDatasource 的思考</a></li>
-<li><a href="#接管-tableviewdelegate">接管 TableViewDelegate</a></li>
-<li><a href="#cell-的协议里有啥">Cell 的协议里有啥</a></li>
-<li><a href="#初始化方法">初始化方法</a></li>
-<li><a href="#item-的一些小技巧">item 的一些小技巧</a></li>
-<li><a href="#最后">最后</a></li>
-</ul>
+  <ul>
+    <li><a href="#-tableviewdatasource-">关于 TableViewDatasource 的思考</a></li>
+    <li><a href="#-tableviewdelegate">接管 TableViewDelegate</a></li>
+    <li><a href="#cell-">Cell 的协议里有啥</a></li>
+    <li><a href="#heading">初始化方法</a></li>
+    <li><a href="#item-">item 的一些小技巧</a></li>
+    <li><a href="#heading-1">最后</a></li>
+  </ul>
 </nav>
 
     <article class="post-content"><p>在 App 中，比如侧边栏，设置，个人界面，编辑表单，总会有一些地方用到一些静态 Cell 构成的 TableView，这些界面的特点是，Cell 种类繁多，Model 种类繁多，点击事件处理分散但单调（页面跳转，编辑 textFiled），重复写 tableViewDelegate 和 datasource 的相关方法，但不会用到一些奇怪的 datasource 和 delegate 方法，而且显示内容一般是固定的，每个页面 Cell 的数量不会很多。</p>
-
 <p>像笔者所在的项目里的侧边栏模块，里面有很多 tableView，由于没有使用 StoryBoard 且很久之前写的，充斥着各种if&hellip;else  if 用 model 的某个key值进行判断的逻辑去让 cell 去显示和隐藏某些视图，已经进行点击跳转逻辑，更有甚者，有 <code>if (indexPath == 0)</code> 之类的通过行数判断去处理的逻辑。增加新的cell时，便要在各种地方再加上 else if  的新判断，而做新界面时，也没有很好的方法进行复用。</p>
-
 <p>笔者结合之前 <a href="https://nemocdz.github.io/post/tableview%E5%92%8Ccollectionview%E9%80%9A%E7%94%A8datasource%E5%92%8Ccell/">文章</a> 进行进一步思考，抽象出一个适合这种特点 tableView 的管理类，记录一下思路供参考。</p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tKfTcly1fi1a1xvl8qj30p00r7ach.jpg" alt="" /></p>
-
-<h2 id="关于-tableviewdatasource-的思考">关于 TableViewDatasource 的思考</h2>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tKfTcly1fi1a1xvl8qj30p00r7ach.jpg" alt=""></p>
+<h2 id="-tableviewdatasource-">关于 TableViewDatasource 的思考</h2>
 <p>在之前的文章中，已经对 Datasource 和 SectionObject 进行了抽象，datasource  本质是告诉 Cell 如何去处理 Model 的桥梁，之前笔者是通过维护一个字典去一一对应 Model 的种类和 Cell 种类的，但后来发现，有时候 Model 和 Cell 的种类并不一定是 1 对 1 的，比如有些时候 cell 只要只要展示一个 title，可能使用者只想写一个 String 去对应，而不用去建一个 Model，在静态不变的 Model 中，这种情况更突出，因为并不需要从网络解析数据，不用用反射机制去进行 json 转 model 的处理，有时候，一个 NSDictionary 甚至一个 NSString 或者 Bool 就可以满足一个 Cell 的展示需求，那么对于这种可能是多 Cell 对多 Model（String 也可以是一种 Model）的情况，且每个 TableView 的 Cell 数量不多（一般设置页不会超过 20 个），可以考虑为在字典里每个 Model 配置对应的 Cell 类型的键值对。而且因为 Model 种类不一，我们也需要手动 Add 到 SectionObject 里，那么我们可以把这个字典分在每个 sectionObject 里去管理。在 Section 类里添加以下方法，而 Model 的唯一性可以用 hash 属性标识，默认 hash  属性就是对象的内存地址。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">addItem:</span>(<span style="color:#8be9fd">id</span><span style="color:#ff79c6">&lt;</span>NSObject<span style="color:#ff79c6">&gt;</span>)<span style="color:#8be9fd;font-style:italic">item</span> <span style="color:#50fa7b">cellClass:</span>(<span style="color:#8be9fd">Class</span>)<span style="color:#8be9fd;font-style:italic">cellClass</span>{
     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>item) {
@@ -249,16 +244,16 @@
     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>cellClass) {
         <span style="color:#ff79c6">return</span>;
     }
-    NSString <span style="color:#ff79c6">*</span>itemHash <span style="color:#ff79c6">=</span> [NSString <span style="color:#8be9fd;font-style:italic">stringWithFormat</span>:<span style="color:#f1fa8c">@&#34;%tu&#34;</span>,item.hash];
+    NSString <span style="color:#ff79c6">*</span>itemHash <span style="color:#ff79c6">=</span> [NSString <span style="color:#8be9fd;font-style:italic">stringWithFormat</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">%tu</span><span style="color:#f1fa8c">&#34;</span>,item.hash];
     [<span style="color:#8be9fd;font-style:italic">self</span>.sectionCellDic <span style="color:#8be9fd;font-style:italic">setObject</span>:cellClass <span style="color:#8be9fd;font-style:italic">forKey</span>:itemHash];
-}</code></pre></div>
-<p>然后再增加外部通过 indexPath 读取对应 Cell Class 的方法</p>
+}
+</code></pre></div><p>然后再增加外部通过 indexPath 读取对应 Cell Class 的方法</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">Class</span>)<span style="color:#50fa7b">cellClassIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>{
     <span style="color:#ff79c6">return</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">cellClassForItem</span>:[<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">itemForIndexPath</span>:indexPath]];
 }
 
 - (<span style="color:#8be9fd">Class</span>)<span style="color:#50fa7b">cellClassForItem:</span>(<span style="color:#8be9fd">id</span><span style="color:#ff79c6">&lt;</span>NSObject<span style="color:#ff79c6">&gt;</span>)<span style="color:#8be9fd;font-style:italic">item</span>{
-    NSString <span style="color:#ff79c6">*</span>itemHash <span style="color:#ff79c6">=</span> [NSString <span style="color:#8be9fd;font-style:italic">stringWithFormat</span>:<span style="color:#f1fa8c">@&#34;%tu&#34;</span>,item.hash];
+    NSString <span style="color:#ff79c6">*</span>itemHash <span style="color:#ff79c6">=</span> [NSString <span style="color:#8be9fd;font-style:italic">stringWithFormat</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">%tu</span><span style="color:#f1fa8c">&#34;</span>,item.hash];
     <span style="color:#8be9fd">Class</span> cellClass <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span>.sectionCellDic <span style="color:#8be9fd;font-style:italic">objectForKey</span>:itemHash];
     <span style="color:#ff79c6">return</span> cellClass;
 }
@@ -268,9 +263,8 @@
         <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">self</span>.items[indexPath.row];
     }
     <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">nil</span>;
-}</code></pre></div>
-<h2 id="接管-tableviewdelegate">接管 TableViewDelegate</h2>
-
+}
+</code></pre></div><h2 id="-tableviewdelegate">接管 TableViewDelegate</h2>
 <p>和很多动态 Cell 会有一些奇奇怪怪的 Delegate 不同，静态 Cell 主要就是展示和点击事件，一般会用到以下原生 Delegate。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">didSelectRowAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>;
 - (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">willDisplayCell:</span>(UITableViewCell <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">cell</span> <span style="color:#50fa7b">forRowAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>;
@@ -278,9 +272,8 @@
 - (CGFloat)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">heightForFooterInSection:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">sectionIndex</span>;
 - (UIView <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">viewForHeaderInSection:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">sectionIndex</span>;
 - (CGFloat)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">heightForHeaderInSection:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">sectionIndex</span>;
-- (CGFloat)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">heightForRowAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>;</code></pre></div>
-<p>所以我们可以让 TableViewManager 接管这些协议的实现，同时新建一个 TableViewManagerDelegate 为 <code>UITableViewDelegate</code> 的子协议，并开放这些协议给使用 Manager 的人，也就是可以让使用者覆写这些 Delegate。</p>
-
+- (CGFloat)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">heightForRowAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>;
+</code></pre></div><p>所以我们可以让 TableViewManager 接管这些协议的实现，同时新建一个 TableViewManagerDelegate 为 <code>UITableViewDelegate</code> 的子协议，并开放这些协议给使用 Manager 的人，也就是可以让使用者覆写这些 Delegate。</p>
 <p>比如 heightForRowAtIndexPath 方法，就可以在判断外部是否实现，否则则内部实现。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (CGFloat)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">heightForRowAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>{
     <span style="color:#ff79c6">if</span> ([<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">tableView</span>:<span style="color:#8be9fd;font-style:italic">heightForRowAtIndexPath</span>:)]) {
@@ -288,9 +281,9 @@
     }
     <span style="color:#8be9fd">Class</span> cellClass <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">tableView</span>:tableView <span style="color:#8be9fd;font-style:italic">cellClassForRowAtIndexPath</span>:indexPath];
     <span style="color:#8be9fd">id</span> item <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">tableView</span>:tableView <span style="color:#8be9fd;font-style:italic">itemForRowAtIndexPath</span>:indexPath];
-    <span style="color:#ff79c6">return</span> (cellClass <span style="color:#ff79c6">==</span> [UITableViewCell <span style="color:#ff79c6">class</span>])<span style="color:#ff79c6">?</span><span style="color:#bd93f9">44.f</span><span style="color:#ff79c6">:</span>[cellClass <span style="color:#8be9fd;font-style:italic">tableView</span>:tableView <span style="color:#8be9fd;font-style:italic">rowHeightForItem</span>:item];
-}</code></pre></div>
-<p>同理，这些协议的默认实现可以根据实际情况作调整，比如对于 <code>didSelectRowAtIndexPath</code>，我们也可以带上其 item 再返回给外部，带上 item 的好处，等会会讲到。</p>
+    <span style="color:#ff79c6">return</span> (cellClass <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> [UITableViewCell <span style="color:#ff79c6">class</span>])<span style="color:#ff79c6">?</span><span style="color:#bd93f9">44.f</span><span style="color:#ff79c6">:</span>[cellClass <span style="color:#8be9fd;font-style:italic">tableView</span>:tableView <span style="color:#8be9fd;font-style:italic">rowHeightForItem</span>:item];
+}
+</code></pre></div><p>同理，这些协议的默认实现可以根据实际情况作调整，比如对于 <code>didSelectRowAtIndexPath</code>，我们也可以带上其 item 再返回给外部，带上 item 的好处，等会会讲到。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">didSelectRowAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span> {
     <span style="color:#ff79c6">if</span> ([<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">tableView</span>:<span style="color:#8be9fd;font-style:italic">didSelectItem</span>:<span style="color:#8be9fd;font-style:italic">atIndexPath</span>:)]) {
         <span style="color:#8be9fd">id</span> item <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">tableView</span>:tableView <span style="color:#8be9fd;font-style:italic">itemForRowAtIndexPath</span>:indexPath];
@@ -300,9 +293,8 @@
     <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> ([<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">tableView</span>:<span style="color:#8be9fd;font-style:italic">didSelectRowAtIndexPath</span>:)]) {
         [<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">tableView</span>:tableView <span style="color:#8be9fd;font-style:italic">didSelectRowAtIndexPath</span>:indexPath];
     }
-}</code></pre></div>
-<h2 id="cell-的协议里有啥">Cell 的协议里有啥</h2>
-
+}
+</code></pre></div><h2 id="cell-">Cell 的协议里有啥</h2>
 <p>之前文章讲过，我们可以通过一个 CellProtocol 去指定 configItem 的方法让 Cell 自己去解析 Model，同时我们也可以让这个协议丰富一点，比如加上 CellDelegate 的回调，可以让 Cell 把信息传到外部，这在一些 Cell 里面的点击事件，或者开关（<code>UISwitch</code>），表单编辑时都很有用，所以我们可以加上 Delegate。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@protocol</span> <span style="color:#50fa7b">CDZTableViewCellDelegate</span> <span style="color:#ff79c6">&lt;</span>NSObject<span style="color:#ff79c6">&gt;</span>
 <span style="color:#ff79c6">@optional</span>
@@ -315,16 +307,16 @@
 + (CGFloat)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">rowHeightForItem:</span>(<span style="color:#8be9fd">id</span>)<span style="color:#8be9fd;font-style:italic">item</span>;
 <span style="color:#ff79c6">@optional</span>
 <span style="color:#ff79c6">-</span> (<span style="color:#8be9fd">void</span>)<span style="color:#8be9fd;font-style:italic">setCDZCellDelegate</span>:(<span style="color:#8be9fd">id</span><span style="color:#ff79c6">&lt;</span>CDZTableViewCellDelegate<span style="color:#ff79c6">&gt;</span>)objectDelegate;
-<span style="color:#ff79c6">@end</span></code></pre></div>
-<p>而这个 Message 的执行者应该是外部调用者而不是 Manager 本身，所以对于 Cell 和外部来说，它虽然是个 id 但实际类型是外部和 Cell 内部统一知道的，比如是个 <code>Bool</code> 值表示开关状态，一个 <code>NSDictionary</code> 里面包含信息，或者是一个 <code>NSString</code>。而 Manager 只要做一个中转就好了。这里我在 Manager 里把 Cell 转换成了对应的 Item 及 IndexPath 传给外部，因为 Cell 是可复用的，实际关心的应该是 Model。</p>
+<span style="color:#ff79c6">@end</span>
+</code></pre></div><p>而这个 Message 的执行者应该是外部调用者而不是 Manager 本身，所以对于 Cell 和外部来说，它虽然是个 id 但实际类型是外部和 Cell 内部统一知道的，比如是个 <code>Bool</code> 值表示开关状态，一个 <code>NSDictionary</code> 里面包含信息，或者是一个 <code>NSString</code>。而 Manager 只要做一个中转就好了。这里我在 Manager 里把 Cell 转换成了对应的 Item 及 IndexPath 传给外部，因为 Cell 是可复用的，实际关心的应该是 Model。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">didTriggleCell:</span>(UITableViewCell <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">cell</span> <span style="color:#50fa7b">message:</span>(<span style="color:#8be9fd">id</span>)<span style="color:#8be9fd;font-style:italic">message</span>{
     <span style="color:#ff79c6">if</span> ([<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">receiveCellMessage</span>:<span style="color:#8be9fd;font-style:italic">atIndexPath</span>:<span style="color:#8be9fd;font-style:italic">item</span>:)]) {
         NSIndexPath <span style="color:#ff79c6">*</span>indexPath <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span>.tableView <span style="color:#8be9fd;font-style:italic">indexPathForCell</span>:cell];
         <span style="color:#8be9fd">id</span> item <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">tableView</span>:<span style="color:#8be9fd;font-style:italic">self</span>.tableView <span style="color:#8be9fd;font-style:italic">itemForRowAtIndexPath</span>:indexPath];
         [<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">receiveCellMessage</span>:message <span style="color:#8be9fd;font-style:italic">atIndexPath</span>:indexPath <span style="color:#8be9fd;font-style:italic">item</span>:item];
     }
-}</code></pre></div>
-<h2 id="初始化方法">初始化方法</h2>
+}
+</code></pre></div><h2 id="heading">初始化方法</h2>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">instancetype</span>)<span style="color:#50fa7b">initWithTableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">delegate:</span>(<span style="color:#8be9fd">id</span><span style="color:#ff79c6">&lt;</span>CDZTableViewManagerDelegate<span style="color:#ff79c6">&gt;</span>)<span style="color:#8be9fd;font-style:italic">objectDelegate</span>{
     <span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">super</span> init];
     <span style="color:#ff79c6">if</span> (<span style="color:#8be9fd;font-style:italic">self</span>){
@@ -336,19 +328,17 @@
         <span style="color:#8be9fd;font-style:italic">self</span>.tableView <span style="color:#ff79c6">=</span> tableView;
     }
     <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">self</span>;
-}</code></pre></div>
-<p>最后外界只需要初始化一个 Manager，即可不用写 Datasource 和 Delegate了，因为都被 Manager 接管了。</p>
-
-<h2 id="item-的一些小技巧">item 的一些小技巧</h2>
-
+}
+</code></pre></div><p>最后外界只需要初始化一个 Manager，即可不用写 Datasource 和 Delegate了，因为都被 Manager 接管了。</p>
+<h2 id="item-">item 的一些小技巧</h2>
 <p>对应一些初展示类或者开关操作的 item，我们可以用简单的 <code>Bool</code>，<code>NSString</code>，<code>NSDictionry</code> 作为 Model，而有点击事件的 Model，我们可以在 Model 类里增加一个 tapBlock，这样我们可以在配置 item 时顺便配置其点击事件。因为静态 Cell 中的点击事件往往各不相同，所以配置在 tapBlock 可以让代码更加统一。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">TestItem <span style="color:#ff79c6">*</span>itemD <span style="color:#ff79c6">=</span> [[TestItem alloc]init];
-itemD.title <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;itemD&#34;</span>;
+itemD.title <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">itemD</span><span style="color:#f1fa8c">&#34;</span>;
 itemD.tapBlock <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">^</span>(TestItem <span style="color:#ff79c6">*</span>item) {
-   NSLog(<span style="color:#f1fa8c">@&#34;%@ tap&#34;</span>,item.title);
+   NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">%@ tap</span><span style="color:#f1fa8c">&#34;</span>,item.title);
 };
-[firstSection <span style="color:#8be9fd;font-style:italic">addItem</span>:itemD <span style="color:#8be9fd;font-style:italic">cellClass</span>:[TestBCell <span style="color:#ff79c6">class</span>]];</code></pre></div>
-<p>这样不仅好找，一次性把相关的操作配置完成，而且在执行点击事件时，不用再关心具体的点击事件，进行 item 的识别分类判断。</p>
+[firstSection <span style="color:#8be9fd;font-style:italic">addItem</span>:itemD <span style="color:#8be9fd;font-style:italic">cellClass</span>:[TestBCell <span style="color:#ff79c6">class</span>]];
+</code></pre></div><p>这样不仅好找，一次性把相关的操作配置完成，而且在执行点击事件时，不用再关心具体的点击事件，进行 item 的识别分类判断。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">didSelectItem:</span>(<span style="color:#8be9fd">id</span>)<span style="color:#8be9fd;font-style:italic">item</span> <span style="color:#50fa7b">atIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>{
     <span style="color:#ff79c6">if</span> ([item <span style="color:#8be9fd;font-style:italic">isMemberOfClass</span>:[TestItem <span style="color:#ff79c6">class</span>]]) {
         TestItem <span style="color:#ff79c6">*</span>cellItem <span style="color:#ff79c6">=</span> (TestItem <span style="color:#ff79c6">*</span>)item;
@@ -356,45 +346,43 @@ itemD.tapBlock <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">
             cellItem.tapBlock(cellItem);
         }
     }
-}</code></pre></div>
-<h2 id="最后">最后</h2>
-
+}
+</code></pre></div><h2 id="heading-1">最后</h2>
 <p>通过这些的 Manager，就可以随心所欲搭配 Model 和 Cell，并把配置写在一起，方便修改，查找，同时也不用重复写 Delegate 和 Datasource，而对老的 Cell 和 Model 也有很好的兼容。底下是一个混搭的例子。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (NSMutableArray <span style="color:#ff79c6">&lt;</span>CDZTableViewSection <span style="color:#ff79c6">*&gt;*</span>)<span style="color:#50fa7b">sections</span>{
-    NSMutableArray <span style="color:#ff79c6">&lt;</span>CDZTableViewSection <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>sections <span style="color:#ff79c6">=</span> [NSMutableArray array];
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (NSMutableArray <span style="color:#ff79c6">&lt;</span>CDZTableViewSection <span style="color:#ff79c6">*</span><span style="color:#ff79c6">&gt;</span><span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">sections</span>{
+    NSMutableArray <span style="color:#ff79c6">&lt;</span>CDZTableViewSection <span style="color:#ff79c6">*</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">*</span>sections <span style="color:#ff79c6">=</span> [NSMutableArray array];
     CDZTableViewSection <span style="color:#ff79c6">*</span>firstSection <span style="color:#ff79c6">=</span> [[CDZTableViewSection alloc]init];
   
-    NSString <span style="color:#ff79c6">*</span>itemA <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;itemA&#34;</span>;
+    NSString <span style="color:#ff79c6">*</span>itemA <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">itemA</span><span style="color:#f1fa8c">&#34;</span>;
     [firstSection <span style="color:#8be9fd;font-style:italic">addItem</span>:itemA <span style="color:#8be9fd;font-style:italic">cellClass</span>:[TestACell <span style="color:#ff79c6">class</span>]];
     
-  	NSDictionary <span style="color:#ff79c6">*</span>itemB <span style="color:#ff79c6">=</span> @{<span style="color:#f1fa8c">@&#34;title&#34;</span> <span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">@&#34;itemB&#34;</span>};
+  	NSDictionary <span style="color:#ff79c6">*</span>itemB <span style="color:#ff79c6">=</span> @{<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">title</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">itemB</span><span style="color:#f1fa8c">&#34;</span>};
     [firstSection <span style="color:#8be9fd;font-style:italic">addItem</span>:itemB <span style="color:#8be9fd;font-style:italic">cellClass</span>:[TestACell <span style="color:#ff79c6">class</span>]];
    
     TestItem <span style="color:#ff79c6">*</span>itemC <span style="color:#ff79c6">=</span> [[TestItem alloc]init];
-    itemC.title <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;itemC&#34;</span>;
+    itemC.title <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">itemC</span><span style="color:#f1fa8c">&#34;</span>;
     itemC.tapBlock <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">^</span>(TestItem <span style="color:#ff79c6">*</span>item) {
-        NSLog(<span style="color:#f1fa8c">@&#34;%@ tap&#34;</span>,item.title);
+        NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">%@ tap</span><span style="color:#f1fa8c">&#34;</span>,item.title);
     };
     [firstSection <span style="color:#8be9fd;font-style:italic">addItem</span>:itemC <span style="color:#8be9fd;font-style:italic">cellClass</span>:[TestBCell <span style="color:#ff79c6">class</span>]];
   
     TestItem <span style="color:#ff79c6">*</span>itemD <span style="color:#ff79c6">=</span> [[TestItem alloc]init];
-    itemD.title <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;itemD&#34;</span>;
+    itemD.title <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">itemD</span><span style="color:#f1fa8c">&#34;</span>;
     itemD.tapBlock <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">^</span>(TestItem <span style="color:#ff79c6">*</span>item) {
-        NSLog(<span style="color:#f1fa8c">@&#34;%@ tap&#34;</span>,item.title);
+        NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">%@ tap</span><span style="color:#f1fa8c">&#34;</span>,item.title);
     };
     [firstSection <span style="color:#8be9fd;font-style:italic">addItem</span>:itemD <span style="color:#8be9fd;font-style:italic">cellClass</span>:[TestBCell <span style="color:#ff79c6">class</span>]];
   
     [sections <span style="color:#8be9fd;font-style:italic">addObject</span>:firstSection];
     <span style="color:#ff79c6">return</span> sections;
-}</code></pre></div>
-<p>所有源码和 <a href="https://github.com/Nemocdz/CDZTableViewManager">Demo</a>
+}
+</code></pre></div><p>所有源码和 <a href="https://github.com/Nemocdz/CDZTableViewManager">Demo</a>
 可以直接拿文件去使用或修改，也支持 Cocoapods.</p>
-
 <p>如果您觉得有帮助,不妨给个 star 鼓励一下,欢迎关注&amp;交流</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>964</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>965</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

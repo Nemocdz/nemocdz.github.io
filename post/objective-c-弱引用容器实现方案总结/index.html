@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.58.1">
+<meta name="generator" content="Hugo 0.62.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">
@@ -220,109 +220,82 @@
     
 	
 	<nav id="TableOfContents">
-<ul>
-<li><a href="#实现思路">实现思路</a>
-<ul>
-<li><a href="#容器本身支持弱引用对象">容器本身支持弱引用对象</a>
-<ul>
-<li><a href="#1-foundation-框架支持弱引用的容器类">1.Foundation 框架支持弱引用的容器类</a></li>
-<li><a href="#2-用-cffoundation-框架里对应容器类自定义内存管理选项在初始化时-使用-cffoundation-里的容器类实现后转成-foundation-对象">2.用 CFFoundation 框架里对应容器类自定义内存管理选项在初始化时，使用 CFFoundation 里的容器类实现后转成 Foundation 对象</a>
-<ul>
-<li><a href="#1-生成-callbacks-结构体">1.生成 CallBacks 结构体</a></li>
-<li><a href="#2-使用-creatmutable-生成可变容器">2.使用 CreatMutable 生成可变容器</a></li>
-<li><a href="#3-在对象销毁时移除出容器或置-nil">3.在对象销毁时移除出容器或置 nil</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#加入容器时不引用">加入容器时不引用</a></li>
-<li><a href="#使对象变得可被弱引用">使对象变得可被弱引用</a>
-<ul>
-<li><a href="#1-使用-nsvalue">1.使用 NSValue</a></li>
-<li><a href="#2-使用-block">2.使用 block</a></li>
-</ul></li>
-<li><a href="#最终方案">最终方案</a></li>
-</ul></li>
-<li><a href="#总结">总结</a>
-<ul>
-<li><a href="#foundation-中的弱引用容器类-nshashtable-nsmaptable-nspointerarray">Foundation 中的弱引用容器类 NSHashTable/NSMaptable/NSPointerArray</a></li>
-<li><a href="#cffoundation-实现容器">CFFoundation 实现容器</a></li>
-<li><a href="#操作容器时实现引用计数修正">操作容器时实现引用计数修正</a></li>
-<li><a href="#使用新对象持有弱引用对象">使用新对象持有弱引用对象</a></li>
-</ul></li>
-<li><a href="#最后">最后</a></li>
-<li><a href="#参考链接">参考链接</a></li>
-</ul>
+  <ul>
+    <li><a href="#heading">实现思路</a>
+      <ul>
+        <li><a href="#heading-1">容器本身支持弱引用对象</a></li>
+        <li><a href="#heading-2">加入容器时不引用</a></li>
+        <li><a href="#heading-3">使对象变得可被弱引用</a></li>
+        <li><a href="#heading-4">最终方案</a></li>
+      </ul>
+    </li>
+    <li><a href="#heading-5">总结</a>
+      <ul>
+        <li><a href="#foundation--nshashtablensmaptablenspointerarray">Foundation 中的弱引用容器类 NSHashTable/NSMaptable/NSPointerArray</a></li>
+        <li><a href="#cffoundation-">CFFoundation 实现容器</a></li>
+        <li><a href="#heading-6">操作容器时实现引用计数修正</a></li>
+        <li><a href="#heading-7">使用新对象持有弱引用对象</a></li>
+      </ul>
+    </li>
+    <li><a href="#heading-8">最后</a></li>
+    <li><a href="#heading-9">参考链接</a></li>
+  </ul>
 </nav>
 
     <article class="post-content"><p>在 OC 中 Foundation 框架中的常用容器类（<code>NSSet</code>，<code>NSDictionary</code>，<code>NSArray</code>）及其可变子类在加入元素时，均会对元素进行强引用。有的时候（比如持有多个 Delegate 对象时），希望有对应的弱引用容器使用。</p>
-
-<h2 id="实现思路">实现思路</h2>
-
+<h2 id="heading">实现思路</h2>
 <p>根据加入元素这个操作，很容易发现实现方案从容器本身、加入对象这个行为、对象本身三个方向入手。</p>
-
-<h3 id="容器本身支持弱引用对象">容器本身支持弱引用对象</h3>
-
-<h4 id="1-foundation-框架支持弱引用的容器类">1.Foundation 框架支持弱引用的容器类</h4>
-
+<h3 id="heading-1">容器本身支持弱引用对象</h3>
+<h4 id="1foundation-">1.Foundation 框架支持弱引用的容器类</h4>
 <ul>
 <li><code>NSHashTable</code>：对应 <code>NSMutebleSet</code></li>
 <li><code>NSMapTable</code>：对应 <code>NSMutebleDictionary</code></li>
 <li><code>NSPointerArray</code>：对应 <code>NSMutebleArray</code></li>
 </ul>
-
 <p>本身都是可变的，没有不可变父类。其共同点是 <code>addObject</code> 方法参数声明为 <code>nullable</code> 即不用判断是否为 nil 来避免崩溃，且都拥有初始化方法 <code>- (instancetype)initWithOptions:(NSPointerFunctionsOptions)options</code> 而参数 options 代表其所支持的放入对象的指针管理选项。根据苹果官方文档显示，这些枚举值被分为三类。</p>
-
 <ul>
-<li><p>Memory Options（内存语义管理选项）</p>
+<li>
+<p>Memory Options（内存语义管理选项）</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">NSPointerFunctionsStrongMemory <span style="color:#6272a4">// 和 strong 一样，默认
 </span><span style="color:#6272a4"></span>NSPointerFunctionsOpaqueMemory <span style="color:#6272a4">// 在指针去除时不做任何动作
 </span><span style="color:#6272a4"></span>NSPointerFunctionsMallocMemory <span style="color:#6272a4">// 去除时调用 free() , 加入时calloc()
 </span><span style="color:#6272a4"></span>NSPointerFunctionsMachVirtualMemory <span style="color:#6272a4">//使用可执行文件的虚拟内存
-</span><span style="color:#6272a4"></span>NSPointerFunctionsWeakMemory <span style="color:#ff79c6">//</span>和 <span style="color:#ff79c6">weak</span> 一样         </code></pre></div></li>
-
-<li><p>Personaility Options(对象处理选项-如何进行哈希算法，判定等同性，描述)</p>
+</span><span style="color:#6272a4"></span>NSPointerFunctionsWeakMemory <span style="color:#6272a4">//和 weak 一样         
+</span></code></pre></div></li>
+<li>
+<p>Personaility Options(对象处理选项-如何进行哈希算法，判定等同性，描述)</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">NSPointerFunctionsObjectPersonality <span style="color:#6272a4">//使用 NSObject 的 hash、isEqual、description，默认
 </span><span style="color:#6272a4"></span>NSPointerFunctionsOpaquePersonality <span style="color:#6272a4">//使用偏移后指针，进行 hash 和直接比较等同性
 </span><span style="color:#6272a4"></span>NSPointerFunctionsObjectPointerPersonality <span style="color:#6272a4">//和上一个相同，多了 description 方法	  
 </span><span style="color:#6272a4"></span>NSPointerFunctionsCStringPersonality <span style="color:#6272a4">//使用 C 字符串的 hash 和 strcmp 比较，%s 作为 decription
 </span><span style="color:#6272a4"></span>NSPointerFunctionsStructPersonality <span style="color:#6272a4">// 使用内存的 hash 和 memcmp 
-</span><span style="color:#6272a4"></span>NSPointerFunctionsIntegerPersonality <span style="color:#ff79c6">//</span>使用偏移量作为 hash 和等同性判断</code></pre></div></li>
-
-<li><p>Copy Options（对象拷贝选项）</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">NSPointerFunctionsCopyIn<span style="color:#ff79c6">//</span>通过 NSCopying 方法，复制后存入</code></pre></div></li>
+</span><span style="color:#6272a4"></span>NSPointerFunctionsIntegerPersonality <span style="color:#6272a4">//使用偏移量作为 hash 和等同性判断
+</span></code></pre></div></li>
+<li>
+<p>Copy Options（对象拷贝选项）</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">NSPointerFunctionsCopyIn<span style="color:#6272a4">//通过 NSCopying 方法，复制后存入
+</span></code></pre></div></li>
 </ul>
-
 <p>另外，文档还强调，<strong>每种类别的选项互斥，只能每种类别选择一个</strong>。</p>
-
 <p>当然，这三种容器还提供了快捷实例化类方法，含有 weakObjects 字样。</p>
-
 <p>其中 <code>NSPointerArray</code> 稍微和其他两个有点特殊。</p>
-
 <ol>
-<li>不支持 OC 的轻量级泛型（未被声明为 <Object Type>）</li>
+<li>不支持 OC 的轻量级泛型（未被声明为 <!-- raw HTML omitted -->）</li>
 <li>猜测和 1 有关，<code>addPointer</code> 方法（相当于 <code>NSMuteableArray</code> 的 <code>addObject</code> 方法）参数类型是 void* 指针，所以需要(__bridge void *）转换</li>
 </ol>
-
 <p>这个方案应该是最简单的了，毕竟是苹果 Foundation 框架里封装的高级对象。但是其缺点是性能相比对应强引用容器在性能上有所欠缺，根据 Objc.io <a href="https://objccn.io/issue-7-1/">文章</a>中的测试结果，<strong><code>NSHashTable</code> 的 <code>addObject</code> 和 <code>NSPointerArray</code> 的  <code>addPointer</code></strong> 性能差距尤其严重，使用时需要注意。</p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tKfTcly1fht96ofpjqj30ig0cqwfz.jpg" alt="屏幕快照 2017-07-23 上午3.04.13" /></p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tKfTcly1fht96ud6zxj30h1084mxy.jpg" alt="屏幕快照 2017-07-23 上午3.04.21" /></p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tKfTcly1fht970xifdj30er06bgm6.jpg" alt="屏幕快照 2017-07-23 上午3.04.29" /></p>
-
-<h4 id="2-用-cffoundation-框架里对应容器类自定义内存管理选项在初始化时-使用-cffoundation-里的容器类实现后转成-foundation-对象">2.用 CFFoundation 框架里对应容器类自定义内存管理选项在初始化时，使用 CFFoundation 里的容器类实现后转成 Foundation 对象</h4>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tKfTcly1fht96ofpjqj30ig0cqwfz.jpg" alt="屏幕快照 2017-07-23 上午3.04.13"></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tKfTcly1fht96ud6zxj30h1084mxy.jpg" alt="屏幕快照 2017-07-23 上午3.04.21"></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tKfTcly1fht970xifdj30er06bgm6.jpg" alt="屏幕快照 2017-07-23 上午3.04.29"></p>
+<h4 id="2-cffoundation--cffoundation--foundation-">2.用 CFFoundation 框架里对应容器类自定义内存管理选项在初始化时，使用 CFFoundation 里的容器类实现后转成 Foundation 对象</h4>
 <p>以 <code>NSMutableSet</code> 为例，可以增加一个新的分类，自定义一个实例化方法</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">+ (<span style="color:#8be9fd">instancetype</span>)<span style="color:#50fa7b">cdz_weakSet</span>{
     CFSetCallBacks callbacks <span style="color:#ff79c6">=</span> {<span style="color:#bd93f9">0</span>, <span style="color:#8be9fd;font-style:italic">NULL</span>, <span style="color:#8be9fd;font-style:italic">NULL</span>, CFCopyDescription, CFEqual, CFHash};
     <span style="color:#ff79c6">return</span> (NSMutableSet <span style="color:#ff79c6">*</span>)CFBridgingRelease(CFSetCreateMutable(<span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">0</span>, <span style="color:#ff79c6">&amp;</span>callbacks));
-}</code></pre></div>
-<p>建立容器类的步骤</p>
-
-<h5 id="1-生成-callbacks-结构体">1.生成 CallBacks 结构体</h5>
-
+}
+</code></pre></div><p>建立容器类的步骤</p>
+<h5 id="1-callbacks-">1.生成 CallBacks 结构体</h5>
 <p>结构体中的对象其实就是一些描述容器的选项</p>
-
 <p>同样以 <code>CFSetCallBacks</code> 为例，其结构体定义如下</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">typedef</span> <span style="color:#ff79c6">struct</span> {
     CFIndex				version;
@@ -331,68 +304,43 @@
     CFSetCopyDescriptionCallBack	copyDescription;
     CFSetEqualCallBack			equal;
     CFSetHashCallBack			hash;
-} CFSetCallBacks;</code></pre></div>
-<p>version 暂时不管它，看下剩下变量类型名字，是否感觉比较熟悉</p>
-
+} CFSetCallBacks;
+</code></pre></div><p>version 暂时不管它，看下剩下变量类型名字，是否感觉比较熟悉</p>
 <p>其实和之前 <code>NSPointerFunctionsOptions</code> 类似，还是分三种，retain 和 release 是内存管理，equal 和 hash 和是对象处理，copyDescription 是复制处理。</p>
-
 <p>所以我们就需要改变 retain 和 release 就好。类型是 xxxCallBack 那么说明应该这个类型是一个 block，而去当这些操作执行执行对应的 block。文档对 retain 和 release 这两个 block 的描述也是这样说的。那么如果要实现引用计数增减，就应该在这两个 block 里实现，所以我猜测 Foundation 框架里的容器类 retain，应该就在这个两个 block 里实现。那么我们只需要 block 值为 NULL，在 retain 和 release 操作里，就不会引用计数的变化，从而不持有对象。</p>
-
-<h5 id="2-使用-creatmutable-生成可变容器">2.使用 CreatMutable 生成可变容器</h5>
-
+<h5 id="2-creatmutable-">2.使用 CreatMutable 生成可变容器</h5>
 <p>这时传入之前的自定义 callBacks，也可以传入 capacity 之类的（默认为 0 就好），转换为 Foundation 对象</p>
-
-<h5 id="3-在对象销毁时移除出容器或置-nil">3.在对象销毁时移除出容器或置 nil</h5>
-
+<h5 id="3-nil">3.在对象销毁时移除出容器或置 nil</h5>
 <p>如果不这么做，在对象销毁后容器里的元素会变成野指针引发 Crash。详见 <a href="https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88-objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/">再谈 Objective-C 弱引用容器的实现-关联对象实现weak</a> 补充说明。</p>
-
-<h3 id="加入容器时不引用">加入容器时不引用</h3>
-
+<h3 id="heading-2">加入容器时不引用</h3>
 <p>方式很简单，在 addObject 后调用一次 release 减少引用计数。</p>
-
 <p>release 方法有两种</p>
-
 <ol>
 <li>将分类 .m 文件将编译选项切换为 MRC（在 Build Phases 中的 Compile Sources 中加入编译标记 -fno-objc-arc），直接使用 [object release]</li>
 <li>在 ARC 中，使用 CFFoundation 的 release 方法 <code>CFRelease</code></li>
 </ol>
-
 <p>例子中使用第二种，在分类中新增一个方法</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">mrc_weakAddObject:</span>(NSObject <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">object</span>{
     [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">addObject</span>:object];
     CFRelease((<span style="color:#ff79c6">__bridge</span> CFTypeRef)(object));
-}</code></pre></div>
-<p><strong>注意！！</strong></p>
-
+}
+</code></pre></div><p><strong>注意！！</strong></p>
 <p>在使用这种方法后，这个容器将变得极其不安全，必须搭配一整套 API 来操作容器，包括 add/remove/objectOfxxx，而不搭配使用的话，将可能将引用计数变得混乱，甚至导致崩溃。</p>
-
 <p>而最起码的，在容器会被销毁时，需要搭配一个特殊的 removeAllObjects 去将引用计数进行修正。否则因为在 addObject 时没有增加引用计数，则在容器销毁时，容器内部的对象的引用计数已经将至 0，对象被销毁（而不是置 nil），内存被回收（标记为可用）。此时当容器在销毁时，会遍历容器里所有对象并对他们发送 release 消息，代表不再持有该对象（引用计数减 1），会向一个已被销毁的对象发送消息，导致崩溃。</p>
-
 <p>这也是 MRC 时代遇见比较多的过度释放（over release）问题。</p>
-
 <p>可以在 Xcode 开启 NSZombie（释放时转变为 NSZombie 并记录收到的消息）或  Address Sanitizer（XCode 7 以上）调试选项进行追踪过渡释放。</p>
-
 <p>同时，同 CoreFoundation 方法一样，需要在对象摧毁时移除出容器或置 nil。详见 <a href="https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88-objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/">再谈 Objective-C 弱引用容器的实现-关联对象实现 weak</a> 补充说明。</p>
-
 <p><strong>笔者不推荐这种方式实现，因为在使用时必须十分小心，而团队维护也容易不小心和系统 API 混合使用。</strong></p>
-
-<h3 id="使对象变得可被弱引用">使对象变得可被弱引用</h3>
-
+<h3 id="heading-3">使对象变得可被弱引用</h3>
 <p>思路就是用一个别的对象 A 持有这个原来元素的弱引用，在容器类存入对象 A。抛砖引玉，提供两种方法</p>
-
-<h4 id="1-使用-nsvalue">1.使用 NSValue</h4>
-
+<h4 id="1-nsvalue">1.使用 NSValue</h4>
 <p>使用 <code>NSValue</code> 的 <code>valueWithNonretainedObject</code> 转化为 <code>NSValue</code> 对象存入容器。</p>
-
 <p>这个方法会弱引用这个 object。</p>
-
 <p>取的时候用 value 的 nonretainedObjectValue 属性</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">NSValue <span style="color:#ff79c6">*</span>weakObject <span style="color:#ff79c6">=</span> [NSValue <span style="color:#8be9fd;font-style:italic">valueWithNonretainedObject</span>:object];
-weakObject.nonretainedObjectValue;</code></pre></div>
-<h4 id="2-使用-block">2.使用 block</h4>
-
+weakObject.nonretainedObjectValue;
+</code></pre></div><h4 id="2-block">2.使用 block</h4>
 <p>先对 object 加上 <code>weak</code> 修饰符，再包在 block 中就可以了。</p>
-
 <p>使用时可搭配以下简便方法</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">typedef</span> <span style="color:#50fa7b">id</span>(<span style="color:#ff79c6">^</span>CDZWeakObjectBlock)();
 CDZWeakObjectBlock <span style="color:#50fa7b">blockOfObjcet</span> (<span style="color:#8be9fd">id</span> object) {
@@ -409,60 +357,42 @@ CDZWeakObjectBlock <span style="color:#50fa7b">blockOfObjcet</span> (<span style
     <span style="color:#ff79c6">else</span> {
         <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">nil</span>;
     }
-}</code></pre></div>
-<p>当然也可以实现自定义对象进行持有，而缺点就是，<strong>没办法使用容器的泛型进行约束和警告</strong>，差异值被抹去了。</p>
-
-<h3 id="最终方案">最终方案</h3>
-
+}
+</code></pre></div><p>当然也可以实现自定义对象进行持有，而缺点就是，<strong>没办法使用容器的泛型进行约束和警告</strong>，差异值被抹去了。</p>
+<h3 id="heading-4">最终方案</h3>
 <p>自己实现一个容器类，哈哈</p>
-
 <p>这里提供自己浅显的思路，参考系统 API，容器类关心下面这几个点</p>
-
 <ul>
 <li>容器里对象的内存管理</li>
 <li>Hash 算法，等同性算法，描述</li>
 <li>可拷贝</li>
 <li>对象类型，泛型支持</li>
 </ul>
-
-<h2 id="总结">总结</h2>
-
-<h3 id="foundation-中的弱引用容器类-nshashtable-nsmaptable-nspointerarray">Foundation 中的弱引用容器类 NSHashTable/NSMaptable/NSPointerArray</h3>
-
+<h2 id="heading-5">总结</h2>
+<h3 id="foundation--nshashtablensmaptablenspointerarray">Foundation 中的弱引用容器类 NSHashTable/NSMaptable/NSPointerArray</h3>
 <ul>
 <li>使用简单，功能强大，高层级封装</li>
 <li>性能有差距</li>
 </ul>
-
-<h3 id="cffoundation-实现容器">CFFoundation 实现容器</h3>
-
+<h3 id="cffoundation-">CFFoundation 实现容器</h3>
 <ul>
 <li>实现稍复杂</li>
 <li>需要自己处理置 nil 行为</li>
 </ul>
-
-<h3 id="操作容器时实现引用计数修正">操作容器时实现引用计数修正</h3>
-
+<h3 id="heading-6">操作容器时实现引用计数修正</h3>
 <ul>
 <li>使用简单</li>
 <li>实现繁琐（几乎都要实现对应的），需要了解 MRC，注意管理引用计数，和系统 API 混用时容易出问题</li>
 </ul>
-
-<h3 id="使用新对象持有弱引用对象">使用新对象持有弱引用对象</h3>
-
+<h3 id="heading-7">使用新对象持有弱引用对象</h3>
 <ul>
 <li>低耦合，按需选择</li>
 <li>失去容器类泛型修饰</li>
 </ul>
-
-<h2 id="最后">最后</h2>
-
+<h2 id="heading-8">最后</h2>
 <p>所有方案的代码可在 <a href="https://github.com/Nemocdz/OCWeakContainer">Demo</a> 中找到</p>
-
 <p>如果您觉得有帮助,不妨给个 star 鼓励一下,欢迎关注&amp;交流</p>
-
-<h2 id="参考链接">参考链接</h2>
-
+<h2 id="heading-9">参考链接</h2>
 <ul>
 <li><a href="http://nshipster.com/nshashtable-and-nsmaptable/">NSHashTable &amp; NSMapTable</a></li>
 <li><a href="https://www.objc.io/issues/7-foundation/collections/">The Foundation Collection Classes</a></li>

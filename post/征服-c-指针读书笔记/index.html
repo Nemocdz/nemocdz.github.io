@@ -26,9 +26,10 @@
 
   
   
-  <meta name="description" content="用英语来解读 C 的声明  首先着眼于识别符（变量名或者函数名）。 从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。优先顺序说明如下：
- 用于整理声明内容的括弧 用于表示数组的 []，用于表示函数的 () 用于表示指针的 *  解释完成派生型，使用“of”或“to”或“returning”将它们连接起来。
- C 里面不存在多维数组。
+  <meta name="description" content="用英语来解读 C 的声明   首先着眼于识别符（变量名或者函数名）。
+  从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。优先顺序说明如下：
+ 用于整理声明内容的括弧 用于表示数组的 []，用于表示函数的 () 用于表示指针的 *    解释完成派生型，使用“of”或“to”或“returning”将它们连接起来。
+  C 里面不存在多维数组。
  ">
 
   
@@ -36,9 +37,10 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="《征服 C 指针》读书笔记">
-    <meta name="twitter:description" content="用英语来解读 C 的声明  首先着眼于识别符（变量名或者函数名）。 从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。优先顺序说明如下：
- 用于整理声明内容的括弧 用于表示数组的 []，用于表示函数的 () 用于表示指针的 *  解释完成派生型，使用“of”或“to”或“returning”将它们连接起来。
- C 里面不存在多维数组。
+    <meta name="twitter:description" content="用英语来解读 C 的声明   首先着眼于识别符（变量名或者函数名）。
+  从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。优先顺序说明如下：
+ 用于整理声明内容的括弧 用于表示数组的 []，用于表示函数的 () 用于表示指针的 *    解释完成派生型，使用“of”或“to”或“returning”将它们连接起来。
+  C 里面不存在多维数组。
  ">
     <meta name="twitter:image" content="/images/avatar.png">
   
@@ -46,9 +48,10 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="《征服 C 指针》读书笔记">
-  <meta property="og:description" content="用英语来解读 C 的声明  首先着眼于识别符（变量名或者函数名）。 从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。优先顺序说明如下：
- 用于整理声明内容的括弧 用于表示数组的 []，用于表示函数的 () 用于表示指针的 *  解释完成派生型，使用“of”或“to”或“returning”将它们连接起来。
- C 里面不存在多维数组。
+  <meta property="og:description" content="用英语来解读 C 的声明   首先着眼于识别符（变量名或者函数名）。
+  从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。优先顺序说明如下：
+ 用于整理声明内容的括弧 用于表示数组的 []，用于表示函数的 () 用于表示指针的 *    解释完成派生型，使用“of”或“to”或“returning”将它们连接起来。
+  C 里面不存在多维数组。
  ">
   <meta property="og:url" content="https://nemocdz.github.io/post/%E5%BE%81%E6%9C%8D-c-%E6%8C%87%E9%92%88%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
   <meta property="og:image" content="/images/avatar.png">
@@ -56,7 +59,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.58.1">
+<meta name="generator" content="Hugo 0.62.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E5%BE%81%E6%9C%8D-c-%E6%8C%87%E9%92%88%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
@@ -77,12 +80,13 @@
 
 <meta name="keywords" content="Swift, iOS, OC, Objective-C" >
 
-<meta name='description' itemprop="description" content="&lt;h2 id=&#34;用英语来解读-c-的声明&#34;&gt;用英语来解读 C 的声明&lt;/h2&gt;
-
+<meta name='description' itemprop="description" content="&lt;h2 id=&#34;-c-&#34;&gt;用英语来解读 C 的声明&lt;/h2&gt;
 &lt;ol&gt;
-&lt;li&gt;首先着眼于识别符（变量名或者函数名）。&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;从距离识别符最近的地方开始，依照优">
+&lt;li&gt;
+&lt;p&gt;首先着眼于识别符（变量名或者函数名）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;从距离识别符最近的地方开始，依照优先">
 
 
 <meta name="theme-color" content="#02b875">
@@ -231,37 +235,40 @@
     
 	
 	<nav id="TableOfContents">
-<ul>
-<li><a href="#用英语来解读-c-的声明">用英语来解读 C 的声明</a></li>
-<li><a href="#解读-const-修饰符">解读 const 修饰符</a></li>
-<li><a href="#解读数组">解读数组</a>
-<ul>
-<li><a href="#数组为-sizeof-运算符的操作数">数组为 sizeof 运算符的操作数</a></li>
-<li><a href="#数组为-运算符的操作数">数组为 &amp; 运算符的操作数</a></li>
-</ul></li>
-<li><a href="#关于运算符">关于运算符</a></li>
-<li><a href="#参考链接">参考链接</a></li>
-</ul>
+  <ul>
+    <li><a href="#-c-">用英语来解读 C 的声明</a></li>
+    <li><a href="#-const-">解读 const 修饰符</a></li>
+    <li><a href="#heading">解读数组</a>
+      <ul>
+        <li><a href="#-sizeof-">数组为 sizeof 运算符的操作数</a></li>
+        <li><a href="#--">数组为 & 运算符的操作数</a></li>
+      </ul>
+    </li>
+    <li><a href="#heading-1">关于运算符</a></li>
+    <li><a href="#heading-2">参考链接</a></li>
+  </ul>
 </nav>
 
-    <article class="post-content"><h2 id="用英语来解读-c-的声明">用英语来解读 C 的声明</h2>
-
+    <article class="post-content"><h2 id="-c-">用英语来解读 C 的声明</h2>
 <ol>
-<li>首先着眼于识别符（变量名或者函数名）。</li>
-
-<li><p>从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。优先顺序说明如下：</p>
-
+<li>
+<p>首先着眼于识别符（变量名或者函数名）。</p>
+</li>
+<li>
+<p>从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。优先顺序说明如下：</p>
 <ol>
 <li>用于整理声明内容的括弧</li>
 <li>用于表示数组的 <code>[]</code>，用于表示函数的 <code>()</code></li>
 <li>用于表示指针的 <code>*</code></li>
-</ol></li>
-
-<li><p>解释完成派生型，使用“of”或“to”或“returning”将它们连接起来。</p></li>
-
-<li><p>C 里面不存在多维数组。</p></li>
 </ol>
-
+</li>
+<li>
+<p>解释完成派生型，使用“of”或“to”或“returning”将它们连接起来。</p>
+</li>
+<li>
+<p>C 里面不存在多维数组。</p>
+</li>
+</ol>
 <table>
 <thead>
 <tr>
@@ -270,32 +277,27 @@
 <th>中文</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>int *hoge[10];</td>
 <td>hoge is array of pointer to int</td>
 <td>hoge 是指向 int 的指针的数组</td>
 </tr>
-
 <tr>
 <td>int (*hoge)[3];</td>
 <td>hoge is pointer to array of int</td>
 <td>hoge 是指向 in t的数组的指针</td>
 </tr>
-
 <tr>
 <td>int func(int a);</td>
 <td>func is function(argument is int a) returning int</td>
 <td>func 是返回 int 的函数(参数是 int a)</td>
 </tr>
-
 <tr>
 <td>int (*func)(int a)；</td>
 <td>func is pointer to function(argument is int a) returning int</td>
 <td>func_p 是指向返回 int 的函数(参数为 int a)的指针</td>
 </tr>
-
 <tr>
 <td>int hoge<code>[10][3]</code>;</td>
 <td>hoge is array(10) of array(3) of int</td>
@@ -303,59 +305,47 @@
 </tr>
 </tbody>
 </table>
-
-<h2 id="解读-const-修饰符">解读 const 修饰符</h2>
-
+<h2 id="-const-">解读 const 修饰符</h2>
 <p><code>const</code> 代表变量只读。在指针作为参数的时候，<code>const</code> 常用于将指针指向的对象设定为只读。</p>
-
 <ul>
 <li><code>const</code> 修饰解读声明时 <code>const</code> 外一层修饰符。</li>
-
-<li><p>若类型指定符左边存在 <code>const</code>，则修饰该类型指定符。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#8be9fd">char</span> <span style="color:#ff79c6">const</span> <span style="color:#ff79c6">*</span>src;<span style="color:#6272a4">//src is a pointer to read-only char
-</span><span style="color:#6272a4"></span><span style="color:#ff79c6">const</span> <span style="color:#8be9fd">char</span> <span style="color:#ff79c6">*</span>src;<span style="color:#ff79c6">//</span>src is a pointer to read<span style="color:#ff79c6">-</span>only <span style="color:#8be9fd">char</span></code></pre></div></li>
+<li>若类型指定符左边存在 <code>const</code>，则修饰该类型指定符。</li>
 </ul>
-
-<h2 id="解读数组">解读数组</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#8be9fd">int</span> hoge[<span style="color:#bd93f9">10</span>];<span style="color:#ff79c6">//</span>hoge <span style="color:#ff79c6">==</span> <span style="color:#ff79c6">&amp;</span>hoge[<span style="color:#bd93f9">0</span>]</code></pre></div>
-<p><strong>由*声明的指针是指针变量，它可以随意修改指向的方向</strong>，包括用 <code>new</code> 建立一片空间然后让指针指向它；然而用 <code>[]</code> 声明的指针是指针常量（然而<strong>它指向的量却可以是一个变量</strong>），你不能修改指针常量，但是<strong>你可以借助这个指针常量去修改它所指向的指针变量</strong>。</p>
-
-<h3 id="数组为-sizeof-运算符的操作数">数组为 sizeof 运算符的操作数</h3>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#8be9fd">char</span> <span style="color:#ff79c6">const</span> <span style="color:#ff79c6">*</span>src;<span style="color:#6272a4">//src is a pointer to read-only char
+</span><span style="color:#6272a4"></span><span style="color:#ff79c6">const</span> <span style="color:#8be9fd">char</span> <span style="color:#ff79c6">*</span>src;<span style="color:#6272a4">//src is a pointer to read-only char
+</span></code></pre></div><h2 id="heading">解读数组</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#8be9fd">int</span> hoge[<span style="color:#bd93f9">10</span>];<span style="color:#6272a4">//hoge == &amp;hoge[0]
+</span></code></pre></div><p><strong>由*声明的指针是指针变量，它可以随意修改指向的方向</strong>，包括用 <code>new</code> 建立一片空间然后让指针指向它；然而用 <code>[]</code> 声明的指针是指针常量（然而<strong>它指向的量却可以是一个变量</strong>），你不能修改指针常量，但是<strong>你可以借助这个指针常量去修改它所指向的指针变量</strong>。</p>
+<h3 id="-sizeof-">数组为 sizeof 运算符的操作数</h3>
 <p>通过“ <code>sizeof</code> 表达式”的方式使用 <code>sizeof</code> 运算符的情况下，如果操作数是“表达式”，数组会被当成指针，这时对数组使用 <code>sizeof</code>，返回的是<strong>数组全体的尺寸而不是指针长度</strong>。</p>
-
-<h3 id="数组为-运算符的操作数">数组为 &amp; 运算符的操作数</h3>
-
+<h3 id="--">数组为 &amp; 运算符的操作数</h3>
 <p>通过对数组使用 <code>&amp;</code>，可以返回指向整体数组的指针。</p>
-
-<h2 id="关于运算符">关于运算符</h2>
-
+<h2 id="heading-1">关于运算符</h2>
 <p>运算符和声明不可混淆，声明左侧有返回类型。</p>
-
 <p><strong>两侧表达式必须指针层级相等才可赋值。</strong></p>
-
 <ul>
-<li><p><code>*</code>在表达式中，是<strong>解引用</strong>运算符。返回指针所指向的对象或函数。表达式指针层级-1。</p></li>
-
-<li><p><code>[]</code>在表达式中，是<strong>下标</strong>运算符，是一种语法糖，所以和<code>*</code>的指针层级一样 -1。</p>
+<li>
+<p><code>*</code>在表达式中，是<strong>解引用</strong>运算符。返回指针所指向的对象或函数。表达式指针层级-1。</p>
+</li>
+<li>
+<p><code>[]</code>在表达式中，是<strong>下标</strong>运算符，是一种语法糖，所以和<code>*</code>的指针层级一样 -1。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">p[i];<span style="color:#6272a4">//等同于
-</span><span style="color:#6272a4"></span><span style="color:#ff79c6">*</span>(p <span style="color:#ff79c6">+</span> i);</code></pre></div></li>
-
-<li><p><code>-&gt;</code>在表达式中，是通过指针访问结构体成员的语法糖。</p>
-
+</span><span style="color:#6272a4"></span><span style="color:#ff79c6">*</span>(p <span style="color:#ff79c6">+</span> i);
+</code></pre></div></li>
+<li>
+<p><code>-&gt;</code>在表达式中，是通过指针访问结构体成员的语法糖。</p>
 <ul>
 <li><code>-&gt;</code>左侧是指针</li>
-
-<li><p><code>.</code>左侧是结构体实体</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">p<span style="color:#ff79c6">-&gt;</span>hoge;<span style="color:#6272a4">//等同于
-</span><span style="color:#6272a4"></span>(<span style="color:#ff79c6">*</span>p).hoge;</code></pre></div></li>
-</ul></li>
-
-<li><p>`<code>&amp;</code>在表达式中，是<strong>地址</strong>运算符，返回该值的指针。表达式指针层级+1。</p></li>
+<li><code>.</code>左侧是结构体实体</li>
 </ul>
-
-<h2 id="参考链接">参考链接</h2>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">p<span style="color:#ff79c6">-</span><span style="color:#ff79c6">&gt;</span>hoge;<span style="color:#6272a4">//等同于
+</span><span style="color:#6272a4"></span>(<span style="color:#ff79c6">*</span>p).hoge;
+</code></pre></div></li>
+<li>
+<p>``&amp;`在表达式中，是<strong>地址</strong>运算符，返回该值的指针。表达式指针层级+1。</p>
+</li>
+</ul>
+<h2 id="heading-2">参考链接</h2>
 <ul>
 <li><a href="http://avnpc.com/pages/c-pointer">《征服 C 指针》Web版</a></li>
 </ul></article>

@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.58.1">
+<meta name="generator" content="Hugo 0.62.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/tableview-%E5%86%85%E5%B5%8C%E5%A5%97-collectionview-%E5%8A%A8%E6%80%81%E9%AB%98%E5%BA%A6%E7%9A%84%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BC%E8%A1%A8%E5%8D%95%E6%88%96%E5%9B%BE%E7%89%87%E5%88%86%E4%BA%AB%E7%95%8C%E9%9D%A2/">
@@ -220,74 +220,59 @@
     
 	
 	<nav id="TableOfContents">
-<ul>
-<li><a href="#实现原理分析">实现原理分析</a></li>
-<li><a href="#1-实现-tbleview-和自定义-tableviewcell">1.实现 Tbleview 和自定义 Tableviewcell</a></li>
-<li><a href="#2-实现-collectionview-和自定义-collectionviewcell">2.实现 Collectionview 和自定义 Collectionviewcell</a></li>
-<li><a href="#3-自定义-collectionviewcell-并实现删除按钮">3.自定义 Collectionviewcell 并实现删除按钮</a></li>
-<li><a href="#最后">最后</a></li>
-</ul>
+  <ul>
+    <li><a href="#heading">实现原理分析</a></li>
+    <li><a href="#1-tbleview--tableviewcell">1.实现 Tbleview 和自定义 Tableviewcell</a></li>
+    <li><a href="#2-collectionview--collectionviewcell">2.实现 Collectionview 和自定义 Collectionviewcell</a></li>
+    <li><a href="#3-collectionviewcell-">3.自定义 Collectionviewcell 并实现删除按钮</a></li>
+    <li><a href="#heading-1">最后</a></li>
+  </ul>
 </nav>
 
     <article class="post-content"><p>在有社交分享平台属性的 App 中，我们经常看见类似有 TableView 中多图展示。不管是发布的表单界面中，还是社交动态的时间线的界面中，都需要根据图片数量动态变化界面。最近刚好写了一个这样的界面，花了点时间写了个 Demo 总结一下，希望可以帮助有需要的人。</p>
-
 <p>实现 Demo 效果如下图。</p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tKfTcly1fi1a8609dcg30ks1127t7.gif" alt="" /></p>
-
-<h2 id="实现原理分析">实现原理分析</h2>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tKfTcly1fi1a8609dcg30ks1127t7.gif" alt=""></p>
+<h2 id="heading">实现原理分析</h2>
 <p>初步思路是在 Tableview 的 cell 中内嵌一个 CollecitonView，CollectionView 高度动态变化并是 CollectionView 所在的 Tableview 的 cell 的高度动态变化。总结起来我们需要这几件事：</p>
-
 <p>1.实现一个 Tableview 并自定义一种 TableViewCell 并实现高度自适应</p>
-
 <p>2.在 TableViewCell 中实现 CollectionView 并实现高度动态变化</p>
-
 <p>3.自定义 CollectionViewCell 中实现按钮点击事件（如删除，跳转），数据展示操作</p>
-
-<h2 id="1-实现-tbleview-和自定义-tableviewcell">1.实现 Tbleview 和自定义 Tableviewcell</h2>
-
+<h2 id="1-tbleview--tableviewcell">1.实现 Tbleview 和自定义 Tableviewcell</h2>
 <p>Tableview 就很简单，storyboard 或者代码写一下都可以。实现数据源协议啥的，很普通。要实现 TableViewCell 的高度自适应，一般来说有两种方式，一种是用 iOS 7 后支持的 cel l的 estimatedRowHeight 和 iOS 8 后支持的 self-sizing cells（两者差不多，iOS 8 更完善一些），另一种是用孙源大神的第三方开源库，可以看这篇 <a href="http://blog.sunnyxx.com/2015/05/17/cell-height-calculation/">文章</a>，两者共同之处都是需要设置 cell 里 contentview 的元素对 cell 的 contenview的四个边的布局约束，换言之要让 cell 里的元素把 cell 四边“撑”起来。Demo里使用了原生的 self-sizing cells 来高度自适应，需要下面两句代码。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#8be9fd;font-style:italic">self</span>.tableview.estimatedRowHeight <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">100.f</span>;<span style="color:#6272a4">//数字为大致估算高度，比如有些 50 有些 100 可以估算 75 左右
-</span><span style="color:#6272a4"></span><span style="color:#8be9fd;font-style:italic">self</span>.tableview.rowHeight <span style="color:#ff79c6">=</span> UITableViewAutomaticDimension;</code></pre></div>
-<p>如果 Tableview 是用代码创建的，那么 rowheight 属性的默认参数就是 <code>UITableViewAutomaticDimension</code>，不需要第二行代码。而在 storyboard 或 xib 里拖的默认 rowheight 是拖的 storyboard 属性菜单里的，需要更改为 <code>UITableViewAutomaticDimension</code>。</p>
-
+</span><span style="color:#6272a4"></span><span style="color:#8be9fd;font-style:italic">self</span>.tableview.rowHeight <span style="color:#ff79c6">=</span> UITableViewAutomaticDimension;
+</code></pre></div><p>如果 Tableview 是用代码创建的，那么 rowheight 属性的默认参数就是 <code>UITableViewAutomaticDimension</code>，不需要第二行代码。而在 storyboard 或 xib 里拖的默认 rowheight 是拖的 storyboard 属性菜单里的，需要更改为 <code>UITableViewAutomaticDimension</code>。</p>
 <p>接着自定义一个 CDZTableViewCell。<del>并用xib拖上一个collectionview并设置对contenview的autolayout约束。用Masonry之类的第三方布局库或原生进行代码约束也可以。然后在tableview里用<code>registerNib</code>方法注册一下自定义的cell。</del></p>
-
 <p><strong>因为 TableView 执行 reloadData 方法时，会把所有 Cell 从 VisableCells 池中移除，并从同一复用标识的复用池中取出 Cell 加入视图中，这个时候 Cell 的高度已经确定好，但 indexPath 的 row 顺序有可能不是原来的，所以不能复用。也就是虽然每一个 Cell 功能一致，但是由于高度和里面图片数量不一样，并不能互相复用。在 Storyboard 中可以用静态 cell 分别放入 CollectionView 实现。这里为了不重复放 CollectionView 用了代码书写 TableView。</strong></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (UITableViewCell <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">cellForRowAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>{
-    NSString <span style="color:#ff79c6">*</span>identifer <span style="color:#ff79c6">=</span> [NSString <span style="color:#8be9fd;font-style:italic">stringWithFormat</span>:<span style="color:#f1fa8c">@&#34;CDZTableViewCell%ld&#34;</span>,indexPath.row];<span style="color:#6272a4">//唯一复用标识，相当于不复用
+    NSString <span style="color:#ff79c6">*</span>identifer <span style="color:#ff79c6">=</span> [NSString <span style="color:#8be9fd;font-style:italic">stringWithFormat</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">CDZTableViewCell%ld</span><span style="color:#f1fa8c">&#34;</span>,indexPath.row];<span style="color:#6272a4">//唯一复用标识，相当于不复用
 </span><span style="color:#6272a4"></span>    CDZTableViewCell <span style="color:#ff79c6">*</span>cell <span style="color:#ff79c6">=</span> [tableView <span style="color:#8be9fd;font-style:italic">dequeueReusableCellWithIdentifier</span>:identifer];
     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>cell) {
         cell  <span style="color:#ff79c6">=</span> [CDZTableViewCell.alloc <span style="color:#8be9fd;font-style:italic">initWithStyle</span>:UITableViewCellStyleDefault <span style="color:#8be9fd;font-style:italic">reuseIdentifier</span>:identifer];
     }
     cell.delegate <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>;
     <span style="color:#ff79c6">return</span> cell;
-}</code></pre></div>
-<p>当然要实现动态高度变化，我们还需要让 Cell 在合适的时候通知 TableView 应该更新数据和布局了，即调用 TableView 自身的 <code>reloadData</code> 方法。这里我用 Delegate 实现，通知的话也可以，但是通知的要明确接受者和发送者的对应关系，不然有些情况会接受对象不明确（比如实现了两个类似的 Tableview 在视图里）。在 Cell 的头文件里创建 Delegate。</p>
+}
+</code></pre></div><p>当然要实现动态高度变化，我们还需要让 Cell 在合适的时候通知 TableView 应该更新数据和布局了，即调用 TableView 自身的 <code>reloadData</code> 方法。这里我用 Delegate 实现，通知的话也可以，但是通知的要明确接受者和发送者的对应关系，不然有些情况会接受对象不明确（比如实现了两个类似的 Tableview 在视图里）。在 Cell 的头文件里创建 Delegate。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@protocol</span> <span style="color:#50fa7b">CDZTableViewCellDelegate</span><span style="color:#ff79c6">&lt;</span>NSObject<span style="color:#ff79c6">&gt;</span>
 <span style="color:#ff79c6">-</span> (<span style="color:#8be9fd">void</span>)<span style="color:#8be9fd;font-style:italic">didChangeCell</span>:(UITableViewCell <span style="color:#ff79c6">*</span>)cell;
 <span style="color:#ff79c6">@end</span>
 <span style="color:#ff79c6">@interface</span> <span style="color:#50fa7b">CDZTableViewCell</span> : <span style="color:#50fa7b">UITableViewCell</span>
 <span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>,<span style="color:#ff79c6">assign</span>) <span style="color:#8be9fd">id</span><span style="color:#ff79c6">&lt;</span>CDZTableViewCellDelegate<span style="color:#ff79c6">&gt;</span> delegate;
-<span style="color:#ff79c6">@end</span></code></pre></div>
-<p>然后让 Tableview 遵守 CDZTableViewCellDelegate 并在 Tableview 的 DataSource 或 Delegate 方法里设置 Cell 的 Delegate，比如</p>
+<span style="color:#ff79c6">@end</span>
+</code></pre></div><p>然后让 Tableview 遵守 CDZTableViewCellDelegate 并在 Tableview 的 DataSource 或 Delegate 方法里设置 Cell 的 Delegate，比如</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (UITableViewCell <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">cellForRowAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>{
     <span style="color:#6272a4">//......
 </span><span style="color:#6272a4"></span>    cell.delegate <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>;
     <span style="color:#6272a4">//......
-</span><span style="color:#6272a4"></span>}</code></pre></div>
-<p>也可以在 Delegate 里的 <code>-(void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath</code> 里设置（感觉这个方法更好些，Datasource 应该处理数据相关的，而且有时候会复用抽离出来）。</p>
-
-<h2 id="2-实现-collectionview-和自定义-collectionviewcell">2.实现 Collectionview 和自定义 Collectionviewcell</h2>
-
+</span><span style="color:#6272a4"></span>}
+</code></pre></div><p>也可以在 Delegate 里的 <code>-(void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath</code> 里设置（感觉这个方法更好些，Datasource 应该处理数据相关的，而且有时候会复用抽离出来）。</p>
+<h2 id="2-collectionview--collectionviewcell">2.实现 Collectionview 和自定义 Collectionviewcell</h2>
 <p>Collectionview 在约束上，除了实现  CollecitionView 对 TableviewCell 的上下左右约束外，还要实现其高度约束，因为本质 Collectionview 是 Scrollview 的子类，实现 Scollview 的 Autolayout 其实就是需要实现对其撑起来 ContentView 的约束，而动态实现 ContentView 的高度，则需要我们更新 ContenView 的高度布局约束的值。 CollectionView 也是类似的，我们先设定一个 CollectionView 的高度约束，再在数据更新时更新高度约束。</p>
-
 <p>这里再提一句，CollectionView 本身和 TableView 类似，系统本身也有 self-sizing cells 的API，如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#8be9fd;font-style:italic">self</span>.collectionViewFlowLayout.estimatedItemSize <span style="color:#ff79c6">=</span> CGSizeMake(<span style="color:#bd93f9">125</span>, <span style="color:#bd93f9">100</span>);
-<span style="color:#8be9fd;font-style:italic">self</span>.collectionViewFlowLayout.itemSize <span style="color:#ff79c6">=</span> UICollectionViewFlowLayoutAutomaticSize;</code></pre></div>
-<p>同样也要实现 CollectionViewCell 里元素对 Cell 四边的约束，“撑”起来自动计算高度，但是不知道为何用了之后在一个 Cell 的时候会莫名其妙居中，且 Cell 的 indexPath 有些错乱，根据 Cell 的 indexPath 找出来的 Cell 是错误的，不知道是啥问题，若有人知道可以告诉一声囧。</p>
-
+<span style="color:#8be9fd;font-style:italic">self</span>.collectionViewFlowLayout.itemSize <span style="color:#ff79c6">=</span> UICollectionViewFlowLayoutAutomaticSize;
+</code></pre></div><p>同样也要实现 CollectionViewCell 里元素对 Cell 四边的约束，“撑”起来自动计算高度，但是不知道为何用了之后在一个 Cell 的时候会莫名其妙居中，且 Cell 的 indexPath 有些错乱，根据 Cell 的 indexPath 找出来的 Cell 是错误的，不知道是啥问题，若有人知道可以告诉一声囧。</p>
 <p>这里就不用 CollectionView 的大小自适应了，常规的用设置 itemsize 的大小就好了。在 TableViewCell 的 <code>awakeFromNib</code>方法中，我们让 CollectionView 的 <code>reloadData</code> 更新一下高度布局约束为 CollectionView 的真实高度并调用刚才自定义的 Delegate 去让 TableView <code>reloadData</code> 从而让 Tableview 的 Cell 高度自适应。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">reloadCell</span>{
     [<span style="color:#8be9fd;font-style:italic">self</span>.collectionView reloadData];
@@ -295,31 +280,29 @@
         make.height.equalTo(@(<span style="color:#8be9fd;font-style:italic">self</span>.collectionView.collectionViewLayout.collectionViewContentSize.height));
     }];
     [<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">didChangeCell</span>:<span style="color:#8be9fd;font-style:italic">self</span>];
-}</code></pre></div>
-<p>CollectionView 的真实大小其实是他的 Layout 对象的 CollectionViewContentSize 的值。所以我们需要在每次数据发生改变时，更新一下高度约束的值。</p>
-
+}
+</code></pre></div><p>CollectionView 的真实大小其实是他的 Layout 对象的 CollectionViewContentSize 的值。所以我们需要在每次数据发生改变时，更新一下高度约束的值。</p>
 <p>还有就是实现 CollectionView 的 Delegate，点击后执行操作，在赋值在 Cell 对应的 Model 里等操作（比如调用相册等）。注意当点击最后一个 CollectionViewCell 时，要在它的后面插入一个数据，也就是说，最后一个总是会保持在最后。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">collectionView:</span>(UICollectionView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">collectionView</span> <span style="color:#50fa7b">didSelectItemAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>{
     <span style="color:#6272a4">//载入数据，如图片等
 </span><span style="color:#6272a4"></span>    CDZCollectionViewItem <span style="color:#ff79c6">*</span>item <span style="color:#ff79c6">=</span> [CDZCollectionViewItem new];
-    item.image <span style="color:#ff79c6">=</span> [UIImage <span style="color:#8be9fd;font-style:italic">imageNamed</span>:<span style="color:#f1fa8c">@&#34;example&#34;</span>];
-    <span style="color:#ff79c6">if</span> ((indexPath.row <span style="color:#ff79c6">==</span> <span style="color:#8be9fd;font-style:italic">self</span>.itemsArray.count <span style="color:#ff79c6">-</span> <span style="color:#bd93f9">1</span>)) {
+    item.image <span style="color:#ff79c6">=</span> [UIImage <span style="color:#8be9fd;font-style:italic">imageNamed</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">example</span><span style="color:#f1fa8c">&#34;</span>];
+    <span style="color:#ff79c6">if</span> ((indexPath.row <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.itemsArray.count <span style="color:#ff79c6">-</span> <span style="color:#bd93f9">1</span>)) {
         [<span style="color:#8be9fd;font-style:italic">self</span>.itemsArray <span style="color:#8be9fd;font-style:italic">insertObject</span>:item <span style="color:#8be9fd;font-style:italic">atIndex</span>:<span style="color:#8be9fd;font-style:italic">self</span>.itemsArray.count <span style="color:#ff79c6">-</span> <span style="color:#bd93f9">1</span>];
     }
     <span style="color:#ff79c6">else</span>{
         <span style="color:#8be9fd;font-style:italic">self</span>.itemsArray[indexPath.row] <span style="color:#ff79c6">=</span> item;
     }
     [<span style="color:#8be9fd;font-style:italic">self</span> reloadCell];
-}</code></pre></div>
-<h2 id="3-自定义-collectionviewcell-并实现删除按钮">3.自定义 Collectionviewcell 并实现删除按钮</h2>
-
+}
+</code></pre></div><h2 id="3-collectionviewcell-">3.自定义 Collectionviewcell 并实现删除按钮</h2>
 <p>先自定义一个 CDZCollectionViewCell，并用 xib 拖上一个 Imageview 用于展示图片，一个 button 用于点击关闭 Cell。并定义好解析 item 的方法。item 中设定一个 delBtnHidden 属性用于设定 Cell 里的 button 是否隐藏。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">setItem:</span>(CDZCollectionViewItem <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">item</span>{
     <span style="color:#6272a4">//  解析需要的数据
 </span><span style="color:#6272a4"></span>    <span style="color:#8be9fd;font-style:italic">self</span>.imageView.image <span style="color:#ff79c6">=</span> item.image;
     <span style="color:#8be9fd;font-style:italic">self</span>.delButton.hidden <span style="color:#ff79c6">=</span> item.delBtnHidden;
-}</code></pre></div>
-<p>并定义一个 Delegate 用于将按钮点击事件回传给 CollectionView 并删除数据。</p>
+}
+</code></pre></div><p>并定义一个 Delegate 用于将按钮点击事件回传给 CollectionView 并删除数据。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@protocol</span> <span style="color:#50fa7b">CDZCollectionCellDelegate</span><span style="color:#ff79c6">&lt;</span>NSObject<span style="color:#ff79c6">&gt;</span>
 <span style="color:#ff79c6">-</span> (<span style="color:#8be9fd">void</span>)<span style="color:#8be9fd;font-style:italic">didDelete</span>:(UICollectionViewCell <span style="color:#ff79c6">*</span>)cell;
 <span style="color:#ff79c6">@end</span>
@@ -327,31 +310,28 @@
 <span style="color:#ff79c6">@interface</span> <span style="color:#50fa7b">CDZCollectionViewCell</span> : <span style="color:#50fa7b">UICollectionViewCell</span>
 <span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">strong</span>, <span style="color:#ff79c6">nonatomic</span>) CDZCollectionViewItem <span style="color:#ff79c6">*</span>item;
 <span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">assign</span>, <span style="color:#ff79c6">nonatomic</span>) <span style="color:#8be9fd">id</span><span style="color:#ff79c6">&lt;</span>CDZCollectionCellDelegate<span style="color:#ff79c6">&gt;</span> delegate;
-<span style="color:#ff79c6">@end</span></code></pre></div>
-<p>并在点击按钮的事件中调用 Delegate，把 Cell 本身传回 TableView，从而找到 Cell 对应的 item。</p>
+<span style="color:#ff79c6">@end</span>
+</code></pre></div><p>并在点击按钮的事件中调用 Delegate，把 Cell 本身传回 TableView，从而找到 Cell 对应的 item。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">IBAction</span>)<span style="color:#50fa7b">delCell:</span>(UIButton <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">sender</span>{
     <span style="color:#ff79c6">if</span> ([<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">didDelete</span>:)]){
         [<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">didDelete</span>:<span style="color:#8be9fd;font-style:italic">self</span>];
     }
-}</code></pre></div>
-<p>然后使 CollectionView 所在的 TableViewCell 遵守 <code>CDZCollectionCellDelegate</code>。并和之前一样，在 CollectionView 的 Datasource 或 Delegate 中设置 Delegate。</p>
+}
+</code></pre></div><p>然后使 CollectionView 所在的 TableViewCell 遵守 <code>CDZCollectionCellDelegate</code>。并和之前一样，在 CollectionView 的 Datasource 或 Delegate 中设置 Delegate。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (UICollectionViewCell <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">collectionView:</span>(UICollectionView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">collectionView</span> <span style="color:#50fa7b">cellForItemAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>{
     <span style="color:#6272a4">//......
 </span><span style="color:#6272a4"></span>    cell.delegate <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>;
     <span style="color:#6272a4">//......
-</span><span style="color:#6272a4"></span>}</code></pre></div>
-<p>并调用 Cell 的 Delegate 的方法，通过 Cell 去找到对应的 indexPath。</p>
+</span><span style="color:#6272a4"></span>}
+</code></pre></div><p>并调用 Cell 的 Delegate 的方法，通过 Cell 去找到对应的 indexPath。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">didDelete:</span>(UICollectionViewCell <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">cell</span>{
     NSIndexPath <span style="color:#ff79c6">*</span>indexPath <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span>.collectionView <span style="color:#8be9fd;font-style:italic">indexPathForCell</span>:cell];
     [<span style="color:#8be9fd;font-style:italic">self</span>.itemsArray <span style="color:#8be9fd;font-style:italic">removeObjectAtIndex</span>:indexPath.row];
     [<span style="color:#8be9fd;font-style:italic">self</span> reloadCell];
-}</code></pre></div>
-<p>第一个 Cell 是没有关闭按钮的，那么只要把第一个 item 的 delBthHidden 属性设为 YES 就可以了。</p>
-
-<h2 id="最后">最后</h2>
-
+}
+</code></pre></div><p>第一个 Cell 是没有关闭按钮的，那么只要把第一个 item 的 delBthHidden 属性设为 YES 就可以了。</p>
+<h2 id="heading-1">最后</h2>
 <p>所有源码和 <a href="https://github.com/Nemocdz/CDZCollectionInTableDemo">Demo</a></p>
-
 <p>如果您觉得有帮助,不妨给个 star 鼓励一下,欢迎关注&amp;交流</p></article>
     <footer class="post-footer">
       

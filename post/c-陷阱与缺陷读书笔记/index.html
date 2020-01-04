@@ -47,7 +47,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.58.1">
+<meta name="generator" content="Hugo 0.62.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/c-%E9%99%B7%E9%98%B1%E4%B8%8E%E7%BC%BA%E9%99%B7%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
@@ -68,11 +68,10 @@
 
 <meta name="keywords" content="Swift, iOS, OC, Objective-C" >
 
-<meta name='description' itemprop="description" content="&lt;h2 id=&#34;多字符记号&#34;&gt;多字符记号&lt;/h2&gt;
-
+<meta name='description' itemprop="description" content="&lt;h2 id=&#34;heading&#34;&gt;多字符记号&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号&lt;/li&gt;
-&lt;li&gt;组合赋值运算符是两个记号，如 &lt;">
+&lt;li&gt;组合赋值运算符是两个记号，如 ">
 
 
 <meta name="theme-color" content="#02b875">
@@ -221,48 +220,41 @@
     
 	
 	<nav id="TableOfContents">
-<ul>
-<li><a href="#多字符记号">多字符记号</a></li>
-<li><a href="#单引号与双引号">单引号与双引号</a></li>
-<li><a href="#声明">声明</a></li>
-<li><a href="#函数调用">函数调用</a></li>
-<li><a href="#表达式求值顺序">表达式求值顺序</a></li>
-<li><a href="#函数参数转换">函数参数转换</a></li>
-<li><a href="#指针非数组">指针非数组</a></li>
-<li><a href="#除法">除法</a></li>
-</ul>
+  <ul>
+    <li><a href="#heading">多字符记号</a></li>
+    <li><a href="#heading-1">单引号与双引号</a></li>
+    <li><a href="#heading-2">声明</a></li>
+    <li><a href="#heading-3">函数调用</a></li>
+    <li><a href="#heading-4">表达式求值顺序</a></li>
+    <li><a href="#heading-5">函数参数转换</a></li>
+    <li><a href="#heading-6">指针非数组</a></li>
+    <li><a href="#heading-7">除法</a></li>
+  </ul>
 </nav>
 
-    <article class="post-content"><h2 id="多字符记号">多字符记号</h2>
-
+    <article class="post-content"><h2 id="heading">多字符记号</h2>
 <ul>
 <li>输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号</li>
 <li>组合赋值运算符是两个记号，如 <code>+=</code></li>
 </ul>
-
-<h2 id="单引号与双引号">单引号与双引号</h2>
-
+<h2 id="heading-1">单引号与双引号</h2>
 <ul>
 <li>单引号是当中字符对照整数序列的值</li>
-
-<li><p>双引号是初始化一个无名数组指针包括挡住字符和一个附近二进制为 0 的字符</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">printf(<span style="color:#f1fa8c">&#34;Hello world</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>);
-<span style="color:#6272a4">//等价于
-</span><span style="color:#6272a4"></span><span style="color:#8be9fd">char</span> hello[] <span style="color:#ff79c6">=</span> { <span style="color:#f1fa8c">&#39;H&#39;</span>, <span style="color:#f1fa8c">&#39;e&#39;</span>, <span style="color:#f1fa8c">&#39;l&#39;</span>, <span style="color:#f1fa8c">&#39;l&#39;</span>, <span style="color:#f1fa8c">&#39;o&#39;</span>, <span style="color:#f1fa8c">&#39; &#39;</span>, <span style="color:#f1fa8c">&#39;w&#39;</span>, <span style="color:#f1fa8c">&#39;o&#39;</span>, <span style="color:#f1fa8c">&#39;r&#39;</span>, <span style="color:#f1fa8c">&#39;l&#39;</span>, <span style="color:#f1fa8c">&#39;d&#39;</span>, <span style="color:#f1fa8c">&#39;\n&#39;</span>, <span style="color:#bd93f9">0</span> };
-printf(hello);</code></pre></div></li>
+<li>双引号是初始化一个无名数组指针包括挡住字符和一个附近二进制为 0 的字符</li>
 </ul>
-
-<h2 id="声明">声明</h2>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">printf(<span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">Hello world</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>);
+<span style="color:#6272a4">//等价于
+</span><span style="color:#6272a4"></span><span style="color:#8be9fd">char</span> hello[] <span style="color:#ff79c6">=</span> { <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">H</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">e</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">l</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">l</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">o</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c"> </span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">w</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">o</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">r</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">l</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">d</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#bd93f9">0</span> };
+printf(hello);
+</code></pre></div><h2 id="heading-2">声明</h2>
 <p>变量声明=类型+对该类型求值的表达式</p>
-
 <p>类型的模型=变量声明去除变量名和分号后用括号括起来</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#8be9fd">float</span> <span style="color:#ff79c6">*</span><span style="color:#50fa7b">a</span>();
 <span style="color:#6272a4">//a是一个返回float指针的函数，模型为
 </span><span style="color:#6272a4"></span>(<span style="color:#8be9fd">float</span> <span style="color:#ff79c6">*</span>())
 
 <span style="color:#6272a4">//调用地址0的函数
-</span><span style="color:#6272a4">//调用变量
+</span><span style="color:#6272a4"></span><span style="color:#6272a4">//调用变量
 </span><span style="color:#6272a4"></span>(<span style="color:#ff79c6">*</span>a)();
 <span style="color:#6272a4">//a为返回void的函数的指针
 </span><span style="color:#6272a4"></span><span style="color:#8be9fd">void</span> (<span style="color:#ff79c6">*</span>b)();
@@ -271,46 +263,35 @@ printf(hello);</code></pre></div></li>
 <span style="color:#6272a4">//将0转为此类型
 </span><span style="color:#6272a4"></span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">*</span>)())<span style="color:#bd93f9">0</span>;
 <span style="color:#6272a4">//调用转换后的变量
-</span><span style="color:#6272a4"></span>(<span style="color:#ff79c6">*</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">*</span>)())<span style="color:#bd93f9">0</span>)();</code></pre></div>
-<h2 id="函数调用">函数调用</h2>
-
+</span><span style="color:#6272a4"></span>(<span style="color:#ff79c6">*</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">*</span>)())<span style="color:#bd93f9">0</span>)();
+</code></pre></div><h2 id="heading-3">函数调用</h2>
 <p>需要参数列表，可无参数</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">f();<span style="color:#6272a4">//函数调用
-</span><span style="color:#6272a4"></span>f;<span style="color:#ff79c6">//</span>函数地址求值，不调用</code></pre></div>
-<h2 id="表达式求值顺序">表达式求值顺序</h2>
-
+</span><span style="color:#6272a4"></span>f;<span style="color:#6272a4">//函数地址求值，不调用
+</span></code></pre></div><h2 id="heading-4">表达式求值顺序</h2>
 <ul>
 <li><code>&amp;&amp;</code> 和 <code>||</code> 先求左边，左边为真才求右边</li>
 <li>a?b:c  b 和 c 只求其中一个</li>
 </ul>
-
-<h2 id="函数参数转换">函数参数转换</h2>
-
+<h2 id="heading-5">函数参数转换</h2>
 <p>规则</p>
-
 <ol>
 <li>比 <code>int</code> 短的整型转换为 <code>int</code></li>
 <li>比 <code>double</code> 短的浮点转换为 <code>double</code></li>
 <li>其余不转换</li>
 </ol>
-
-<h2 id="指针非数组">指针非数组</h2>
-
+<h2 id="heading-6">指针非数组</h2>
 <p><code>char</code> 指针变量是指向其数组第 0 个元素的指针</p>
-
-<h2 id="除法">除法</h2>
+<h2 id="heading-7">除法</h2>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">q <span style="color:#ff79c6">=</span> a <span style="color:#ff79c6">/</span> b;
-r <span style="color:#ff79c6">=</span> a <span style="color:#ff79c6">%</span> b;</code></pre></div>
-<p>保证</p>
-
+r <span style="color:#ff79c6">=</span> a <span style="color:#ff79c6">%</span> b;
+</code></pre></div><p>保证</p>
 <ul>
 <li>q * b + r == a</li>
 <li>绝对值 r&lt; 绝对值 b</li>
 <li>当a &gt;=0 且 b &gt; 0 时，r &gt;= 0</li>
 </ul>
-
 <p>不一定保证</p>
-
 <ul>
 <li>a 为负数，q 也为负</li>
 <li>r &gt;= 0</li>

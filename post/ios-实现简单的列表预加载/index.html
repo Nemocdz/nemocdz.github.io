@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.58.1">
+<meta name="generator" content="Hugo 0.62.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84%E5%88%97%E8%A1%A8%E9%A2%84%E5%8A%A0%E8%BD%BD/">
@@ -220,43 +220,38 @@
     
 	
 	<nav id="TableOfContents">
-<ul>
-<li><a href="#加载策略">加载策略</a>
-<ul>
-<li><a href="#阈值策略">阈值策略</a></li>
-<li><a href="#剩余策略">剩余策略</a></li>
-<li><a href="#除法策略">除法策略</a></li>
-</ul></li>
-<li><a href="#预加载组件">预加载组件</a></li>
-<li><a href="#最后">最后</a></li>
-</ul>
+  <ul>
+    <li><a href="#heading">加载策略</a>
+      <ul>
+        <li><a href="#heading-1">阈值策略</a></li>
+        <li><a href="#heading-2">剩余策略</a></li>
+        <li><a href="#heading-3">除法策略</a></li>
+      </ul>
+    </li>
+    <li><a href="#heading-4">预加载组件</a></li>
+    <li><a href="#heading-5">最后</a></li>
+  </ul>
 </nav>
 
     <article class="post-content"><p>在大部分 App 中，在有 feeds 流之类列表的地方，由于后端数据一般采用分页加载，为了用户体验需要做预加载。最简单的加载方式，就是当列表显示的内容达到一定的数量时候，自动请求下一个分页。</p>
-
-<h2 id="加载策略">加载策略</h2>
-
+<h2 id="heading">加载策略</h2>
 <p>而这其实就是根据总行数，列表总高度，列表当前偏移值这三个数字决定是否要加载的关系式 fx。这里判断加载的策略，是需要自定义的，所以可以定义这样一个 Protocol。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">ListPrefetcherStrategy</span> {
     <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">totalRowsCount</span>:<span style="color:#8be9fd;font-style:italic">Int</span> { <span style="color:#ff79c6">get</span> <span style="color:#ff79c6">set</span> }
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">shouldFetch</span>(<span style="color:#ff79c6">_</span> totalHeight:CGFloat, <span style="color:#ff79c6">_</span> offsetY:CGFloat) -&gt; <span style="color:#8be9fd;font-style:italic">Bool</span>
-}</code></pre></div>
-<p>下面给出几种简单的加载策略。</p>
-
-<h3 id="阈值策略">阈值策略</h3>
-
+}
+</code></pre></div><p>下面给出几种简单的加载策略。</p>
+<h3 id="heading-1">阈值策略</h3>
 <p>设定一个阈值，比如 70%，显示内容达到阈值时进行加载。这种比较适用于每一页的数量一致的情况。</p>
-
 <p>同时要注意的是，这里的阈值应该是每个分页的阈值，总的阈值会随着列表长度增长。比如设置阈值为 70%，每页加载 10 个，第一页在加载到 7 个时进行预加载，第二页在第 17 个时进行预加载，此时阈值为 85%，而如果还是 70%，则会在第 14 个时进行预加载。所以这里的阈值需要动态增长。</p>
-
 <p>假设我们已知目前列表的数据量和目前页数，根据每一页的阈值就可以动态计算总阈值：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 数据总数除以当前页数，算出每一页的数量</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span><span style="color:#6272a4">总</span><span style="color:#6272a4">数</span><span style="color:#6272a4">除</span><span style="color:#6272a4">以</span><span style="color:#6272a4">当</span><span style="color:#6272a4">前</span><span style="color:#6272a4">页</span><span style="color:#6272a4">数</span><span style="color:#6272a4">，</span><span style="color:#6272a4">算</span><span style="color:#6272a4">出</span><span style="color:#6272a4">每</span><span style="color:#6272a4">一</span><span style="color:#6272a4">页</span><span style="color:#6272a4">的</span><span style="color:#6272a4">数</span><span style="color:#6272a4">量</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">perPageCount</span> = <span style="color:#8be9fd;font-style:italic">Double</span>(totalRowsCount) <span style="color:#ff79c6">/</span> <span style="color:#8be9fd;font-style:italic">Double</span>(currentPageIndex <span style="color:#ff79c6">+</span> <span style="color:#bd93f9">1</span>)
-<span style="color:#6272a4">// 每页数量乘以页数加上每一页的阈值的和，就是总共需要的数量</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">每</span><span style="color:#6272a4">页</span><span style="color:#6272a4">数</span><span style="color:#6272a4">量</span><span style="color:#6272a4">乘</span><span style="color:#6272a4">以</span><span style="color:#6272a4">页</span><span style="color:#6272a4">数</span><span style="color:#6272a4">加</span><span style="color:#6272a4">上</span><span style="color:#6272a4">每</span><span style="color:#6272a4">一</span><span style="color:#6272a4">页</span><span style="color:#6272a4">的</span><span style="color:#6272a4">阈</span><span style="color:#6272a4">值</span><span style="color:#6272a4">的</span><span style="color:#6272a4">和</span><span style="color:#6272a4">，</span><span style="color:#6272a4">就</span><span style="color:#6272a4">是</span><span style="color:#6272a4">总</span><span style="color:#6272a4">共</span><span style="color:#6272a4">需</span><span style="color:#6272a4">要</span><span style="color:#6272a4">的</span><span style="color:#6272a4">数</span><span style="color:#6272a4">量</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">needRowsCount</span> = perPageCount <span style="color:#ff79c6">*</span> (<span style="color:#8be9fd;font-style:italic">Double</span>(currentPageIndex) <span style="color:#ff79c6">+</span> threshold)
-<span style="color:#6272a4">// 算出动态的阈值</span>
-<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">actalThreshold</span> = needRowsCount <span style="color:#ff79c6">/</span> <span style="color:#8be9fd;font-style:italic">Double</span>(totalRowsCount)</code></pre></div>
-<p>这里需要记录当前的页数，笔者这里用了一个比较 trick 的做法，当行数增长时，则认为页数 +1，行数减少时，则认为页数归 0，适用于下拉刷新整个列表清空的情况。可以用属性观察 <code>willSet</code> 来改变页数。</p>
+<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">算</span><span style="color:#6272a4">出</span><span style="color:#6272a4">动</span><span style="color:#6272a4">态</span><span style="color:#6272a4">的</span><span style="color:#6272a4">阈</span><span style="color:#6272a4">值</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">actalThreshold</span> = needRowsCount <span style="color:#ff79c6">/</span> <span style="color:#8be9fd;font-style:italic">Double</span>(totalRowsCount)
+</code></pre></div><p>这里需要记录当前的页数，笔者这里用了一个比较 trick 的做法，当行数增长时，则认为页数 +1，行数减少时，则认为页数归 0，适用于下拉刷新整个列表清空的情况。可以用属性观察 <code>willSet</code> 来改变页数。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">ThresholdStrategy</span>: ListPrefetcherStrategy{
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">shouldFetch</span>(<span style="color:#ff79c6">_</span> totalHeight: CGFloat, <span style="color:#ff79c6">_</span> offsetY: CGFloat) -&gt; <span style="color:#8be9fd;font-style:italic">Bool</span> {
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">viewRatio</span> = <span style="color:#8be9fd;font-style:italic">Double</span>(offsetY <span style="color:#ff79c6">/</span> totalHeight)
@@ -288,9 +283,8 @@
         <span style="color:#ff79c6">self</span>.threshold = threshold
         totalRowsCount = <span style="color:#bd93f9">0</span>
     }
-}</code></pre></div>
-<h3 id="剩余策略">剩余策略</h3>
-
+}
+</code></pre></div><h3 id="heading-2">剩余策略</h3>
 <p>也可以设定当列表剩余未展示行数即将少于某个值时，进行加载。这种适合每次分页数量不一定一致的情况。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">RemainStrategy</span>: ListPrefetcherStrategy{
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">shouldFetch</span>(<span style="color:#ff79c6">_</span> totalHeight: CGFloat, <span style="color:#ff79c6">_</span> offsetY: CGFloat) -&gt; <span style="color:#8be9fd;font-style:italic">Bool</span> {
@@ -311,9 +305,8 @@
         <span style="color:#ff79c6">self</span>.remainRowsCount = remainRowsCount
         totalRowsCount = <span style="color:#bd93f9">0</span>
     }
-}</code></pre></div>
-<h3 id="除法策略">除法策略</h3>
-
+}
+</code></pre></div><h3 id="heading-3">除法策略</h3>
 <p>还可以自己定义除数和余数，当达到余数时，进行加载。当然还要考虑一下实际余数比指定余数小的情况，这里笔者简单的往前面偏移一个除数的量进行判断。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">OffsetStrategy</span>: ListPrefetcherStrategy {
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">shouldFetch</span>(<span style="color:#ff79c6">_</span> totalHeight: CGFloat, <span style="color:#ff79c6">_</span> offsetY: CGFloat) -&gt; <span style="color:#8be9fd;font-style:italic">Bool</span> {
@@ -336,17 +329,15 @@
         <span style="color:#ff79c6">self</span>.offset = offset
         totalRowsCount = <span style="color:#bd93f9">0</span>
     }
-}</code></pre></div>
-<h2 id="预加载组件">预加载组件</h2>
-
+}
+</code></pre></div><h2 id="heading-4">预加载组件</h2>
 <p>组件需要的信息有，scrollView，总行数，以及加载时候的通知外界。</p>
-
 <p>定义一个 delegate 让外界遵循。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">ListPrefetcherDelegate</span>:<span style="color:#8be9fd;font-style:italic">AnyObject</span> {
     <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">totalRowsCount</span>:<span style="color:#8be9fd;font-style:italic">Int</span> { <span style="color:#ff79c6">get</span> }
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">startFetch</span>()
-}</code></pre></div>
-<p>然后用 KVO 监听 scrollView 的 contentSize，当发生变化是，就认为总行数发生改变，就可以将总行数设置给策略。监听 scrollView 的 contentOffset，变化时就是列表滚动，就可以用策略进行判断。</p>
+}
+</code></pre></div><p>然后用 KVO 监听 scrollView 的 contentSize，当发生变化是，就认为总行数发生改变，就可以将总行数设置给策略。监听 scrollView 的 contentOffset，变化时就是列表滚动，就可以用策略进行判断。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">ListPrefetcher</span>:NSObject{
     <span style="color:#ff79c6">@objc</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">scrollView</span>:UIScrollView
     <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">contentSizeObserver</span>:NSKeyValueObservation?
@@ -380,11 +371,10 @@
         <span style="color:#ff79c6">self</span>.scrollView = scrollView
       	<span style="color:#ff79c6">super</span>.<span style="color:#8be9fd;font-style:italic">init</span>()
     }
-}</code></pre></div>
-<p>这样外界使用起来只需要提供策略和 scrollView，实现 delegate 的方法，然后在需要的时候(比如 <code>viewDidAppear</code> &amp; <code>viewDidDisAppear</code>) start 和 stop，就可以自动完成预加载的工作了。</p>
+}
 
-<h2 id="最后">最后</h2>
-
+</code></pre></div><p>这样外界使用起来只需要提供策略和 scrollView，实现 delegate 的方法，然后在需要的时候(比如 <code>viewDidAppear</code> &amp; <code>viewDidDisAppear</code>) start 和 stop，就可以自动完成预加载的工作了。</p>
+<h2 id="heading-5">最后</h2>
 <p>完整的 <a href="https://github.com/Nemocdz/ListPrefetcher">Demo</a>，也可以自定义不同的策略实现。</p></article>
     <footer class="post-footer">
       

@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.58.1">
+<meta name="generator" content="Hugo 0.62.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E6%B5%85%E8%B0%88%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/">
@@ -214,110 +214,74 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">浅谈移动端图片压缩(iOS &amp; Android)</h1>
-      <p class="post-meta">@Nemocdz · Jan 20, 2019 · 13 min read</p>
+      <p class="post-meta">@Nemocdz · Jan 20, 2019 · 12 min read</p>
     </header>
 
     
 	
 	<nav id="TableOfContents">
-<ul>
-<li><a href="#图片格式基础">图片格式基础</a>
-<ul>
-<li><a href="#点阵图-矢量图">点阵图&amp;矢量图</a></li>
-<li><a href="#颜色">颜色</a></li>
-<li><a href="#移动端常用图片格式">移动端常用图片格式</a>
-<ul>
-<li><a href="#静态图">静态图</a></li>
-<li><a href="#动态图">动态图</a></li>
-</ul></li>
-<li><a href="#移动端系统图片处理架构">移动端系统图片处理架构</a></li>
-</ul></li>
-<li><a href="#ios-的-imageio">iOS 的 ImageIO</a>
-<ul>
-<li><a href="#解码">解码</a>
-<ul>
-<li><a href="#1-创建-cgimagesource">1. 创建 CGImageSource</a></li>
-<li><a href="#2-解码得到-cgimage">2. 解码得到 CGImage</a></li>
-</ul></li>
-<li><a href="#编码">编码</a>
-<ul>
-<li><a href="#1-创建-cgimagedestination">1. 创建 CGImageDestination</a></li>
-<li><a href="#2-添加-cgimage">2. 添加 CGImage</a></li>
-<li><a href="#3-进行编码">3. 进行编码</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#压缩思路分析">压缩思路分析</a>
-<ul>
-<li><a href="#判断图片格式">判断图片格式</a>
-<ul>
-<li><a href="#ios">iOS</a></li>
-<li><a href="#andorid">Andorid</a></li>
-</ul></li>
-<li><a href="#色彩深度改变">色彩深度改变</a>
-<ul>
-<li><a href="#ios-1">iOS</a></li>
-<li><a href="#android">Android</a></li>
-</ul></li>
-<li><a href="#jpg-的压缩系数改变">JPG 的压缩系数改变</a>
-<ul>
-<li><a href="#ios-2">iOS</a></li>
-<li><a href="#andoid">Andoid</a></li>
-</ul></li>
-<li><a href="#gif-的压缩">GIF 的压缩</a>
-<ul>
-<li><a href="#ios-3">iOS</a></li>
-<li><a href="#android-1">Android</a></li>
-</ul></li>
-<li><a href="#分辨率压缩">分辨率压缩</a>
-<ul>
-<li><a href="#ios-4">iOS</a></li>
-<li><a href="#android-2">Android</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#限制大小的压缩方式">限制大小的压缩方式</a>
-<ul>
-<li><a href="#ios-5">iOS</a></li>
-<li><a href="#android-3">Android</a></li>
-</ul></li>
-<li><a href="#最后">最后</a></li>
-<li><a href="#参考链接">参考链接</a></li>
-</ul>
+  <ul>
+    <li><a href="#heading">图片格式基础</a>
+      <ul>
+        <li><a href="#heading-1">点阵图&矢量图</a></li>
+        <li><a href="#heading-2">颜色</a></li>
+        <li><a href="#heading-3">移动端常用图片格式</a></li>
+        <li><a href="#heading-6">移动端系统图片处理架构</a></li>
+      </ul>
+    </li>
+    <li><a href="#ios--imageio">iOS 的 ImageIO</a>
+      <ul>
+        <li><a href="#heading-7">解码</a></li>
+        <li><a href="#heading-8">编码</a></li>
+      </ul>
+    </li>
+    <li><a href="#heading-9">压缩思路分析</a>
+      <ul>
+        <li><a href="#heading-10">判断图片格式</a></li>
+        <li><a href="#heading-11">色彩深度改变</a></li>
+        <li><a href="#jpg-">JPG 的压缩系数改变</a></li>
+        <li><a href="#gif-">GIF 的压缩</a></li>
+        <li><a href="#heading-12">分辨率压缩</a></li>
+      </ul>
+    </li>
+    <li><a href="#heading-13">限制大小的压缩方式</a>
+      <ul>
+        <li><a href="#ios-5">iOS</a></li>
+        <li><a href="#android-3">Android</a></li>
+      </ul>
+    </li>
+    <li><a href="#heading-14">最后</a></li>
+    <li><a href="#heading-15">参考链接</a></li>
+  </ul>
 </nav>
 
     <article class="post-content"><p>在 App 中，如果分享、发布、上传功能涉及到图片，必不可少会对图片进行一定程度的压缩。笔者最近在公司项目中恰好重构了双端（iOS&amp;Android）的图片压缩模块。本文会非常基础的讲解一些图片压缩的方式和思路。</p>
-
-<h2 id="图片格式基础">图片格式基础</h2>
-
-<h3 id="点阵图-矢量图">点阵图&amp;矢量图</h3>
-
+<h2 id="heading">图片格式基础</h2>
+<h3 id="heading-1">点阵图&amp;矢量图</h3>
 <ul>
 <li>点阵图：也叫位图。用像素为单位，像素保存颜色信息，排列像素实现显示。</li>
 <li>矢量图：记录元素形状和颜色的算法，显示时展示算法运算的结果。</li>
 </ul>
-
-<h3 id="颜色">颜色</h3>
-
+<h3 id="heading-2">颜色</h3>
 <p>表示颜色时，有两种形式，一种为索引色（Index Color），一种为直接色（Direct Color）</p>
-
 <ul>
 <li>索引色：用一个数字索引代表一种颜色，在图像信息中存储数字到颜色的映射关系表（调色盘 Palette）。每个像素保存该像素颜色对应的数字索引。一般调色盘只能存储有限种类的颜色，通常为 256 种。所以每个像素的数字占用 1 字节（8 bit）大小。</li>
 <li>直接色：用四个数字来代表一种颜色，数字分别对应颜色中红色，绿色，蓝色，透明度（RGBA）。每个像素保存这四个纬度的信息来代表该像素的颜色。根据色彩深度（每个像素存储颜色信息的 bit 数不同），最多可以支持的颜色种类也不同，常见的有 8 位（R3+G3+B2）、16 位（R5+G6+B5）、24 位（R8+G8+B8）、32 位（A8+R8+G8+B8）。所以每个像素占用 1~4 字节大小。</li>
 </ul>
-
-<h3 id="移动端常用图片格式">移动端常用图片格式</h3>
-
+<h3 id="heading-3">移动端常用图片格式</h3>
 <p>图片格式中一般分为静态图和动态图</p>
-
-<h4 id="静态图">静态图</h4>
-
+<h4 id="heading-4">静态图</h4>
 <ul>
-<li><p>JPG：是支持 JPEG（ 一种有损压缩方法）标准中最常用的图片格式。采用点阵图。常见的是使用 24 位的颜色深度的直接色（不支持透明）。</p></li>
-
-<li><p>PNG：是支持无损压缩的图片格式。采用点阵图。PNG 有 5 种颜色选项：索引色、灰度、灰度透明、真彩色（24 位直接色）、真彩色透明（32 位直接色）。</p></li>
-
-<li><p>WebP：是同时支持有损压缩和无所压缩的的图片格式。采用点阵图。支持 32 位直接色。移动端支持情况如下：</p></li>
+<li>
+<p>JPG：是支持 JPEG（ 一种有损压缩方法）标准中最常用的图片格式。采用点阵图。常见的是使用 24 位的颜色深度的直接色（不支持透明）。</p>
+</li>
+<li>
+<p>PNG：是支持无损压缩的图片格式。采用点阵图。PNG 有 5 种颜色选项：索引色、灰度、灰度透明、真彩色（24 位直接色）、真彩色透明（32 位直接色）。</p>
+</li>
+<li>
+<p>WebP：是同时支持有损压缩和无所压缩的的图片格式。采用点阵图。支持 32 位直接色。移动端支持情况如下：</p>
+</li>
 </ul>
-
 <table>
 <thead>
 <tr>
@@ -327,7 +291,6 @@
 <th align="center">浏览器</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td align="center">iOS</td>
@@ -335,7 +298,6 @@
 <td align="center">不支持</td>
 <td align="center">不支持</td>
 </tr>
-
 <tr>
 <td align="center">Android</td>
 <td align="center">4.3 后支持完整功能</td>
@@ -344,15 +306,15 @@
 </tr>
 </tbody>
 </table>
-
-<h4 id="动态图">动态图</h4>
-
+<h4 id="heading-5">动态图</h4>
 <ul>
-<li><p>GIF：是支持无损压缩的图片格式。采用点阵图。使用索引色，并有 1 位透明度通道（透明与否）。</p></li>
-
-<li><p>APNG：基于 PNG 格式扩展的格式，加入动态图支持。采用点阵图。使用 32 位直接色。但没有被官方 PNG 接纳。移动端支持情况如下：</p></li>
+<li>
+<p>GIF：是支持无损压缩的图片格式。采用点阵图。使用索引色，并有 1 位透明度通道（透明与否）。</p>
+</li>
+<li>
+<p>APNG：基于 PNG 格式扩展的格式，加入动态图支持。采用点阵图。使用 32 位直接色。但没有被官方 PNG 接纳。移动端支持情况如下：</p>
+</li>
 </ul>
-
 <table>
 <thead>
 <tr>
@@ -362,7 +324,6 @@
 <th align="center">浏览器</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td align="center">iOS</td>
@@ -370,7 +331,6 @@
 <td align="center">支持</td>
 <td align="center">支持</td>
 </tr>
-
 <tr>
 <td align="center">Android</td>
 <td align="center">第三方库支持</td>
@@ -379,11 +339,9 @@
 </tr>
 </tbody>
 </table>
-
 <ul>
 <li>Animated Webp：Webp 的动图形式，实际上是文件中打包了多个单帧 Webp，在 libwebp 0.4 后开始支持。移动端支持情况如下：</li>
 </ul>
-
 <table>
 <thead>
 <tr>
@@ -393,7 +351,6 @@
 <th align="center">系统浏览器</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td align="center">iOS</td>
@@ -401,7 +358,6 @@
 <td align="center">不支持</td>
 <td align="center">不支持</td>
 </tr>
-
 <tr>
 <td align="center">Android</td>
 <td align="center">第三方库支持</td>
@@ -410,63 +366,36 @@
 </tr>
 </tbody>
 </table>
-
 <p>而由于一般项目需要兼容三端（iOS、Android、Web 的关系），最简单就是支持 JPG、PNG、GIF 这三种通用的格式。所以本文暂不讨论其余图片格式的压缩。</p>
-
-<h3 id="移动端系统图片处理架构">移动端系统图片处理架构</h3>
-
+<h3 id="heading-6">移动端系统图片处理架构</h3>
 <p>根据我的了解，画了一下 iOS&amp;Android 图片处理架构。iOS 这边，也是可以直接调用底层一点的框架的。</p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fz5abubavwj31pg0u0gsk.jpg" alt="屏幕快照 2019-01-13 下午9.37.00" /></p>
-
-<h2 id="ios-的-imageio">iOS 的 ImageIO</h2>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fz5abubavwj31pg0u0gsk.jpg" alt="屏幕快照 2019-01-13 下午9.37.00"></p>
+<h2 id="ios--imageio">iOS 的 ImageIO</h2>
 <p>本文 iOS 端处理图片主要用 ImageIO 框架，使用的原因主要是静态图动态图 API 调用保持一致，且不会因为 UIImage 转换时会丢失一部分数据的信息。</p>
-
 <p>ImageIO 主要提供了图片编解码功能，封装了一套 C 语言接口。在 Swift 中不需要对 C 对象进行内存管理，会比 Objective-C 中使用方便不少，但 api 结果返回都是 Optional（实际上非空），需要用 <code>guard</code>/<code>if</code>，或者 <code>!</code>进行转换。</p>
-
-<h3 id="解码">解码</h3>
-
-<h4 id="1-创建-cgimagesource">1. 创建 CGImageSource</h4>
-
+<h3 id="heading-7">解码</h3>
+<h4 id="1--cgimagesource">1. 创建 CGImageSource</h4>
 <p><code>CGImageSource</code> 相当于 ImageIO 数据来源的抽象类。通用的使用方式 <code>CGImageSourceCreateWithDataProvider:</code> 需要提供一个 DataProvider，可以指定文件、URL、Data 等输入。也有通过传入 CFData 来进行创建的便捷方法 <code>CGImageSourceCreateWithData:</code>。方法的第二个参数 options 传入一个字典进行配置。根据 Apple 在 WWDC 2018 上的 <a href="https://developer.apple.com/videos/play/wwdc2018/219/">Image and Graphics Best Practices</a> 上的例子，当不需要解码仅需要创建 <code>CGImageSource</code> 的时候，应该将 <code>kCGImageSourceShouldCache</code> 设为 false。</p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fz7jhd3o50j30yg0fnwlf.jpg" alt="11994763-6f25c32bd4d3b427" /></p>
-
-<h4 id="2-解码得到-cgimage">2. 解码得到 CGImage</h4>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fz7jhd3o50j30yg0fnwlf.jpg" alt="11994763-6f25c32bd4d3b427"></p>
+<h4 id="2--cgimage">2. 解码得到 CGImage</h4>
 <p>用 <code>CGImageSourceCreateImageAtIndex:</code> 或者 <code>CGImageSourceCreateThumbnailAtIndex:</code> 来获取生成的 <code>CGImage</code>，这里参数的 Index 就是第几帧图片，静态图传入 0 即可。</p>
-
-<h3 id="编码">编码</h3>
-
-<h4 id="1-创建-cgimagedestination">1. 创建 CGImageDestination</h4>
-
+<h3 id="heading-8">编码</h3>
+<h4 id="1--cgimagedestination">1. 创建 CGImageDestination</h4>
 <p><code>CGImageDestination</code> 相当于 ImageIO 数据输出的抽象类。通用的使用方式 <code>CGImageDestinationCreateWithDataConsumer:</code> 需要提供一个 DataConsumer，可以置顶 URL、Data 等输入。也有通过传入 CFData 来进行创建的便捷方法 <code>CGImageDestinationCreateWithData:</code>，输出会写入到传入的 Data 中。方法还需要提供图片类型，图片帧数。</p>
-
-<h4 id="2-添加-cgimage">2. 添加 CGImage</h4>
-
+<h4 id="2--cgimage-1">2. 添加 CGImage</h4>
 <p>添加 <code>CGImage</code> 使用 <code>CGImageDestinationAddImage:</code> 方法，动图的话，按顺序多次调用就行了。</p>
-
 <p>而且还有一个特别的 <code>CGImageDestinationAddImageFromSource:</code> 方法，添加的其实是一个 <code>CGImageSource</code>，有什么用呢，通过 options 参数，达到改变图像设置的作用。比如改变 JPG 的压缩参数，用上这个功能后，就不需要转换成更顶层的对象（比如 <code>UIImage</code>），减少了转换时的编解码的损耗，达到性能更优的目的。</p>
-
-<h4 id="3-进行编码">3. 进行编码</h4>
-
+<h4 id="3-">3. 进行编码</h4>
 <p>调用 <code>CGImageDestinationFinalize:</code> ，表示开始编码，完成后会返回一个 <code>Bool</code> 值，并将数据写入 <code>CGImageDestination</code> 提供的 DataConsumer 中。</p>
-
-<h2 id="压缩思路分析">压缩思路分析</h2>
-
+<h2 id="heading-9">压缩思路分析</h2>
 <p>位图占用的空间大小，其实就是像素数量 x 单像素占用空间 x 帧数。所以减小图片空间大小，其实就从这三个方向下手。其中单像素占用空间，在直接色的情况下，主要和色彩深度相关。在实际项目中，改变色彩深度会导致图片颜色和原图没有保持完全一致，笔者并不建议对色彩深度进行更改。而像素数量就是平时非常常用的图片分辨率缩放。除此之外，JPG 格式还有特有的通过指定压缩系数来进行有损压缩。</p>
-
 <ul>
 <li>JPG：压缩系数 + 分辨率缩放 + 色彩深度降低</li>
 <li>PNG： 分辨率缩放 + 降低色彩深度</li>
 <li>GIF：减少帧数 + 每帧分辨率缩放 + 减小调色盘</li>
 </ul>
-
-<h3 id="判断图片格式">判断图片格式</h3>
-
+<h3 id="heading-10">判断图片格式</h3>
 <p>后缀扩展名来判断其实并不保险，真实的判断方式应该是通过文件头里的信息进行判断。</p>
-
 <table>
 <thead>
 <tr>
@@ -475,18 +404,15 @@
 <th>GIF</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>开头：FF D8  + 结尾：FF D9</td>
 <td>89 50 4E 47 0D 0A 1A 0A</td>
-<td>47 49 46 38 <sup>39</sup>&frasl;<sub>37</sub> 61</td>
+<td>47 49 46 38 39/37 61</td>
 </tr>
 </tbody>
 </table>
-
 <p>简单判断用前三个字节来判断</p>
-
 <h4 id="ios">iOS</h4>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Data</span>{   
     <span style="color:#8be9fd;font-style:italic">enum</span> <span style="color:#50fa7b">ImageFormat</span> {
@@ -496,19 +422,18 @@
     <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">imageFormat</span>:ImageFormat {
         <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">headerData</span> = [<span style="color:#8be9fd;font-style:italic">UInt8</span>](repeating: <span style="color:#bd93f9">0</span>, count: <span style="color:#bd93f9">3</span>)
         <span style="color:#ff79c6">self</span>.copyBytes(to: &amp;headerData, from:(<span style="color:#bd93f9">0.</span>.&lt;<span style="color:#bd93f9">3</span>))
-        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">hexString</span> = headerData.reduce(<span style="color:#f1fa8c">&#34;&#34;</span>) { <span style="color:#8be9fd;font-style:italic">$0</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">String</span>((<span style="color:#8be9fd;font-style:italic">$1</span>&amp;<span style="color:#bd93f9">0xFF</span>), radix:<span style="color:#bd93f9">16</span>) }.uppercased()
+        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">hexString</span> = headerData.reduce(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span>) { <span style="color:#8be9fd;font-style:italic">$0</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">String</span>((<span style="color:#8be9fd;font-style:italic">$1</span>&amp;<span style="color:#bd93f9">0xFF</span>), radix:<span style="color:#bd93f9">16</span>) }.uppercased()
         <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">imageFormat</span> = ImageFormat.unknown
         <span style="color:#ff79c6">switch</span> hexString {
-        <span style="color:#ff79c6">case</span> <span style="color:#f1fa8c">&#34;FFD8FF&#34;</span>: imageFormat = .jpg
-        <span style="color:#ff79c6">case</span> <span style="color:#f1fa8c">&#34;89504E&#34;</span>: imageFormat = .png
-        <span style="color:#ff79c6">case</span> <span style="color:#f1fa8c">&#34;474946&#34;</span>: imageFormat = .gif
+        <span style="color:#ff79c6">case</span> <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">FFD8FF</span><span style="color:#f1fa8c">&#34;</span>: imageFormat = .jpg
+        <span style="color:#ff79c6">case</span> <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">89504E</span><span style="color:#f1fa8c">&#34;</span>: imageFormat = .png
+        <span style="color:#ff79c6">case</span> <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">474946</span><span style="color:#f1fa8c">&#34;</span>: imageFormat = .gif
         <span style="color:#ff79c6">default</span>:<span style="color:#ff79c6">break</span>
         }
         <span style="color:#ff79c6">return</span> imageFormat
     }
-}</code></pre></div>
-<p>iOS 中除了可以用文件头信息以外，还可以将 Data 转成 <code>CGImageSource</code>，然后用 <code>CGImageSourceGetType</code> 这个 API，这样会获取到 ImageIO 框架支持的图片格式的的 UTI 标识的字符串。对应的标识符常量定义在 MobileCoreServices 框架下的 <code>UTCoreTypes</code> 中。</p>
-
+}
+</code></pre></div><p>iOS 中除了可以用文件头信息以外，还可以将 Data 转成 <code>CGImageSource</code>，然后用 <code>CGImageSourceGetType</code> 这个 API，这样会获取到 ImageIO 框架支持的图片格式的的 UTI 标识的字符串。对应的标识符常量定义在 MobileCoreServices 框架下的 <code>UTCoreTypes</code> 中。</p>
 <table>
 <thead>
 <tr>
@@ -516,25 +441,21 @@
 <th>UTI 格式（字符串原始值）</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>kUTTypePNG</td>
 <td>public.png</td>
 </tr>
-
 <tr>
 <td>kUTTypeJPEG</td>
 <td>public.jpeg</td>
 </tr>
-
 <tr>
 <td>kUTTypeGIF</td>
 <td>com.compuserve.gif</td>
 </tr>
 </tbody>
 </table>
-
 <h4 id="andorid">Andorid</h4>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#ff79c6">enum</span> <span style="color:#ff79c6">class</span> <span style="color:#50fa7b">ImageFormat</span>{
     JPG, PNG, GIF, UNKNOWN
@@ -556,36 +477,30 @@
         }
     }
     <span style="color:#ff79c6">return</span> imageFormat
-}</code></pre></div>
-<h3 id="色彩深度改变">色彩深度改变</h3>
-
+}
+</code></pre></div><h3 id="heading-11">色彩深度改变</h3>
 <p>实际上，减少深度一般也就是从 32 位减少至 16 位，但颜色的改变并一定能让产品、用户、设计接受，所以笔者在压缩过程并没有实际使用改变色彩深度的方法，仅仅研究了做法。</p>
-
 <h4 id="ios-1">iOS</h4>
-
 <p>在 iOS 中，改变色彩深度，原生的 <code>CGImage</code> 库中，没有简单的方法。需要自己设置参数，重新生成 <code>CGImage</code>。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>?(width: <span style="color:#8be9fd;font-style:italic">Int</span>, height: <span style="color:#8be9fd;font-style:italic">Int</span>, bitsPerComponent: <span style="color:#8be9fd;font-style:italic">Int</span>, bitsPerPixel: <span style="color:#8be9fd;font-style:italic">Int</span>, bytesPerRow: <span style="color:#8be9fd;font-style:italic">Int</span>, space: CGColorSpace, bitmapInfo: CGBitmapInfo, provider: CGDataProvider, decode: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;CGFloat&gt;?, shouldInterpolate: <span style="color:#8be9fd;font-style:italic">Bool</span>, intent: CGColorRenderingIntent)</code></pre></div>
-<ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>?(width: <span style="color:#8be9fd;font-style:italic">Int</span>, height: <span style="color:#8be9fd;font-style:italic">Int</span>, bitsPerComponent: <span style="color:#8be9fd;font-style:italic">Int</span>, bitsPerPixel: <span style="color:#8be9fd;font-style:italic">Int</span>, bytesPerRow: <span style="color:#8be9fd;font-style:italic">Int</span>, space: CGColorSpace, bitmapInfo: CGBitmapInfo, provider: CGDataProvider, decode: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;CGFloat&gt;?, shouldInterpolate: <span style="color:#8be9fd;font-style:italic">Bool</span>, intent: CGColorRenderingIntent)
+</code></pre></div><ul>
 <li>bitsPerComponent 每个通道占用位数</li>
 <li>bitsPerPixel 每个像素占用位数，相当于所有通道加起来的位数，也就是色彩深度</li>
 <li>bytesPerRow 传入 0 即可，系统会自动计算</li>
 <li>space 色彩空间</li>
 <li>bitmapInfo 这个是一个很重要的东西，其中常用的信息有 <code>CGImageAlphaInfo</code>，代表是否有透明通道，透明通道在前还是后面（ARGB 还是 RGBA），是否有浮点数（floatComponents），<code>CGImageByteOrderInfo</code>，代表字节顺序，采用大端还是小端，以及数据单位宽度，iOS 一般采用 32 位小端模式，一般用 orderDefault 就好。</li>
 </ul>
-
 <p>那么对于常用的色彩深度，就可以用这些参数的组合来完成。同时笔者在查看更底层的 vImage 框架的 <code>vImage_CGImageFormat</code> 结构体时（CGImage 底层也是使用 vImage，具体可查看 Accelerate 框架 vImage 库的 vImage_Utilities 文件），发现了 Apple 的注释，里面也包含了常用的色彩深度用的参数。</p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fz7kziqcaij32q40t6n94.jpg" alt="屏幕快照 2019-01-15 下午9.16.40" /></p>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fz7kziqcaij32q40t6n94.jpg" alt="屏幕快照 2019-01-15 下午9.16.40"></p>
 <p>这一块为了和 Android 保持一致，笔者封装了 Android 常用的色彩深度参数对应的枚举值。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">enum</span> <span style="color:#50fa7b">ColorConfig</span>{
     <span style="color:#ff79c6">case</span> alpha8
     <span style="color:#ff79c6">case</span> rgb565
     <span style="color:#ff79c6">case</span> argb8888
     <span style="color:#ff79c6">case</span> rgbaF16
-    <span style="color:#ff79c6">case</span> unknown <span style="color:#6272a4">// 其余色彩配置</span>
-}</code></pre></div>
-<p><code>CGBitmapInfo</code> 由于是 Optional Set，可以封装用到的属性的便捷方法。</p>
+    <span style="color:#ff79c6">case</span> unknown <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">其</span><span style="color:#6272a4">余</span><span style="color:#6272a4">色</span><span style="color:#6272a4">彩</span><span style="color:#6272a4">配</span><span style="color:#6272a4">置</span>
+}
+</code></pre></div><p><code>CGBitmapInfo</code> 由于是 Optional Set，可以封装用到的属性的便捷方法。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">CGBitmapInfo</span> {
     <span style="color:#8be9fd;font-style:italic">init</span>(<span style="color:#ff79c6">_</span> alphaInfo:CGImageAlphaInfo, <span style="color:#ff79c6">_</span> isFloatComponents:<span style="color:#8be9fd;font-style:italic">Bool</span> = <span style="color:#ff79c6">false</span>) {
         <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">array</span> = [
@@ -599,8 +514,8 @@
         
         <span style="color:#ff79c6">self</span>.<span style="color:#8be9fd;font-style:italic">init</span>(array)
     }
-}</code></pre></div>
-<p>那么 ColorConfig 对应的 <code>CGImage</code> 参数也可以对应起来了。</p>
+}
+</code></pre></div><p>那么 ColorConfig 对应的 <code>CGImage</code> 参数也可以对应起来了。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">ColorConfig</span>{
     <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">CGImageConfig</span>{
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">bitsPerComponent</span>:<span style="color:#8be9fd;font-style:italic">Int</span>
@@ -622,8 +537,8 @@
             <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
         }
     }
-}</code></pre></div>
-<p>反过来，判断 <code>CGImage</code> 的 ColorConfig 的方法。</p>
+}
+</code></pre></div><p>反过来，判断 <code>CGImage</code> 的 ColorConfig 的方法。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">CGImage</span>{
     <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">colorConfig</span>:ColorConfig{
         <span style="color:#ff79c6">if</span> isColorConfig(.alpha8) {
@@ -653,14 +568,14 @@
             <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">false</span>
         }
     }
-}</code></pre></div>
-<p>对外封装的 Api，也就是直接介绍的 ImageIO 的使用步骤，只是参数不一样。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">    <span style="color:#6272a4">/// 改变图片到指定的色彩配置</span>
-    <span style="color:#6272a4">///</span>
-    <span style="color:#6272a4">/// - Parameters:</span>
-    <span style="color:#6272a4">///   - rawData: 原始图片数据</span>
-    <span style="color:#6272a4">///   - config: 色彩配置</span>
-    <span style="color:#6272a4">/// - Returns: 处理后数据</span>
+}
+</code></pre></div><p>对外封装的 Api，也就是直接介绍的 ImageIO 的使用步骤，只是参数不一样。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">改</span><span style="color:#6272a4">变</span><span style="color:#6272a4">图</span><span style="color:#6272a4">片</span><span style="color:#6272a4">到</span><span style="color:#6272a4">指</span><span style="color:#6272a4">定</span><span style="color:#6272a4">的</span><span style="color:#6272a4">色</span><span style="color:#6272a4">彩</span><span style="color:#6272a4">配</span><span style="color:#6272a4">置</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">P</span><span style="color:#6272a4">a</span><span style="color:#6272a4">r</span><span style="color:#6272a4">a</span><span style="color:#6272a4">m</span><span style="color:#6272a4">e</span><span style="color:#6272a4">t</span><span style="color:#6272a4">e</span><span style="color:#6272a4">r</span><span style="color:#6272a4">s</span><span style="color:#6272a4">:</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">r</span><span style="color:#6272a4">a</span><span style="color:#6272a4">w</span><span style="color:#6272a4">D</span><span style="color:#6272a4">a</span><span style="color:#6272a4">t</span><span style="color:#6272a4">a</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">原</span><span style="color:#6272a4">始</span><span style="color:#6272a4">图</span><span style="color:#6272a4">片</span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">c</span><span style="color:#6272a4">o</span><span style="color:#6272a4">n</span><span style="color:#6272a4">f</span><span style="color:#6272a4">i</span><span style="color:#6272a4">g</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">色</span><span style="color:#6272a4">彩</span><span style="color:#6272a4">配</span><span style="color:#6272a4">置</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">R</span><span style="color:#6272a4">e</span><span style="color:#6272a4">t</span><span style="color:#6272a4">u</span><span style="color:#6272a4">r</span><span style="color:#6272a4">n</span><span style="color:#6272a4">s</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">处</span><span style="color:#6272a4">理</span><span style="color:#6272a4">后</span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span>
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">changeColorWithImageData</span>(<span style="color:#ff79c6">_</span> rawData:Data, config:ColorConfig) -&gt; Data?{
         <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageConfig</span> = config.imageConfig <span style="color:#ff79c6">else</span> {
             <span style="color:#ff79c6">return</span> rawData
@@ -692,35 +607,33 @@
     }
     
     
-    <span style="color:#6272a4">/// 获取图片的色彩配置</span>
-    <span style="color:#6272a4">///</span>
-    <span style="color:#6272a4">/// - Parameter rawData: 原始图片数据</span>
-    <span style="color:#6272a4">/// - Returns: 色彩配置</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">获</span><span style="color:#6272a4">取</span><span style="color:#6272a4">图</span><span style="color:#6272a4">片</span><span style="color:#6272a4">的</span><span style="color:#6272a4">色</span><span style="color:#6272a4">彩</span><span style="color:#6272a4">配</span><span style="color:#6272a4">置</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">P</span><span style="color:#6272a4">a</span><span style="color:#6272a4">r</span><span style="color:#6272a4">a</span><span style="color:#6272a4">m</span><span style="color:#6272a4">e</span><span style="color:#6272a4">t</span><span style="color:#6272a4">e</span><span style="color:#6272a4">r</span><span style="color:#6272a4"> </span><span style="color:#6272a4">r</span><span style="color:#6272a4">a</span><span style="color:#6272a4">w</span><span style="color:#6272a4">D</span><span style="color:#6272a4">a</span><span style="color:#6272a4">t</span><span style="color:#6272a4">a</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">原</span><span style="color:#6272a4">始</span><span style="color:#6272a4">图</span><span style="color:#6272a4">片</span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">R</span><span style="color:#6272a4">e</span><span style="color:#6272a4">t</span><span style="color:#6272a4">u</span><span style="color:#6272a4">r</span><span style="color:#6272a4">n</span><span style="color:#6272a4">s</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">色</span><span style="color:#6272a4">彩</span><span style="color:#6272a4">配</span><span style="color:#6272a4">置</span>
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">getColorConfigWithImageData</span>(<span style="color:#ff79c6">_</span> rawData:Data) -&gt; ColorConfig{
         <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageSource</span> = CGImageSourceCreateWithData(rawData <span style="color:#ff79c6">as</span> CFData, [kCGImageSourceShouldCache: <span style="color:#ff79c6">false</span>] <span style="color:#ff79c6">as</span> CFDictionary),
             <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageFrame</span> = CGImageSourceCreateImageAtIndex(imageSource, <span style="color:#bd93f9">0</span>, <span style="color:#ff79c6">nil</span>) <span style="color:#ff79c6">else</span> {
                 <span style="color:#ff79c6">return</span> .unknown
         }
         <span style="color:#ff79c6">return</span> imageFrame.colorConfig
-    }</code></pre></div>
-<h4 id="android">Android</h4>
-
+    }
+</code></pre></div><h4 id="android">Android</h4>
 <p>对于 Android 来说，其原生的 Bitmap 库有相当方便的转换色彩深度的方法，只需要传入 Config 就好。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#50fa7b">Bitmap</span> copy(Config <span style="color:#50fa7b">config</span>, <span style="color:#8be9fd">boolean</span> <span style="color:#50fa7b">isMutable</span>) {
-      checkRecycled(<span style="color:#f1fa8c">&#34;Can&#39;t copy a recycled bitmap&#34;</span>);
-      <span style="color:#ff79c6">if</span> (config <span style="color:#ff79c6">==</span> Config.<span style="color:#50fa7b">HARDWARE</span> <span style="color:#ff79c6">&amp;&amp;</span> isMutable) {
-          <span style="color:#ff79c6">throw</span> <span style="color:#ff79c6">new</span> IllegalArgumentException(<span style="color:#f1fa8c">&#34;Hardware bitmaps are always immutable&#34;</span>);
-      }
-      noteHardwareBitmapSlowCall();
-      Bitmap <span style="color:#50fa7b">b</span> <span style="color:#ff79c6">=</span> nativeCopy(mNativePtr, config.<span style="color:#50fa7b">nativeInt</span>, isMutable);
-      <span style="color:#ff79c6">if</span> (b <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">null</span>) {
-          b.<span style="color:#50fa7b">setPremultiplied</span>(mRequestPremultiplied);
-          b.<span style="color:#50fa7b">mDensity</span> <span style="color:#ff79c6">=</span> mDensity;
-      }
-      <span style="color:#ff79c6">return</span> b;
-}</code></pre></div>
-<p>iOS 的 <code>CGImage</code> 参数和 Android 的 <code>Bitmap.Config</code> 以及色彩深度对应关系如下表：</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#8be9fd;font-style:italic">public</span> Bitmap <span style="color:#50fa7b">copy</span><span style="color:#ff79c6">(</span>Config config<span style="color:#ff79c6">,</span> <span style="color:#8be9fd">boolean</span> isMutable<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">{</span>
+      checkRecycled<span style="color:#ff79c6">(</span><span style="color:#f1fa8c">&#34;Can&#39;t copy a recycled bitmap&#34;</span><span style="color:#ff79c6">)</span><span style="color:#ff79c6">;</span>
+      <span style="color:#ff79c6">if</span> <span style="color:#ff79c6">(</span>config <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> Config<span style="color:#ff79c6">.</span><span style="color:#50fa7b">HARDWARE</span> <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&amp;</span> isMutable<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">{</span>
+          <span style="color:#ff79c6">throw</span> <span style="color:#ff79c6">new</span> IllegalArgumentException<span style="color:#ff79c6">(</span><span style="color:#f1fa8c">&#34;Hardware bitmaps are always immutable&#34;</span><span style="color:#ff79c6">)</span><span style="color:#ff79c6">;</span>
+      <span style="color:#ff79c6">}</span>
+      noteHardwareBitmapSlowCall<span style="color:#ff79c6">(</span><span style="color:#ff79c6">)</span><span style="color:#ff79c6">;</span>
+      Bitmap b <span style="color:#ff79c6">=</span> nativeCopy<span style="color:#ff79c6">(</span>mNativePtr<span style="color:#ff79c6">,</span> config<span style="color:#ff79c6">.</span><span style="color:#50fa7b">nativeInt</span><span style="color:#ff79c6">,</span> isMutable<span style="color:#ff79c6">)</span><span style="color:#ff79c6">;</span>
+      <span style="color:#ff79c6">if</span> <span style="color:#ff79c6">(</span>b <span style="color:#ff79c6">!</span><span style="color:#ff79c6">=</span> <span style="color:#ff79c6">null</span><span style="color:#ff79c6">)</span> <span style="color:#ff79c6">{</span>
+          b<span style="color:#ff79c6">.</span><span style="color:#50fa7b">setPremultiplied</span><span style="color:#ff79c6">(</span>mRequestPremultiplied<span style="color:#ff79c6">)</span><span style="color:#ff79c6">;</span>
+          b<span style="color:#ff79c6">.</span><span style="color:#50fa7b">mDensity</span> <span style="color:#ff79c6">=</span> mDensity<span style="color:#ff79c6">;</span>
+      <span style="color:#ff79c6">}</span>
+      <span style="color:#ff79c6">return</span> b<span style="color:#ff79c6">;</span>
+<span style="color:#ff79c6">}</span>
+</code></pre></div><p>iOS 的 <code>CGImage</code> 参数和 Android 的 <code>Bitmap.Config</code> 以及色彩深度对应关系如下表：</p>
 <table>
 <thead>
 <tr>
@@ -729,26 +642,22 @@
 <th>Android</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>8 位灰度（只有透明度）</td>
 <td>bitsPerComponent: 8 bitsPerPixel: 8  bitmapInfo: CGImageAlphaInfo.alphaOnly</td>
 <td>Bitmap.Config.ALPHA_8</td>
 </tr>
-
 <tr>
 <td>16 位色（R5+G6+R5）</td>
 <td>bitsPerComponent: 5 bitsPerPixel: 16  bitmapInfo: CGImageAlphaInfo.noneSkipFirst</td>
 <td>Bitmap.Config.RGB_565</td>
 </tr>
-
 <tr>
 <td>32 位色（A8+R8+G8+B8）</td>
 <td>bitsPerComponent: 8 bitsPerPixel: 32  bitmapInfo: CGImageAlphaInfo.premultipliedFirst</td>
 <td>Bitmap.Config.ARGB_8888</td>
 </tr>
-
 <tr>
 <td>64 位色（R16+G16+B16+A16 但使用半精度减少一半储存空间）用于宽色域或HDR</td>
 <td>bitsPerComponent: 16 bitsPerPixel: 64 bitmapInfo: CGImageAlphaInfo.premultipliedLast + .floatComponents</td>
@@ -756,13 +665,9 @@
 </tr>
 </tbody>
 </table>
-
-<h3 id="jpg-的压缩系数改变">JPG 的压缩系数改变</h3>
-
+<h3 id="jpg-">JPG 的压缩系数改变</h3>
 <p>JPG 的压缩算法相当复杂，以至于主流使用均是用 <a href="http://libjpeg.sourceforge.net/">libjpeg</a> 这个广泛的库进行编解码（在 Android 7.0 上开始使用性能更好的 <a href="https://libjpeg-turbo.org/">libjpeg-turbo</a>，iOS 则是用 Apple 自己开发未开源的 AppleJPEG）。而在 iOS 和 Android 上，都有 Api 输入压缩系数，来压缩 JPG。但具体压缩系数如何影响压缩大小，笔者并未深究。这里只能简单给出使用方法。</p>
-
 <h4 id="ios-2">iOS</h4>
-
 <p>iOS 里面压缩系数为 0-1 之间的数值，据说 iOS 相册中采用的压缩系数是 0.9。同时，png 不支持有损压缩，所以 <code>kCGImageDestinationLossyCompressionQuality</code> 这个参数是无效。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">compressImageData</span>(<span style="color:#ff79c6">_</span> rawData:Data, compression:<span style="color:#8be9fd;font-style:italic">Double</span>) -&gt; Data?{
         <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageSource</span> = CGImageSourceCreateWithData(rawData <span style="color:#ff79c6">as</span> CFData, [kCGImageSourceShouldCache: <span style="color:#ff79c6">false</span>] <span style="color:#ff79c6">as</span> CFDictionary),
@@ -778,58 +683,45 @@
             <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
         }
         <span style="color:#ff79c6">return</span> writeData <span style="color:#ff79c6">as</span> Data
-    }</code></pre></div>
-<h4 id="andoid">Andoid</h4>
-
+    }
+</code></pre></div><h4 id="andoid">Andoid</h4>
 <p>Andoird 用 Bitmap 自带的接口，并输出到流中。压缩系数是 0-100 之间的数值。这里的参数虽然可以填 <code>Bitmap.CompressFormat.PNG</code>，但当然也是无效的。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#ff79c6">val</span> outputStream = ByteArrayOutputStream()
 <span style="color:#ff79c6">val</span> image = BitmapFactory.decodeByteArray(rawData,<span style="color:#bd93f9">0</span>,rawData.count())
 image.compress(Bitmap.CompressFormat.JPEG, compression, outputStream)
-resultData = outputStream.toByteArray()</code></pre></div>
-<h3 id="gif-的压缩">GIF 的压缩</h3>
-
+resultData = outputStream.toByteArray()
+</code></pre></div><h3 id="gif-">GIF 的压缩</h3>
 <p>GIF 压缩上有很多种思路。参考开源项目 <a href="https://github.com/kohler/gifsicle">gifsicle</a> 和 <a href="https://github.com/ImageMagick/ImageMagick">ImageMagick</a> 中的做法，大概有以下几种。</p>
-
 <ol>
-<li><p>由于 GIF 支持全局调色盘和局部调色盘，在没有局部调色盘的时候会用放在文件头中的全局调色盘。所以对于颜色变化不大的 GIF，可以将颜色放入全局调色盘中，去除局部调色盘。</p></li>
-
-<li><p>对于颜色较少的 GIF，将调色盘大小减少，比如从 256 种减少到 128 种等。</p></li>
+<li>
+<p>由于 GIF 支持全局调色盘和局部调色盘，在没有局部调色盘的时候会用放在文件头中的全局调色盘。所以对于颜色变化不大的 GIF，可以将颜色放入全局调色盘中，去除局部调色盘。</p>
+</li>
+<li>
+<p>对于颜色较少的 GIF，将调色盘大小减少，比如从 256 种减少到 128 种等。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbp21oqag305k05ggqc.gif" alt="1490353055438_2367_1490353055781"></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbp9om1dg305k05gjum.gif" alt="1490353098026_7360_1490353098210"></p>
+</li>
+<li>
+<p>对于背景一致，画面中有一部分元素在变化的 GIF，可以将多个元素和背景分开存储，然后加上如何还原的信息</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbmaoit6g302s02swe9.gif" alt="b522ac7896b320b4a9ee1eed1034e4fe_articlex"></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbmqdaz2g30fk042jrb.gif" alt="9e9fe93459fe7117909eb27771bdc182_articlex"></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbn0nrthg30fk042747.gif" alt="433b41c29c6a70e64631a3d4c363e468_articlex"></p>
+</li>
+<li>
+<p>对于背景一致，画面中有一部分元素在动的 GIF，可以和前面一帧比较，将不动的部分透明化</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbnox1heg303c0283ys.gif" alt="d3c7444d59eed11d98abbb7c4e1da7ec_articlex"></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbnycn68g30eo03e3yu.gif" alt="e50b7f75feebb9bd056bb8dca9964873_articlex"></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbo6podqg30eo03imxc.gif" alt="704d70c65d22fb240cb5f6f7be5bbf86_articlex"></p>
+</li>
+<li>
+<p>对于帧数很多的 GIF，可以抽取中间部分的帧，减少帧数</p>
+</li>
+<li>
+<p>对于每帧分辨率很高的 GIF，将每帧的分辨率减小</p>
+</li>
 </ol>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbp21oqag305k05ggqc.gif" alt="1490353055438_2367_1490353055781" /></p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbp9om1dg305k05gjum.gif" alt="1490353098026_7360_1490353098210" /></p>
-
-<ol>
-<li>对于背景一致，画面中有一部分元素在变化的 GIF，可以将多个元素和背景分开存储，然后加上如何还原的信息</li>
-</ol>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbmaoit6g302s02swe9.gif" alt="b522ac7896b320b4a9ee1eed1034e4fe_articlex" /></p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbmqdaz2g30fk042jrb.gif" alt="9e9fe93459fe7117909eb27771bdc182_articlex" /></p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbn0nrthg30fk042747.gif" alt="433b41c29c6a70e64631a3d4c363e468_articlex" /></p>
-
-<ol>
-<li>对于背景一致，画面中有一部分元素在动的 GIF，可以和前面一帧比较，将不动的部分透明化</li>
-</ol>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbnox1heg303c0283ys.gif" alt="d3c7444d59eed11d98abbb7c4e1da7ec_articlex" /></p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbnycn68g30eo03e3yu.gif" alt="e50b7f75feebb9bd056bb8dca9964873_articlex" /></p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzdbo6podqg30eo03imxc.gif" alt="704d70c65d22fb240cb5f6f7be5bbf86_articlex" /></p>
-
-<ol>
-<li><p>对于帧数很多的 GIF，可以抽取中间部分的帧，减少帧数</p></li>
-
-<li><p>对于每帧分辨率很高的 GIF，将每帧的分辨率减小</p></li>
-</ol>
-
 <p>对于动画的 GIF，3、4 是很实用的，因为背景一般是不变的，但对于拍摄的视频转成的 GIF，就没那么实用了，因为存在轻微抖动，很难做到背景不变。但在移动端，除非将 ImageMagick 或者 gifsicle 移植到 iOS&amp;Android 上，要实现前面 4 个方法是比较困难的。笔者这里只实现了抽帧，和每帧分辨率压缩。</p>
-
 <p>至于抽帧的间隔，参考了 <a href="https://cloud.tencent.com/developer/article/1004763">文章</a> 中的数值。</p>
-
 <table>
 <thead>
 <tr>
@@ -837,41 +729,32 @@ resultData = outputStream.toByteArray()</code></pre></div>
 <th>每 x 帧使用 1 帧</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>&lt;9</td>
 <td>x = 2</td>
 </tr>
-
 <tr>
 <td>9 - 20</td>
 <td>x = 3</td>
 </tr>
-
 <tr>
 <td>21 - 30</td>
 <td>x = 4</td>
 </tr>
-
 <tr>
 <td>31 - 40</td>
 <td>x = 5</td>
 </tr>
-
 <tr>
 <td>&gt;40</td>
 <td>x = 6</td>
 </tr>
 </tbody>
 </table>
-
 <p>这里还有一个问题，抽帧的时候，原来的帧可能使用了 3、4 的方法进行压缩过，但还原的时候需要还原成完整的图像帧，再重新编码时，就没有办法再用 3、4 进行优化了。虽然帧减少了，但实际上会将帧还原成未做 3、4 优化的状态，一增一减，压缩的效果就没那么好了（所以这种压缩还是尽量在服务器做）。抽帧后记得将中间被抽取的帧的时间累加在剩下的帧的时间上，不然帧速度就变快了，而且不要用抽取数x帧时间偷懒来计算，因为不一定所有帧的时间是一样的。</p>
-
 <h4 id="ios-3">iOS</h4>
-
 <p>iOS 上的实现比较简单，用 ImageIO 的函数即可实现，性能也比较好。</p>
-
 <p>先定义从 ImageSource 获取每帧的时间的便捷扩展方法，帧时长会存在 <code>kCGImagePropertyGIFUnclampedDelayTime</code> 或者 <code>kCGImagePropertyGIFDelayTime</code> 中，两个 key 不同之处在于后者有最小值的限制，正确的获取方法参考苹果在 WebKit 中的 <a href="https://stackoverflow.com/questions/16964366/delaytime-or-unclampeddelaytime-for-gifs">使用方法</a>。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">CGImageSource</span> {
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">frameDurationAtIndex</span>(<span style="color:#ff79c6">_</span> index: <span style="color:#8be9fd;font-style:italic">Int</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Double</span>{
@@ -899,14 +782,14 @@ resultData = outputStream.toByteArray()</code></pre></div>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">frameCount</span> = CGImageSourceGetCount(<span style="color:#ff79c6">self</span>)
         <span style="color:#ff79c6">return</span> (<span style="color:#bd93f9">0.</span>.&lt;frameCount).map{ <span style="color:#ff79c6">self</span>.frameDurationAtIndex(<span style="color:#8be9fd;font-style:italic">$0</span>) }
     }
-}</code></pre></div>
-<p>先去掉不要的帧，合并帧的时间，再重新生成帧就完成了。注意帧不要被拖得太长，不然体验不好，我这里给的最大值是 200ms。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">    <span style="color:#6272a4">/// 同步压缩图片抽取帧数，仅支持 GIF</span>
-    <span style="color:#6272a4">///</span>
-    <span style="color:#6272a4">/// - Parameters:</span>
-    <span style="color:#6272a4">///   - rawData: 原始图片数据</span>
-    <span style="color:#6272a4">///   - sampleCount: 采样频率，比如 3 则每三张用第一张，然后延长时间</span>
-    <span style="color:#6272a4">/// - Returns: 处理后数据</span>
+}
+</code></pre></div><p>先去掉不要的帧，合并帧的时间，再重新生成帧就完成了。注意帧不要被拖得太长，不然体验不好，我这里给的最大值是 200ms。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">同</span><span style="color:#6272a4">步</span><span style="color:#6272a4">压</span><span style="color:#6272a4">缩</span><span style="color:#6272a4">图</span><span style="color:#6272a4">片</span><span style="color:#6272a4">抽</span><span style="color:#6272a4">取</span><span style="color:#6272a4">帧</span><span style="color:#6272a4">数</span><span style="color:#6272a4">，</span><span style="color:#6272a4">仅</span><span style="color:#6272a4">支</span><span style="color:#6272a4">持</span><span style="color:#6272a4"> </span><span style="color:#6272a4">G</span><span style="color:#6272a4">I</span><span style="color:#6272a4">F</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">P</span><span style="color:#6272a4">a</span><span style="color:#6272a4">r</span><span style="color:#6272a4">a</span><span style="color:#6272a4">m</span><span style="color:#6272a4">e</span><span style="color:#6272a4">t</span><span style="color:#6272a4">e</span><span style="color:#6272a4">r</span><span style="color:#6272a4">s</span><span style="color:#6272a4">:</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">r</span><span style="color:#6272a4">a</span><span style="color:#6272a4">w</span><span style="color:#6272a4">D</span><span style="color:#6272a4">a</span><span style="color:#6272a4">t</span><span style="color:#6272a4">a</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">原</span><span style="color:#6272a4">始</span><span style="color:#6272a4">图</span><span style="color:#6272a4">片</span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">s</span><span style="color:#6272a4">a</span><span style="color:#6272a4">m</span><span style="color:#6272a4">p</span><span style="color:#6272a4">l</span><span style="color:#6272a4">e</span><span style="color:#6272a4">C</span><span style="color:#6272a4">o</span><span style="color:#6272a4">u</span><span style="color:#6272a4">n</span><span style="color:#6272a4">t</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">采</span><span style="color:#6272a4">样</span><span style="color:#6272a4">频</span><span style="color:#6272a4">率</span><span style="color:#6272a4">，</span><span style="color:#6272a4">比</span><span style="color:#6272a4">如</span><span style="color:#6272a4"> </span><span style="color:#6272a4">3</span><span style="color:#6272a4"> </span><span style="color:#6272a4">则</span><span style="color:#6272a4">每</span><span style="color:#6272a4">三</span><span style="color:#6272a4">张</span><span style="color:#6272a4">用</span><span style="color:#6272a4">第</span><span style="color:#6272a4">一</span><span style="color:#6272a4">张</span><span style="color:#6272a4">，</span><span style="color:#6272a4">然</span><span style="color:#6272a4">后</span><span style="color:#6272a4">延</span><span style="color:#6272a4">长</span><span style="color:#6272a4">时</span><span style="color:#6272a4">间</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">R</span><span style="color:#6272a4">e</span><span style="color:#6272a4">t</span><span style="color:#6272a4">u</span><span style="color:#6272a4">r</span><span style="color:#6272a4">n</span><span style="color:#6272a4">s</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">处</span><span style="color:#6272a4">理</span><span style="color:#6272a4">后</span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span>
     <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">compressImageData</span>(<span style="color:#ff79c6">_</span> rawData:Data, sampleCount:<span style="color:#8be9fd;font-style:italic">Int</span>) -&gt; Data?{
         <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageSource</span> = CGImageSourceCreateWithData(rawData <span style="color:#ff79c6">as</span> CFData, [kCGImageSourceShouldCache: <span style="color:#ff79c6">false</span>] <span style="color:#ff79c6">as</span> CFDictionary),
             <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">writeData</span> = CFDataCreateMutable(<span style="color:#ff79c6">nil</span>, <span style="color:#bd93f9">0</span>),
@@ -914,22 +797,22 @@ resultData = outputStream.toByteArray()</code></pre></div>
                 <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
         }
         
-        <span style="color:#6272a4">// 计算帧的间隔</span>
+        <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">计</span><span style="color:#6272a4">算</span><span style="color:#6272a4">帧</span><span style="color:#6272a4">的</span><span style="color:#6272a4">间</span><span style="color:#6272a4">隔</span>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">frameDurations</span> = imageSource.frameDurations
         
-        <span style="color:#6272a4">// 合并帧的时间,最长不可高于 200ms</span>
+        <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">合</span><span style="color:#6272a4">并</span><span style="color:#6272a4">帧</span><span style="color:#6272a4">的</span><span style="color:#6272a4">时</span><span style="color:#6272a4">间</span><span style="color:#6272a4">,</span><span style="color:#6272a4">最</span><span style="color:#6272a4">长</span><span style="color:#6272a4">不</span><span style="color:#6272a4">可</span><span style="color:#6272a4">高</span><span style="color:#6272a4">于</span><span style="color:#6272a4"> </span><span style="color:#6272a4">2</span><span style="color:#6272a4">0</span><span style="color:#6272a4">0</span><span style="color:#6272a4">m</span><span style="color:#6272a4">s</span>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">mergeFrameDurations</span> = (<span style="color:#bd93f9">0.</span>.&lt;frameDurations.count).filter{ <span style="color:#8be9fd;font-style:italic">$0</span> <span style="color:#ff79c6">%</span> sampleCount == <span style="color:#bd93f9">0</span> }.map{ min(frameDurations[<span style="color:#8be9fd;font-style:italic">$0</span>..&lt;min(<span style="color:#8be9fd;font-style:italic">$0</span> <span style="color:#ff79c6">+</span> sampleCount, frameDurations.count)].reduce(<span style="color:#bd93f9">0.0</span>) { <span style="color:#8be9fd;font-style:italic">$0</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">$1</span> }, <span style="color:#bd93f9">0.2</span>) }
         
-        <span style="color:#6272a4">// 抽取帧 每 n 帧使用 1 帧</span>
+        <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">抽</span><span style="color:#6272a4">取</span><span style="color:#6272a4">帧</span><span style="color:#6272a4"> </span><span style="color:#6272a4">每</span><span style="color:#6272a4"> </span><span style="color:#6272a4">n</span><span style="color:#6272a4"> </span><span style="color:#6272a4">帧</span><span style="color:#6272a4">使</span><span style="color:#6272a4">用</span><span style="color:#6272a4"> </span><span style="color:#6272a4">1</span><span style="color:#6272a4"> </span><span style="color:#6272a4">帧</span>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">sampleImageFrames</span> = (<span style="color:#bd93f9">0.</span>.&lt;frameDurations.count).filter{ <span style="color:#8be9fd;font-style:italic">$0</span> <span style="color:#ff79c6">%</span> sampleCount == <span style="color:#bd93f9">0</span> }.compactMap{ CGImageSourceCreateImageAtIndex(imageSource, <span style="color:#8be9fd;font-style:italic">$0</span>, <span style="color:#ff79c6">nil</span>) }
         
         <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageDestination</span> = CGImageDestinationCreateWithData(writeData, imageType, sampleImageFrames.count, <span style="color:#ff79c6">nil</span>) <span style="color:#ff79c6">else</span>{
             <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
         }
         
-        <span style="color:#6272a4">// 每一帧图片都进行重新编码</span>
+        <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">每</span><span style="color:#6272a4">一</span><span style="color:#6272a4">帧</span><span style="color:#6272a4">图</span><span style="color:#6272a4">片</span><span style="color:#6272a4">都</span><span style="color:#6272a4">进</span><span style="color:#6272a4">行</span><span style="color:#6272a4">重</span><span style="color:#6272a4">新</span><span style="color:#6272a4">编</span><span style="color:#6272a4">码</span>
         zip(sampleImageFrames, mergeFrameDurations).forEach{
-            <span style="color:#6272a4">// 设置帧间隔</span>
+            <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">设</span><span style="color:#6272a4">置</span><span style="color:#6272a4">帧</span><span style="color:#6272a4">间</span><span style="color:#6272a4">隔</span>
             <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">frameProperties</span> = [kCGImagePropertyGIFDictionary : [kCGImagePropertyGIFDelayTime: <span style="color:#8be9fd;font-style:italic">$1</span>, kCGImagePropertyGIFUnclampedDelayTime: <span style="color:#8be9fd;font-style:italic">$1</span>]]
             CGImageDestinationAddImage(imageDestination, <span style="color:#8be9fd;font-style:italic">$0</span>, frameProperties <span style="color:#ff79c6">as</span> CFDictionary)
         }
@@ -940,15 +823,13 @@ resultData = outputStream.toByteArray()</code></pre></div>
         
         <span style="color:#ff79c6">return</span> writeData <span style="color:#ff79c6">as</span> Data
     }
-    </code></pre></div>
-<p>压缩分辨率也是类似的，每帧按分辨率压缩再重新编码就好。</p>
-
+    
+</code></pre></div><p>压缩分辨率也是类似的，每帧按分辨率压缩再重新编码就好。</p>
 <h4 id="android-1">Android</h4>
-
 <p>Android 原生对于 GIF 的支持就不怎么友好了，由于笔者 Android 研究不深，暂时先用 <a href="https://github.com/bumptech/glide">Glide</a> 中的 GIF 编解码组件来完成。编码的性能比较一般，比不上 iOS，但除非换用更底层 C++ 库实现的编码库，Java 写的性能都很普通。先用 Gradle 导入 Glide，注意解码器是默认的，但编码器需要另外导入。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy">api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:glide:4.8.0&#39;</span>
-api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integration:4.8.0&#39;</span></code></pre></div>
-<p>抽帧思路和 iOS 一样，只是 Glide 的这个 GIF 解码器没办法按指定的 index 取读取某一帧，只能一帧帧读取，调用 <code>advance</code> 方法往后读取。先从 GIF 读出头部信息，然后在读真正的帧信息。</p>
+api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integration:4.8.0&#39;</span>
+</code></pre></div><p>抽帧思路和 iOS 一样，只是 Glide 的这个 GIF 解码器没办法按指定的 index 取读取某一帧，只能一帧帧读取，调用 <code>advance</code> 方法往后读取。先从 GIF 读出头部信息，然后在读真正的帧信息。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">	<span style="color:#6272a4">/**
 </span><span style="color:#6272a4">     * 返回同步压缩 gif 图片 Byte 数据 [rawData] 的按 [sampleCount] 采样后的 Byte 数据
 </span><span style="color:#6272a4">     */</span>
@@ -1012,8 +893,8 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
         }
 
         <span style="color:#ff79c6">return</span> resultData
-    }</code></pre></div>
-<p>压缩分辨率的时候要注意，分辨率太大编码容易出现 Crash（应该是 OOM），这里设置为 512。</p>
+    }
+</code></pre></div><p>压缩分辨率的时候要注意，分辨率太大编码容易出现 Crash（应该是 OOM），这里设置为 512。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">    <span style="color:#6272a4">/**
 </span><span style="color:#6272a4">     * 返回同步压缩 gif 图片 Byte 数据 [rawData] 每一帧长边到 [limitLongWidth] 后的 Byte 数据
 </span><span style="color:#6272a4">     */</span>
@@ -1069,20 +950,17 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
             e.printStackTrace()
         }
         <span style="color:#ff79c6">return</span> resultData
-    }</code></pre></div>
-<h3 id="分辨率压缩">分辨率压缩</h3>
-
+    }
+</code></pre></div><h3 id="heading-12">分辨率压缩</h3>
 <p>这个是最常用的，而且也比较简单。</p>
-
 <h4 id="ios-4">iOS</h4>
-
 <p>iOS 的 ImageIO 提供了 <code>CGImageSourceCreateThumbnailAtIndex</code> 的 API 来创建缩放的缩略图。在 options 中添加需要缩放的长边参数即可。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">    <span style="color:#6272a4">/// 同步压缩图片数据长边到指定数值</span>
-    <span style="color:#6272a4">///</span>
-    <span style="color:#6272a4">/// - Parameters:</span>
-    <span style="color:#6272a4">///   - rawData: 原始图片数据</span>
-    <span style="color:#6272a4">///   - limitLongWidth: 长边限制</span>
-    <span style="color:#6272a4">/// - Returns: 处理后数据</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">同</span><span style="color:#6272a4">步</span><span style="color:#6272a4">压</span><span style="color:#6272a4">缩</span><span style="color:#6272a4">图</span><span style="color:#6272a4">片</span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span><span style="color:#6272a4">长</span><span style="color:#6272a4">边</span><span style="color:#6272a4">到</span><span style="color:#6272a4">指</span><span style="color:#6272a4">定</span><span style="color:#6272a4">数</span><span style="color:#6272a4">值</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">P</span><span style="color:#6272a4">a</span><span style="color:#6272a4">r</span><span style="color:#6272a4">a</span><span style="color:#6272a4">m</span><span style="color:#6272a4">e</span><span style="color:#6272a4">t</span><span style="color:#6272a4">e</span><span style="color:#6272a4">r</span><span style="color:#6272a4">s</span><span style="color:#6272a4">:</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">r</span><span style="color:#6272a4">a</span><span style="color:#6272a4">w</span><span style="color:#6272a4">D</span><span style="color:#6272a4">a</span><span style="color:#6272a4">t</span><span style="color:#6272a4">a</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">原</span><span style="color:#6272a4">始</span><span style="color:#6272a4">图</span><span style="color:#6272a4">片</span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">l</span><span style="color:#6272a4">i</span><span style="color:#6272a4">m</span><span style="color:#6272a4">i</span><span style="color:#6272a4">t</span><span style="color:#6272a4">L</span><span style="color:#6272a4">o</span><span style="color:#6272a4">n</span><span style="color:#6272a4">g</span><span style="color:#6272a4">W</span><span style="color:#6272a4">i</span><span style="color:#6272a4">d</span><span style="color:#6272a4">t</span><span style="color:#6272a4">h</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">长</span><span style="color:#6272a4">边</span><span style="color:#6272a4">限</span><span style="color:#6272a4">制</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">R</span><span style="color:#6272a4">e</span><span style="color:#6272a4">t</span><span style="color:#6272a4">u</span><span style="color:#6272a4">r</span><span style="color:#6272a4">n</span><span style="color:#6272a4">s</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">处</span><span style="color:#6272a4">理</span><span style="color:#6272a4">后</span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span>
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">compressImageData</span>(<span style="color:#ff79c6">_</span> rawData:Data, limitLongWidth:CGFloat) -&gt; Data?{
         <span style="color:#ff79c6">guard</span> max(rawData.imageSize.height, rawData.imageSize.width) <span style="color:#ff79c6">&gt;</span> limitLongWidth <span style="color:#ff79c6">else</span> {
             <span style="color:#ff79c6">return</span> rawData
@@ -1101,19 +979,19 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
             <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
         }
         
-        <span style="color:#6272a4">// 设置缩略图参数，kCGImageSourceThumbnailMaxPixelSize 为生成缩略图的大小。当设置为 800，如果图片本身大于 800*600，则生成后图片大小为 800*600，如果源图片为 700*500，则生成图片为 800*500</span>
+        <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">设</span><span style="color:#6272a4">置</span><span style="color:#6272a4">缩</span><span style="color:#6272a4">略</span><span style="color:#6272a4">图</span><span style="color:#6272a4">参</span><span style="color:#6272a4">数</span><span style="color:#6272a4">，</span><span style="color:#6272a4">k</span><span style="color:#6272a4">C</span><span style="color:#6272a4">G</span><span style="color:#6272a4">I</span><span style="color:#6272a4">m</span><span style="color:#6272a4">a</span><span style="color:#6272a4">g</span><span style="color:#6272a4">e</span><span style="color:#6272a4">S</span><span style="color:#6272a4">o</span><span style="color:#6272a4">u</span><span style="color:#6272a4">r</span><span style="color:#6272a4">c</span><span style="color:#6272a4">e</span><span style="color:#6272a4">T</span><span style="color:#6272a4">h</span><span style="color:#6272a4">u</span><span style="color:#6272a4">m</span><span style="color:#6272a4">b</span><span style="color:#6272a4">n</span><span style="color:#6272a4">a</span><span style="color:#6272a4">i</span><span style="color:#6272a4">l</span><span style="color:#6272a4">M</span><span style="color:#6272a4">a</span><span style="color:#6272a4">x</span><span style="color:#6272a4">P</span><span style="color:#6272a4">i</span><span style="color:#6272a4">x</span><span style="color:#6272a4">e</span><span style="color:#6272a4">l</span><span style="color:#6272a4">S</span><span style="color:#6272a4">i</span><span style="color:#6272a4">z</span><span style="color:#6272a4">e</span><span style="color:#6272a4"> </span><span style="color:#6272a4">为</span><span style="color:#6272a4">生</span><span style="color:#6272a4">成</span><span style="color:#6272a4">缩</span><span style="color:#6272a4">略</span><span style="color:#6272a4">图</span><span style="color:#6272a4">的</span><span style="color:#6272a4">大</span><span style="color:#6272a4">小</span><span style="color:#6272a4">。</span><span style="color:#6272a4">当</span><span style="color:#6272a4">设</span><span style="color:#6272a4">置</span><span style="color:#6272a4">为</span><span style="color:#6272a4"> </span><span style="color:#6272a4">8</span><span style="color:#6272a4">0</span><span style="color:#6272a4">0</span><span style="color:#6272a4">，</span><span style="color:#6272a4">如</span><span style="color:#6272a4">果</span><span style="color:#6272a4">图</span><span style="color:#6272a4">片</span><span style="color:#6272a4">本</span><span style="color:#6272a4">身</span><span style="color:#6272a4">大</span><span style="color:#6272a4">于</span><span style="color:#6272a4"> </span><span style="color:#6272a4">8</span><span style="color:#6272a4">0</span><span style="color:#6272a4">0</span><span style="color:#6272a4">*</span><span style="color:#6272a4">6</span><span style="color:#6272a4">0</span><span style="color:#6272a4">0</span><span style="color:#6272a4">，</span><span style="color:#6272a4">则</span><span style="color:#6272a4">生</span><span style="color:#6272a4">成</span><span style="color:#6272a4">后</span><span style="color:#6272a4">图</span><span style="color:#6272a4">片</span><span style="color:#6272a4">大</span><span style="color:#6272a4">小</span><span style="color:#6272a4">为</span><span style="color:#6272a4"> </span><span style="color:#6272a4">8</span><span style="color:#6272a4">0</span><span style="color:#6272a4">0</span><span style="color:#6272a4">*</span><span style="color:#6272a4">6</span><span style="color:#6272a4">0</span><span style="color:#6272a4">0</span><span style="color:#6272a4">，</span><span style="color:#6272a4">如</span><span style="color:#6272a4">果</span><span style="color:#6272a4">源</span><span style="color:#6272a4">图</span><span style="color:#6272a4">片</span><span style="color:#6272a4">为</span><span style="color:#6272a4"> </span><span style="color:#6272a4">7</span><span style="color:#6272a4">0</span><span style="color:#6272a4">0</span><span style="color:#6272a4">*</span><span style="color:#6272a4">5</span><span style="color:#6272a4">0</span><span style="color:#6272a4">0</span><span style="color:#6272a4">，</span><span style="color:#6272a4">则</span><span style="color:#6272a4">生</span><span style="color:#6272a4">成</span><span style="color:#6272a4">图</span><span style="color:#6272a4">片</span><span style="color:#6272a4">为</span><span style="color:#6272a4"> </span><span style="color:#6272a4">8</span><span style="color:#6272a4">0</span><span style="color:#6272a4">0</span><span style="color:#6272a4">*</span><span style="color:#6272a4">5</span><span style="color:#6272a4">0</span><span style="color:#6272a4">0</span>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">options</span> = [kCGImageSourceThumbnailMaxPixelSize: limitLongWidth, kCGImageSourceCreateThumbnailWithTransform:<span style="color:#ff79c6">true</span>, kCGImageSourceCreateThumbnailFromImageIfAbsent:<span style="color:#ff79c6">true</span>] <span style="color:#ff79c6">as</span> CFDictionary
         
         <span style="color:#ff79c6">if</span> frameCount <span style="color:#ff79c6">&gt;</span> <span style="color:#bd93f9">1</span> {
-            <span style="color:#6272a4">// 计算帧的间隔</span>
+            <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">计</span><span style="color:#6272a4">算</span><span style="color:#6272a4">帧</span><span style="color:#6272a4">的</span><span style="color:#6272a4">间</span><span style="color:#6272a4">隔</span>
             <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">frameDurations</span> = imageSource.frameDurations
             
-            <span style="color:#6272a4">// 每一帧都进行缩放</span>
+            <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">每</span><span style="color:#6272a4">一</span><span style="color:#6272a4">帧</span><span style="color:#6272a4">都</span><span style="color:#6272a4">进</span><span style="color:#6272a4">行</span><span style="color:#6272a4">缩</span><span style="color:#6272a4">放</span>
             <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">resizedImageFrames</span> = (<span style="color:#bd93f9">0.</span>.&lt;frameCount).compactMap{ CGImageSourceCreateThumbnailAtIndex(imageSource, <span style="color:#8be9fd;font-style:italic">$0</span>, options) }
             
-            <span style="color:#6272a4">// 每一帧都进行重新编码</span>
+            <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">每</span><span style="color:#6272a4">一</span><span style="color:#6272a4">帧</span><span style="color:#6272a4">都</span><span style="color:#6272a4">进</span><span style="color:#6272a4">行</span><span style="color:#6272a4">重</span><span style="color:#6272a4">新</span><span style="color:#6272a4">编</span><span style="color:#6272a4">码</span>
             zip(resizedImageFrames, frameDurations).forEach {
-                <span style="color:#6272a4">// 设置帧间隔</span>
+                <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">设</span><span style="color:#6272a4">置</span><span style="color:#6272a4">帧</span><span style="color:#6272a4">间</span><span style="color:#6272a4">隔</span>
                 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">frameProperties</span> = [kCGImagePropertyGIFDictionary : [kCGImagePropertyGIFDelayTime: <span style="color:#8be9fd;font-style:italic">$1</span>, kCGImagePropertyGIFUnclampedDelayTime: <span style="color:#8be9fd;font-style:italic">$1</span>]]
                 CGImageDestinationAddImage(imageDestination, <span style="color:#8be9fd;font-style:italic">$0</span>, frameProperties <span style="color:#ff79c6">as</span> CFDictionary)
             }
@@ -1129,9 +1007,8 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
         }
         
         <span style="color:#ff79c6">return</span> writeData <span style="color:#ff79c6">as</span> Data
-    }</code></pre></div>
-<h4 id="android-2">Android</h4>
-
+    }
+</code></pre></div><h4 id="android-2">Android</h4>
 <p>Android 静态图用 Bitmap 里面的 <code>createScaleBitmap</code> API 就好了，GIF 上文已经讲了。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">   <span style="color:#6272a4">/**
 </span><span style="color:#6272a4">     * 返回同步压缩图片 Byte 数据 [rawData] 的长边到 [limitLongWidth] 后的 Byte 数据，Gif 目标长边最大压缩到 512，超过用 512
@@ -1176,18 +1053,16 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
             resizeImageFrame.recycle()
             <span style="color:#ff79c6">return</span> resultData
         }
-    }</code></pre></div>
-<h2 id="限制大小的压缩方式">限制大小的压缩方式</h2>
-
+    }
+</code></pre></div><h2 id="heading-13">限制大小的压缩方式</h2>
 <p>也就是将前面讲的方法综合起来，笔者这边给出一种方案，没有对色彩进行改变，JPG 先用二分法减少最多 6 次的压缩系数，GIF 先抽帧，抽帧间隔参考前文，最后采用逼近目标大小缩小分辨率。</p>
-
 <h3 id="ios-5">iOS</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">    <span style="color:#6272a4">/// 同步压缩图片到指定文件大小</span>
-    <span style="color:#6272a4">///</span>
-    <span style="color:#6272a4">/// - Parameters:</span>
-    <span style="color:#6272a4">///   - rawData: 原始图片数据</span>
-    <span style="color:#6272a4">///   - limitDataSize: 限制文件大小，单位字节</span>
-    <span style="color:#6272a4">/// - Returns: 处理后数据</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">同</span><span style="color:#6272a4">步</span><span style="color:#6272a4">压</span><span style="color:#6272a4">缩</span><span style="color:#6272a4">图</span><span style="color:#6272a4">片</span><span style="color:#6272a4">到</span><span style="color:#6272a4">指</span><span style="color:#6272a4">定</span><span style="color:#6272a4">文</span><span style="color:#6272a4">件</span><span style="color:#6272a4">大</span><span style="color:#6272a4">小</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">P</span><span style="color:#6272a4">a</span><span style="color:#6272a4">r</span><span style="color:#6272a4">a</span><span style="color:#6272a4">m</span><span style="color:#6272a4">e</span><span style="color:#6272a4">t</span><span style="color:#6272a4">e</span><span style="color:#6272a4">r</span><span style="color:#6272a4">s</span><span style="color:#6272a4">:</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">r</span><span style="color:#6272a4">a</span><span style="color:#6272a4">w</span><span style="color:#6272a4">D</span><span style="color:#6272a4">a</span><span style="color:#6272a4">t</span><span style="color:#6272a4">a</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">原</span><span style="color:#6272a4">始</span><span style="color:#6272a4">图</span><span style="color:#6272a4">片</span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">l</span><span style="color:#6272a4">i</span><span style="color:#6272a4">m</span><span style="color:#6272a4">i</span><span style="color:#6272a4">t</span><span style="color:#6272a4">D</span><span style="color:#6272a4">a</span><span style="color:#6272a4">t</span><span style="color:#6272a4">a</span><span style="color:#6272a4">S</span><span style="color:#6272a4">i</span><span style="color:#6272a4">z</span><span style="color:#6272a4">e</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">限</span><span style="color:#6272a4">制</span><span style="color:#6272a4">文</span><span style="color:#6272a4">件</span><span style="color:#6272a4">大</span><span style="color:#6272a4">小</span><span style="color:#6272a4">，</span><span style="color:#6272a4">单</span><span style="color:#6272a4">位</span><span style="color:#6272a4">字</span><span style="color:#6272a4">节</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">R</span><span style="color:#6272a4">e</span><span style="color:#6272a4">t</span><span style="color:#6272a4">u</span><span style="color:#6272a4">r</span><span style="color:#6272a4">n</span><span style="color:#6272a4">s</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">处</span><span style="color:#6272a4">理</span><span style="color:#6272a4">后</span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span>
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">compressImageData</span>(<span style="color:#ff79c6">_</span> rawData:Data, limitDataSize:<span style="color:#8be9fd;font-style:italic">Int</span>) -&gt; Data?{
         <span style="color:#ff79c6">guard</span> rawData.count <span style="color:#ff79c6">&gt;</span> limitDataSize <span style="color:#ff79c6">else</span> {
             <span style="color:#ff79c6">return</span> rawData
@@ -1195,7 +1070,7 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
         
         <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">resultData</span> = rawData
         
-        <span style="color:#6272a4">// 若是 JPG，先用压缩系数压缩 6 次，二分法</span>
+        <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">若</span><span style="color:#6272a4">是</span><span style="color:#6272a4"> </span><span style="color:#6272a4">J</span><span style="color:#6272a4">P</span><span style="color:#6272a4">G</span><span style="color:#6272a4">，</span><span style="color:#6272a4">先</span><span style="color:#6272a4">用</span><span style="color:#6272a4">压</span><span style="color:#6272a4">缩</span><span style="color:#6272a4">系</span><span style="color:#6272a4">数</span><span style="color:#6272a4">压</span><span style="color:#6272a4">缩</span><span style="color:#6272a4"> </span><span style="color:#6272a4">6</span><span style="color:#6272a4"> </span><span style="color:#6272a4">次</span><span style="color:#6272a4">，</span><span style="color:#6272a4">二</span><span style="color:#6272a4">分</span><span style="color:#6272a4">法</span>
         <span style="color:#ff79c6">if</span> resultData.imageFormat == .jpg {
             <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">compression</span>: <span style="color:#8be9fd;font-style:italic">Double</span> = <span style="color:#bd93f9">1</span>
             <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">maxCompression</span>: <span style="color:#8be9fd;font-style:italic">Double</span> = <span style="color:#bd93f9">1</span>
@@ -1220,7 +1095,7 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
             }
         }
         
-        <span style="color:#6272a4">// 若是 GIF，先用抽帧减少大小</span>
+        <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">若</span><span style="color:#6272a4">是</span><span style="color:#6272a4"> </span><span style="color:#6272a4">G</span><span style="color:#6272a4">I</span><span style="color:#6272a4">F</span><span style="color:#6272a4">，</span><span style="color:#6272a4">先</span><span style="color:#6272a4">用</span><span style="color:#6272a4">抽</span><span style="color:#6272a4">帧</span><span style="color:#6272a4">减</span><span style="color:#6272a4">少</span><span style="color:#6272a4">大</span><span style="color:#6272a4">小</span>
         <span style="color:#ff79c6">if</span> resultData.imageFormat == .gif {
             <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">sampleCount</span> = resultData.fitSampleCount
             <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">data</span> = compressImageData(resultData, sampleCount: sampleCount){
@@ -1234,7 +1109,7 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
         }
         
         <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">longSideWidth</span> = max(resultData.imageSize.height, resultData.imageSize.width)
-        <span style="color:#6272a4">// 图片尺寸按比率缩小，比率按字节比例逼近</span>
+        <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">图</span><span style="color:#6272a4">片</span><span style="color:#6272a4">尺</span><span style="color:#6272a4">寸</span><span style="color:#6272a4">按</span><span style="color:#6272a4">比</span><span style="color:#6272a4">率</span><span style="color:#6272a4">缩</span><span style="color:#6272a4">小</span><span style="color:#6272a4">，</span><span style="color:#6272a4">比</span><span style="color:#6272a4">率</span><span style="color:#6272a4">按</span><span style="color:#6272a4">字</span><span style="color:#6272a4">节</span><span style="color:#6272a4">比</span><span style="color:#6272a4">例</span><span style="color:#6272a4">逼</span><span style="color:#6272a4">近</span>
         <span style="color:#ff79c6">while</span> resultData.count <span style="color:#ff79c6">&gt;</span> limitDataSize{
             <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">ratio</span> = sqrt(CGFloat(limitDataSize) <span style="color:#ff79c6">/</span> CGFloat(resultData.count))
             longSideWidth <span style="color:#ff79c6">*=</span> ratio
@@ -1245,8 +1120,8 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
             }
         }
         <span style="color:#ff79c6">return</span> resultData
-    }</code></pre></div>
-<h3 id="android-3">Android</h3>
+    }
+</code></pre></div><h3 id="android-3">Android</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">    <span style="color:#6272a4">/**
 </span><span style="color:#6272a4">     * 返回同步压缩图片 Byte 数据 [rawData] 的数据大小到 [limitDataSize] 后的 Byte 数据
 </span><span style="color:#6272a4">     */</span>
@@ -1327,36 +1202,41 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
         }
 
         <span style="color:#ff79c6">return</span> resultData
-    }</code></pre></div>
-<p>注意在异步线程中使用，毕竟是耗时操作。</p>
-
-<h2 id="最后">最后</h2>
-
+    }
+</code></pre></div><p>注意在异步线程中使用，毕竟是耗时操作。</p>
+<h2 id="heading-14">最后</h2>
 <p>所有代码均封装成文件在 <a href="https://github.com/Nemocdz/ImageCompress-iOS">iOS</a> 和 <a href="https://github.com/Nemocdz/ImageCompress-Android">Android</a> 中了，如有错误和建议，欢迎指出。</p>
-
-<h2 id="参考链接">参考链接</h2>
-
+<h2 id="heading-15">参考链接</h2>
 <ul>
-<li><p><a href="https://www.secaibi.com/tools/2013/08/06/%E6%97%A0%E6%8D%9F%E5%8E%8B%E7%BC%A9-vs-%E6%9C%89%E6%8D%9F%E5%8E%8B%E7%BC%A9-vs-%E6%8D%9F%E5%A4%9A%E5%B0%91/">无损压缩 vs 有损压缩 vs 损多少</a></p></li>
-
-<li><p><a href="https://www.zhihu.com/question/20028452">图片格式 jpg、png、gif各有什么优缺点？什么情况下用什么格式的图片呢？</a></p></li>
-
-<li><p><a href="https://juejin.im/entry/58fc75e0ac502e0063aa433b">也谈图片压缩</a></p></li>
-
-<li><p><a href="https://blog.ibireme.com/2015/11/02/mobile_image_benchmark/">移动端图片格式调研</a></p></li>
-
-<li><p><a href="https://cloud.tencent.com/developer/article/1004763">浓缩的才是精华：浅析 GIF 格式图片的存储和压缩</a></p></li>
-
-<li><p><a href="https://segmentfault.com/a/1190000000436384">压缩gif的正确姿势</a></p></li>
-
-<li><p><a href="http://blog.leichunfeng.com/blog/2017/02/20/talking-about-the-decompression-of-the-image-in-ios/">谈谈 iOS 中图片的解压缩</a></p></li>
-
-<li><p><a href="https://dreampiggy.com/2017/10/30/iOS%E5%B9%B3%E5%8F%B0%E5%9B%BE%E7%89%87%E7%BC%96%E8%A7%A3%E7%A0%81%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B%EF%BC%88Image:IO%E7%AF%87%EF%BC%89/">iOS平台图片编解码入门教程（Image/IO篇）</a></p></li>
+<li>
+<p><a href="https://www.secaibi.com/tools/2013/08/06/%E6%97%A0%E6%8D%9F%E5%8E%8B%E7%BC%A9-vs-%E6%9C%89%E6%8D%9F%E5%8E%8B%E7%BC%A9-vs-%E6%8D%9F%E5%A4%9A%E5%B0%91/">无损压缩 vs 有损压缩 vs 损多少</a></p>
+</li>
+<li>
+<p><a href="https://www.zhihu.com/question/20028452">图片格式 jpg、png、gif各有什么优缺点？什么情况下用什么格式的图片呢？</a></p>
+</li>
+<li>
+<p><a href="https://juejin.im/entry/58fc75e0ac502e0063aa433b">也谈图片压缩</a></p>
+</li>
+<li>
+<p><a href="https://blog.ibireme.com/2015/11/02/mobile_image_benchmark/">移动端图片格式调研</a></p>
+</li>
+<li>
+<p><a href="https://cloud.tencent.com/developer/article/1004763">浓缩的才是精华：浅析 GIF 格式图片的存储和压缩</a></p>
+</li>
+<li>
+<p><a href="https://segmentfault.com/a/1190000000436384">压缩gif的正确姿势</a></p>
+</li>
+<li>
+<p><a href="http://blog.leichunfeng.com/blog/2017/02/20/talking-about-the-decompression-of-the-image-in-ios/">谈谈 iOS 中图片的解压缩</a></p>
+</li>
+<li>
+<p><a href="https://dreampiggy.com/2017/10/30/iOS%E5%B9%B3%E5%8F%B0%E5%9B%BE%E7%89%87%E7%BC%96%E8%A7%A3%E7%A0%81%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B%EF%BC%88Image:IO%E7%AF%87%EF%BC%89/">iOS平台图片编解码入门教程（Image/IO篇）</a></p>
+</li>
 </ul></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>348</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>349</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

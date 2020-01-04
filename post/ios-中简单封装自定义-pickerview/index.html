@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.58.1">
+<meta name="generator" content="Hugo 0.62.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89-pickerview/">
@@ -220,50 +220,44 @@
     
 	
 	<nav id="TableOfContents">
-<ul>
-<li><a href="#1-数据">1.数据</a></li>
-<li><a href="#2-视图">2.视图</a></li>
-<li><a href="#3-响应按钮点击事件">3.响应按钮点击事件</a></li>
-<li><a href="#4-封装成工厂方法">4.封装成工厂方法</a></li>
-<li><a href="#最后">最后</a></li>
-</ul>
+  <ul>
+    <li><a href="#1">1.数据</a></li>
+    <li><a href="#2">2.视图</a></li>
+    <li><a href="#3">3.响应按钮点击事件</a></li>
+    <li><a href="#4">4.封装成工厂方法</a></li>
+    <li><a href="#heading">最后</a></li>
+  </ul>
 </nav>
 
     <article class="post-content"><p><code>UIPickerView</code> 是 iOS 开发中，相当常用的一个 UI 控件，用于滚动选择选项。也是项目中经常复用的一个控件，封装成一个统一风格的库，可以减少很多代码量。一般还会在 PickerView 上加上 Toolbar 和确定取消按钮。</p>
-
 <p>点击 Button 弹出 Picker，并改变指定 Label 的值，效果如下图所示。
-<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gw1f9wp3v4z00g30ku112agf.gif" alt="" />
+<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gw1f9wp3v4z00g30ku112agf.gif" alt="">
 最终目的是在 ViewController 中 Button 的 Event Reponse 中调用封装好的库的方法进行传值及操作。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objectivec" data-lang="objectivec">- (<span style="color:#8be9fd">IBAction</span>)<span style="color:#50fa7b">showPicker:</span>(UIButton <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">sender</span> {
-    NSArray <span style="color:#ff79c6">*</span>array <span style="color:#ff79c6">=</span> @[<span style="color:#f1fa8c">@&#34;电子科技大学&#34;</span>,<span style="color:#f1fa8c">@&#34;清华大学&#34;</span>,<span style="color:#f1fa8c">@&#34;四川大学&#34;</span>,<span style="color:#f1fa8c">@&#34;华中科技大学&#34;</span>,<span style="color:#f1fa8c">@&#34;西安电子科技大学&#34;</span>];
+    NSArray <span style="color:#ff79c6">*</span>array <span style="color:#ff79c6">=</span> @[<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">电子科技大学</span><span style="color:#f1fa8c">&#34;</span>,<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">清华大学</span><span style="color:#f1fa8c">&#34;</span>,<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">四川大学</span><span style="color:#f1fa8c">&#34;</span>,<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">华中科技大学</span><span style="color:#f1fa8c">&#34;</span>,<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">西安电子科技大学</span><span style="color:#f1fa8c">&#34;</span>];
     [CDZPicker <span style="color:#8be9fd;font-style:italic">showPickerInView</span>:<span style="color:#8be9fd;font-style:italic">self</span>.view <span style="color:#8be9fd;font-style:italic">withObjectsArray</span>:array <span style="color:#8be9fd;font-style:italic">withlastString</span>:<span style="color:#8be9fd;font-style:italic">self</span>.label.text <span style="color:#8be9fd;font-style:italic">withStringBlock</span>:<span style="color:#ff79c6">^</span>(NSString <span style="color:#ff79c6">*</span>string) {
         <span style="color:#8be9fd;font-style:italic">self</span>.label.text <span style="color:#ff79c6">=</span> string;
     }];
-    }</code></pre></div>
-<p>实现思路从数据，视图，按钮处理三个方面说</p>
-
-<h2 id="1-数据">1.数据</h2>
-
+    }
+</code></pre></div><p>实现思路从数据，视图，按钮处理三个方面说</p>
+<h2 id="1">1.数据</h2>
 <ul>
 <li>传入数据（上层 View 对象，数组 Array，最后的值）</li>
 <li>改变的值（利用 block 传值回调）</li>
 <li><code>UIPickerView</code> 的 Delegate 和 DataSource 方法的实现</li>
 </ul>
-
 <p>上层 View 对象和数组 Array 没啥可说的，关于取消按钮的实现，个人想法是把弹出 picker 改变前最后的值传进 View 的内部并存储起来，等待按钮的动作响应判断是否取出。（但个人感觉把这个值传进去实现不太优雅，但水平不够没想到其它实现方法，希望交流）
 改变值用利用 block 方法传值，不用 delegate 和通知的原因是感觉都太复杂了，通知还需要注册，但 block 的使用要注意避免循环引用导致内存没办法得到释放的问题。
 在 .h 文件中定义 block 的别名便于使用</p>
-
 <p><code>typedef void (^CDZStringResultBlock)(NSString *string);</code></p>
-
 <p>.m 中增加以下属性</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objectivec" data-lang="objectivec"><span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>,<span style="color:#ff79c6">strong</span>) NSArray <span style="color:#ff79c6">*</span>dataArray;
 <span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>,<span style="color:#ff79c6">strong</span>) NSString <span style="color:#ff79c6">*</span>lastString;
-<span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>,  <span style="color:#ff79c6">copy</span>) CDZStringResultBlock block;</code></pre></div>
-<p>实现 Pickerview 的 Delegate 和 DataSource 协议
- <code>&lt;UIPickerViewDelegate,UIPickerViewDataSource&gt;</code>
+<span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>,  <span style="color:#ff79c6">copy</span>) CDZStringResultBlock block;
+</code></pre></div><p>实现 Pickerview 的 Delegate 和 DataSource 协议
+<code>&lt;UIPickerViewDelegate,UIPickerViewDataSource&gt;</code>
 实现 Pickerview 的 Delegate 和 DataSource 相关方法</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">#pragma mark - PickerDataSource
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">#pragma mark - PickerDataSource
 //返回 picker 列数
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView{
     return 1;
@@ -272,7 +266,8 @@
 //picker 行数
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
     return self.dataArray.count;
-}</pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">#pragma mark - PickerDelegate
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">#pragma mark - PickerDelegate
 //返回每行高度
 - (CGFloat)pickerView:(UIPickerView *)pickerView rowHeightForComponent:(NSInteger)component{
     return 44;
@@ -300,24 +295,22 @@
     genderLabel.textColor = [UIColor blackColor];
 
     return genderLabel;
-}</pre></div>
-<p>另外有一点要注意
- <code>-(UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view</code>
+}
+</code></pre></div><p>另外有一点要注意
+<code>-(UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view</code>
 这个方法的优先级比
- <code>- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component</code>
+<code>- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component</code>
 这个方法优先级高，也就是说会覆盖后面那个方法里的设置，后面的方法只能确定每行返回的方法的值，没办法对字体大小，颜色，分割线等进行自定义，需要自定义就使用第一个方法。</p>
-
-<h2 id="2-视图">2.视图</h2>
-
+<h2 id="2">2.视图</h2>
 <p>视图上，由一个压黑背景的 View 上面加上一个包含确定和取消两个按钮和 pickerview 的 containview 组成。
 先在最开始进行一些颜色，屏幕大小的宏定义和全局静态变量定义，方便使用</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">#define SCREEN_WIDTH ([UIScreen mainScreen].bounds.size.width)
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">#define SCREEN_WIDTH ([UIScreen mainScreen].bounds.size.width)
 #define SCREEN_HEIGHT ([UIScreen mainScreen].bounds.size.height)
 #define BACKGROUND_BLACK_COLOR [UIColor colorWithRed:0.412 green:0.412 blue:0.412 alpha:0.7]
 static const int pickerViewHeight = 228;
-static const int toolBarHeight = 44;</pre></div>
-<p>进行 view 的布局，增加 button 点击动作等，pickerview 要指定 datasource 和 delegate 为 self</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">- (void)initView{
+static const int toolBarHeight = 44;
+</code></pre></div><p>进行 view 的布局，增加 button 点击动作等，pickerview 要指定 datasource 和 delegate 为 self</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">- (void)initView{
     UIView *containerView = [[UIView alloc]initWithFrame:CGRectMake(0, SCREEN_HEIGHT - pickerViewHeight, SCREEN_WIDTH, pickerViewHeight)];
     containerView.backgroundColor = [UIColor whiteColor];
     
@@ -343,11 +336,10 @@ static const int toolBarHeight = 44;</pre></div>
     
     self.backgroundColor = BACKGROUND_BLACK_COLOR;
     [self addSubview:containerView];
-}</pre></div>
-<h2 id="3-响应按钮点击事件">3.响应按钮点击事件</h2>
-
+}
+</code></pre></div><h2 id="3">3.响应按钮点击事件</h2>
 <p>很简单，见代码即可。取消的话把传进来的 lastString 传回去即可。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">#pragma mark - event response
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">#pragma mark - event response
 - (void)pickerViewBtnOk:(UIButton *)btn{
     [self removeFromSuperview];
 }
@@ -355,9 +347,9 @@ static const int toolBarHeight = 44;</pre></div>
 - (void)pickerViewBtnCancel:(UIButton *)btn{
     self.block (self.lastString);
     [self removeFromSuperview];
-}</pre></div>
-<h2 id="4-封装成工厂方法">4.封装成工厂方法</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">+ (void)showPickerInView:(UIView *)view
+}
+</code></pre></div><h2 id="4">4.封装成工厂方法</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">+ (void)showPickerInView:(UIView *)view
         withObjectsArray:(NSArray *)array
           withlastString:(NSString *)string
          withStringBlock:(CDZStringResultBlock)stringBlock{
@@ -368,12 +360,10 @@ static const int toolBarHeight = 44;</pre></div>
     pickerView.block(array[0]);//未滑动的话默认为第一个数据
     [pickerView initView];
     [view addSubview:pickerView];
-}</pre></div>
-<h2 id="最后">最后</h2>
-
+}
+</code></pre></div><h2 id="heading">最后</h2>
 <p>所有源码和 <a href="https://github.com/Nemocdz/CDZPickerViewDemo">Demo</a>
 这是我第一次写技术类文章，虽然不是什么很深入的问题，但希望能分享给有需要的人。</p>
-
 <p>如果您觉得有帮助,不妨给个 star 鼓励一下,欢迎关注&amp;交流</p></article>
     <footer class="post-footer">
       

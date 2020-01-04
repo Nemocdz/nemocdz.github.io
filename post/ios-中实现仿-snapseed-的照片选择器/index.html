@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.58.1">
+<meta name="generator" content="Hugo 0.62.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BF-snapseed-%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/">
@@ -220,27 +220,23 @@
     
 	
 	<nav id="TableOfContents">
-<ul>
-<li><a href="#1-功能按钮的-tableview">1.功能按钮的 Tableview</a></li>
-<li><a href="#2-展示照片的-collecionview">2.展示照片的 Collecionview</a></li>
-<li><a href="#3-透明图层-用于实现空白处点击消失">3.透明图层（用于实现空白处点击消失）</a></li>
-<li><a href="#4-收尾-封装">4.收尾&amp;封装</a></li>
-<li><a href="#5-使用方法">5.使用方法</a></li>
-<li><a href="#最后">最后</a></li>
-</ul>
+  <ul>
+    <li><a href="#1-tableview">1.功能按钮的 Tableview</a></li>
+    <li><a href="#2-collecionview">2.展示照片的 Collecionview</a></li>
+    <li><a href="#3">3.透明图层（用于实现空白处点击消失）</a></li>
+    <li><a href="#4">4.收尾&封装</a></li>
+    <li><a href="#5">5.使用方法</a></li>
+    <li><a href="#heading">最后</a></li>
+  </ul>
 </nav>
 
     <article class="post-content"><p>ImagePickerController（图片选择器）是 iOS 开发中一个很常用的 UI 控件。作为摄影爱好者，而 Google 出品的摄影后期 App，Snapseed 中那个图片选择器，好看又实用，便尝试着仿写了一个。</p>
-
 <p>集成后一行代码即可实现下图效果。
-<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006y8mN6gw1fae4wlsm89g30ku1121gx.gif" alt="" />
+<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006y8mN6gw1fae4wlsm89g30ku1121gx.gif" alt="">
 实现原理从界面说起。
 界面可以分解为一个背景图层用于点击关闭（空白处点击消失），一个横向可滚动的 Collectionview 用于显示图库里的图片，一个 Tableview 用于存放功能按钮。</p>
-
-<h2 id="1-功能按钮的-tableview">1.功能按钮的 Tableview</h2>
-
+<h2 id="1-tableview">1.功能按钮的 Tableview</h2>
 <p>先从简单的 Tableview说起，从小模块到大模块应该是以下方面。</p>
-
 <ul>
 <li>自定义数组数据对象 item 方便调整按钮的文字图片数量功能</li>
 <li>自定义 Tableview 的 cell 方便样式调整，cell 中属性根据对应 item 设置</li>
@@ -249,19 +245,18 @@
 <li>点击功能实现，设置 <code>UIImagePickerController</code></li>
 <li>Tableview 的 View 初始化，设置 datasource，view 绘制</li>
 </ul>
-
 <p>自定义 item 对象，item 对象定义了 Action 的显示名字，类型，图片</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@property</span>(<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">copy</span>) NSString <span style="color:#ff79c6">*</span>actionTitle;
 <span style="color:#ff79c6">@property</span>(<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">strong</span>) UIImage <span style="color:#ff79c6">*</span>actionImage;
-<span style="color:#ff79c6">@property</span>(<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">assign</span>) CDZImagePickerActionType actionType;</code></pre></div>
-<p>其中 CDZImagePickerActionType 可用来定义按钮动作类型，可以用枚举来定义</p>
+<span style="color:#ff79c6">@property</span>(<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">assign</span>) CDZImagePickerActionType actionType;
+</code></pre></div><p>其中 CDZImagePickerActionType 可用来定义按钮动作类型，可以用枚举来定义</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">typedef</span> <span style="color:#50fa7b">NS_ENUM</span>(NSInteger, CDZImagePickerActionType) {
     CDZImagePickerCameraAction,
     CDZImagePickerLibraryAction,
     CDZImagePickerRecentAction,
     CDZImagePickerCloseAction
-};</code></pre></div>
-<p>定义一个 init 方法用来快捷初始化 item 对象。</p>
+};
+</code></pre></div><p>定义一个 init 方法用来快捷初始化 item 对象。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">instancetype</span>)<span style="color:#50fa7b">initWithTitle:</span>(NSString <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">titele</span> <span style="color:#50fa7b">withActionType:</span>(CDZImagePickerActionType)<span style="color:#8be9fd;font-style:italic">type</span> <span style="color:#50fa7b">withImage:</span>(UIImage <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">image</span>{
     <span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">super</span> init];
     <span style="color:#ff79c6">if</span> (<span style="color:#8be9fd;font-style:italic">self</span>) {
@@ -270,13 +265,13 @@
         _actionImage <span style="color:#ff79c6">=</span> image;
     }
     <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">self</span>;
-}</code></pre></div>
-<p>自定义 cell 对象，封装一个方法来对应 item 和 cell 的关系</p>
+}
+</code></pre></div><p>自定义 cell 对象，封装一个方法来对应 item 和 cell 的关系</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">setCellFromItem:</span>(CDZImagePickerActionsItem <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">item</span>{
     <span style="color:#8be9fd;font-style:italic">self</span>.textLabel.text <span style="color:#ff79c6">=</span> item.actionTitle;
     <span style="color:#8be9fd;font-style:italic">self</span>.imageView.image <span style="color:#ff79c6">=</span> item.actionImage;
-}</code></pre></div>
-<p>可以重写 <code>layoutSubviews</code> 方法达到 cell 中文字，图片样式自定义的效果，比如可以写有图片和无图片的样式布局</p>
+}
+</code></pre></div><p>可以重写 <code>layoutSubviews</code> 方法达到 cell 中文字，图片样式自定义的效果，比如可以写有图片和无图片的样式布局</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">layoutSubviews</span>{
     [<span style="color:#8be9fd;font-style:italic">super</span> layoutSubviews];
     <span style="color:#8be9fd;font-style:italic">self</span>.selectionStyle <span style="color:#ff79c6">=</span> UITableViewCellSelectionStyleNone;<span style="color:#6272a4">//点击不变色
@@ -291,11 +286,10 @@
     <span style="color:#ff79c6">else</span>{
         <span style="color:#8be9fd;font-style:italic">self</span>.textLabel.textAlignment <span style="color:#ff79c6">=</span> NSTextAlignmentCenter;
     }
-}</code></pre></div>
-<p>自定义 datasource，这一步可以根据个人选择，个人习惯是把 datasource 从 Viewcontroller 里抽离，可以让 Controller更少代码，datasource 有数组对象用于存放 item <code>@property (nonatomic, strong) NSMutableArray *itemArray;</code></p>
-
+}
+</code></pre></div><p>自定义 datasource，这一步可以根据个人选择，个人习惯是把 datasource 从 Viewcontroller 里抽离，可以让 Controller更少代码，datasource 有数组对象用于存放 item <code>@property (nonatomic, strong) NSMutableArray *itemArray;</code></p>
 <p>实现 datasource 方法。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">#pragma mark - tableViewDataSourceRequried
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">#</span><span style="color:#ff79c6">pragma mark - tableViewDataSourceRequried</span><span style="color:#ff79c6">
 </span><span style="color:#ff79c6"></span>- (NSInteger)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">numberOfRowsInSection:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">section</span>{
     <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">self</span>.itemArray.count;
 }
@@ -309,9 +303,9 @@
     }
     [cell <span style="color:#8be9fd;font-style:italic">setCellFromItem</span>:item];<span style="color:#6272a4">//将 cell 和 item 对应起来
 </span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">return</span> cell;
-}</code></pre></div>
-<p>实现 delegate 和点击事件</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">#pragma mark - tableViewDelegate
+}
+</code></pre></div><p>实现 delegate 和点击事件</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">#</span><span style="color:#ff79c6">pragma mark - tableViewDelegate</span><span style="color:#ff79c6">
 </span><span style="color:#ff79c6"></span>
 - (CGFloat)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">heightForRowAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>{
     <span style="color:#ff79c6">return</span> actionsViewCellHeight;
@@ -321,7 +315,8 @@
 - (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">didSelectRowAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>{
     CDZImagePickerActionsItem <span style="color:#ff79c6">*</span>item <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.actionArray[indexPath.row];
     [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">doActionsWithType</span>:item.actionType];
-}</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">#pragma mark - actions
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">#</span><span style="color:#ff79c6">pragma mark - actions</span><span style="color:#ff79c6">
 </span><span style="color:#ff79c6"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">doActionsWithType:</span>(CDZImagePickerActionType)<span style="color:#8be9fd;font-style:italic">type</span>{
     <span style="color:#ff79c6">switch</span> (type) {
         <span style="color:#ff79c6">case</span>  <span style="color:#8be9fd;font-style:italic">CDZImagePickerCameraAction</span>:
@@ -345,7 +340,7 @@
         pickerController.delegate <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>;
         pickerController.sourceType <span style="color:#ff79c6">=</span> UIImagePickerControllerSourceTypeCamera;
         [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">presentViewController</span>:pickerController <span style="color:#8be9fd;font-style:italic">animated</span>:<span style="color:#8be9fd;font-style:italic">NO</span> <span style="color:#8be9fd;font-style:italic">completion</span>:<span style="color:#8be9fd;font-style:italic">nil</span>];
-        NSLog(<span style="color:#f1fa8c">@&#34;打开相机&#34;</span>);
+        NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">打开相机</span><span style="color:#f1fa8c">&#34;</span>);
     }
 }
 
@@ -354,13 +349,13 @@
     pickerController.delegate <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>;
     pickerController.sourceType <span style="color:#ff79c6">=</span> UIImagePickerControllerSourceTypePhotoLibrary;
     [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">presentViewController</span>:pickerController <span style="color:#8be9fd;font-style:italic">animated</span>:<span style="color:#8be9fd;font-style:italic">NO</span> <span style="color:#8be9fd;font-style:italic">completion</span>:<span style="color:#8be9fd;font-style:italic">nil</span>];
-    NSLog(<span style="color:#f1fa8c">@&#34;打开图库&#34;</span>);
+    NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">打开图库</span><span style="color:#f1fa8c">&#34;</span>);
     
 }
 
 - (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">closeAction</span>{
     [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">dismissViewControllerAnimated</span>:<span style="color:#8be9fd;font-style:italic">YES</span> <span style="color:#8be9fd;font-style:italic">completion</span>:<span style="color:#8be9fd;font-style:italic">nil</span>];
-    NSLog(<span style="color:#f1fa8c">@&#34;关闭按钮&#34;</span>);
+    NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">关闭按钮</span><span style="color:#f1fa8c">&#34;</span>);
 }
 
 
@@ -368,24 +363,24 @@
     [[PHImageManager defaultManager]<span style="color:#8be9fd;font-style:italic">requestImageForAsset</span>:<span style="color:#8be9fd;font-style:italic">self</span>.photosDataSource.itemArray[<span style="color:#bd93f9">0</span>] <span style="color:#8be9fd;font-style:italic">targetSize</span>:PHImageManagerMaximumSize <span style="color:#8be9fd;font-style:italic">contentMode</span>:PHImageContentModeAspectFill <span style="color:#8be9fd;font-style:italic">options</span>:<span style="color:#8be9fd;font-style:italic">nil</span> <span style="color:#8be9fd;font-style:italic">resultHandler</span>:<span style="color:#ff79c6">^</span>(UIImage <span style="color:#ff79c6">*</span> _Nullable result, NSDictionary <span style="color:#ff79c6">*</span> _Nullable info) {
         <span style="color:#8be9fd;font-style:italic">self</span>.resultImage <span style="color:#ff79c6">=</span> result;
         [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">dismissViewControllerAnimated</span>:<span style="color:#8be9fd;font-style:italic">YES</span> <span style="color:#8be9fd;font-style:italic">completion</span>:<span style="color:#8be9fd;font-style:italic">nil</span>];
-        NSLog(<span style="color:#f1fa8c">@&#34;打开最新图片&#34;</span>);
+        NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">打开最新图片</span><span style="color:#f1fa8c">&#34;</span>);
     }];
-}</code></pre></div>
-<p>实现 imagepicker 的 delegate（<strong>记得实现 UINavigationControllerDelegate，不可只实现 UIImagePickerControllerDelegate，会报错</strong>）</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">#pragma mark - imagePickerController delegate
+}
+</code></pre></div><p>实现 imagepicker 的 delegate（<strong>记得实现 UINavigationControllerDelegate，不可只实现 UIImagePickerControllerDelegate，会报错</strong>）</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">#</span><span style="color:#ff79c6">pragma mark - imagePickerController delegate</span><span style="color:#ff79c6">
 </span><span style="color:#ff79c6"></span>
 - (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">imagePickerController:</span>(UIImagePickerController <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">picker</span> <span style="color:#50fa7b">didFinishPickingMediaWithInfo:</span>(nonnull NSDictionary<span style="color:#ff79c6">&lt;</span>NSString <span style="color:#ff79c6">*</span>,<span style="color:#8be9fd">id</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">info</span>{
     UIImage <span style="color:#ff79c6">*</span>image <span style="color:#ff79c6">=</span> info[UIImagePickerControllerOriginalImage];
-    <span style="color:#ff79c6">if</span>(picker.sourceType <span style="color:#ff79c6">==</span> UIImagePickerControllerSourceTypeCamera){
+    <span style="color:#ff79c6">if</span>(picker.sourceType <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> UIImagePickerControllerSourceTypeCamera){
         UIImageWriteToSavedPhotosAlbum(image, <span style="color:#8be9fd;font-style:italic">self</span>, <span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">image</span>:<span style="color:#8be9fd;font-style:italic">didFinishSavingWithError</span>:<span style="color:#8be9fd;font-style:italic">contextInfo</span>:), <span style="color:#8be9fd;font-style:italic">nil</span>);
     }
     <span style="color:#8be9fd;font-style:italic">self</span>.resultImage <span style="color:#ff79c6">=</span> image;
     [picker <span style="color:#8be9fd;font-style:italic">dismissViewControllerAnimated</span>:<span style="color:#8be9fd;font-style:italic">NO</span> <span style="color:#8be9fd;font-style:italic">completion</span>:<span style="color:#8be9fd;font-style:italic">nil</span>];
     [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">dismissViewControllerAnimated</span>:<span style="color:#8be9fd;font-style:italic">YES</span> <span style="color:#8be9fd;font-style:italic">completion</span>:<span style="color:#8be9fd;font-style:italic">nil</span>];
-    NSLog(<span style="color:#f1fa8c">@&#34;从相机或图库获取图片&#34;</span>);
-}</code></pre></div>
-<p>iOS 10 还要检查一下相机和图库的权限，记得在 info.plist 中添加两行，不然会崩溃
-<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006y8mN6gw1fadyvsos06j30r4024754.jpg" alt="" />
+    NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">从相机或图库获取图片</span><span style="color:#f1fa8c">&#34;</span>);
+}
+</code></pre></div><p>iOS 10 还要检查一下相机和图库的权限，记得在 info.plist 中添加两行，不然会崩溃
+<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006y8mN6gw1fadyvsos06j30r4024754.jpg" alt="">
 最后在是 Tableview 初始化与绘制，在 datasource 初始化自己需要的按钮 item 数组（acctionArray）</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (CDZImagePickerActionsDataSource <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">actionsDataSource</span>{
     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>_actionsDataSource) {
@@ -393,7 +388,8 @@
         _actionsDataSource.itemArray <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.actionArray;
     }
     <span style="color:#ff79c6">return</span> _actionsDataSource;
-}</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (UITableView <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">actionView</span>{
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (UITableView <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">actionView</span>{
     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>_actionView) {
         CGFloat actionsViewHeight <span style="color:#ff79c6">=</span> actionsViewCellHeight <span style="color:#ff79c6">*</span> <span style="color:#8be9fd;font-style:italic">self</span>.actionArray.count;
         _actionView <span style="color:#ff79c6">=</span> [[UITableView alloc]<span style="color:#8be9fd;font-style:italic">initWithFrame</span>:CGRectMake(<span style="color:#bd93f9">0</span>,SCREEN_HEIGHT <span style="color:#ff79c6">-</span> actionsViewHeight ,SCREEN_WIDTH, actionsViewHeight) <span style="color:#8be9fd;font-style:italic">style</span>:UITableViewStylePlain];
@@ -403,11 +399,9 @@
         _actionView.dataSource <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.actionsDataSource;
     }
     <span style="color:#ff79c6">return</span> _actionView;
-}</code></pre></div>
-<h2 id="2-展示照片的-collecionview">2.展示照片的 Collecionview</h2>
-
+}
+</code></pre></div><h2 id="2-collecionview">2.展示照片的 Collecionview</h2>
 <p>Collecionview 的实现思路和 Tableview 类似</p>
-
 <ul>
 <li>自定义 Collectionview 的 cell 实现样式调整</li>
 <li>自定义 Datasource 解析并设置当前的 cell 对应的图片</li>
@@ -416,9 +410,7 @@
 <li>实现 Collecitonview 的 Delegate，设置点击事件</li>
 <li>实现 Collectionview 的初始化和视图绘制</li>
 </ul>
-
 <p>cell 的自定义主要是重写其 <code>initWithFrame</code> 方法添加 imageview（<strong>注意 Collectionviewcell 只用 initWithFrame 方式初始化，Tableviewcell 初始化方法有多种</strong>），并在 <code>layoutSubviews</code> 里改变 Imageview 的大小,和 Tableview 类似写一个 setCellFromItem 的方法解析 item 数据。而 PhotosKit 获取的图片对象为 <code>PHAsset</code>，用 <code>PHImageManage</code> 的方法根据将其解析为 size 为 cell 的大小 <code>UIImage</code>，加快加载速度，按需加载（关于 PhotosKit 的优点不再赘述，iOS 8 以后苹果只保留了 PhotosKit 用于获取系统图片）</p>
-
 <p>PhotosKit 获取时，注意两个地方，targetSize 传入的是 pixel，而不是平时用的 size，且 option 里的 resizeMode 默认为 None（不缩放），不重写 resizeMode 属性那么只会抓取不缩放的图，在意质量可以设置 resizeMode 为 Exact（精确），追求速度可以设置为 Fast(这样不会完全按照设置的 targetSize 去获取图片)</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">instancetype</span>)<span style="color:#50fa7b">initWithFrame:</span>(CGRect)<span style="color:#8be9fd;font-style:italic">frame</span>{
     <span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">super</span> <span style="color:#8be9fd;font-style:italic">initWithFrame</span>:frame];
@@ -447,13 +439,12 @@
         _photoImageView.contentMode <span style="color:#ff79c6">=</span> UIViewContentModeScaleAspectFill;
     }
     <span style="color:#ff79c6">return</span> _photoImageView;
-}</code></pre></div>
-<hr />
-
+}
+</code></pre></div><hr>
 <p>Datasource 也类似，定义一个 itemArray 用于存放图片对象 <code>PHAsset</code>
- <code>@property (nonatomic, strong) NSMutableArray *itemArray;</code>
+<code>@property (nonatomic, strong) NSMutableArray *itemArray;</code>
 实现 Datasource 方法，和 Tableview 类似（<strong>不用判断 cell 是 nil 是因为 Collectionviewcell 的初始化只有一种</strong>）</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">#pragma mark - collectionViewDataSourceRequried
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">#</span><span style="color:#ff79c6">pragma mark - collectionViewDataSourceRequried</span><span style="color:#ff79c6">
 </span><span style="color:#ff79c6"></span>
 - (NSInteger)<span style="color:#50fa7b">collectionView:</span>(UICollectionView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">collectionView</span> <span style="color:#50fa7b">numberOfItemsInSection:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">section</span>{
     <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">self</span>.itemArray.count;
@@ -464,9 +455,8 @@
     CDZImagePickerPhotosCell <span style="color:#ff79c6">*</span>cell <span style="color:#ff79c6">=</span> [collectionView <span style="color:#8be9fd;font-style:italic">dequeueReusableCellWithReuseIdentifier</span>:NSStringFromClass([CDZImagePickerPhotosCell <span style="color:#ff79c6">class</span>]) <span style="color:#8be9fd;font-style:italic">forIndexPath</span>:indexPath];
     [cell <span style="color:#8be9fd;font-style:italic">setCellFromItem</span>:item];
     <span style="color:#ff79c6">return</span> cell;
-}</code></pre></div>
-<hr />
-
+}
+</code></pre></div><hr>
 <p>在 Controller 中获取全部照片
 再用 PhotosKit 的方法把所有图片获取到数组里</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (NSMutableArray <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">getImageAssets</span>{
@@ -476,9 +466,8 @@
         [assets <span style="color:#8be9fd;font-style:italic">insertObject</span>:asset <span style="color:#8be9fd;font-style:italic">atIndex</span>:<span style="color:#bd93f9">0</span>];
     }
     <span style="color:#ff79c6">return</span> assets;
-}</code></pre></div>
-<hr />
-
+}
+</code></pre></div><hr>
 <p>Collectionview 的布局，cell 的大小排列和间距等，都是由 <code>UICollectionViewLayout</code> 决定的，布局是线性的话，推荐用官方的子类 <code>UICollectionViewFlowLayout</code>，其 Deleagate 是 <code>UICollectionviewDeleagateFlowLayout</code>，是 <code>UICollectionViewDelegate</code> 的子 Delegate。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (UICollectionViewFlowLayout <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">photosFlowLayout</span>{
     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>_photosFlowLayout) {
@@ -486,7 +475,8 @@
         _photosFlowLayout.scrollDirection <span style="color:#ff79c6">=</span> UICollectionViewScrollDirectionHorizontal; <span style="color:#6272a4">//水平滚动
 </span><span style="color:#6272a4"></span>    }
     <span style="color:#ff79c6">return</span> _photosFlowLayout;
-}</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">#pragma mark - collectionViewDelegateFlowLayout
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">#</span><span style="color:#ff79c6">pragma mark - collectionViewDelegateFlowLayout</span><span style="color:#ff79c6">
 </span><span style="color:#ff79c6"></span><span style="color:#6272a4">//根据 asset 的长宽设定每个 cell 的 size
 </span><span style="color:#6272a4"></span>- (CGSize)<span style="color:#50fa7b">collectionView:</span>(UICollectionView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">collectionView</span> <span style="color:#50fa7b">layout:</span>(UICollectionViewLayout <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">collectionViewLayout</span> <span style="color:#50fa7b">sizeForItemAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>{
     PHAsset <span style="color:#ff79c6">*</span>asset <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.photosDataSource.itemArray[indexPath.row];
@@ -505,21 +495,19 @@
 <span style="color:#6272a4">//设置 cell 之间的间距
 </span><span style="color:#6272a4"></span>- (CGFloat) <span style="color:#50fa7b">collectionView:</span>(UICollectionView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">collectionView</span> <span style="color:#50fa7b">layout:</span>(UICollectionViewLayout <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">collectionViewLayout</span> <span style="color:#50fa7b">minimumInteritemSpacingForSectionAtIndex:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">section</span>{
     <span style="color:#ff79c6">return</span> photosViewInset;
-}</code></pre></div>
-<hr />
-
+}
+</code></pre></div><hr>
 <p>设置 Collecionview 的 Delegate 和点击事件</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">#pragma mark - collectionViewDelegate
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">#</span><span style="color:#ff79c6">pragma mark - collectionViewDelegate</span><span style="color:#ff79c6">
 </span><span style="color:#ff79c6"></span>
 - (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">collectionView:</span>(UICollectionView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">collectionView</span> <span style="color:#50fa7b">didSelectItemAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>{
     [[PHImageManager defaultManager]<span style="color:#8be9fd;font-style:italic">requestImageForAsset</span>:<span style="color:#8be9fd;font-style:italic">self</span>.photosArray[indexPath.row] <span style="color:#8be9fd;font-style:italic">targetSize</span>:PHImageManagerMaximumSize <span style="color:#8be9fd;font-style:italic">contentMode</span>:PHImageContentModeAspectFill <span style="color:#8be9fd;font-style:italic">options</span>:<span style="color:#8be9fd;font-style:italic">nil</span> <span style="color:#8be9fd;font-style:italic">resultHandler</span>:<span style="color:#ff79c6">^</span>(UIImage <span style="color:#ff79c6">*</span> _Nullable result, NSDictionary <span style="color:#ff79c6">*</span> _Nullable info) {
         <span style="color:#8be9fd;font-style:italic">self</span>.resultImage <span style="color:#ff79c6">=</span> result;
         [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">dismissViewControllerAnimated</span>:<span style="color:#8be9fd;font-style:italic">YES</span> <span style="color:#8be9fd;font-style:italic">completion</span>:<span style="color:#8be9fd;font-style:italic">nil</span>];
-        NSLog(<span style="color:#f1fa8c">@&#34;已选择图片&#34;</span>);
+        NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">已选择图片</span><span style="color:#f1fa8c">&#34;</span>);
     }];
-}</code></pre></div>
-<hr />
-
+}
+</code></pre></div><hr>
 <p>最后就是 Collectionview 的初始化和绘制和 Tableview 类似，多了一步注册 Collectionview 的 cell（<strong>Collectionviewcell 必须让 Collecionview 注册重用标识，而 Tableviewcell 可以在自己 init 方法里注册</strong>）</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (UICollectionView <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">photosView</span>{
     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>_photosView){
@@ -532,17 +520,16 @@
         [_photosView <span style="color:#8be9fd;font-style:italic">registerClass</span>:[CDZImagePickerPhotosCell <span style="color:#ff79c6">class</span>] <span style="color:#8be9fd;font-style:italic">forCellWithReuseIdentifier</span>:NSStringFromClass([CDZImagePickerPhotosCell <span style="color:#ff79c6">class</span>])];
     }
     <span style="color:#ff79c6">return</span> _photosView;
-}</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (CDZImagePickerPhotosDataSource <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">photosDataSource</span>{
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (CDZImagePickerPhotosDataSource <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">photosDataSource</span>{
     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>_photosDataSource){
         _photosDataSource <span style="color:#ff79c6">=</span> [[CDZImagePickerPhotosDataSource alloc]init];
         _photosDataSource.itemArray <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> getImageAssets];
     }
     <span style="color:#ff79c6">return</span> _photosDataSource;
-}</code></pre></div>
-<hr />
-
-<h2 id="3-透明图层-用于实现空白处点击消失">3.透明图层（用于实现空白处点击消失）</h2>
-
+}
+</code></pre></div><hr>
+<h2 id="3">3.透明图层（用于实现空白处点击消失）</h2>
 <p>比较简单，增加一个 tap 手势即可，直接上代码（记得实现 <code>UIGestureRecognizerDelegate</code>）</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (UIView <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">backgroundView</span>{
     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>_backgroundView){
@@ -554,9 +541,8 @@
         [_backgroundView <span style="color:#8be9fd;font-style:italic">addGestureRecognizer</span>:tap];
     }
     <span style="color:#ff79c6">return</span> _backgroundView;
-}</code></pre></div>
-<h2 id="4-收尾-封装">4.收尾&amp;封装</h2>
-
+}
+</code></pre></div><h2 id="4">4.收尾&amp;封装</h2>
 <p>定义一个 block 用于回调传照片
 <code>typedef void (^CDZImageResultBlock) (UIImage *image);</code>
 一个内部block属性
@@ -566,14 +552,13 @@
     <span style="color:#8be9fd;font-style:italic">self</span>.modalPresentationStyle <span style="color:#ff79c6">=</span> UIModalPresentationOverCurrentContext;<span style="color:#6272a4">//iOS 8 上默认 presentviewcontroller 不透明，需设置 style
 </span><span style="color:#6272a4"></span>    <span style="color:#8be9fd;font-style:italic">self</span>.block <span style="color:#ff79c6">=</span> imageBlock;
     [controller <span style="color:#8be9fd;font-style:italic">presentViewController</span>:<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">animated</span>:<span style="color:#8be9fd;font-style:italic">YES</span> <span style="color:#8be9fd;font-style:italic">completion</span>:<span style="color:#8be9fd;font-style:italic">nil</span>];
-}</code></pre></div>
-<p>在 <code>dealloc</code> 方法里调用 block 回调</p>
+}
+</code></pre></div><p>在 <code>dealloc</code> 方法里调用 block 回调</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">dealloc</span>{
     <span style="color:#8be9fd;font-style:italic">self</span>.block(<span style="color:#8be9fd;font-style:italic">self</span>.resultImage);
-    NSLog(<span style="color:#f1fa8c">@&#34;ImagePicker已销毁&#34;</span>);
-}</code></pre></div>
-<h2 id="5-使用方法">5.使用方法</h2>
-
+    NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">ImagePicker已销毁</span><span style="color:#f1fa8c">&#34;</span>);
+}
+</code></pre></div><h2 id="5">5.使用方法</h2>
 <p>将 CDZImagePicker 文件夹拖入项目</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">CDZImagePickerViewController <span style="color:#ff79c6">*</span>imagePickerController <span style="color:#ff79c6">=</span> [[CDZImagePickerViewController alloc]init];
 [imagePickerController <span style="color:#8be9fd;font-style:italic">openPickerInController</span>:<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">withImageBlock</span>:<span style="color:#ff79c6">^</span>(UIImage <span style="color:#ff79c6">*</span>image) {
@@ -581,23 +566,19 @@
 </span><span style="color:#6272a4"></span>           <span style="color:#6272a4">//yourcode
 </span><span style="color:#6272a4"></span>        }
        <span style="color:#6272a4">// yourcode
-</span><span style="color:#6272a4"></span>}];</code></pre></div>
-<p>也可以自定义 CDZActionsItem 自定义文字和图片</p>
+</span><span style="color:#6272a4"></span>}];
+</code></pre></div><p>也可以自定义 CDZActionsItem 自定义文字和图片</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">imagePickerController.actionArray <span style="color:#ff79c6">=</span> [NSMutableArray <span style="color:#8be9fd;font-style:italic">arrayWithObjects</span>:
-                      [[CDZImagePickerActionsItem alloc]<span style="color:#8be9fd;font-style:italic">initWithTitle</span>:<span style="color:#f1fa8c">@&#34;打开设备上的图片&#34;</span> <span style="color:#8be9fd;font-style:italic">withActionType</span>:CDZImagePickerLibraryAction <span style="color:#8be9fd;font-style:italic">withImage</span>:[UIImage <span style="color:#8be9fd;font-style:italic">imageNamed</span>:<span style="color:#f1fa8c">@&#34;phone-icon.png&#34;</span>]],
-                      [[CDZImagePickerActionsItem alloc]<span style="color:#8be9fd;font-style:italic">initWithTitle</span>:<span style="color:#f1fa8c">@&#34;相机&#34;</span> <span style="color:#8be9fd;font-style:italic">withActionType</span>:CDZImagePickerCameraAction <span style="color:#8be9fd;font-style:italic">withImage</span>:[UIImage <span style="color:#8be9fd;font-style:italic">imageNamed</span>:<span style="color:#f1fa8c">@&#34;camera-icon.png&#34;</span>]],
-                      [[CDZImagePickerActionsItem alloc]<span style="color:#8be9fd;font-style:italic">initWithTitle</span>:<span style="color:#f1fa8c">@&#34;打开最新图片&#34;</span> <span style="color:#8be9fd;font-style:italic">withActionType</span>:CDZImagePickerRecentAction <span style="color:#8be9fd;font-style:italic">withImage</span>:[UIImage <span style="color:#8be9fd;font-style:italic">imageNamed</span>:<span style="color:#f1fa8c">@&#34;clock-icon.png&#34;</span>]],
-                      <span style="color:#8be9fd;font-style:italic">nil</span>];</code></pre></div>
-<p>效果就和 Snapseed 很像啦！
-<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006y8mN6gw1fae4wt2mk0g30ku1124oj.gif" alt="" /></p>
-
-<h2 id="最后">最后</h2>
-
+                      [[CDZImagePickerActionsItem alloc]<span style="color:#8be9fd;font-style:italic">initWithTitle</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">打开设备上的图片</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#8be9fd;font-style:italic">withActionType</span>:CDZImagePickerLibraryAction <span style="color:#8be9fd;font-style:italic">withImage</span>:[UIImage <span style="color:#8be9fd;font-style:italic">imageNamed</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">phone-icon.png</span><span style="color:#f1fa8c">&#34;</span>]],
+                      [[CDZImagePickerActionsItem alloc]<span style="color:#8be9fd;font-style:italic">initWithTitle</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">相机</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#8be9fd;font-style:italic">withActionType</span>:CDZImagePickerCameraAction <span style="color:#8be9fd;font-style:italic">withImage</span>:[UIImage <span style="color:#8be9fd;font-style:italic">imageNamed</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">camera-icon.png</span><span style="color:#f1fa8c">&#34;</span>]],
+                      [[CDZImagePickerActionsItem alloc]<span style="color:#8be9fd;font-style:italic">initWithTitle</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">打开最新图片</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#8be9fd;font-style:italic">withActionType</span>:CDZImagePickerRecentAction <span style="color:#8be9fd;font-style:italic">withImage</span>:[UIImage <span style="color:#8be9fd;font-style:italic">imageNamed</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">clock-icon.png</span><span style="color:#f1fa8c">&#34;</span>]],
+                      <span style="color:#8be9fd;font-style:italic">nil</span>];
+</code></pre></div><p>效果就和 Snapseed 很像啦！
+<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006y8mN6gw1fae4wt2mk0g30ku1124oj.gif" alt=""></p>
+<h2 id="heading">最后</h2>
 <p>所有源码和 <a href="https://github.com/Nemocdz/CDZImagePickerDemo">Demo</a>
 虽然不是什么很难的轮子，但希望能分享给有需要的人。</p>
-
 <p>关于后续的处理照片变更和获取相册权限另写了一篇 <a href="https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E6%9D%83%E9%99%90%E5%B0%81%E8%A3%85%E5%B0%8Ftips%E5%92%8C%E7%9B%91%E6%B5%8B%E7%9B%B8%E5%86%8C%E5%8F%98%E5%8C%96/">文章</a>，欢迎阅读。</p>
-
 <p>如果您觉得有帮助,不妨给个 star 鼓励一下,欢迎关注&amp;交流</p></article>
     <footer class="post-footer">
       

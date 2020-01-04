@@ -62,7 +62,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.58.1">
+<meta name="generator" content="Hugo 0.62.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E6%B5%85%E8%B0%88-webrtc-neteq/">
@@ -232,70 +232,67 @@
     
 	
 	<nav id="TableOfContents">
-<ul>
-<li><a href="#抖动消除">抖动消除</a></li>
-<li><a href="#丢包补偿">丢包补偿</a>
-<ul>
-<li><a href="#发送端">发送端</a></li>
-<li><a href="#接收端">接收端</a></li>
-</ul></li>
-<li><a href="#整体架构">整体架构</a></li>
-<li><a href="#mcu-模块">MCU 模块</a>
-<ul>
-<li><a href="#网络延时统计算法">网络延时统计算法</a></li>
-<li><a href="#抖动延迟统计算法">抖动延迟统计算法</a></li>
-<li><a href="#控制命令决策判定">控制命令决策判定</a></li>
-</ul></li>
-<li><a href="#dsp-处理">DSP 处理</a>
-<ul>
-<li><a href="#变速不变调">变速不变调</a></li>
-<li><a href="#正常">正常</a></li>
-<li><a href="#加速">加速</a></li>
-<li><a href="#减速">减速</a></li>
-<li><a href="#融合">融合</a></li>
-<li><a href="#丢包补偿-1">丢包补偿</a></li>
-</ul></li>
-<li><a href="#缓冲区">缓冲区</a>
-<ul>
-<li><a href="#抖动缓冲区">抖动缓冲区</a></li>
-<li><a href="#解码缓冲区">解码缓冲区</a></li>
-<li><a href="#算法缓冲区">算法缓冲区</a></li>
-<li><a href="#语音缓冲区">语音缓冲区</a></li>
-</ul></li>
-<li><a href="#进包处理">进包处理</a></li>
-<li><a href="#出包处理">出包处理</a></li>
-<li><a href="#拓展-如何设计-jitter-buffer">拓展 - 如何设计 Jitter Buffer</a></li>
-<li><a href="#最后">最后</a></li>
-<li><a href="#参考链接">参考链接</a></li>
-</ul>
+  <ul>
+    <li><a href="#heading">抖动消除</a></li>
+    <li><a href="#heading-1">丢包补偿</a>
+      <ul>
+        <li><a href="#heading-2">发送端</a></li>
+        <li><a href="#heading-3">接收端</a></li>
+      </ul>
+    </li>
+    <li><a href="#heading-4">整体架构</a></li>
+    <li><a href="#mcu-">MCU 模块</a>
+      <ul>
+        <li><a href="#heading-5">网络延时统计算法</a></li>
+        <li><a href="#heading-6">抖动延迟统计算法</a></li>
+        <li><a href="#heading-7">控制命令决策判定</a></li>
+      </ul>
+    </li>
+    <li><a href="#dsp-">DSP 处理</a>
+      <ul>
+        <li><a href="#heading-8">变速不变调</a></li>
+        <li><a href="#heading-9">正常</a></li>
+        <li><a href="#heading-10">加速</a></li>
+        <li><a href="#heading-11">减速</a></li>
+        <li><a href="#heading-12">融合</a></li>
+        <li><a href="#heading-13">丢包补偿</a></li>
+      </ul>
+    </li>
+    <li><a href="#heading-14">缓冲区</a>
+      <ul>
+        <li><a href="#heading-15">抖动缓冲区</a></li>
+        <li><a href="#heading-16">解码缓冲区</a></li>
+        <li><a href="#heading-17">算法缓冲区</a></li>
+        <li><a href="#heading-18">语音缓冲区</a></li>
+      </ul>
+    </li>
+    <li><a href="#heading-19">进包处理</a></li>
+    <li><a href="#heading-20">出包处理</a></li>
+    <li><a href="#----jitter-buffer">拓展 - 如何设计 Jitter Buffer</a></li>
+    <li><a href="#heading-21">最后</a></li>
+    <li><a href="#heading-22">参考链接</a></li>
+  </ul>
 </nav>
 
     <article class="post-content"><p>WebRTC Native 代码里面有很多值得学习的宝藏，其中一个就是 WebRTC 的 NetEQ 模块。根据 <a href="https://webrtcglossary.com/neteq/">WebRTC 术语表</a> 对 NetEQ 的解释：</p>
-
 <blockquote>
 <p>A dynamic jitter buffer and error concealment algorithm used for concealing the negative effects of network jitter and packet loss. Keeps latency as low as possible while maintaining the highest voice quality.</p>
-
 <p>一种动态抖动缓冲区和错误隐藏（丢包补偿）算法，用于去除网络抖动和数据包丢失的负面影响。在保持最高语音质量的同时，保持尽可能低的延迟。</p>
 </blockquote>
-
 <p>NetEQ 其实就是音视频处理中的 Jitter Buffer 模块，在 WebRTC 的语音引擎中使用。这个模块很重要，会影响播放时的体验，同时也相当复杂。</p>
-
 <p>本文源码参考 <a href="https://webrtc.googlesource.com/src">WebRTC Native</a> M78 版本。</p>
-
-<h2 id="抖动消除">抖动消除</h2>
-
+<h2 id="heading">抖动消除</h2>
 <p>同码率下：抖动（J） = 平均到达间隔（接近发送间隔） - 单次到达间隔</p>
-
 <ul>
-<li><p>J &gt; 0：正抖动，数据包提前到达，包堆积，接收端溢出</p></li>
-
-<li><p>J &lt; 0 ：负抖动，数据包延迟或丢包</p></li>
+<li>
+<p>J &gt; 0：正抖动，数据包提前到达，包堆积，接收端溢出</p>
+</li>
+<li>
+<p>J &lt; 0 ：负抖动，数据包延迟或丢包</p>
+</li>
 </ul>
-
 <p>由于网络包的到达有快有慢，导致间隔不一致，这样听感就不顺畅。而抖动消除就是使不统一的延迟变为统一的延迟，所有数据包在网络传输的延迟之和与抖动缓冲区处理后的延迟之和相等。</p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200104174709.png" alt="" /></p>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200104174709.png" alt=""></p>
 <table>
 <thead>
 <tr>
@@ -306,7 +303,6 @@
 <th>D</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>发送</td>
@@ -315,7 +311,6 @@
 <td>90</td>
 <td>120</td>
 </tr>
-
 <tr>
 <td>到达</td>
 <td>40</td>
@@ -323,7 +318,6 @@
 <td>100</td>
 <td>130</td>
 </tr>
-
 <tr>
 <td>处理后</td>
 <td>60</td>
@@ -333,111 +327,88 @@
 </tr>
 </tbody>
 </table>
-
 <p>通过处理，A、B、C、D 的播放间隔一致，播放端就听感就会感受到延迟，但不会有卡顿。</p>
-
 <p>常见的抖动缓冲控制算法有两种：</p>
-
 <ul>
-<li><p>静态抖动缓冲控制算法：缓冲区大小固定，容易实现，网络抖动大时，丢包率高，抖动小时，延迟大。</p></li>
-
-<li><p>自适应抖动缓冲控制算法：计算目前最大抖动，调整缓冲区大小，实现复杂，网络抖动大时，丢包率低，抖动小时，延迟小。</p></li>
+<li>
+<p>静态抖动缓冲控制算法：缓冲区大小固定，容易实现，网络抖动大时，丢包率高，抖动小时，延迟大。</p>
+</li>
+<li>
+<p>自适应抖动缓冲控制算法：计算目前最大抖动，调整缓冲区大小，实现复杂，网络抖动大时，丢包率低，抖动小时，延迟小。</p>
+</li>
 </ul>
-
 <p>好的算法自然是追求低丢包率和低延迟。</p>
-
-<h2 id="丢包补偿">丢包补偿</h2>
-
+<h2 id="heading-1">丢包补偿</h2>
 <p>丢包补偿（PLC，Packet Loss Concealment）顾名思义，就是在丢包发生时，做的应对措施。主要分为发送端的接受端的丢包补偿。</p>
-
-<h3 id="发送端">发送端</h3>
-
+<h3 id="heading-2">发送端</h3>
 <ul>
-<li><p>主动重传：通过信令，让发送端重新补发。</p></li>
-
-<li><p>被动通道编码：在组包时做一些特殊处理，丢包时可以作依据。</p>
-
+<li>
+<p>主动重传：通过信令，让发送端重新补发。</p>
+</li>
+<li>
+<p>被动通道编码：在组包时做一些特殊处理，丢包时可以作依据。</p>
 <ul>
-<li>前向差错纠正（FEC，Forward error correction）：根据丢包前面的包信息来进行处理。</li>
+<li>前向差错纠正（FEC，Forward error correction）：根据丢包前面的包信息来进行处理。
+<ul>
 <li>媒体相关：双发，数据包中第二个包一般用较低码率和音质编码的包。</li>
 <li>媒体无关：每 n 个数据包生成一个（多个）新的校验包，校验包能还原出这 n 个包的信息。</li>
-<li>交织：对数据包分割重排，减少单次丢包的数据量大小。</li>
-</ul></li>
 </ul>
-
-<h3 id="接收端">接收端</h3>
-
+</li>
+<li>交织：对数据包分割重排，减少单次丢包的数据量大小。</li>
+</ul>
+</li>
+</ul>
+<h3 id="heading-3">接收端</h3>
 <ul>
 <li>插入：用固定的包进行补偿
-
 <ul>
 <li>静音包</li>
 <li>噪音包</li>
 <li>重复包</li>
-</ul></li>
+</ul>
+</li>
 <li>插值：模式匹配及插值技术生成相似的包，算法不会理解数据包具体内容，而只是从数据特征上进行处理</li>
 <li>重构：根据编码参数和压缩参数生成包，与插值不同，算法使用更多数据包的信息，效果更好</li>
 </ul>
-
-<h2 id="整体架构">整体架构</h2>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200104161044.png" alt="" /></p>
-
+<h2 id="heading-4">整体架构</h2>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200104161044.png" alt=""></p>
 <p>在 WebRTC 源码中，NetEQ 位于语音引擎中。其他的，还有包括编解码器，3A 算法等也很经典和通用的模块。</p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200104161404.png" alt="" /></p>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200104161404.png" alt=""></p>
 <p>而从声音的处理流程中，NetEQ 在接受端靠前位置，用于处理收到的网络数据包，并传输给下面的具体的音频处理算法。</p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200104161537.png" alt="" /></p>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200104161537.png" alt=""></p>
 <p>在 NetEQ 模块中，又被大致分为 MCU（Micro Control Unit，微控单元） 模块和 DSP 模块。MCU 主要负责做<strong>延时及抖动的计算统计，并生成对应的控制命令</strong>。而 DSP 模块负责<strong>接收并根据 MCU 的控制命令进行对应的数据包处理</strong>，并传输给下一个环节。</p>
-
-<h2 id="mcu-模块">MCU 模块</h2>
-
+<h2 id="mcu-">MCU 模块</h2>
 <p>MCU 模块就像指挥部一样。它在接收到数据包后，根据数据包的信息进行统计计算并分析，作出命令决策。主要包括：</p>
-
-<h3 id="网络延时统计算法">网络延时统计算法</h3>
-
+<h3 id="heading-5">网络延时统计算法</h3>
 <p>这块算法位于 <code>neteq/delay_manager.cc</code>。在接收到包时，会调用</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> DelayManager<span style="color:#ff79c6">::</span>Update(uint16_t sequence_number,
-                         uint32_t timestamp,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> DelayManager<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>Update(<span style="color:#8be9fd">uint16_t</span> sequence_number,
+                         <span style="color:#8be9fd">uint32_t</span> timestamp,
                          <span style="color:#8be9fd">int</span> sample_rate_hz)
-</code></pre></div>
-<p>将数据包的信息传入，然后更新统计信息。主要流程如下：</p>
-
+</code></pre></div><p>将数据包的信息传入，然后更新统计信息。主要流程如下：</p>
 <ol>
 <li>计算从队列中拉取包的时间到现在的间隔</li>
 <li>根据包序号，包时间戳，计算延迟 <code>iat_packets</code> 间隔的数量
-
 <ul>
 <li>正常到达：iat_packets=1</li>
 <li>乱序提前到达：iat_packets=0</li>
 <li>延迟到达的 n 个间隔：iat_packets=n</li>
-</ul></li>
-
-<li><p>调用 <code>CalculateTargetLevel</code> 更新间隔（根据计算最近一段时间的延迟间隔概率，延迟峰值，进行推算）</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> DelayManager<span style="color:#ff79c6">::</span>CalculateTargetLevel(<span style="color:#8be9fd">int</span> iat_packets, <span style="color:#8be9fd">bool</span> reordered)
-</code></pre></div></li>
+</ul>
+</li>
+<li>调用 <code>CalculateTargetLevel</code> 更新间隔（根据计算最近一段时间的延迟间隔概率，延迟峰值，进行推算）</li>
 </ol>
-
-<h3 id="抖动延迟统计算法">抖动延迟统计算法</h3>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> DelayManager<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>CalculateTargetLevel(<span style="color:#8be9fd">int</span> iat_packets, <span style="color:#8be9fd">bool</span> reordered)
+</code></pre></div><h3 id="heading-6">抖动延迟统计算法</h3>
 <p>这块算法位于 <code>neteq/buffer_level_filter.cc</code>。在取包时，将调用：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">void</span> BufferLevelFilter<span style="color:#ff79c6">::</span>Update(size_t buffer_size_samples,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">void</span> BufferLevelFilter<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>Update(size_t buffer_size_samples,
                                <span style="color:#8be9fd">int</span> time_stretched_samples)
-</code></pre></div>
-<p>将当前抖动缓冲区剩余包的数量和加减速处理过的包量传入，然后更新统计信息。主要流程如下：</p>
-
+</code></pre></div><p>将当前抖动缓冲区剩余包的数量和加减速处理过的包量传入，然后更新统计信息。主要流程如下：</p>
 <ol>
 <li>通过动态的遗忘因子（根据网络延迟值计算），计算平滑延迟</li>
 <li>计算加减速的影响（time_stretched_samples）</li>
 </ol>
-
-<h3 id="控制命令决策判定">控制命令决策判定</h3>
-
+<h3 id="heading-7">控制命令决策判定</h3>
 <p>这块算法位于 <code>neteq/decision_logic.cc</code>。在取包时，将调用：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Operations DecisionLogic<span style="color:#ff79c6">::</span>GetDecision(<span style="color:#ff79c6">const</span> SyncBuffer<span style="color:#ff79c6">&amp;</span> sync_buffer,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Operations DecisionLogic<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>GetDecision(<span style="color:#ff79c6">const</span> SyncBuffer<span style="color:#ff79c6">&amp;</span> sync_buffer,
                                       <span style="color:#ff79c6">const</span> Expand<span style="color:#ff79c6">&amp;</span> expand,
                                       size_t decoder_frame_length,
                                       <span style="color:#ff79c6">const</span> Packet<span style="color:#ff79c6">*</span> next_packet,
@@ -445,160 +416,132 @@
                                       <span style="color:#8be9fd">bool</span> play_dtmf,
                                       size_t generated_noise_samples,
                                       <span style="color:#8be9fd">bool</span><span style="color:#ff79c6">*</span> reset_decoder)
-</code></pre></div>
-<p>会根据包和前一个包之间的关系，进行判定，给出决策。主要判断条件如下：</p>
-
+</code></pre></div><p>会根据包和前一个包之间的关系，进行判定，给出决策。主要判断条件如下：</p>
 <ul>
 <li>当前帧正常+前一帧正常：根据网络延时统计值判断，给出正常/加速/减速决策</li>
 <li>当前帧正常+前一帧丢失：前一帧是补偿产生的，所以要做平滑处理，给出正常/融合决策</li>
 <li>当前帧丢失+前一帧正常：启用丢包补偿</li>
 <li>当前帧丢失+前一帧丢失：连续丢包补偿</li>
 </ul>
-
-<h2 id="dsp-处理">DSP 处理</h2>
-
-<h3 id="变速不变调">变速不变调</h3>
-
+<h2 id="dsp-">DSP 处理</h2>
+<h3 id="heading-8">变速不变调</h3>
 <p>代码位于 <code>neteq/time_stretch.cc</code> 中：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">TimeStretch<span style="color:#ff79c6">::</span>ReturnCodes TimeStretch<span style="color:#ff79c6">::</span>Process(<span style="color:#ff79c6">const</span> int16_t<span style="color:#ff79c6">*</span> input,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">TimeStretch<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>ReturnCodes TimeStretch<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>Process(<span style="color:#ff79c6">const</span> <span style="color:#8be9fd">int16_t</span><span style="color:#ff79c6">*</span> input,
                                               size_t input_len,
                                               <span style="color:#8be9fd">bool</span> fast_mode,
                                               AudioMultiVector<span style="color:#ff79c6">*</span> output,
                                               size_t<span style="color:#ff79c6">*</span> length_change_samples) 
-</code></pre></div>
-<p>实现变速不变调，进行语音时长调整，是能进行加减速控制的基础。WebRTC NetEQ 中使用了 WSOLA 算法，但由于此算法过于复杂，以笔者的专业知识无法完全理解，感兴趣见 <a href="http://sxjs.cnjournals.cn/ch/reader/create_pdf.aspx?file_no=20100512&amp;flag=1&amp;journal_id=sxjs&amp;year_id=2010">文章</a>。</p>
-
-<h3 id="正常">正常</h3>
-
+</code></pre></div><p>实现变速不变调，进行语音时长调整，是能进行加减速控制的基础。WebRTC NetEQ 中使用了 WSOLA 算法，但由于此算法过于复杂，以笔者的专业知识无法完全理解，感兴趣见 <a href="http://sxjs.cnjournals.cn/ch/reader/create_pdf.aspx?file_no=20100512&amp;flag=1&amp;journal_id=sxjs&amp;year_id=2010">文章</a>。</p>
+<h3 id="heading-9">正常</h3>
 <p>代码位于 <code>neteq/normal.cc</code> 中：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> Normal<span style="color:#ff79c6">::</span>Process(<span style="color:#ff79c6">const</span> int16_t<span style="color:#ff79c6">*</span> input,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> Normal<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>Process(<span style="color:#ff79c6">const</span> <span style="color:#8be9fd">int16_t</span><span style="color:#ff79c6">*</span> input,
                     size_t length,
                     Modes last_mode,
                     AudioMultiVector<span style="color:#ff79c6">*</span> output) 
-</code></pre></div>
-<p>数据正好符合播放要求，没有什么额外处理，但要考虑上一次包是否为补偿的包，若是则进行平滑处理。</p>
-
-<h3 id="加速">加速</h3>
-
+</code></pre></div><p>数据正好符合播放要求，没有什么额外处理，但要考虑上一次包是否为补偿的包，若是则进行平滑处理。</p>
+<h3 id="heading-10">加速</h3>
 <p>代码位于 <code>neteq/accelerate.cc</code> 中：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Accelerate<span style="color:#ff79c6">::</span>ReturnCodes Accelerate<span style="color:#ff79c6">::</span>Process(<span style="color:#ff79c6">const</span> int16_t<span style="color:#ff79c6">*</span> input,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Accelerate<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>ReturnCodes Accelerate<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>Process(<span style="color:#ff79c6">const</span> <span style="color:#8be9fd">int16_t</span><span style="color:#ff79c6">*</span> input,
                                             size_t input_length,
                                             <span style="color:#8be9fd">bool</span> fast_accelerate,
                                             AudioMultiVector<span style="color:#ff79c6">*</span> output,
                                             size_t<span style="color:#ff79c6">*</span> length_change_samples) 
-</code></pre></div>
-<p>在抖动延迟过大时，在不丢包的情况下尽量减少抖动延迟。因为这时候数据包累计多，为了尽快消耗数据包，将数据包播放时长缩短。</p>
-
-<h3 id="减速">减速</h3>
-
+</code></pre></div><p>在抖动延迟过大时，在不丢包的情况下尽量减少抖动延迟。因为这时候数据包累计多，为了尽快消耗数据包，将数据包播放时长缩短。</p>
+<h3 id="heading-11">减速</h3>
 <p>代码位于 <code>neteq/preemptive_expand.cc</code> 中：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">PreemptiveExpand<span style="color:#ff79c6">::</span>ReturnCodes PreemptiveExpand<span style="color:#ff79c6">::</span>Process(
-    <span style="color:#ff79c6">const</span> int16_t<span style="color:#ff79c6">*</span> input,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">PreemptiveExpand<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>ReturnCodes PreemptiveExpand<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>Process(
+    <span style="color:#ff79c6">const</span> <span style="color:#8be9fd">int16_t</span><span style="color:#ff79c6">*</span> input,
     size_t input_length,
     size_t old_data_length,
     AudioMultiVector<span style="color:#ff79c6">*</span> output,
     size_t<span style="color:#ff79c6">*</span> length_change_samples) 
-</code></pre></div>
-<p>减速则相反，在网络状况不好时，丢包较多，为了连续性，延长等待网络数据的时间。因为这时候数据包累计少或没有，为了争取等待新的网络数据包的时间，将数据包的播放时长拉长。</p>
-
-<h3 id="融合">融合</h3>
-
+</code></pre></div><p>减速则相反，在网络状况不好时，丢包较多，为了连续性，延长等待网络数据的时间。因为这时候数据包累计少或没有，为了争取等待新的网络数据包的时间，将数据包的播放时长拉长。</p>
+<h3 id="heading-12">融合</h3>
 <p>代码位于 <code>neteq/expand.cc</code> 中：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Expand<span style="color:#ff79c6">::</span>Expand(BackgroundNoise<span style="color:#ff79c6">*</span> background_noise,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Expand<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>Expand(BackgroundNoise<span style="color:#ff79c6">*</span> background_noise,
                SyncBuffer<span style="color:#ff79c6">*</span> sync_buffer,
                RandomVector<span style="color:#ff79c6">*</span> random_vector,
                StatisticsCalculator<span style="color:#ff79c6">*</span> statistics,
                <span style="color:#8be9fd">int</span> fs,
                size_t num_channels)
-</code></pre></div>
-<p>当上一次播放的帧与当前解码的帧不是连续的情况下，需要来衔接和平滑一下。会让两个数据包一部分播放时间重叠，让过度更自然。</p>
-
-<h3 id="丢包补偿-1">丢包补偿</h3>
-
+</code></pre></div><p>当上一次播放的帧与当前解码的帧不是连续的情况下，需要来衔接和平滑一下。会让两个数据包一部分播放时间重叠，让过度更自然。</p>
+<h3 id="heading-13">丢包补偿</h3>
 <p>代码位于 <code>neteq/expand.cc</code> 中：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Expand<span style="color:#ff79c6">::</span>Expand(BackgroundNoise<span style="color:#ff79c6">*</span> background_noise,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Expand<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>Expand(BackgroundNoise<span style="color:#ff79c6">*</span> background_noise,
                SyncBuffer<span style="color:#ff79c6">*</span> sync_buffer,
                RandomVector<span style="color:#ff79c6">*</span> random_vector,
                StatisticsCalculator<span style="color:#ff79c6">*</span> statistics,
                <span style="color:#8be9fd">int</span> fs,
                size_t num_channels)
-</code></pre></div>
-<p>在当前帧丢失时，丢包补偿会参考之前最新的一些样本，通过线性预测重构生成数据，并更新为下次补偿做参考。但由于此算法过于复杂，以笔者的专业知识无法完全理解，感兴趣见 <a href="https://blog.csdn.net/wanggp_2007/article/details/5136609">文章</a>.</p>
-
-<h2 id="缓冲区">缓冲区</h2>
-
+</code></pre></div><p>在当前帧丢失时，丢包补偿会参考之前最新的一些样本，通过线性预测重构生成数据，并更新为下次补偿做参考。但由于此算法过于复杂，以笔者的专业知识无法完全理解，感兴趣见 <a href="https://blog.csdn.net/wanggp_2007/article/details/5136609">文章</a>.</p>
+<h2 id="heading-14">缓冲区</h2>
 <p>整个 NetEQ 模块处理过程中，有以下几个缓冲区：</p>
-
-<h3 id="抖动缓冲区">抖动缓冲区</h3>
-
+<h3 id="heading-15">抖动缓冲区</h3>
 <p>位于 <code>neteq/neteq_impl.h</code> 的 <code>NetEqImpl</code> 类中的 <code>Dependencies</code> 结构体中。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">std<span style="color:#ff79c6">::</span>unique_ptr<span style="color:#ff79c6">&lt;</span>PacketBuffer<span style="color:#ff79c6">&gt;</span> packet_buffer
-</code></pre></div>
-<p>用于存储网络的音频数据包。</p>
-
-<h3 id="解码缓冲区">解码缓冲区</h3>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">std<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>unique_ptr<span style="color:#ff79c6">&lt;</span>PacketBuffer<span style="color:#ff79c6">&gt;</span> packet_buffer
+</code></pre></div><p>用于存储网络的音频数据包。</p>
+<h3 id="heading-16">解码缓冲区</h3>
 <p>位于 <code>neteq/neteq_impl.h</code> 的 <code>NetEqImpl</code> 类中。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">std<span style="color:#ff79c6">::</span>unique_ptr<span style="color:#ff79c6">&lt;</span>int16_t[]<span style="color:#ff79c6">&gt;</span> decoded_buffer_ RTC_GUARDED_BY(crit_sect_);
-</code></pre></div>
-<p>用于存储解码后 PCM 数据。</p>
-
-<h3 id="算法缓冲区">算法缓冲区</h3>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">std<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>unique_ptr<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">int16_t</span>[]<span style="color:#ff79c6">&gt;</span> decoded_buffer_ RTC_GUARDED_BY(crit_sect_);
+</code></pre></div><p>用于存储解码后 PCM 数据。</p>
+<h3 id="heading-17">算法缓冲区</h3>
 <p>位于 <code>neteq/neteq_impl.h</code> 的 <code>NetEqImpl</code> 类中。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">std<span style="color:#ff79c6">::</span>unique_ptr<span style="color:#ff79c6">&lt;</span>AudioMultiVector<span style="color:#ff79c6">&gt;</span> algorithm_buffer_ RTC_GUARDED_BY(crit_sect_);
-</code></pre></div>
-<p>用于存储 DSP 处理后的数据。</p>
-
-<h3 id="语音缓冲区">语音缓冲区</h3>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">std<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>unique_ptr<span style="color:#ff79c6">&lt;</span>AudioMultiVector<span style="color:#ff79c6">&gt;</span> algorithm_buffer_ RTC_GUARDED_BY(crit_sect_);
+</code></pre></div><p>用于存储 DSP 处理后的数据。</p>
+<h3 id="heading-18">语音缓冲区</h3>
 <p>位于 <code>neteq/neteq_impl.h</code> 的 <code>NetEqImpl</code> 类中。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">std<span style="color:#ff79c6">::</span>unique_ptr<span style="color:#ff79c6">&lt;</span>SyncBuffer<span style="color:#ff79c6">&gt;</span> sync_buffer_ RTC_GUARDED_BY(crit_sect_);
-</code></pre></div>
-<p>其实就是算法缓冲区的数据复制，增加了已播放位置分割标识。</p>
-
-<h2 id="进包处理">进包处理</h2>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">std<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>unique_ptr<span style="color:#ff79c6">&lt;</span>SyncBuffer<span style="color:#ff79c6">&gt;</span> sync_buffer_ RTC_GUARDED_BY(crit_sect_);
+</code></pre></div><p>其实就是算法缓冲区的数据复制，增加了已播放位置分割标识。</p>
+<h2 id="heading-19">进包处理</h2>
 <p>进包处理流程代码位于 <code>neteq/neteq_impl.cc</code> 中的 <code>InsertPacket</code> 方法中，此方法调用了真正处理的内部方法：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> NetEqImpl<span style="color:#ff79c6">::</span>InsertPacketInternal(<span style="color:#ff79c6">const</span> RTPHeader<span style="color:#ff79c6">&amp;</span> rtp_header,
-                                    rtc<span style="color:#ff79c6">::</span>ArrayView<span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">const</span> uint8_t<span style="color:#ff79c6">&gt;</span> payload,
-                                    uint32_t receive_timestamp)
-</code></pre></div>
-<p>总体流程如下：
-1. 将数据放入局部变量 PacketList 中
-2. 处理 RTP 包逻辑
-    * 转换内外部时间戳
-    * NACK（否定应答） 处理
-    * 判断冗余大包（RED）并解为小包
-    * 检查包类型
-    * 判断并处理 DTMF（双音多频） 包
-    * 带宽估算
-3. 分析包
-    * 去除噪音包
-    * 解包头获取包的信息
-    * 计算除纠错包和冗余包以外的正常语音包数量
-4. 将语音包插入 PacketBuffer（抖动缓冲区）</p>
-
-<h2 id="出包处理">出包处理</h2>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> NetEqImpl<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>InsertPacketInternal(<span style="color:#ff79c6">const</span> RTPHeader<span style="color:#ff79c6">&amp;</span> rtp_header,
+                                    rtc<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>ArrayView<span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">const</span> <span style="color:#8be9fd">uint8_t</span><span style="color:#ff79c6">&gt;</span> payload,
+                                    <span style="color:#8be9fd">uint32_t</span> receive_timestamp)
+</code></pre></div><p>总体流程如下：</p>
+<ol>
+<li>
+<p>将数据放入局部变量 PacketList 中</p>
+</li>
+<li>
+<p>处理 RTP 包逻辑</p>
+<ul>
+<li>转换内外部时间戳</li>
+<li>NACK（否定应答） 处理</li>
+<li>判断冗余大包（RED）并解为小包</li>
+<li>检查包类型</li>
+<li>判断并处理 DTMF（双音多频） 包</li>
+<li>带宽估算</li>
+</ul>
+</li>
+<li>
+<p>分析包</p>
+<ul>
+<li>去除噪音包</li>
+<li>解包头获取包的信息</li>
+<li>计算除纠错包和冗余包以外的正常语音包数量</li>
+</ul>
+</li>
+<li>
+<p>将语音包插入 PacketBuffer（抖动缓冲区）</p>
+</li>
+</ol>
+<h2 id="heading-20">出包处理</h2>
 <p>出包处理流程代码位于 <code>neteq/neteq_impl.cc</code> 中的 <code>GetAudio</code> 方法中，此方法调用了真正处理的内部方法：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> NetEqImpl<span style="color:#ff79c6">::</span>GetAudioInternal(AudioFrame<span style="color:#ff79c6">*</span> audio_frame,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> NetEqImpl<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>GetAudioInternal(AudioFrame<span style="color:#ff79c6">*</span> audio_frame,
                                 <span style="color:#8be9fd">bool</span><span style="color:#ff79c6">*</span> muted,
-                                absl<span style="color:#ff79c6">::</span>optional<span style="color:#ff79c6">&lt;</span>Operations<span style="color:#ff79c6">&gt;</span> action_override)
-</code></pre></div>
-<p>总体流程如下：
-1. 检查静音状态，直接返回静音包
-2. 根据当前帧和前一帧的接收情况获取控制命令决策
-3. 若非丢包补偿，进行解码，放入解码缓冲区
-4. 进行静音检测（Vad）
-5. 根据命令决策，将解码缓冲区进行处理，放到算法缓冲区（AudioMultiVector）
-6. 将算法缓冲区的数据拷贝到语音缓冲区（SyncBuffer）
-7. 处理并取出 10ms 的语音数据输出</p>
-
-<h2 id="拓展-如何设计-jitter-buffer">拓展 - 如何设计 Jitter Buffer</h2>
-
+                                absl<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>optional<span style="color:#ff79c6">&lt;</span>Operations<span style="color:#ff79c6">&gt;</span> action_override)
+</code></pre></div><p>总体流程如下：</p>
+<ol>
+<li>检查静音状态，直接返回静音包</li>
+<li>根据当前帧和前一帧的接收情况获取控制命令决策</li>
+<li>若非丢包补偿，进行解码，放入解码缓冲区</li>
+<li>进行静音检测（Vad）</li>
+<li>根据命令决策，将解码缓冲区进行处理，放到算法缓冲区（AudioMultiVector）</li>
+<li>将算法缓冲区的数据拷贝到语音缓冲区（SyncBuffer）</li>
+<li>处理并取出 10ms 的语音数据输出</li>
+</ol>
+<h2 id="----jitter-buffer">拓展 - 如何设计 Jitter Buffer</h2>
 <p>根据 WebRTC 的 NetEQ 模块，笔者总结了以下设计 Jitter Buffer 需要注意的几点：</p>
-
 <ul>
 <li>接口 - putPacket/getPacket</li>
 <li>包处理 - 类型判断/分割为播放帧</li>
@@ -608,21 +551,22 @@
 <li>音频参数切换 - Reset</li>
 <li>丢包补偿 - 参考历史包进行重构</li>
 </ul>
-
-<h2 id="最后">最后</h2>
-
+<h2 id="heading-21">最后</h2>
 <p>WebRTC NetEQ 模块大概介绍完毕了。正是因为 Google 将其开源，才能一窥究竟，而大部分自研的语音引擎，或多或少都参考过 NetEQ 里的策略。不得不说，WebRTC 真是音视频领域的值得学习的好源码。</p>
-
-<h2 id="参考链接">参考链接</h2>
-
+<h2 id="heading-22">参考链接</h2>
 <ul>
-<li><a href="https://github.com/mobinsheng/books/blob/master/WebRTC语音引擎中NetEQ技术的研究_吴江锐.pdf">WebRTC语音引擎中NetEQ技术的研究-吴江锐</a></li>
-
-<li><p><a href="https://www.cnblogs.com/talkaudiodev/p/9142192.html">webRTC 中音频相关的 netEQ（一）：概述</a></p></li>
-
-<li><p><a href="https://www.cnblogs.com/talkaudiodev/p/9501438.html">webRTC 中音频相关的 netEQ（五）：DSP 处理</a></p></li>
-
-<li><p><a href="http://www.voycn.com/article/webrtcyinshipindoudonghuanchongquweidaima">webrtc 音视频抖动缓冲区伪代码</a></p></li>
+<li>
+<p><a href="https://github.com/mobinsheng/books/blob/master/WebRTC%E8%AF%AD%E9%9F%B3%E5%BC%95%E6%93%8E%E4%B8%ADNetEQ%E6%8A%80%E6%9C%AF%E7%9A%84%E7%A0%94%E7%A9%B6_%E5%90%B4%E6%B1%9F%E9%94%90.pdf">WebRTC语音引擎中NetEQ技术的研究-吴江锐</a></p>
+</li>
+<li>
+<p><a href="https://www.cnblogs.com/talkaudiodev/p/9142192.html">webRTC 中音频相关的 netEQ（一）：概述</a></p>
+</li>
+<li>
+<p><a href="https://www.cnblogs.com/talkaudiodev/p/9501438.html">webRTC 中音频相关的 netEQ（五）：DSP 处理</a></p>
+</li>
+<li>
+<p><a href="http://www.voycn.com/article/webrtcyinshipindoudonghuanchongquweidaima">webrtc 音视频抖动缓冲区伪代码</a></p>
+</li>
 </ul></article>
     <footer class="post-footer">
       

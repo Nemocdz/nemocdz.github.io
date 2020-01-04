@@ -56,7 +56,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.58.1">
+<meta name="generator" content="Hugo 0.62.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E7%AE%80%E4%BB%8B/">
@@ -227,134 +227,100 @@
     
 	
 	<nav id="TableOfContents">
-<ul>
-<li><a href="#引言">引言</a></li>
-<li><a href="#what-is-combine">What is Combine</a></li>
-<li><a href="#combine-特性">Combine 特性</a>
-<ul>
-<li><a href="#泛型支持">泛型支持</a></li>
-<li><a href="#类型安全">类型安全</a></li>
-<li><a href="#组合优先">组合优先</a></li>
-<li><a href="#请求驱动">请求驱动</a></li>
-</ul></li>
-<li><a href="#combine-核心">Combine 核心</a>
-<ul>
-<li><a href="#发布者-publisher">发布者(Publisher)</a></li>
-<li><a href="#订阅者-subscriber">订阅者（Subscriber）</a></li>
-<li><a href="#运算符-operator">运算符（Operator）</a>
-<ul>
-<li><a href="#1-函数式转换">1. 函数式转换</a></li>
-<li><a href="#2-列表操作">2. 列表操作</a></li>
-<li><a href="#3-错误处理">3. 错误处理</a></li>
-<li><a href="#4-线程-队列行为">4. 线程/队列行为</a></li>
-<li><a href="#5-调度和时间处理">5. 调度和时间处理</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#combine-设计理念-组合优先">Combine 设计理念 - 组合优先</a>
-<ul>
-<li><a href="#组合多个发布者">组合多个发布者</a>
-<ul>
-<li><a href="#zip">Zip</a></li>
-<li><a href="#combine-lastest">Combine Lastest</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#延伸阅读">延伸阅读</a></li>
-</ul>
+  <ul>
+    <li><a href="#heading">引言</a></li>
+    <li><a href="#what-is-combine">What is Combine</a></li>
+    <li><a href="#combine-">Combine 特性</a>
+      <ul>
+        <li><a href="#heading-1">泛型支持</a></li>
+        <li><a href="#heading-2">类型安全</a></li>
+        <li><a href="#heading-3">组合优先</a></li>
+        <li><a href="#heading-4">请求驱动</a></li>
+      </ul>
+    </li>
+    <li><a href="#combine--1">Combine 核心</a>
+      <ul>
+        <li><a href="#publisher">发布者(Publisher)</a></li>
+        <li><a href="#subscriber">订阅者（Subscriber）</a></li>
+        <li><a href="#operator">运算符（Operator）</a></li>
+      </ul>
+    </li>
+    <li><a href="#combine----">Combine 设计理念 - 组合优先</a>
+      <ul>
+        <li><a href="#heading-5">组合多个发布者</a></li>
+      </ul>
+    </li>
+    <li><a href="#heading-6">总结</a></li>
+    <li><a href="#heading-7">延伸阅读</a></li>
+  </ul>
 </nav>
 
     <article class="post-content"><blockquote>
 <p>WWDC 2019 Session 722 - <a href="https://developer.apple.com/videos/play/wwdc2019/722/">Introducing Combine</a></p>
 </blockquote>
-
-<h2 id="引言">引言</h2>
-
+<h2 id="heading">引言</h2>
 <p>在现代 GUI 编程中，开发者会处理大量事件（包括网络，屏幕输入，系统通知等），根据事件去让界面变化。而对异步事件的处理，会让代码和状态变得复杂。而现有的 Cocoa 框架中，异步编程的接口主要有以下这几种：</p>
-
 <ul>
 <li>Target/Action</li>
 <li>NotificationCenter</li>
 <li>KVO</li>
 <li>Callbacks</li>
 </ul>
-
 <p>而在实际情况中，由于不同的第三方库，系统框架，业务代码可能采用不一样的方式处理异步事件，会导致对事件的处理分散且存在差异。苹果为了帮助开发者简化异步编程，发布了 Swift 的异步编程框架 - Combine。</p>
-
 <h2 id="what-is-combine">What is Combine</h2>
-
 <blockquote>
 <p>&ldquo;A unified, declarative API for processing values over time&rdquo;</p>
 </blockquote>
-
 <p><strong>统一、声明式、为处理变化的值而生的 API</strong>。</p>
-
 <p>Combine 作用是将异步事件通过组合<strong>事件处理操作符</strong>进行自定义处理。</p>
-
 <p>关注如何处理变化的值，正是响应式编程所考虑的。也可以说，Combine 是一个苹果官方的 Swift <strong>响应式</strong>框架。</p>
-
 <blockquote>
 <p>响应式编程（Reactive Programming）：面向异步数据流的编程思想。业界比较知名的响应式框架是 ReactiveX 系列。Rx 也有 Swift 版本的 RxSwift。</p>
 </blockquote>
-
-<h2 id="combine-特性">Combine 特性</h2>
-
+<h2 id="combine-">Combine 特性</h2>
 <p>由于 Combine 是一个 Swift 编写的框架，所以 Combine 可以受益于 Swift 的一些语言特性。</p>
-
-<h3 id="泛型支持">泛型支持</h3>
-
+<h3 id="heading-1">泛型支持</h3>
 <p>Combine 享受 Swift 泛型带来的便利性。泛型可以帮助开发者提取更多模板代码，这也意味着我们可以让异步操作的代码支持泛型，然后适配到各个种类的异步操作中。</p>
-
-<h3 id="类型安全">类型安全</h3>
-
+<h3 id="heading-2">类型安全</h3>
 <p>同样受惠于 Swift，可以让编译器和 Runtime 帮助我们检查类型安全问题。</p>
-
-<h3 id="组合优先">组合优先</h3>
-
+<h3 id="heading-3">组合优先</h3>
 <p>Combine 的主要设计理念，使用组合。组合的优点是可以将核心设计得简单又便于理解，但当放在一起使用时，能产生 <code>1 + 1 &gt; 2</code> 的效果。</p>
-
-<h3 id="请求驱动">请求驱动</h3>
-
+<h3 id="heading-4">请求驱动</h3>
 <blockquote>
 <p>请求驱动(Request Driven)：基于请求和响应的设计思想，消费者向生产者请求某个事务的变化，当变化时生产者给消费者对应的响应。</p>
-
+</blockquote>
+<blockquote>
 <p>事件驱动(Event Driven)：基于事件通知的设计思想。在事务发生变化时，生产者将通知提交给事件管道进行分发，而不关心谁去消费事件。消费者需要到事件管道中订阅关心的通知。</p>
 </blockquote>
-
 <p>Combine 是基于请求和响应的设计思想的，这允许你更精准的控制 App 的内存使用和性能。(这一块苹果没有详细解释)</p>
-
-<h2 id="combine-核心">Combine 核心</h2>
-
+<h2 id="combine--1">Combine 核心</h2>
 <p>Combine 框架有三个核心概念</p>
-
 <ul>
 <li>发布者(Publisher)</li>
 <li>订阅者(Subscriber)</li>
 <li>操作符(Operator)</li>
 </ul>
-
-<h3 id="发布者-publisher">发布者(Publisher)</h3>
-
+<h3 id="publisher">发布者(Publisher)</h3>
 <p>发布者在 Combine 框架中是一个协议：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">Publisher</span> {
 
-    <span style="color:#6272a4">/// 产生的值的类型</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">产</span><span style="color:#6272a4">生</span><span style="color:#6272a4">的</span><span style="color:#6272a4">值</span><span style="color:#6272a4">的</span><span style="color:#6272a4">类</span><span style="color:#6272a4">型</span>
     associatedtype Output
 
-    <span style="color:#6272a4">/// 失败的错误类型</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">失</span><span style="color:#6272a4">败</span><span style="color:#6272a4">的</span><span style="color:#6272a4">错</span><span style="color:#6272a4">误</span><span style="color:#6272a4">类</span><span style="color:#6272a4">型</span>
     associatedtype Failure : Error
 
-    <span style="color:#6272a4">/// 实现这个方法，将调用 `subscribe(_:)` 订阅的订阅者附加到发布者上</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">实</span><span style="color:#6272a4">现</span><span style="color:#6272a4">这</span><span style="color:#6272a4">个</span><span style="color:#6272a4">方</span><span style="color:#6272a4">法</span><span style="color:#6272a4">，</span><span style="color:#6272a4">将</span><span style="color:#6272a4">调</span><span style="color:#6272a4">用</span><span style="color:#6272a4"> </span><span style="color:#6272a4">`</span><span style="color:#6272a4">s</span><span style="color:#6272a4">u</span><span style="color:#6272a4">b</span><span style="color:#6272a4">s</span><span style="color:#6272a4">c</span><span style="color:#6272a4">r</span><span style="color:#6272a4">i</span><span style="color:#6272a4">b</span><span style="color:#6272a4">e</span><span style="color:#6272a4">(</span><span style="color:#6272a4">_</span><span style="color:#6272a4">:</span><span style="color:#6272a4">)</span><span style="color:#6272a4">`</span><span style="color:#6272a4"> </span><span style="color:#6272a4">订</span><span style="color:#6272a4">阅</span><span style="color:#6272a4">的</span><span style="color:#6272a4">订</span><span style="color:#6272a4">阅</span><span style="color:#6272a4">者</span><span style="color:#6272a4">附</span><span style="color:#6272a4">加</span><span style="color:#6272a4">到</span><span style="color:#6272a4">发</span><span style="color:#6272a4">布</span><span style="color:#6272a4">者</span><span style="color:#6272a4">上</span>
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>&lt;S&gt;(subscriber: S) <span style="color:#ff79c6">where</span> S : Subscriber, <span style="color:#ff79c6">Self</span>.Failure == S.Failure, <span style="color:#ff79c6">Self</span>.Output == S.Input
 }
 
 <span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Publisher</span> {
-    <span style="color:#6272a4">/// 将订阅者附加到发布者上，供外部调用，不直接使用 `receive(_:)` 方法</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">将</span><span style="color:#6272a4">订</span><span style="color:#6272a4">阅</span><span style="color:#6272a4">者</span><span style="color:#6272a4">附</span><span style="color:#6272a4">加</span><span style="color:#6272a4">到</span><span style="color:#6272a4">发</span><span style="color:#6272a4">布</span><span style="color:#6272a4">者</span><span style="color:#6272a4">上</span><span style="color:#6272a4">，</span><span style="color:#6272a4">供</span><span style="color:#6272a4">外</span><span style="color:#6272a4">部</span><span style="color:#6272a4">调</span><span style="color:#6272a4">用</span><span style="color:#6272a4">，</span><span style="color:#6272a4">不</span><span style="color:#6272a4">直</span><span style="color:#6272a4">接</span><span style="color:#6272a4">使</span><span style="color:#6272a4">用</span><span style="color:#6272a4"> </span><span style="color:#6272a4">`</span><span style="color:#6272a4">r</span><span style="color:#6272a4">e</span><span style="color:#6272a4">c</span><span style="color:#6272a4">e</span><span style="color:#6272a4">i</span><span style="color:#6272a4">v</span><span style="color:#6272a4">e</span><span style="color:#6272a4">(</span><span style="color:#6272a4">_</span><span style="color:#6272a4">:</span><span style="color:#6272a4">)</span><span style="color:#6272a4">`</span><span style="color:#6272a4"> </span><span style="color:#6272a4">方</span><span style="color:#6272a4">法</span>
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">subscribe</span>&lt;S&gt;(<span style="color:#ff79c6">_</span> subscriber: S) <span style="color:#ff79c6">where</span> S : Subscriber, <span style="color:#ff79c6">Self</span>.Failure == S.Failure, <span style="color:#ff79c6">Self</span>.Output == S.Input
-}</code></pre></div>
-<p>发布者定义了<strong>如何描述产生的值和错误</strong>，通过定义关联类型 <code>Output</code> 和 <code>Failure</code> 的实际类型（当发布者不产生错误时，可以使用 <code>Never</code>）。由于发布者不需要实际产生值和错误，所以我们可以用值类型来定义它，也就是 Swift 里的结构体。发布者提供让订阅者注册的能力，通过实现 <code>receive</code> 方法。</p>
+}
 
+</code></pre></div><p>发布者定义了<strong>如何描述产生的值和错误</strong>，通过定义关联类型 <code>Output</code> 和 <code>Failure</code> 的实际类型（当发布者不产生错误时，可以使用 <code>Never</code>）。由于发布者不需要实际产生值和错误，所以我们可以用值类型来定义它，也就是 Swift 里的结构体。发布者提供让订阅者注册的能力，通过实现 <code>receive</code> 方法。</p>
 <p>发布者可以适配到现有的很多异步操作接口中。</p>
-
 <p>官方 Cocoa 框架中 <code>NotificationCenter</code> 接口适配发布者的例子（<del>截止至 beta1 版本的 Xcode， 此 API 尚未开放</del>beta2 版本已支持）：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">NotificationCenter</span> {
         <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">Publisher</span>: Combine.Publisher {
@@ -362,41 +328,37 @@
                 <span style="color:#8be9fd;font-style:italic">typealias</span> Failure = Never
                 <span style="color:#8be9fd;font-style:italic">init</span>(center: NotificationCenter, name: Notification.Name, object: <span style="color:#8be9fd;font-style:italic">Any</span>? = <span style="color:#ff79c6">nil</span>)
         }
-}</code></pre></div>
-<h3 id="订阅者-subscriber">订阅者（Subscriber）</h3>
-
+}
+</code></pre></div><h3 id="subscriber">订阅者（Subscriber）</h3>
 <p>和发布者配对的，就是订阅者。同样的，在 Combine 框架中是一个协议：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">Subscriber</span> : CustomCombineIdentifierConvertible {
 
-    <span style="color:#6272a4">/// 接受到的值的类型</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">接</span><span style="color:#6272a4">受</span><span style="color:#6272a4">到</span><span style="color:#6272a4">的</span><span style="color:#6272a4">值</span><span style="color:#6272a4">的</span><span style="color:#6272a4">类</span><span style="color:#6272a4">型</span>
     associatedtype Input
 
-    <span style="color:#6272a4">/// 可能接受到的错误的类型</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">可</span><span style="color:#6272a4">能</span><span style="color:#6272a4">接</span><span style="color:#6272a4">受</span><span style="color:#6272a4">到</span><span style="color:#6272a4">的</span><span style="color:#6272a4">错</span><span style="color:#6272a4">误</span><span style="color:#6272a4">的</span><span style="color:#6272a4">类</span><span style="color:#6272a4">型</span>
     associatedtype Failure : Error
 
-    <span style="color:#6272a4">/// 告诉订阅者，它在发布者上被成功订阅，可以请求值了</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">告</span><span style="color:#6272a4">诉</span><span style="color:#6272a4">订</span><span style="color:#6272a4">阅</span><span style="color:#6272a4">者</span><span style="color:#6272a4">，</span><span style="color:#6272a4">它</span><span style="color:#6272a4">在</span><span style="color:#6272a4">发</span><span style="color:#6272a4">布</span><span style="color:#6272a4">者</span><span style="color:#6272a4">上</span><span style="color:#6272a4">被</span><span style="color:#6272a4">成</span><span style="color:#6272a4">功</span><span style="color:#6272a4">订</span><span style="color:#6272a4">阅</span><span style="color:#6272a4">，</span><span style="color:#6272a4">可</span><span style="color:#6272a4">以</span><span style="color:#6272a4">请</span><span style="color:#6272a4">求</span><span style="color:#6272a4">值</span><span style="color:#6272a4">了</span>
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>(subscription: Subscription)
 
-    <span style="color:#6272a4">/// 告诉订阅者，发布者产生值了</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">告</span><span style="color:#6272a4">诉</span><span style="color:#6272a4">订</span><span style="color:#6272a4">阅</span><span style="color:#6272a4">者</span><span style="color:#6272a4">，</span><span style="color:#6272a4">发</span><span style="color:#6272a4">布</span><span style="color:#6272a4">者</span><span style="color:#6272a4">产</span><span style="color:#6272a4">生</span><span style="color:#6272a4">值</span><span style="color:#6272a4">了</span>
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>(<span style="color:#ff79c6">_</span> input: <span style="color:#ff79c6">Self</span>.Input) -&gt; Subscribers.Demand
 
-    <span style="color:#6272a4">/// 告诉订阅者，发布者已经终止产生值了，不管是正常情况还是由于情况</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">告</span><span style="color:#6272a4">诉</span><span style="color:#6272a4">订</span><span style="color:#6272a4">阅</span><span style="color:#6272a4">者</span><span style="color:#6272a4">，</span><span style="color:#6272a4">发</span><span style="color:#6272a4">布</span><span style="color:#6272a4">者</span><span style="color:#6272a4">已</span><span style="color:#6272a4">经</span><span style="color:#6272a4">终</span><span style="color:#6272a4">止</span><span style="color:#6272a4">产</span><span style="color:#6272a4">生</span><span style="color:#6272a4">值</span><span style="color:#6272a4">了</span><span style="color:#6272a4">，</span><span style="color:#6272a4">不</span><span style="color:#6272a4">管</span><span style="color:#6272a4">是</span><span style="color:#6272a4">正</span><span style="color:#6272a4">常</span><span style="color:#6272a4">情</span><span style="color:#6272a4">况</span><span style="color:#6272a4">还</span><span style="color:#6272a4">是</span><span style="color:#6272a4">由</span><span style="color:#6272a4">于</span><span style="color:#6272a4">情</span><span style="color:#6272a4">况</span>
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>(completion: Subscribers.Completion&lt;<span style="color:#ff79c6">Self</span>.Failure&gt;)
-}</code></pre></div>
-<p>订阅者定义了<strong>如何描述接受的值和错误</strong>，类似的，通过定义关联类型 <code>Input</code> 和 <code>Failure</code>。由于订阅者在接受到值之后，经常会影响和修改某些状态，所以我们使用引用类型来定义它，也就是 Swift 里的类类型。</p>
+}
 
+</code></pre></div><p>订阅者定义了<strong>如何描述接受的值和错误</strong>，类似的，通过定义关联类型 <code>Input</code> 和 <code>Failure</code>。由于订阅者在接受到值之后，经常会影响和修改某些状态，所以我们使用引用类型来定义它，也就是 Swift 里的类类型。</p>
 <p>订阅者有三个核心方法：</p>
-
 <ul>
 <li>接收到订阅的消息</li>
 <li>接收到产生的值的消息</li>
 <li>接收到产生已经终止的消息</li>
 </ul>
-
 <blockquote>
 <p>订阅消息(Subsciption):描述如何控制发布者到订阅者的数据流动，用于表达发布者和订阅者之间的连接。</p>
 </blockquote>
-
 <p>官方的提供 <code>Assign</code> 的订阅者例子（可以在文档中找到更详细的定义）：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Subscribers</span> {
     <span style="color:#ff79c6">final</span> <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">Assign</span>&lt;Root, Input&gt; : Subscriber, Cancellable {
@@ -404,23 +366,19 @@
         <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">typealias</span> Failure = Never
 
         <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>(object: Root, keyPath: ReferenceWritableKeyPath&lt;Root, Input&gt;)
-			<span style="color:#6272a4">//...</span>
+			<span style="color:#6272a4">//</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
     }
-}</code></pre></div>
-<h3 id="运算符-operator">运算符（Operator）</h3>
-
+}
+</code></pre></div><h3 id="operator">运算符（Operator）</h3>
 <p>当有了发布者和订阅者后，它们之间是怎么配合起来运作的呢，如下图所示：</p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014519.png" alt="" /></p>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014519.png" alt=""></p>
 <ul>
 <li>首先订阅者通过 <code>subsribe</code> 方法附加到发布者上</li>
 <li>发布者发送一个订阅消息给订阅者，订阅者通过 <code>receive</code> 方法响应</li>
-<li>发布者通过定义在订阅消息中的 <code>request</code>方法发送请求需要的值</li>
+<li>发布者通过定义在订阅消息中的 <code>request </code>方法发送请求需要的值</li>
 <li>当请求的值产生时，发布者将值发送给订阅者，订阅者通过 <code>receive</code> 方法响应</li>
 <li>最后当发布者终止产生值时，发送完成消息给订阅者，订阅者通过 <code>receive</code> 方法响应</li>
 </ul>
-
 <p>看起来一切都配合的很美好，好像这两个概念已经可以实现我们的功能了。当你开开心心敲下这个例子的时候：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">Foo</span> {
     <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">name</span>:<span style="color:#8be9fd;font-style:italic">String</span>
@@ -429,17 +387,14 @@
     }
 }
 
-<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">object</span> = Foo(name:<span style="color:#f1fa8c">&#34;Test&#34;</span>)
-<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">publisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: <span style="color:#f1fa8c">&#34;Send&#34;</span>, object: object)
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">object</span> = Foo(name:<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">Test</span><span style="color:#f1fa8c">&#34;</span>)
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">publisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">Send</span><span style="color:#f1fa8c">&#34;</span>, object: object)
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">subsciber</span> = Subscribers.Assign(object: object, keyPath: \.name)
 
-publisher.subscribe(subsciber)</code></pre></div>
-<p>你会发现编译不过，因为 <code>NotificationCenter</code>  发布者产生的值类型是 <code>Notification</code>，而订阅者需要接受 name 的 <code>String</code> 类型。这时候，操作符就应运而生了。</p>
-
+publisher.subscribe(subsciber)
+</code></pre></div><p>你会发现编译不过，因为 <code>NotificationCenter</code>  发布者产生的值类型是 <code>Notification</code>，而订阅者需要接受 name 的 <code>String</code> 类型。这时候，操作符就应运而生了。</p>
 <p>操作符是一个<strong>桥梁</strong>，定义一些便捷的操作，让发布者和订阅者能搭配使用，而这样就可以让发布者和订阅者的耦合程度降低，通用程度变高。而复用的发布者和订阅者可以通过一到多个操作符进行适配。</p>
-
 <p>操作符定义<strong>如何进行值的转换</strong>。操作符是遵循 Publisher 协议的，从上游的发布者订阅值，生成新的发布者，处理后并发送给下游的订阅者。</p>
-
 <p>官方提供的 Map 操作符的例子：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Publishers</span> {
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">Map</span>&lt;Upstream, Output&gt; : Publisher <span style="color:#ff79c6">where</span> Upstream : Publisher {
@@ -448,55 +403,33 @@ publisher.subscribe(subsciber)</code></pre></div>
         <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">transform</span>: (Upstream.Output) -&gt; Output
         <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>&lt;S&gt;(subscriber: S) <span style="color:#ff79c6">where</span> Output == S.Input, S : Subscriber, Upstream.Failure == S.Failure
     }
-}</code></pre></div>
-<p>但在一般使用时，我们不直接生成操作符发布者，而是使用官方提供的<strong>声明式操作符 API</strong>。</p>
-
+}
+</code></pre></div><p>但在一般使用时，我们不直接生成操作符发布者，而是使用官方提供的<strong>声明式操作符 API</strong>。</p>
 <p>比如 Map 操作符的方法如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Publishers</span>.Map {
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">map</span>&lt;T&gt;(<span style="color:#ff79c6">_</span> transform: @escaping (Output) -&gt; T) -&gt; Publishers.Map&lt;Upstream, T&gt;
-}</code></pre></div>
-<p>Combine 框架中，有以下几类声明式操作符 API：</p>
-
-<h4 id="1-函数式转换">1. 函数式转换</h4>
-
+}
+</code></pre></div><p>Combine 框架中，有以下几类声明式操作符 API：</p>
+<h4 id="1-">1. 函数式转换</h4>
 <p>比如 <code>map</code>、<code>filter</code>、<code>reduce</code> 等函数式思想里的常见的高阶函数的操作符。</p>
-
-<h4 id="2-列表操作">2. 列表操作</h4>
-
+<h4 id="2-">2. 列表操作</h4>
 <p>比如 <code>first</code>、<code>drop</code>、<code>append</code> 等在产生值序列的中使用便捷方法的操作符。</p>
-
-<h4 id="3-错误处理">3. 错误处理</h4>
-
+<h4 id="3-">3. 错误处理</h4>
 <p>比如 <code>catch</code>，<code>retry</code> 等进行错处理的操作符。</p>
-
-<h4 id="4-线程-队列行为">4. 线程/队列行为</h4>
-
+<h4 id="4-">4. 线程/队列行为</h4>
 <p>比如 <code>subscribeOn</code>，<code>receiveOn</code> 等对订阅和接受时线程进行指定的操作符。</p>
-
-<h4 id="5-调度和时间处理">5. 调度和时间处理</h4>
-
+<h4 id="5-">5. 调度和时间处理</h4>
 <p>比如 <code>delay</code>，<code>debounce</code>（去抖动），<code>throttle</code>(节流) 等操作符。</p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014532.png" alt="" /></p>
-
-<h2 id="combine-设计理念-组合优先">Combine 设计理念 - 组合优先</h2>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014532.png" alt=""></p>
+<h2 id="combine----">Combine 设计理念 - 组合优先</h2>
 <p>Combine 的设计理念就是优先是使用<strong>组合</strong>。</p>
-
 <p>如果把 Combine 的思想对应到同步编程里面的概念，就是这样下面的图。</p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014615.png" alt="" /></p>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014615.png" alt=""></p>
 <p>也就是发布者可以使用的操作符，大部分和 Foundation 框架里 Collection 类型的操作符相似，举个例子：我们知道可以对集合类型进行 <code>filter</code> 操作，那么 Combine 操作符里也有对应的 <code>filter</code> 方法。通过方法链（Method Chaning），组合大量的操作符，可以让异步操作更加统一，代码更加整洁。</p>
-
-<h3 id="组合多个发布者">组合多个发布者</h3>
-
+<h3 id="heading-5">组合多个发布者</h3>
 <p>有时候，我们希望将一些异步操作汇合，并统一处理响应。组合多个发布者有两种方式：<code>Zip</code> 和 <code>CombineLastest</code>。</p>
-
 <h4 id="zip">Zip</h4>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014652.png" alt="" /></p>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014652.png" alt=""></p>
 <p><code>Zip</code> 在 Combine 框架里面是一个结构体(同时还有 <code>Zip3</code>，<code>Zip4</code>，用于更多数量的组合)</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Publishers</span> {
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">Zip</span>&lt;A, B&gt; : Publisher <span style="color:#ff79c6">where</span> A : Publisher, B : Publisher, A.Failure == B.Failure {
@@ -507,13 +440,10 @@ publisher.subscribe(subsciber)</code></pre></div>
         <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>(<span style="color:#ff79c6">_</span> a: A, <span style="color:#ff79c6">_</span> b: B)
         <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>&lt;S&gt;(subscriber: S) <span style="color:#ff79c6">where</span> S : Subscriber, B.Failure == S.Failure, S.Input == (A.Output, B.Output)
     }
-}</code></pre></div>
-<p><code>Zip</code> 可以通过传入两个发布者进行初始化，要求多个组合的发布者的的错误类型一致，而输出是多个组合的发布者合并起来的元组。<code>Zip</code> 的意思是，当组合的<strong>每一个</strong>发布者都产生值的时候，才会将值合并成元组发送给订阅者。</p>
-
+}
+</code></pre></div><p><code>Zip</code> 可以通过传入两个发布者进行初始化，要求多个组合的发布者的的错误类型一致，而输出是多个组合的发布者合并起来的元组。<code>Zip</code> 的意思是，当组合的<strong>每一个</strong>发布者都产生值的时候，才会将值合并成元组发送给订阅者。</p>
 <h4 id="combine-lastest">Combine Lastest</h4>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014709.png" alt="" /></p>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014709.png" alt=""></p>
 <p>类似的是，<code>CombineLastest</code> 在 Combine 框架里面也是一个结构体(同理还有 <code>CombineLatest3</code>，<code>CombineLatest4</code>，用于更多数量的组合)</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Publishers</span> {
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">CombineLatest</span>&lt;A, B, Output&gt; : Publisher <span style="color:#ff79c6">where</span> A : Publisher, B : Publisher, A.Failure == B.Failure {
@@ -524,19 +454,13 @@ publisher.subscribe(subsciber)</code></pre></div>
         <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>(<span style="color:#ff79c6">_</span> a: A, <span style="color:#ff79c6">_</span> b: B, transform: @escaping (A.Output, B.Output) -&gt; Output)
         <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>&lt;S&gt;(subscriber: S) <span style="color:#ff79c6">where</span> Output == S.Input, S : Subscriber, B.Failure == S.Failure
     }
-}</code></pre></div>
-<p><code>CombineLatest</code> 使用两个发布者加上一个 <code>transform</code> 的转换闭包(在闭包中将两个产生的值处理并返回)进行初始化(<del>截止目前 beta1 版本的 Xcode，苹果还没将声明公开 init 方法，预计可能还会调整，这一部分来自官方幻灯片中的例子，有待订正</del>beta 2 版本已支持)，同样也要求多个组合发布者的错误类型一致，输出是 <code>transform</code> 闭包里的 <code>Output</code> 类型。<code>CombineLastest</code> 的意思是，当多个发布者中<strong>任意一个</strong>发布者产生值时，都会执行 <code>transform</code> 闭包的操作并将结果发送给订阅者。</p>
-
-<h2 id="总结">总结</h2>
-
+}
+</code></pre></div><p><code>CombineLatest</code> 使用两个发布者加上一个 <code>transform</code> 的转换闭包(在闭包中将两个产生的值处理并返回)进行初始化(<del>截止目前 beta1 版本的 Xcode，苹果还没将声明公开 init 方法，预计可能还会调整，这一部分来自官方幻灯片中的例子，有待订正</del>beta 2 版本已支持)，同样也要求多个组合发布者的错误类型一致，输出是 <code>transform</code> 闭包里的 <code>Output</code> 类型。<code>CombineLastest</code> 的意思是，当多个发布者中<strong>任意一个</strong>发布者产生值时，都会执行 <code>transform</code> 闭包的操作并将结果发送给订阅者。</p>
+<h2 id="heading-6">总结</h2>
 <p>Combine 作为官方出品的响应式框架，无疑是令人惊喜的。整个框架的思想虽然现有的响应式框架(如 RxSwift）差不多，但无论是接口上隐藏掉序列，冷热信号等理解难度较大的概念，还是更方便的事件设计，清晰简洁的命名规范，都觉得 Apple 很用心的在打磨这个框架。同时，最具杀伤力的的是，Apple 可以让他和 Cocoa 框架更紧密的结合，打造出类似 UIKit+Combine，Foundation+Combine 的官方支持，这也意味着 Combine 有望成为类似 JavaScript 里面 Promise 这样的规范特性。如果你错过了 ReactiveCocoa，也错过了 RxSwift，也没使用过响应式编程，那么我强烈建议你了解一下今年的 Combine 框架。而剩下最大的问题，是国内什么时候能够 iOS 13 Only 和迁移到 Swift 了。</p>
-
-<h2 id="延伸阅读">延伸阅读</h2>
-
-<p><a href="https://nemocdz.github.io/post/apple-官方异步编程框架swift-combine-应用/">Apple 官方异步编程框架：Swift Combine 应用</a></p>
-
+<h2 id="heading-7">延伸阅读</h2>
+<p><a href="https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E5%BA%94%E7%94%A8/">Apple 官方异步编程框架：Swift Combine 应用</a></p>
 <p><a href="https://github.com/freak4pc/rxswift-to-combine-cheatsheet">RXSwift 和 Combine 对应关系速查表</a></p>
-
 <p><a href="https://xiaozhuanlan.com/topic/8362954017">WWDC 19 专栏文章目录</a></p></article>
     <footer class="post-footer">
       

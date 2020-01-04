@@ -53,7 +53,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.58.1">
+<meta name="generator" content="Hugo 0.62.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88-objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/">
@@ -223,21 +223,18 @@
     
 	
 	<nav id="TableOfContents">
-<ul>
-<li><a href="#runtime-源码的-weak-关键字实现">Runtime 源码的 weak 关键字实现</a></li>
-<li><a href="#动手实现弱引用置-nil">动手实现弱引用置 nil</a></li>
-<li><a href="#弱引用容器的拓展">弱引用容器的拓展</a></li>
-<li><a href="#最后">最后</a></li>
-<li><a href="#参考链接">参考链接</a></li>
-</ul>
+  <ul>
+    <li><a href="#runtime--weak-">Runtime 源码的 weak 关键字实现</a></li>
+    <li><a href="#-nil">动手实现弱引用置 nil</a></li>
+    <li><a href="#heading">弱引用容器的拓展</a></li>
+    <li><a href="#heading-1">最后</a></li>
+    <li><a href="#heading-2">参考链接</a></li>
+  </ul>
 </nav>
 
     <article class="post-content"><p>之前写了一篇 <a href="https://nemocdz.github.io/post/objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">文章</a> 总结了 OC 中弱引用容器实现，在小米面试中提到其中 CFFoundation 的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现 Weak 特质，也就是没有在销毁后置 nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。</p>
-
 <p>所以看了 Runtime 源码和文章后，订正弱引用容器的一些实现方法。</p>
-
-<h2 id="runtime-源码的-weak-关键字实现">Runtime 源码的 weak 关键字实现</h2>
-
+<h2 id="runtime--weak-">Runtime 源码的 weak 关键字实现</h2>
 <p>源码基于 <a href="https://opensource.apple.com/tarballs/objc4/">Runtime-709 </a>分析，当我们使用 <code>__weak</code> 关键字时，实际上调用的是 NSObject.mm 中的 <code>objc_initWeak()</code> 方法，然后进入核心方法 <code>storeWeak</code>，传入核心参数是 location（弱引用指针的地址）和 newobj（弱引用指针应该指向的）核心方法源码如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#ff79c6">template</span> <span style="color:#ff79c6">&lt;</span>HaveOld haveOld, HaveNew haveNew,
           CrashIfDeallocating crashIfDeallocating<span style="color:#ff79c6">&gt;</span>
@@ -246,9 +243,9 @@
 </span><span style="color:#6272a4"></span>storeWeak(id <span style="color:#ff79c6">*</span>location, objc_object <span style="color:#ff79c6">*</span>newObj)
 {   
     
-    assert(haveOld  <span style="color:#ff79c6">||</span>  haveNew);
+    assert(haveOld  <span style="color:#ff79c6">|</span><span style="color:#ff79c6">|</span>  haveNew);
     <span style="color:#6272a4">//新值没有的情况应该被上层的方法拦截，所以这里有个断言
-</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>haveNew) assert(newObj <span style="color:#ff79c6">==</span> nil);
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>haveNew) assert(newObj <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> nil);
     
     
     Class previouslyInitializedClass <span style="color:#ff79c6">=</span> nil;
@@ -271,20 +268,20 @@
     }
     
     <span style="color:#6272a4">//加锁
-</span><span style="color:#6272a4"></span>    SideTable<span style="color:#ff79c6">::</span>lockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
+</span><span style="color:#6272a4"></span>    SideTable<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>lockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
     <span style="color:#6272a4">//再次确认保证线程安全
-</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (haveOld  <span style="color:#ff79c6">&amp;&amp;</span>  <span style="color:#ff79c6">*</span>location <span style="color:#ff79c6">!=</span> oldObj) {
-        SideTable<span style="color:#ff79c6">::</span>unlockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (haveOld  <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&amp;</span>  <span style="color:#ff79c6">*</span>location <span style="color:#ff79c6">!</span><span style="color:#ff79c6">=</span> oldObj) {
+        SideTable<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>unlockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
         <span style="color:#ff79c6">goto</span> retry;
     }
 
     <span style="color:#6272a4">// 防止弱引用机制的死锁并用 init 构造保证弱引用的 isa 指针非空
-</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (haveNew  <span style="color:#ff79c6">&amp;&amp;</span>  newObj) {
-        Class cls <span style="color:#ff79c6">=</span> newObj<span style="color:#ff79c6">-&gt;</span>getIsa();
-        <span style="color:#ff79c6">if</span> (cls <span style="color:#ff79c6">!=</span> previouslyInitializedClass  <span style="color:#ff79c6">&amp;&amp;</span>  
-            <span style="color:#ff79c6">!</span>((objc_class <span style="color:#ff79c6">*</span>)cls)<span style="color:#ff79c6">-&gt;</span>isInitialized()) 
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (haveNew  <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&amp;</span>  newObj) {
+        Class cls <span style="color:#ff79c6">=</span> newObj<span style="color:#ff79c6">-</span><span style="color:#ff79c6">&gt;</span>getIsa();
+        <span style="color:#ff79c6">if</span> (cls <span style="color:#ff79c6">!</span><span style="color:#ff79c6">=</span> previouslyInitializedClass  <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&amp;</span>  
+            <span style="color:#ff79c6">!</span>((objc_class <span style="color:#ff79c6">*</span>)cls)<span style="color:#ff79c6">-</span><span style="color:#ff79c6">&gt;</span>isInitialized()) 
         {
-            SideTable<span style="color:#ff79c6">::</span>unlockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
+            SideTable<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>unlockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
             _class_initialize(_class_getNonMetaClass(cls, (id)newObj));
             previouslyInitializedClass <span style="color:#ff79c6">=</span> cls;
             <span style="color:#ff79c6">goto</span> retry;
@@ -294,52 +291,43 @@
     <span style="color:#6272a4">//清除旧址
 </span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (haveOld) {
         <span style="color:#6272a4">//在 weakTable 中反注册
-</span><span style="color:#6272a4"></span>        weak_unregister_no_lock(<span style="color:#ff79c6">&amp;</span>oldTable<span style="color:#ff79c6">-&gt;</span>weak_table, oldObj, location);
+</span><span style="color:#6272a4"></span>        weak_unregister_no_lock(<span style="color:#ff79c6">&amp;</span>oldTable<span style="color:#ff79c6">-</span><span style="color:#ff79c6">&gt;</span>weak_table, oldObj, location);
     }
 
     <span style="color:#6272a4">//分配新值
 </span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (haveNew) {
         <span style="color:#6272a4">//在 weakTable 中注册新值并返回对象
 </span><span style="color:#6272a4"></span>        newObj <span style="color:#ff79c6">=</span> (objc_object <span style="color:#ff79c6">*</span>)
-            weak_register_no_lock(<span style="color:#ff79c6">&amp;</span>newTable<span style="color:#ff79c6">-&gt;</span>weak_table, (id)newObj, location, 
+            weak_register_no_lock(<span style="color:#ff79c6">&amp;</span>newTable<span style="color:#ff79c6">-</span><span style="color:#ff79c6">&gt;</span>weak_table, (id)newObj, location, 
                                   crashIfDeallocating);
 
 
         <span style="color:#6272a4">// 对 TaggedPointer 的优化
-</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">if</span> (newObj  <span style="color:#ff79c6">&amp;&amp;</span>  <span style="color:#ff79c6">!</span>newObj<span style="color:#ff79c6">-&gt;</span>isTaggedPointer()) {
-            newObj<span style="color:#ff79c6">-&gt;</span>setWeaklyReferenced_nolock();
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">if</span> (newObj  <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&amp;</span>  <span style="color:#ff79c6">!</span>newObj<span style="color:#ff79c6">-</span><span style="color:#ff79c6">&gt;</span>isTaggedPointer()) {
+            newObj<span style="color:#ff79c6">-</span><span style="color:#ff79c6">&gt;</span>setWeaklyReferenced_nolock();
         }
 
         <span style="color:#ff79c6">*</span>location <span style="color:#ff79c6">=</span> (id)newObj;
     }
     <span style="color:#ff79c6">else</span> {
     }
-    SideTable<span style="color:#ff79c6">::</span>unlockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
+    SideTable<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>unlockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
 
     <span style="color:#ff79c6">return</span> (id)newObj;
 }
-</code></pre></div>
-<p>而 WeakTable 是一个 Hash 表设计，以对象的地址为 key，value 是所有指向这个对象的 weak 指针的地址集合。通过这种设计，在废弃对象时，可以通过 weak 表快速找到 value 即所有 weak 指针并统一设置为 nil 并删除该记录。</p>
-
+</code></pre></div><p>而 WeakTable 是一个 Hash 表设计，以对象的地址为 key，value 是所有指向这个对象的 weak 指针的地址集合。通过这种设计，在废弃对象时，可以通过 weak 表快速找到 value 即所有 weak 指针并统一设置为 nil 并删除该记录。</p>
 <p><strong>所以苹果对于 weak 的实现其实类似于通知的实现，指明谁（weak 指针）要监听谁（赋值对象）什么事件（dealloc 操作）执行什么操作（置 nil）。</strong></p>
-
-<h2 id="动手实现弱引用置-nil">动手实现弱引用置 nil</h2>
-
+<h2 id="-nil">动手实现弱引用置 nil</h2>
 <p>对于弱引用不增加引用计数，之前 <a href="https://nemocdz.github.io/My-blog/post/objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">文章</a> 已经探讨过，现在目的是如何仿照苹果这种设计，去实现置 nil 的操作。苹果是为了多个弱引用指针指向同一个对象才使用了表，而需要其中一个指针置 nil 的关键在于，监听 <code>dealloc</code> 操作。而其实在 ARC 里，重写 dealloc 方法就可以，但是怎么样不入侵整个类的 <code>dealloc</code> 方法呢？这时突破点在于，<code>dealloc</code> 中做了什么，有没有办法在 <code>dealloc</code> 调用的其它方法入手。</p>
-
 <p>而 MRC 中的 <code>dealloc</code> 方法实际上做了这些事情：</p>
-
 <ol>
 <li>对自己所有强引用的属性发送 release 消息</li>
 <li>对自己所有强引用的关联对象发送 release 消息</li>
 <li>….</li>
 <li>调用 <code>[super dealloc]</code></li>
 </ol>
-
 <p>这时我们发现，只要此时关联对象引用计数为 1，那么发送 release 消息后则会调用它的 <code>dealloc</code> 方法并销毁。</p>
-
 <p>在它 <code>dealloc</code> 时置我们需要的指针为 nil 是合适的选择，因为之后的时机指向的对象也会被销毁，销毁之前置 nil 刚刚好。</p>
-
 <p>为了保证关联对象的引用指针为 1，在 weak 赋值时只要创建一次就好了。由于我们需要置 nil 这个操作，关联对象的 dealloc 跑一个 block 是灵活性最大的选择了，也就是由关联对象持有一个 block，并在 <code>weak</code> 赋值时顺便告诉这个 block 里面执行什么。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@interface</span> <span style="color:#50fa7b">CDZDeallocObserver</span> : <span style="color:#50fa7b">NSObject</span>
 <span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">copy</span>) <span style="color:#8be9fd">void</span> (<span style="color:#ff79c6">^</span>block)(<span style="color:#8be9fd">void</span>);
@@ -351,8 +339,8 @@
         <span style="color:#8be9fd;font-style:italic">self</span>.block();
     }
 }
-<span style="color:#ff79c6">@end</span></code></pre></div>
-<p>用分类实现一个 setBlock 的方法，拓展给 <code>NSObject</code> 类。</p>
+<span style="color:#ff79c6">@end</span>
+</code></pre></div><p>用分类实现一个 setBlock 的方法，拓展给 <code>NSObject</code> 类。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">const</span> <span style="color:#8be9fd">void</span> <span style="color:#ff79c6">*</span>CDZDellocBlockKey <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>CDZDellocBlockKey;
 <span style="color:#ff79c6">@implementation</span> <span style="color:#50fa7b">NSObject</span> <span style="color:#8be9fd;font-style:italic">(DeallocBlock)</span>
 
@@ -364,9 +352,8 @@
     }
     observer.block <span style="color:#ff79c6">=</span> block;
 }
-<span style="color:#ff79c6">@end</span></code></pre></div>
-<h2 id="弱引用容器的拓展">弱引用容器的拓展</h2>
-
+<span style="color:#ff79c6">@end</span>
+</code></pre></div><h2 id="heading">弱引用容器的拓展</h2>
 <p>之前我们知道 CoreFoundation 和 MRC 法都可以使引用计数不变，那么其实我们只要在 Add 的时候顺便关联上释放时移除对象即可，因为保留一堆 nil 指针在容器内并不是一个好的选择。置 nil 其实更希望是表示这个元素不存在了。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#6272a4">//与 CoreFoundation 配套的 add 方法，用 unsafe_unretain 是不希望被置 nil，系统置 nil 的时机可能比实际 dealloc 的时机早
 </span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">cf_addObject:</span>(<span style="color:#8be9fd">id</span>)<span style="color:#8be9fd;font-style:italic">object</span>{
@@ -378,7 +365,8 @@
             [weakSelf <span style="color:#8be9fd;font-style:italic">removeObject</span>:unRetainObject];
         }
     }];
-}</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#6272a4">//跟 mrc 配套的
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#6272a4">//跟 mrc 配套的
 </span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">mrc_addObject:</span>(<span style="color:#8be9fd">id</span>)<span style="color:#8be9fd;font-style:italic">object</span>{
     [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">addObject</span>:object];
     __unsafe_unretained <span style="color:#ff79c6">typeof</span> (object) unRetainObject <span style="color:#ff79c6">=</span> object;
@@ -389,17 +377,12 @@
         }
     }];
     CFRelease((<span style="color:#ff79c6">__bridge</span> CFTypeRef)(object));
-}</code></pre></div>
-<p>这样才能保证后续在对象销毁时，用容器获取的对象是正确的（置 nil 或被移除）。</p>
-
-<h2 id="最后">最后</h2>
-
+}
+</code></pre></div><p>这样才能保证后续在对象销毁时，用容器获取的对象是正确的（置 nil 或被移除）。</p>
+<h2 id="heading-1">最后</h2>
 <p>更改后的方案 <a href="https://github.com/Nemocdz/OCWeakContainer">Demo</a> 已经更新，之前对于内存管理的理解不够深入而导致错误的文章希望不要误导了太多人。</p>
-
 <p>如果您觉得有帮助,不妨给个 star 鼓励一下,欢迎关注&amp;交流</p>
-
-<h2 id="参考链接">参考链接</h2>
-
+<h2 id="heading-2">参考链接</h2>
 <ul>
 <li><a href="http://www.desgard.com/weak/">weak 弱引用的实现方式</a></li>
 <li><a href="http://www.jianshu.com/p/ef6d9bf8fe59">iOS管理对象内存的数据结构以及操作算法&ndash;SideTables、RefcountMap、weak_table_t-一</a></li>

@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.58.1">
+<meta name="generator" content="Hugo 0.62.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/cocoa-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%80%BB%E7%BB%93/">
@@ -220,113 +220,69 @@
     
 	
 	<nav id="TableOfContents">
-<ul>
-<li><a href="#前置知识">前置知识</a>
-<ul>
-<li><a href="#线程">线程</a></li>
-<li><a href="#多元信号量">多元信号量</a></li>
-<li><a href="#死锁">死锁</a></li>
-<li><a href="#并发">并发</a></li>
-<li><a href="#串行与并行">串行与并行</a></li>
-<li><a href="#同步与异步">同步与异步</a></li>
-<li><a href="#多线程技术">多线程技术</a></li>
-</ul></li>
-<li><a href="#ios-开发中的多线程技术">iOS 开发中的多线程技术</a>
-<ul>
-<li><a href="#基础">基础</a></li>
-<li><a href="#方案">方案</a>
-<ul>
-<li><a href="#pthread-posix-threads">pthread（POSIX threads）</a></li>
-<li><a href="#nsthread">NSThread</a></li>
-<li><a href="#gcd-grand-central-dispatch">GCD（Grand Central Dispatch）</a></li>
-<li><a href="#nsoperation-nsoperationqueue">NSOperation+NSOperationQueue</a></li>
-</ul></li>
-<li><a href="#gcd">GCD</a>
-<ul>
-<li><a href="#队列">队列</a></li>
-<li><a href="#执行方式">执行方式</a></li>
-<li><a href="#api">API</a>
-<ul>
-<li><a href="#常用">常用</a></li>
-<li><a href="#非常用">非常用</a></li>
-</ul></li>
-<li><a href="#gcd-中的死锁">GCD 中的死锁</a></li>
-<li><a href="#gcd-的实现原理">GCD 的实现原理</a></li>
-</ul></li>
-<li><a href="#nsoperation">NSOperation</a>
-<ul>
-<li><a href="#标识状态-只读属性">标识状态（只读属性）</a></li>
-<li><a href="#系统子类">系统子类</a></li>
-<li><a href="#nsoperationqueue">NSOperationQueue</a></li>
-<li><a href="#maxconcureentoperationcount">MaxConcureentOperationCount</a></li>
-<li><a href="#与-gcd-比较">与 GCD 比较</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#参考链接">参考链接</a></li>
-</ul>
+  <ul>
+    <li><a href="#heading">前置知识</a>
+      <ul>
+        <li><a href="#heading-1">线程</a></li>
+        <li><a href="#heading-2">多元信号量</a></li>
+        <li><a href="#heading-3">死锁</a></li>
+        <li><a href="#heading-4">并发</a></li>
+        <li><a href="#heading-5">串行与并行</a></li>
+        <li><a href="#heading-6">同步与异步</a></li>
+        <li><a href="#heading-7">多线程技术</a></li>
+      </ul>
+    </li>
+    <li><a href="#ios-">iOS 开发中的多线程技术</a>
+      <ul>
+        <li><a href="#heading-8">基础</a></li>
+        <li><a href="#heading-9">方案</a></li>
+        <li><a href="#gcd">GCD</a></li>
+        <li><a href="#nsoperation">NSOperation</a></li>
+      </ul>
+    </li>
+    <li><a href="#heading-16">参考链接</a></li>
+  </ul>
 </nav>
 
     <article class="post-content"><p>个人学习总结笔记。</p>
-
-<h2 id="前置知识">前置知识</h2>
-
-<h3 id="线程">线程</h3>
-
+<h2 id="heading">前置知识</h2>
+<h3 id="heading-1">线程</h3>
 <p>程序执行流的最小单元</p>
-
 <ul>
 <li>线程拥有自己的空间：栈，线程局部储存（Thread Local Storage），寄存器</li>
 <li>线程之间共享：全局变量，堆上的数据，函数的静态变量，代码，文件</li>
 <li>线程调度中状态：运行，就绪，等待</li>
 <li>线程优先级改变方式：
-
 <ol>
 <li>用户指定</li>
 <li>等待状态频繁程度</li>
 <li>长时间不执行</li>
 <li>抢占和不可抢占</li>
-</ol></li>
+</ol>
+</li>
 </ul>
-
-<h3 id="多元信号量">多元信号量</h3>
-
+<h3 id="heading-2">多元信号量</h3>
 <p>锁的一种，计数 N，访问减 1，小于 0 等待</p>
-
-<h3 id="死锁">死锁</h3>
-
+<h3 id="heading-3">死锁</h3>
 <p>两个或更多线程阻塞着等待其它处于死锁状态的线程所持有的锁。</p>
-
 <p>产生的四个必要条件</p>
-
 <ol>
 <li>互斥，资源需要等待</li>
 <li>请求和保持，请求进程阻塞后不释放自己的资源</li>
 <li>不剥夺，无法剥夺他人的资源</li>
 <li>环路等待，等待关系形成环</li>
 </ol>
-
-<h3 id="并发">并发</h3>
-
+<h3 id="heading-4">并发</h3>
 <p>多个任务同时发生，需要被处理</p>
-
-<h3 id="串行与并行">串行与并行</h3>
-
+<h3 id="heading-5">串行与并行</h3>
 <p>串行：多个任务依次执行</p>
-
 <p>并行：多个任务同时执行</p>
-
-<h3 id="同步与异步">同步与异步</h3>
-
+<h3 id="heading-6">同步与异步</h3>
 <p>同步：调用者主动等待调用的返回结果</p>
-
 <p>异步：调用者不等待调用的返回结果，调用直接返回，之后被调用者在获得结果后返回结果给调用者</p>
-
-<h3 id="多线程技术">多线程技术</h3>
-
+<h3 id="heading-7">多线程技术</h3>
 <p>多线程技术使多个 CPU 可以同时工作，同时处理不同线程的指令。给多核处理器带来并行能力。</p>
-
 <p>优点</p>
-
 <ol>
 <li>某个操作可能陷入长时间等待-等待的线程会进入睡眠状态而无法继续执行</li>
 <li>某个操作可能会消耗大量时间-程序和用户的交互会中断</li>
@@ -334,181 +290,117 @@
 <li>单线程无法发挥多核计算机全部能力</li>
 <li>资源共享效率提高</li>
 </ol>
-
 <p>缺点</p>
-
 <ol>
 <li>创建消耗 CPU 和内存</li>
 <li>需注意线程安全，资源竞争</li>
 </ol>
-
-<h2 id="ios-开发中的多线程技术">iOS 开发中的多线程技术</h2>
-
-<h3 id="基础">基础</h3>
-
+<h2 id="ios-">iOS 开发中的多线程技术</h2>
+<h3 id="heading-8">基础</h3>
 <ul>
 <li>iOS 启动时运行的线程是主线程</li>
 <li>主线程占用堆栈 1 M</li>
 <li>其余线程是 512 KB</li>
 <li>需要主线程操作 UIKit，因为 UIKit 操作不是全都是线程安全的</li>
 </ul>
-
-<h3 id="方案">方案</h3>
-
-<h4 id="pthread-posix-threads">pthread（POSIX threads）</h4>
-
+<h3 id="heading-9">方案</h3>
+<h4 id="pthreadposix-threads">pthread（POSIX threads）</h4>
 <p>类 Unix 系统中作为操作系统的通用多线程 API</p>
-
 <ol>
 <li>跨平台，可移植</li>
 <li>C 语言</li>
 <li>使用难</li>
 </ol>
-
 <h4 id="nsthread">NSThread</h4>
-
 <ol>
 <li>面向对象的线程</li>
 <li>需要手动管理生命周期，同步，加锁</li>
 </ol>
-
-<h4 id="gcd-grand-central-dispatch">GCD（Grand Central Dispatch）</h4>
-
+<h4 id="gcdgrand-central-dispatch">GCD（Grand Central Dispatch）</h4>
 <ol>
 <li>block 定义任务，面向过程</li>
 <li>C 语言</li>
 <li>使用方便</li>
 </ol>
-
-<h4 id="nsoperation-nsoperationqueue">NSOperation+NSOperationQueue</h4>
-
+<h4 id="nsoperationnsoperationqueue">NSOperation+NSOperationQueue</h4>
 <ol>
 <li>面向对象</li>
 <li>指定依赖、取消、暂停恢复、优先级方便</li>
 <li>对 GCD 的封装</li>
 </ol>
-
 <h3 id="gcd">GCD</h3>
-
 <p>CGD=block 块执行任务+队列+执行方式</p>
-
-<h4 id="队列">队列</h4>
-
+<h4 id="heading-10">队列</h4>
 <p>先进先出（FIFO），先追加的任务先执行</p>
-
 <ul>
 <li>串行队列（等待之前执行完再执行）</li>
 <li>并发队列（不需等待之前执行完再执行）</li>
 <li>主队列（主线程中的串行队列）</li>
 </ul>
-
-<h4 id="执行方式">执行方式</h4>
-
+<h4 id="heading-11">执行方式</h4>
 <ul>
 <li>同步</li>
 <li>异步</li>
 </ul>
-
 <p>主队列操作一定在主线程中，<strong>反之不必然</strong></p>
-
 <p><strong>除了主队列外</strong>，同步在当前线程中执行，异步在新建线程中执行</p>
-
 <h4 id="api">API</h4>
-
-<h5 id="常用">常用</h5>
-
+<h5 id="heading-12">常用</h5>
 <p><code>Dispatch_async/sync</code>：派发同步和异步事件，最常用</p>
-
 <p><code>Dispatch_after</code>：用于延迟执行，简单定时</p>
-
 <p><code>Dispatch_get_main_queue/get_global_queue</code>：获取主队列或系统默认的并行队列</p>
-
 <p><code>Dispatch_queue_create</code> ：新建一个队列</p>
-
 <p><code>Dispatch_once</code>：只被执行一次+线程安全，常用于实现单例</p>
-
-<h5 id="非常用">非常用</h5>
-
+<h5 id="heading-13">非常用</h5>
 <p><code>Dispatch_queue_set_target_queue</code>：主要用于通过设定目标队列为自建的队列改变为目标队列的优先级，也可指定队列之间的层次，达到自上而下控制队列</p>
-
 <p><code>Dispatch_group</code>：管理多个队列里事件的执行情况。将队列加入组中，全部结束后追加处理或增加指定时间的任务处理完成情况检测（超时处理）</p>
-
 <p><code>Dispatch_barrier_async</code>：承上启下，队列里在他之前的执行完成才开始执行他 block 的，在 block 执行之后再开始执行队列里后面的。他执行时只有他自己执行，像一个栅栏一样。分隔开之前完成和之后开始的。</p>
-
 <p><code>Dispatch_apply</code>：按指定次数追加 block 到对应的队列中</p>
-
 <p><code>Dispatch_suspen/resume</code>：暂停与恢复</p>
-
 <p><code>Dispatch I/O</code>：通过 GCD 分割文件读写，提高速度</p>
-
 <p><code>Dispatch_semaphore</code>：可设置类似多元信号量中的 “0” 为 x，进行排他性控制。在操作前后进行信号计数判断，小于 x 则等待，大于等于则减 a 并开始执行事件，事件执行完毕后加 b（这里的 a，b 相当于任务对信号量的影响）</p>
-
-<h4 id="gcd-中的死锁">GCD 中的死锁</h4>
+<h4 id="gcd-">GCD 中的死锁</h4>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#6272a4">//主队列中执行以下代码
 </span><span style="color:#6272a4"></span>dispatch_sync(dispatch_get_main_queue(), <span style="color:#ff79c6">^</span>{<span style="color:#6272a4">//操作 B
 </span><span style="color:#6272a4"></span>    …<span style="color:#6272a4">//事件 A
-</span><span style="color:#6272a4"></span>});</code></pre></div>
-<p>这是在一个串行队列（主队列）中执行（往该串行队列派发同步事件 A）的操作 B，会造成死锁（*反之不必然不死锁*）。</p>
-
+</span><span style="color:#6272a4"></span>});
+</code></pre></div><p>这是在一个串行队列（主队列）中执行（往该串行队列派发同步事件 A）的操作 B，会造成死锁（<em>反之不必然不死锁</em>）。</p>
 <p>队列先进先出，而串行队列同时执行的任务只有一个。操作 B 需要等待其派发的 block 执行完才算完成，派发的同步事件 A 被追加在队列最后（后进），同步执行需要等待前面执行完才可以执行，而前面的因为操作 B 没执行完，造成相互等待。</p>
-
 <p>举个例子：面试时要排队（队列），一次只能一个人进面试房间（串行队列），前面的面试完出来后面的人才可以进去面试（同步任务）。A 进去房间，面试官说，你的面试内容是叫 B 来面试，并等他面试完成（派发同步任务 Block 在串行队列中）。A 把 B 叫来了，B 来了就排在了队伍最后面，排队等待轮到他，而 A 则在房间里等待 B 面试完。结果就是 A 等待 B 面试完等不到，而 B 则等待前面的人面试完（包括 A 面试完出来）然后轮到他。两人相互等待，过程就进行不下去了。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">dispatch_sync(queueA,<span style="color:#ff79c6">^</span>{<span style="color:#6272a4">//操作 C
 </span><span style="color:#6272a4"></span>    dispatch_sync(queueB, <span style="color:#ff79c6">^</span>{<span style="color:#6272a4">//操作 B
 </span><span style="color:#6272a4"></span>            dispatch_sync(queueA,<span style="color:#ff79c6">^</span>{...});<span style="color:#6272a4">//事件 A
 </span><span style="color:#6272a4"></span>    })
-});</code></pre></div>
-<p>在一个串行队列中执行需要等待((往该串行队列派发同步事件 A)的操作 B)的操作 C，会造成死锁。</p>
-
+});
+</code></pre></div><p>在一个串行队列中执行需要等待((往该串行队列派发同步事件 A)的操作 B)的操作 C，会造成死锁。</p>
 <p>操作 C 需要等待操作 B，操作 B 需要等待事件 A，事件 A 需要等待操作 C，相互等待。</p>
-
 <p>也就是说，串行队列导致了互斥，block 被持有导致了请求和保持，而又无法剥夺，而这时候代码用法导致事件等待关系形成一个环，从而形成相互等待，满足死锁四个条件。</p>
-
-<h4 id="gcd-的实现原理">GCD 的实现原理</h4>
-
+<h4 id="gcd--1">GCD 的实现原理</h4>
 <p><a href="https://bestswifter.com/deep-gcd/">深入了解 GCD</a></p>
-
 <p><a href="https://apple.github.io/swift-corelibs-libdispatch/">GCD 源码</a></p>
-
 <h3 id="nsoperation">NSOperation</h3>
-
 <p>GCD 中 Block 的面向对象封装</p>
-
-<h4 id="标识状态-只读属性">标识状态（只读属性）</h4>
-
+<h4 id="heading-14">标识状态（只读属性）</h4>
 <ul>
 <li>执行（isExecuted）</li>
 <li>完成（isFinished）</li>
 <li>取消（isCancelled）</li>
 </ul>
-
-<h4 id="系统子类">系统子类</h4>
-
+<h4 id="heading-15">系统子类</h4>
 <p><code>NSBlockOperation</code> 和 <code>NSInvocationOperation</code></p>
-
 <p>默认 start 是同步执行的方式</p>
-
 <h4 id="nsoperationqueue">NSOperationQueue</h4>
-
 <p>GCD 队列的面向对象封装</p>
-
 <p>有 Current 和 Main 两个属性可获取当前队列或者主队列</p>
-
 <p>自己生成 <code>NSOperationQueue</code> 是并发队列，会尽可能为每一个 <code>NSOperation</code> 创建线程</p>
-
 <h4 id="maxconcureentoperationcount">MaxConcureentOperationCount</h4>
-
 <p>表示最大并发执行 <code>NSOperation</code> 的数量</p>
-
 <ul>
 <li>设为 1 时相当于串行队列</li>
 <li>大于 1 为并发队列</li>
 </ul>
-
 <p><code>NSOpertaionQueue</code> 调用 <code>addOperation</code> 方法放入 <code>NSOperation</code> 对象后相当于<strong>异步执行</strong></p>
-
-<h4 id="与-gcd-比较">与 GCD 比较</h4>
-
+<h4 id="-gcd-">与 GCD 比较</h4>
 <ol>
 <li>方便取消，执行前任意取消（GCD 在 iOS 8 后有 <code>dispatch_block_cancel</code>）</li>
 <li>设置 Operation 间依赖关系</li>
@@ -516,9 +408,7 @@
 <li>指定优先级</li>
 <li>重用 <code>NSOperation</code> 对象</li>
 </ol>
-
-<h2 id="参考链接">参考链接</h2>
-
+<h2 id="heading-16">参考链接</h2>
 <ul>
 <li><a href="https://hit-alibaba.github.io/interview/iOS/Cocoa-Touch/Multithreading.html">Cocoa 并发编程</a></li>
 <li><a href="http://blog.leichunfeng.com/blog/2015/07/29/ios-concurrency-programming-operation-queues/">iOS 并发编程之 Operation Queues</a></li>

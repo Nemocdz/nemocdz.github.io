@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Nemocdz&#39;s Blog</title>
@@ -19,15 +19,11 @@
       
       <guid>https://nemocdz.github.io/post/%E6%B5%85%E8%B0%88-webrtc-neteq/</guid>
       <description>&lt;p&gt;WebRTC Native 代码里面有很多值得学习的宝藏，其中一个就是 WebRTC 的 NetEQ 模块。根据 &lt;a href=&#34;https://webrtcglossary.com/neteq/&#34;&gt;WebRTC 术语表&lt;/a&gt; 对 NetEQ 的解释：&lt;/p&gt;
-
 &lt;blockquote&gt;
 &lt;p&gt;A dynamic jitter buffer and error concealment algorithm used for concealing the negative effects of network jitter and packet loss. Keeps latency as low as possible while maintaining the highest voice quality.&lt;/p&gt;
-
 &lt;p&gt;一种动态抖动缓冲区和错误隐藏（丢包补偿）算法，用于去除网络抖动和数据包丢失的负面影响。在保持最高语音质量的同时，保持尽可能低的延迟。&lt;/p&gt;
 &lt;/blockquote&gt;
-
 &lt;p&gt;NetEQ 其实就是音视频处理中的 Jitter Buffer 模块，在 WebRTC 的语音引擎中使用。这个模块很重要，会影响播放时的体验，同时也相当复杂。&lt;/p&gt;
-
 &lt;p&gt;本文源码参考 &lt;a href=&#34;https://webrtc.googlesource.com/src&#34;&gt;WebRTC Native&lt;/a&gt; M78 版本。&lt;/p&gt;</description>
     </item>
     
@@ -67,10 +63,8 @@
       <description>&lt;blockquote&gt;
 &lt;p&gt;WWDC 2019 Session 721 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2019/721/&#34;&gt;Combine in Practice&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
-
-&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;
-
-&lt;p&gt;Combine 是 WWDC2019 推出的异步编程框架，在上篇 &lt;a href=&#34;https://nemocdz.github.io/post/apple-官方异步编程框架swift-combine-简介/&#34;&gt;文章&lt;/a&gt; 中，介绍了 Combine 的基本概念。在这篇文章中，着重介绍一些 Combine 的实际应用。&lt;/p&gt;</description>
+&lt;h2 id=&#34;heading&#34;&gt;引言&lt;/h2&gt;
+&lt;p&gt;Combine 是 WWDC2019 推出的异步编程框架，在上篇 &lt;a href=&#34;https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E7%AE%80%E4%BB%8B/&#34;&gt;文章&lt;/a&gt; 中，介绍了 Combine 的基本概念。在这篇文章中，着重介绍一些 Combine 的实际应用。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -82,18 +76,14 @@
       <description>&lt;blockquote&gt;
 &lt;p&gt;WWDC 2019 Session 722 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2019/722/&#34;&gt;Introducing Combine&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
-
-&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;
-
+&lt;h2 id=&#34;heading&#34;&gt;引言&lt;/h2&gt;
 &lt;p&gt;在现代 GUI 编程中，开发者会处理大量事件（包括网络，屏幕输入，系统通知等），根据事件去让界面变化。而对异步事件的处理，会让代码和状态变得复杂。而现有的 Cocoa 框架中，异步编程的接口主要有以下这几种：&lt;/p&gt;
-
 &lt;ul&gt;
 &lt;li&gt;Target/Action&lt;/li&gt;
 &lt;li&gt;NotificationCenter&lt;/li&gt;
 &lt;li&gt;KVO&lt;/li&gt;
 &lt;li&gt;Callbacks&lt;/li&gt;
 &lt;/ul&gt;
-
 &lt;p&gt;而在实际情况中，由于不同的第三方库，系统框架，业务代码可能采用不一样的方式处理异步事件，会导致对事件的处理分散且存在差异。苹果为了帮助开发者简化异步编程，发布了 Swift 的异步编程框架 - Combine。&lt;/p&gt;</description>
     </item>
     
@@ -116,20 +106,13 @@
       <guid>https://nemocdz.github.io/post/%E8%AF%91-%E5%9B%BE%E5%83%8F%E4%BC%98%E5%8C%96/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;作者：Jordan Morgan&lt;/p&gt;
-
 &lt;p&gt;原文链接：&lt;a href=&#34;https://www.swiftjectivec.com/optimizing-images/&#34;&gt;Optimizing Images&lt;/a&gt;&lt;/p&gt;
-
 &lt;p&gt;原文日期：2018-12-11&lt;/p&gt;
 &lt;/blockquote&gt;
-
 &lt;p&gt;俗话说得好，最好的相机是你身边的那个。那么毫无疑问 - iPhone 可以说是这个星球最重要的的相机。而这在业界也已经达成共识。&lt;/p&gt;
-
 &lt;p&gt;在度假？不偷偷拍几张记录在你的 Instagram 故事里？不存在的。&lt;/p&gt;
-
 &lt;p&gt;出现爆炸新闻？查看 Twitter，就可以知道是哪些媒体正在报道，通过他们揭露事件的实时照片。&lt;/p&gt;
-
 &lt;p&gt;等等……&lt;/p&gt;
-
 &lt;p&gt;正因为图像在平台上无处不在，如果管理不当，很容易出现性能和内存问题。稍微了解下 UIKit，搞清楚它处理图像的机制，可以节省大量时间，避免做无用功。&lt;/p&gt;</description>
     </item>
     
@@ -150,13 +133,10 @@
       <guid>https://nemocdz.github.io/post/%E8%AF%91-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC-attributedstrings/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;作者：Olivier Halligon&lt;/p&gt;
-
 &lt;p&gt;原文链接：&lt;a href=&#34;http://alisoftware.github.io/swift/2018/12/16/swift5-stringinterpolation-part2/&#34;&gt;StringInterpolation in Swift 5 — AttributedStrings&lt;/a&gt;&lt;/p&gt;
-
 &lt;p&gt;原文日期：2018-12-16&lt;/p&gt;
 &lt;/blockquote&gt;
-
-&lt;p&gt;我们已经在 &lt;a href=&#34;https://nemocdz.github.io/post/译-swift-5-字符串插值-简介/&#34;&gt;前文&lt;/a&gt; 里介绍了 Swift 5 全新的 StringInterpolation 设计。在这第二部分中，我会着眼于 &lt;code&gt;ExpressibleByStringInterpolation&lt;/code&gt; 其中一种应用，让 &lt;code&gt;NSAttributedString&lt;/code&gt; 变得更优雅。&lt;/p&gt;</description>
+&lt;p&gt;我们已经在 &lt;a href=&#34;https://nemocdz.github.io/post/%E8%AF%91-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC-%E7%AE%80%E4%BB%8B/&#34;&gt;前文&lt;/a&gt; 里介绍了 Swift 5 全新的 StringInterpolation 设计。在这第二部分中，我会着眼于 &lt;code&gt;ExpressibleByStringInterpolation&lt;/code&gt; 其中一种应用，让 &lt;code&gt;NSAttributedString&lt;/code&gt; 变得更优雅。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -167,12 +147,9 @@
       <guid>https://nemocdz.github.io/post/%E8%AF%91-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC-%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;作者：Olivier Halligon&lt;/p&gt;
-
 &lt;p&gt;原文链接：&lt;a href=&#34;http://alisoftware.github.io/swift/2018/12/15/swift5-stringinterpolation-part1/&#34;&gt;StringInterpolation in Swift 5 — Introduction&lt;/a&gt;&lt;/p&gt;
-
 &lt;p&gt;原文日期：2018-12-15&lt;/p&gt;
 &lt;/blockquote&gt;
-
 &lt;p&gt;&lt;code&gt;StringInterpolation&lt;/code&gt; 协议最初的设计效率低下又不易扩展，为了在后续的版本中能够将其彻底重构，Swift 4 中将该协议标记为废弃。即将在 Swift 5 中亮相的 &lt;a href=&#34;https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md&#34;&gt;SE-0228&lt;/a&gt; 提案介绍了一种新的 &lt;code&gt;StringInterpolation&lt;/code&gt; 设计，使得 String 有了更大的潜能。&lt;/p&gt;</description>
     </item>
     
@@ -238,12 +215,9 @@
       <guid>https://nemocdz.github.io/post/%E8%AF%91-hacking-hit-tests/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;作者：Soroush Khanlou&lt;/p&gt;
-
 &lt;p&gt;原文链接：&lt;a href=&#34;http://khanlou.com/2018/09/hacking-hit-tests/&#34;&gt;Hacking Hit Tests&lt;/a&gt;&lt;/p&gt;
-
 &lt;p&gt;原文日期：2018-09-07&lt;/p&gt;
 &lt;/blockquote&gt;
-
 &lt;p&gt;回想 &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2015/408/&#34;&gt;Crusty 教我们使用面向协议编程&lt;/a&gt;之前的日子，我们大多使用继承来共享代码的实现。通常在 UIKit 编程中，你可能会用 &lt;code&gt;UIView&lt;/code&gt; 的子类去添加一些子视图，重写 &lt;code&gt;-layoutSubviews&lt;/code&gt;，然后重复这些工作。也许你还会重写 &lt;code&gt;-drawRect&lt;/code&gt;。但当你需要做一些特别的事情时，就需要看看 &lt;code&gt;UIView&lt;/code&gt; 中其他可以被重写的方法。&lt;/p&gt;</description>
     </item>
     
@@ -255,12 +229,9 @@
       <guid>https://nemocdz.github.io/post/%E8%AF%91-mirror-%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;作者：&lt;a href=&#34;https://twitter.com/mikeash/&#34;&gt;Mike Ash&lt;/a&gt;&lt;/p&gt;
-
 &lt;p&gt;原文链接：&lt;a href=&#34;https://swift.org/blog/how-mirror-works/&#34;&gt;How Mirror Works&lt;/a&gt;&lt;/p&gt;
-
 &lt;p&gt;原文日期：2018-09-26&lt;/p&gt;
 &lt;/blockquote&gt;
-
 &lt;p&gt;尽管 Swift 重心在强调静态类型上，但它同时支持丰富的元数据类型。元数据类型允许代码在运行时检查和操作任意值。这个功能通过 &lt;code&gt;Mirror&lt;/code&gt; API 暴露给 Swift 开发者。大家可能会感到困惑，在 Swift 这种如此强调静态类型的语言里，&lt;code&gt;Mirror&lt;/code&gt; 这样的特性是怎么工作的？让我们一起来通过这篇文章了解一下。&lt;/p&gt;</description>
     </item>
     
@@ -271,7 +242,6 @@
       
       <guid>https://nemocdz.github.io/post/ios-%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86proxy%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/</guid>
       <description>&lt;p&gt;最近因为项目需要，需要在打开某个网址时设置 HTTP 代理。所以做了相关的技术方案调研，并总结下来。&lt;/p&gt;
-
 &lt;p&gt;在 WebView 设置 Proxy 的方式，就是对请求进行拦截并重新处理。还有一种全局的实现方案，使用 iOS 9 以后才有的 NetworkExtension，但是这种方案会在用户看来像是个微皮恩的 App，不友好且太重了。&lt;/p&gt;</description>
     </item>
     
@@ -300,7 +270,6 @@
       
       <guid>https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88-objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/</guid>
       <description>&lt;p&gt;之前写了一篇 &lt;a href=&#34;https://nemocdz.github.io/post/objective-c%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/&#34;&gt;文章&lt;/a&gt; 总结了 OC 中弱引用容器实现，在小米面试中提到其中 CFFoundation 的做法，面试官问了我一个问题，这样实现后在这些元素在被销毁后，还保留在容器中会有什么问题么？我马上意识到，这些元素会变成野指针，且之前只实现了引用计数的不变，而没有实现 Weak 特质，也就是没有在销毁后置 nil，也没有被移除，那么容器外界再访问时就会崩溃。看来之前考虑得还是太片面，也没有做更周全的实验。&lt;/p&gt;
-
 &lt;p&gt;所以看了 Runtime 源码和文章后，订正弱引用容器的一些实现方法。&lt;/p&gt;</description>
     </item>
     
@@ -328,22 +297,25 @@
       <pubDate>Mon, 21 Aug 2017 01:35:21 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/post/%E5%BE%81%E6%9C%8D-c-%E6%8C%87%E9%92%88%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-      <description>&lt;h2 id=&#34;用英语来解读-c-的声明&#34;&gt;用英语来解读 C 的声明&lt;/h2&gt;
-
+      <description>&lt;h2 id=&#34;-c-&#34;&gt;用英语来解读 C 的声明&lt;/h2&gt;
 &lt;ol&gt;
-&lt;li&gt;首先着眼于识别符（变量名或者函数名）。&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。优先顺序说明如下：&lt;/p&gt;
-
+&lt;li&gt;
+&lt;p&gt;首先着眼于识别符（变量名或者函数名）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;从距离识别符最近的地方开始，依照优先顺序解释派生类型（指针，数组，函数）。优先顺序说明如下：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;用于整理声明内容的括弧&lt;/li&gt;
 &lt;li&gt;用于表示数组的 &lt;code&gt;[]&lt;/code&gt;，用于表示函数的 &lt;code&gt;()&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;用于表示指针的 &lt;code&gt;*&lt;/code&gt;&lt;/li&gt;
-&lt;/ol&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;解释完成派生型，使用“of”或“to”或“returning”将它们连接起来。&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;C 里面不存在多维数组。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;解释完成派生型，使用“of”或“to”或“returning”将它们连接起来。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;C 里面不存在多维数组。&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ol&gt;</description>
     </item>
     
@@ -380,10 +352,8 @@
       <pubDate>Thu, 20 Jul 2017 03:31:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/post/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-      <description>&lt;h2 id=&#34;线程&#34;&gt;线程&lt;/h2&gt;
-
+      <description>&lt;h2 id=&#34;heading&#34;&gt;线程&lt;/h2&gt;
 &lt;p&gt;线程是程序执行流的最小单元。&lt;/p&gt;
-
 &lt;p&gt;各个线程之间共享程序的内存空间和进程级资源。&lt;/p&gt;</description>
     </item>
     
@@ -394,9 +364,7 @@
       
       <guid>https://nemocdz.github.io/post/ios-core-animation%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
       <description>&lt;h2 id=&#34;calayer&#34;&gt;CALayer&lt;/h2&gt;
-
 &lt;p&gt;&lt;code&gt;UIView&lt;/code&gt; = 绘制 + 响应触摸事件&lt;/p&gt;
-
 &lt;ul&gt;
 &lt;li&gt;负责屏幕和显示，不负责触摸事件响应链&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;UIView&lt;/code&gt; 是其高级封装&lt;/li&gt;
@@ -410,8 +378,7 @@
       <pubDate>Thu, 13 Jul 2017 01:28:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/post/c-%E9%99%B7%E9%98%B1%E4%B8%8E%E7%BC%BA%E9%99%B7%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-      <description>&lt;h2 id=&#34;多字符记号&#34;&gt;多字符记号&lt;/h2&gt;
-
+      <description>&lt;h2 id=&#34;heading&#34;&gt;多字符记号&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号&lt;/li&gt;
 &lt;li&gt;组合赋值运算符是两个记号，如 &lt;code&gt;+=&lt;/code&gt;&lt;/li&gt;
@@ -515,7 +482,6 @@
       
       <guid>https://nemocdz.github.io/post/ios-%E4%B8%AD%E6%9D%83%E9%99%90%E5%B0%81%E8%A3%85%E5%B0%8Ftips%E5%92%8C%E7%9B%91%E6%B5%8B%E7%9B%B8%E5%86%8C%E5%8F%98%E5%8C%96/</guid>
       <description>&lt;p&gt;之前写了一个仿 Snapseed 的 ImagePicker，见 &lt;a href=&#34;https://github.com/Nemocdz/CDZImagePickerDemo&#34;&gt;Demo&lt;/a&gt; 和之前的 &lt;a href=&#34;https://nemocdz.github.io/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BFsnapseed%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/&#34;&gt;文章&lt;/a&gt;。&lt;/p&gt;
-
 &lt;p&gt;之后发现有人说第一次未授权时 &lt;code&gt;UICCollectionview&lt;/code&gt; 会加载不出照片，发现没有在合适时候调用权限管理。iOS 10 的这个权限管理是 info.plist 的一个键值，没有回调方法。查询 PhotosKit 方法里，发现有一个权限回调方法，就想封装一个方法来友好的询问用户权限。&lt;/p&gt;</description>
     </item>
     

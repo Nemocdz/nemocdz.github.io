@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.58.1">
+<meta name="generator" content="Hugo 0.62.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F-typescript-%E5%B0%9D%E8%AF%95/">
@@ -220,60 +220,43 @@
     
 	
 	<nav id="TableOfContents">
-<ul>
-<li><a href="#why-typescript">Why TypeScript？</a>
-<ul>
-<li><a href="#可选的静态类型">可选的静态类型</a></li>
-<li><a href="#接口">接口</a></li>
-</ul></li>
-<li><a href="#小程序对-typescript-的支持">小程序对 TypeScript 的支持</a>
-<ul>
-<li><a href="#事件">事件</a></li>
-<li><a href="#page-data">Page&amp;Data</a></li>
-<li><a href="#调用-javascript">调用 JavaScript</a></li>
-</ul></li>
-<li><a href="#最后">最后</a></li>
-</ul>
+  <ul>
+    <li><a href="#why-typescript">Why TypeScript？</a>
+      <ul>
+        <li><a href="#heading">可选的静态类型</a></li>
+        <li><a href="#heading-1">接口</a></li>
+      </ul>
+    </li>
+    <li><a href="#-typescript-">小程序对 TypeScript 的支持</a>
+      <ul>
+        <li><a href="#heading-2">事件</a></li>
+        <li><a href="#pagedata">Page&Data</a></li>
+        <li><a href="#-javascript">调用 JavaScript</a></li>
+      </ul>
+    </li>
+    <li><a href="#heading-3">最后</a></li>
+  </ul>
 </nav>
 
     <article class="post-content"><p>自从去年开始在项目里写了一段时间 Javascript 后，感觉没有类型检查的语言还是不太适合我，所以一直想尝试下 TypeScript，然而由于项目庞大，人员协作问题，一时半会没办法切成 TypeScript。正好最近有小程序的需求和小程序去年 11 月开始官方支持了 TypeScript，所以拿来练练手。</p>
-
 <h2 id="why-typescript">Why TypeScript？</h2>
-
 <p>大概是我这半年写的 Swift 比较多，而 Swift 中的静态类型和协议是我很喜欢的特性。正好 TypeScript 为 JavaScript 带来了<strong>静态类型</strong>和<strong>接口</strong>。</p>
-
-<h3 id="可选的静态类型">可选的静态类型</h3>
-
+<h3 id="heading">可选的静态类型</h3>
 <p>“动态类型一时爽，代码重构火葬场“，对于我这种极度喜欢重（xia）构（gai）代码的人来说，JavaScript 毫无类型提示，类型全靠命名猜测是极度不友好的。而 TypeScript 加上了灵活的类型系统，不仅可以编码期检查，还能增强代码的可读性，并提供了 any 类型进行缓冲。</p>
-
-<h3 id="接口">接口</h3>
-
+<h3 id="heading-1">接口</h3>
 <p>接口和协议，只是不一样的叫法而已，Java、C#、TypeScript 叫 Interface，Swift、Kotlin 叫 Protocol，就是一种规则声明。项目中，和后端接口数据交互，页面传递数据，数据持有，方法代理的地方，有了接口就会更加方便，易重构。TypeScript 的 Interface + JavaScript 简单的对象就让数据构建变得简单又不容易出错。</p>
-
-<h2 id="小程序对-typescript-的支持">小程序对 TypeScript 的支持</h2>
-
+<h2 id="-typescript-">小程序对 TypeScript 的支持</h2>
 <p>TypeScript 有一个很重要的东西，就是 d.ts 文件。d.ts 文件其实相当于 C 系语言里面的 .h 头文件，声明了对外暴露的方法和属性。而小程序官方对 TypeScript 的支持，意味着官方会维护小程序本身 API 的 d.ts 文件，也就是 typing 库，这样当 API 发生变动时，就可以即时变更。</p>
-
 <p>使用也很简单，更新微信开发者工具到最新版，在创建新项目时选择 TypeScript 模板。</p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzowjzfqyyj30u0109twj.jpg" alt="屏幕快照 2019-01-30 下午8.51.40" /></p>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzowjzfqyyj30u0109twj.jpg" alt="屏幕快照 2019-01-30 下午8.51.40"></p>
 <p>创建后，我们可以看到项目里带上了 typings 库，以及 TypeScript 的配置文件 tsconifg。之后，保存时就不会自动编译了，要点击小程序工具栏的编译按钮才可以。</p>
-
 <p>这里有一个坑，笔者电脑安装的 TypeScript 版本是 3.2.2 版本。编译时会被找不到全局类型 <code>CallableFunction</code> 和 <code>NewableFunction</code>。</p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzousqff02j30su06wq3r.jpg" alt="image-20190130195121996" /></p>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzousqff02j30su06wq3r.jpg" alt="image-20190130195121996"></p>
 <p>解决方法也很简单，到 node_modules 路径下的 TypeScript 包的 bin 目录下，lib.es5.d.ts 文件里面把这两个类型的 Interface 拷贝到，小程序 typing 目录下的 lib.wa.es6.d.ts 里面就可以了。小程序模板里这个文件应该是拷贝 TypeScript 官方的，但没有随着官方升级而改变。</p>
-
-<h3 id="事件">事件</h3>
-
+<h3 id="heading-2">事件</h3>
 <p>视图的事件，对应的类型笔者在 typings 中并没有看到有 Interface 定义，所以只能暂时用 <code>any</code>，然后自己再用</p>
-
 <p><code>as</code> 转一下 event 携带的数据的类型。</p>
-
-<h3 id="page-data">Page&amp;Data</h3>
-
+<h3 id="pagedata">Page&amp;Data</h3>
 <p>每个 <code>Page</code> 对象，在 typing 里是这么定义的。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#ff79c6">declare</span> <span style="color:#ff79c6">const</span> Page: <span style="color:#8be9fd">Page.PageConstructor</span>
 
@@ -281,22 +264,20 @@
     <span style="color:#ff79c6">&lt;</span>D <span style="color:#ff79c6">extends</span> IAnyObject, T <span style="color:#ff79c6">extends</span> IAnyObject <span style="color:#ff79c6">&amp;</span> PageInstance<span style="color:#ff79c6">&gt;</span>(
       options: <span style="color:#8be9fd">PageInstance</span><span style="color:#ff79c6">&lt;</span>D, T<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">&amp;</span> T
     )<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">void</span>
-  }</code></pre></div>
-<p>也就是说，它支持 D 和 T 两个范型。这两个范型是什么呢？小程序里，<code>Page</code> 是这么写的。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript">Page({});</code></pre></div>
-<p>也就是说，options 参数就是一个 <code>PageInstance</code>，范型也被传入了。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#ff79c6">interface</span> PageInstance<span style="color:#ff79c6">&lt;</span>D <span style="color:#ff79c6">extends</span> IAnyObject <span style="color:#ff79c6">=</span> any, T <span style="color:#ff79c6">extends</span> IAnyObject <span style="color:#ff79c6">=</span> any<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">extends</span> PageInstanceBaseProps<span style="color:#ff79c6">&lt;</span>D<span style="color:#ff79c6">&gt;</span></code></pre></div>
-<p><code>PageInstance</code> 里面定义了 <code>Page</code> 声明周期的方法，而且继承自 <code>PageInstanceBaseProps</code>，并将范型 D 传入。</p>
+  }
+</code></pre></div><p>也就是说，它支持 D 和 T 两个范型。这两个范型是什么呢？小程序里，<code>Page</code> 是这么写的。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript">Page({});
+</code></pre></div><p>也就是说，options 参数就是一个 <code>PageInstance</code>，范型也被传入了。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#ff79c6">interface</span> PageInstance<span style="color:#ff79c6">&lt;</span>D <span style="color:#ff79c6">extends</span> IAnyObject <span style="color:#ff79c6">=</span> any, T <span style="color:#ff79c6">extends</span> IAnyObject <span style="color:#ff79c6">=</span> any<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">extends</span> PageInstanceBaseProps<span style="color:#ff79c6">&lt;</span>D<span style="color:#ff79c6">&gt;</span>
+</code></pre></div><p><code>PageInstance</code> 里面定义了 <code>Page</code> 声明周期的方法，而且继承自 <code>PageInstanceBaseProps</code>，并将范型 D 传入。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#ff79c6">interface</span> PageInstanceBaseProps<span style="color:#ff79c6">&lt;</span>D <span style="color:#ff79c6">extends</span> IAnyObject <span style="color:#ff79c6">=</span> any<span style="color:#ff79c6">&gt;</span> {
     data?: <span style="color:#8be9fd">D</span>
     <span style="color:#6272a4">//...
-</span><span style="color:#6272a4"></span>}</code></pre></div>
-<p>所以这个 D 范型，其实就是 data 的类型接口。因为 data 不是必须实现的，所以这里是可选型 ？。</p>
-
+</span><span style="color:#6272a4"></span>}
+</code></pre></div><p>所以这个 D 范型，其实就是 data 的类型接口。因为 data 不是必须实现的，所以这里是可选型 ？。</p>
 <p>那么 T 是什么呢？</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript">T <span style="color:#ff79c6">extends</span> IAnyObject <span style="color:#ff79c6">&amp;</span> PageInstance</code></pre></div>
-<p>T 其实就是对 <code>PageInstance</code> 的拓展，<code>PageInstance</code> 是 <code>Page</code> 的实例接口，那么 T 其实就是在 <code>Page</code> 里面 this 的类型接口了，也就是说，需要在 <code>Page</code> 里新增的方法和属性，都在 T 里定义。</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript">T <span style="color:#ff79c6">extends</span> IAnyObject <span style="color:#ff79c6">&amp;</span> PageInstance
+</code></pre></div><p>T 其实就是对 <code>PageInstance</code> 的拓展，<code>PageInstance</code> 是 <code>Page</code> 的实例接口，那么 T 其实就是在 <code>Page</code> 里面 this 的类型接口了，也就是说，需要在 <code>Page</code> 里新增的方法和属性，都在 T 里定义。</p>
 <p>所以，对于一个普通页面我们可以声明两个接口，一个代表 data， 一个代表 page，举个例子。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#ff79c6">interface</span> IIntroPage {
 	nextButtonTap(event: <span style="color:#8be9fd">any</span>)<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">void</span>;
@@ -312,30 +293,25 @@ Page<span style="color:#ff79c6">&lt;</span>IIntroData, IIntroPage<span style="co
 	nextButtonTap(event: <span style="color:#8be9fd">any</span>) {
         <span style="color:#ff79c6">this</span>.isLoading <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">true</span>;
 	}
-});</code></pre></div>
-<p>如果这个页面不需要 data 或者不需要扩展 page，用 <code>IAnyObject</code> 代替 D 或者 T 即可。</p>
+});
+</code></pre></div><p>如果这个页面不需要 data 或者不需要扩展 page，用 <code>IAnyObject</code> 代替 D 或者 T 即可。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#ff79c6">interface</span> PageInstanceBaseProps<span style="color:#ff79c6">&lt;</span>D <span style="color:#ff79c6">extends</span> IAnyObject <span style="color:#ff79c6">=</span> any<span style="color:#ff79c6">&gt;</span> {
     data?: <span style="color:#8be9fd">D</span>
-    setData<span style="color:#ff79c6">?&lt;</span>K <span style="color:#ff79c6">extends</span> keyof D<span style="color:#ff79c6">&gt;</span>(
+    setData<span style="color:#ff79c6">?</span><span style="color:#ff79c6">&lt;</span>K <span style="color:#ff79c6">extends</span> keyof D<span style="color:#ff79c6">&gt;</span>(
       data: <span style="color:#8be9fd">D</span> <span style="color:#ff79c6">|</span> Pick<span style="color:#ff79c6">&lt;</span>D, K<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">|</span> IAnyObject,
-      callback<span style="color:#ff79c6">?:</span> () <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">void</span>
+      callback<span style="color:#ff79c6">?</span><span style="color:#ff79c6">:</span> () <span style="color:#ff79c6">=</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">void</span>
     )<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">void</span>
-}</code></pre></div>
-<p>同时，由于 <code>setData</code> 和 data 都被声明为可选项，使用时需要加上 <code>!</code>，<code>this.setData!({})</code> 和 <code>this.data!</code>。</p>
-
+}
+</code></pre></div><p>同时，由于 <code>setData</code> 和 data 都被声明为可选项，使用时需要加上 <code>!</code>，<code>this.setData!({})</code> 和 <code>this.data!</code>。</p>
 <p>其他就没什么了，用上 TypeScript 之后，官方的 API 都可以直接看参数和返回值的类型，再也不用去查文档猜测类型了。</p>
-
-<h3 id="调用-javascript">调用 JavaScript</h3>
-
+<h3 id="-javascript">调用 JavaScript</h3>
 <p>为 JavaScript 编写一个简单的 .d.ts 文件，将需要调用的类和方法暴露出来。详情见 <a href="https://segmentfault.com/a/1190000009247663">如何编写一个d.ts文件</a>。</p>
-
-<h2 id="最后">最后</h2>
-
+<h2 id="heading-3">最后</h2>
 <p>虽然笔者用了 TypeScript 不久，但严格的检查的确让我在增删改接口字段能快速全局重构，而且方法调用联想，API 查看也方便了不少。小程序对 TypeScript 的支持日常使用开发是没有什么问题了，就是官方的文档指引比较少。</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>338</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>339</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

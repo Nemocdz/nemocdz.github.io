@@ -59,7 +59,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.58.1">
+<meta name="generator" content="Hugo 0.62.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E8%AF%91-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC-%E7%AE%80%E4%BB%8B/">
@@ -82,8 +82,7 @@
 
 <meta name='description' itemprop="description" content="&lt;blockquote&gt;
 &lt;p&gt;作者：Olivier Halligon&lt;/p&gt;
-
-&lt;p&gt;原文链接：&lt;a href=&#34;http://alisoftware.github.io/swift/2018/12">
+&lt;p&gt;原文链接：&lt;a href=&#34;http://alisoftware.github.io/swift/2018/12/">
 
 
 <meta name="theme-color" content="#02b875">
@@ -232,52 +231,38 @@
     
 	
 	<nav id="TableOfContents">
-<ul>
-<li><a href="#全新的-stringinterpolation-设计">全新的 StringInterpolation 设计</a></li>
-<li><a href="#一个简单的例子">一个简单的例子</a></li>
-<li><a href="#这仅仅只是个开始">这仅仅只是个开始</a></li>
-</ul>
+  <ul>
+    <li><a href="#-stringinterpolation-">全新的 StringInterpolation 设计</a></li>
+    <li><a href="#heading">一个简单的例子</a></li>
+    <li><a href="#heading-1">这仅仅只是个开始</a></li>
+  </ul>
 </nav>
 
     <article class="post-content"><blockquote>
 <p>作者：Olivier Halligon</p>
-
 <p>原文链接：<a href="http://alisoftware.github.io/swift/2018/12/15/swift5-stringinterpolation-part1/">StringInterpolation in Swift 5 — Introduction</a></p>
-
 <p>原文日期：2018-12-15</p>
 </blockquote>
-
 <p><code>StringInterpolation</code> 协议最初的设计效率低下又不易扩展，为了在后续的版本中能够将其彻底重构，Swift 4 中将该协议标记为废弃。即将在 Swift 5 中亮相的 <a href="https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md">SE-0228</a> 提案介绍了一种新的 <code>StringInterpolation</code> 设计，使得 String 有了更大的潜能。</p>
-
 <p>在 Swift 的 <code>master</code> 分支里实现之后，就可以下载一个 <a href="https://swift.org/download/#snapshots">快照</a> 来安装最新的 Swift 5 工具链到 Xcode 中，来尝试全新的 <code>StringInterpolation</code>。让我们来把玩一下。</p>
-
-<h2 id="全新的-stringinterpolation-设计">全新的 StringInterpolation 设计</h2>
-
+<h2 id="-stringinterpolation-">全新的 StringInterpolation 设计</h2>
 <p>我强烈建议本篇文章的读者阅读一下 <a href="https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md">SE-0228</a> 提案，感受一下新 API 的背后的设计思路和动机。</p>
-
 <p>要让一个类型遵循 <code>ExpressibleByStringInterpolation</code>，最基本的你需要：</p>
-
 <ul>
 <li>让这个类型拥有一个类型为 <code>StringInterpolation</code> 的子类型，这个子类型遵循 <code>StringInterpolationProtocol</code> 并将负责解释插值</li>
 <li>这个子类型仅需要实现 <code>appendLiteral(_ literal: String)</code> 方法，再选择一个或多个你自己想要支持的 <code>appendInterpolation(...)</code> 签名的方法</li>
 <li>这个 <code>StringInterpolation</code> 子类型会作为“构造器”服务于你的主类型，然后编译器会调用那些 <code>append…</code> 方法一步一步地构造对象</li>
 <li>然后你的主类型需要实现 <code>init(stringInterpolation: StringInterpolation)</code> ，它会用上一步的结果来实例化它自己。</li>
 </ul>
-
 <p>你可以实现任何你喜欢的 <code>appenInterpolation(...)</code> 方法，这意味着你可以任意选择支持什么插值。这是一个带来巨大的可能性的超强功能。</p>
-
 <p>举个例子，如果你实现了 <code>func appendInterpolation(_ string: String, pad: Int)</code>，那么意味着你将可以用类似这样的插值：<code>&quot;Hello \(name, pad: 10), how are you?&quot;</code> 来构造你的类型。插值只需要匹配你的 <code>StringInterpolation</code> 子类型其中一个支持的 <code>appendInterpolation</code> 方法签名。</p>
-
-<h2 id="一个简单的例子">一个简单的例子</h2>
-
+<h2 id="heading">一个简单的例子</h2>
 <p>让我用一个简单的例子来演示一下插值是如何运作的。一起来构造一个允许引用 issue 编号和用户的 <code>GitHubComment</code> 类型吧。</p>
-
 <p>这个例子的目标是做到类似下面的写法：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">comment</span>: GitHubComment = <span style="color:#f1fa8c">&#34;&#34;&#34;
-</span><span style="color:#f1fa8c">  See </span><span style="color:#f1fa8c">\(</span>issue: <span style="color:#bd93f9">123</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c"> where </span><span style="color:#f1fa8c">\(</span>user: <span style="color:#f1fa8c">&#34;alisoftware&#34;</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c"> explains the steps to reproduce.
-</span><span style="color:#f1fa8c">  &#34;&#34;&#34;</span></code></pre></div>
-<p>所以我们该怎么实现它呢？</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">comment</span>: GitHubComment = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">  See </span><span style="color:#f1fa8c">\(</span>issue: <span style="color:#bd93f9">123</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c"> where </span><span style="color:#f1fa8c">\(</span>user: <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">alisoftware</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c"> explains the steps to reproduce.
+</span><span style="color:#f1fa8c">  </span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span>
+</code></pre></div><p>所以我们该怎么实现它呢？</p>
 <p>首先，让我们声明基本的结构体 <code>struct GitHubComment</code> 并让它遵循 <code>ExpressibleByStringLiteral</code>（因为 <code>ExpressibleByStringInterpolation</code> 继承自这个协议所以我们将它的实现抽离）和 <code>CustomStringConvertible</code>（为了 debug 时友好地在控制台中打印）。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">GitHubComment</span> {
   <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">markdown</span>: <span style="color:#8be9fd;font-style:italic">String</span>
@@ -291,61 +276,61 @@
   <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">description</span>: <span style="color:#8be9fd;font-style:italic">String</span> {
     <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">self</span>.markdown
   }
-}</code></pre></div>
-<p>然后，我们让 <code>GitHubComment</code> 遵循 <code>ExpressibleByStringInterpolation</code>。这意味着在剩下需要实现的功能，将由一个 <code>StringInterpolation</code> 子类型来完成：</p>
-
+}
+</code></pre></div><p>然后，我们让 <code>GitHubComment</code> 遵循 <code>ExpressibleByStringInterpolation</code>。这意味着在剩下需要实现的功能，将由一个 <code>StringInterpolation</code> 子类型来完成：</p>
 <ul>
-<li><p>首先初始化它自己：<code>init(literalCapacity: Int, interpolationCount: Int)</code> 提供给你保留一部分数据到缓冲区的能力，在一步步构造类型时就会用到这个能力。在这个例子中，我们可以在构造实例的时候，简单用一个 <code>String</code> 并往它上面追加片段，不过这里我采用一个 <code>parts: [String]</code> 来代替，之后再将它组合起来</p></li>
-
-<li><p>实现 <code>appendLiteral(_ string: String)</code> 逐个追加文本到 <code>parts</code> 里</p></li>
-
-<li><p>实现 <code>appendInterpolation(user: String)</code> 在遇到 <code>\(user: xxx)</code> 时逐个追加 markdown 表示的用户配置链接</p></li>
-
-<li><p>实现 <code>appendInterpolation(issue: Int)</code> 逐个追加用 markdown 表示的 issue 链接</p></li>
-
-<li><p>然后在 <code>GitHubComment</code> 上实现 <code>init(stringInterpolation: StringInterpolation)</code> 将 <code>parts</code> 构造成一个评论</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">GitHubComment</span>: ExpressibleByStringInterpolation {
-<span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">StringInterpolation</span>: StringInterpolationProtocol {
-<span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">parts</span>: [<span style="color:#8be9fd;font-style:italic">String</span>]
-  <span style="color:#8be9fd;font-style:italic">init</span>(literalCapacity: <span style="color:#8be9fd;font-style:italic">Int</span>, interpolationCount: <span style="color:#8be9fd;font-style:italic">Int</span>) {
-  <span style="color:#ff79c6">self</span>.parts = []
-  <span style="color:#6272a4">// - literalCapacity 文本片段的字符数 (L)</span>
-  <span style="color:#6272a4">// - interpolationCount 插值片段数 (I)</span>
-  <span style="color:#6272a4">// 我们预计通常结构会是像 &#34;LILILIL&#34;</span>
-  <span style="color:#6272a4">// — e.g. &#34;Hello \(world, .color(.blue))!&#34; — 因此是 2n+1</span>
-  <span style="color:#ff79c6">self</span>.parts.reserveCapacity(<span style="color:#bd93f9">2</span><span style="color:#ff79c6">*</span>interpolationCount<span style="color:#ff79c6">+</span><span style="color:#bd93f9">1</span>)
-}
-  <span style="color:#ff79c6">mutating</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">appendLiteral</span>(<span style="color:#ff79c6">_</span> literal: <span style="color:#8be9fd;font-style:italic">String</span>) {
-  <span style="color:#ff79c6">self</span>.parts.append(literal)
-}
-<span style="color:#ff79c6">mutating</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">appendInterpolation</span>(user name: <span style="color:#8be9fd;font-style:italic">String</span>) {
-  <span style="color:#ff79c6">self</span>.parts.append(<span style="color:#f1fa8c">&#34;[</span><span style="color:#f1fa8c">\(</span>name<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">](https://github.com/</span><span style="color:#f1fa8c">\(</span>name<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">)&#34;</span>)
-}
-<span style="color:#ff79c6">mutating</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">appendInterpolation</span>(issue number: <span style="color:#8be9fd;font-style:italic">Int</span>) {
-  <span style="color:#ff79c6">self</span>.parts.append(<span style="color:#f1fa8c">&#34;[#</span><span style="color:#f1fa8c">\(</span>number<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">](issues/</span><span style="color:#f1fa8c">\(</span>number<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">)&#34;</span>)
-}
-}
-<span style="color:#8be9fd;font-style:italic">init</span>(stringInterpolation: StringInterpolation) {
-<span style="color:#ff79c6">self</span>.markdown = stringInterpolation.parts.joined()
-}
-}</code></pre></div></li>
+<li>
+<p>首先初始化它自己：<code>init(literalCapacity: Int, interpolationCount: Int)</code> 提供给你保留一部分数据到缓冲区的能力，在一步步构造类型时就会用到这个能力。在这个例子中，我们可以在构造实例的时候，简单用一个 <code>String</code> 并往它上面追加片段，不过这里我采用一个 <code>parts: [String]</code> 来代替，之后再将它组合起来</p>
+</li>
+<li>
+<p>实现 <code>appendLiteral(_ string: String)</code> 逐个追加文本到 <code>parts</code> 里</p>
+</li>
+<li>
+<p>实现 <code>appendInterpolation(user: String)</code> 在遇到 <code>\(user: xxx)</code> 时逐个追加 markdown 表示的用户配置链接</p>
+</li>
+<li>
+<p>实现 <code>appendInterpolation(issue: Int)</code> 逐个追加用 markdown 表示的 issue 链接</p>
+</li>
+<li>
+<p>然后在 <code>GitHubComment</code> 上实现 <code>init(stringInterpolation: StringInterpolation)</code> 将 <code>parts</code> 构造成一个评论</p>
+</li>
 </ul>
-
-<p>这就完事了！我们成功了！</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">GitHubComment</span>: ExpressibleByStringInterpolation {
+  <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">StringInterpolation</span>: StringInterpolationProtocol {
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">parts</span>: [<span style="color:#8be9fd;font-style:italic">String</span>]
+      <span style="color:#8be9fd;font-style:italic">init</span>(literalCapacity: <span style="color:#8be9fd;font-style:italic">Int</span>, interpolationCount: <span style="color:#8be9fd;font-style:italic">Int</span>) {
+      <span style="color:#ff79c6">self</span>.parts = []
+      <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">l</span><span style="color:#6272a4">i</span><span style="color:#6272a4">t</span><span style="color:#6272a4">e</span><span style="color:#6272a4">r</span><span style="color:#6272a4">a</span><span style="color:#6272a4">l</span><span style="color:#6272a4">C</span><span style="color:#6272a4">a</span><span style="color:#6272a4">p</span><span style="color:#6272a4">a</span><span style="color:#6272a4">c</span><span style="color:#6272a4">i</span><span style="color:#6272a4">t</span><span style="color:#6272a4">y</span><span style="color:#6272a4"> </span><span style="color:#6272a4">文</span><span style="color:#6272a4">本</span><span style="color:#6272a4">片</span><span style="color:#6272a4">段</span><span style="color:#6272a4">的</span><span style="color:#6272a4">字</span><span style="color:#6272a4">符</span><span style="color:#6272a4">数</span><span style="color:#6272a4"> </span><span style="color:#6272a4">(</span><span style="color:#6272a4">L</span><span style="color:#6272a4">)</span>
+      <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">i</span><span style="color:#6272a4">n</span><span style="color:#6272a4">t</span><span style="color:#6272a4">e</span><span style="color:#6272a4">r</span><span style="color:#6272a4">p</span><span style="color:#6272a4">o</span><span style="color:#6272a4">l</span><span style="color:#6272a4">a</span><span style="color:#6272a4">t</span><span style="color:#6272a4">i</span><span style="color:#6272a4">o</span><span style="color:#6272a4">n</span><span style="color:#6272a4">C</span><span style="color:#6272a4">o</span><span style="color:#6272a4">u</span><span style="color:#6272a4">n</span><span style="color:#6272a4">t</span><span style="color:#6272a4"> </span><span style="color:#6272a4">插</span><span style="color:#6272a4">值</span><span style="color:#6272a4">片</span><span style="color:#6272a4">段</span><span style="color:#6272a4">数</span><span style="color:#6272a4"> </span><span style="color:#6272a4">(</span><span style="color:#6272a4">I</span><span style="color:#6272a4">)</span>
+      <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">我</span><span style="color:#6272a4">们</span><span style="color:#6272a4">预</span><span style="color:#6272a4">计</span><span style="color:#6272a4">通</span><span style="color:#6272a4">常</span><span style="color:#6272a4">结</span><span style="color:#6272a4">构</span><span style="color:#6272a4">会</span><span style="color:#6272a4">是</span><span style="color:#6272a4">像</span><span style="color:#6272a4"> </span><span style="color:#6272a4">&#34;</span><span style="color:#6272a4">L</span><span style="color:#6272a4">I</span><span style="color:#6272a4">L</span><span style="color:#6272a4">I</span><span style="color:#6272a4">L</span><span style="color:#6272a4">I</span><span style="color:#6272a4">L</span><span style="color:#6272a4">&#34;</span>
+      <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">—</span><span style="color:#6272a4"> </span><span style="color:#6272a4">e</span><span style="color:#6272a4">.</span><span style="color:#6272a4">g</span><span style="color:#6272a4">.</span><span style="color:#6272a4"> </span><span style="color:#6272a4">&#34;</span><span style="color:#6272a4">H</span><span style="color:#6272a4">e</span><span style="color:#6272a4">l</span><span style="color:#6272a4">l</span><span style="color:#6272a4">o</span><span style="color:#6272a4"> </span><span style="color:#6272a4">\</span><span style="color:#6272a4">(</span><span style="color:#6272a4">w</span><span style="color:#6272a4">o</span><span style="color:#6272a4">r</span><span style="color:#6272a4">l</span><span style="color:#6272a4">d</span><span style="color:#6272a4">,</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">c</span><span style="color:#6272a4">o</span><span style="color:#6272a4">l</span><span style="color:#6272a4">o</span><span style="color:#6272a4">r</span><span style="color:#6272a4">(</span><span style="color:#6272a4">.</span><span style="color:#6272a4">b</span><span style="color:#6272a4">l</span><span style="color:#6272a4">u</span><span style="color:#6272a4">e</span><span style="color:#6272a4">)</span><span style="color:#6272a4">)</span><span style="color:#6272a4">!</span><span style="color:#6272a4">&#34;</span><span style="color:#6272a4"> </span><span style="color:#6272a4">—</span><span style="color:#6272a4"> </span><span style="color:#6272a4">因</span><span style="color:#6272a4">此</span><span style="color:#6272a4">是</span><span style="color:#6272a4"> </span><span style="color:#6272a4">2</span><span style="color:#6272a4">n</span><span style="color:#6272a4">+</span><span style="color:#6272a4">1</span>
+      <span style="color:#ff79c6">self</span>.parts.reserveCapacity(<span style="color:#bd93f9">2</span><span style="color:#ff79c6">*</span>interpolationCount<span style="color:#ff79c6">+</span><span style="color:#bd93f9">1</span>)
+    }
+      <span style="color:#ff79c6">mutating</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">appendLiteral</span>(<span style="color:#ff79c6">_</span> literal: <span style="color:#8be9fd;font-style:italic">String</span>) {
+      <span style="color:#ff79c6">self</span>.parts.append(literal)
+    }
+    <span style="color:#ff79c6">mutating</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">appendInterpolation</span>(user name: <span style="color:#8be9fd;font-style:italic">String</span>) {
+      <span style="color:#ff79c6">self</span>.parts.append(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">[</span><span style="color:#f1fa8c">\(</span>name<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">](https://github.com/</span><span style="color:#f1fa8c">\(</span>name<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">&#34;</span>)
+    }
+    <span style="color:#ff79c6">mutating</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">appendInterpolation</span>(issue number: <span style="color:#8be9fd;font-style:italic">Int</span>) {
+      <span style="color:#ff79c6">self</span>.parts.append(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">[#</span><span style="color:#f1fa8c">\(</span>number<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">](issues/</span><span style="color:#f1fa8c">\(</span>number<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">&#34;</span>)
+    }
+  }
+  <span style="color:#8be9fd;font-style:italic">init</span>(stringInterpolation: StringInterpolation) {
+    <span style="color:#ff79c6">self</span>.markdown = stringInterpolation.parts.joined()
+  }
+}
+</code></pre></div><p>这就完事了！我们成功了！</p>
 <p>注意，因为那些我们实现了的 <code>appendInterpolation</code> 方法签名，我们允许使用 <code>Hello \(user: &quot;alisoftware&quot;)</code> 但不能使用 <code>Hello \(user: 123)</code>，因为 <code>appendInterpolation(user:)</code> 期望一个 <code>String</code> 作为形参。类似的是，在你的字符串中 <code>\(issue: 123)</code> 只能允许一个 <code>Int</code> 因为 <code>appendInterpolation(issue:)</code> 采用一个 <code>Int</code> 作为形参。</p>
-
 <p>实际上，如果你尝试在你的 <code>StringInterpolation</code> 子类中用不支持的插值，编译器会给你提示报错：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">comment</span>: GitHubComment = <span style="color:#f1fa8c">&#34;&#34;&#34;
-</span><span style="color:#f1fa8c">See </span><span style="color:#f1fa8c">\(</span>issue: <span style="color:#f1fa8c">&#34;bob&#34;</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c"> where </span><span style="color:#f1fa8c">\(</span>username: <span style="color:#f1fa8c">&#34;alisoftware&#34;</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c"> explains the steps to reproduce.
-</span><span style="color:#f1fa8c">&#34;&#34;&#34;</span>
-<span style="color:#6272a4">//             ^~~~~         ^~~~~~~~~</span>
-<span style="color:#6272a4">// 错误: 无法转换 ‘String’ 类型的值到期望的形参类型 ‘Int’</span>
-<span style="color:#6272a4">// 错误: 调用 (have &#39;username:&#39;, expected &#39;user:&#39;)实参标签不正确</span></code></pre></div>
-<h2 id="这仅仅只是个开始">这仅仅只是个开始</h2>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">comment</span>: GitHubComment = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">See </span><span style="color:#f1fa8c">\(</span>issue: <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">bob</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c"> where </span><span style="color:#f1fa8c">\(</span>username: <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">alisoftware</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c"> explains the steps to reproduce.
+</span><span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4">^</span><span style="color:#6272a4">~</span><span style="color:#6272a4">~</span><span style="color:#6272a4">~</span><span style="color:#6272a4">~</span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4">^</span><span style="color:#6272a4">~</span><span style="color:#6272a4">~</span><span style="color:#6272a4">~</span><span style="color:#6272a4">~</span><span style="color:#6272a4">~</span><span style="color:#6272a4">~</span><span style="color:#6272a4">~</span><span style="color:#6272a4">~</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">错</span><span style="color:#6272a4">误</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">无</span><span style="color:#6272a4">法</span><span style="color:#6272a4">转</span><span style="color:#6272a4">换</span><span style="color:#6272a4"> </span><span style="color:#6272a4">‘</span><span style="color:#6272a4">S</span><span style="color:#6272a4">t</span><span style="color:#6272a4">r</span><span style="color:#6272a4">i</span><span style="color:#6272a4">n</span><span style="color:#6272a4">g</span><span style="color:#6272a4">’</span><span style="color:#6272a4"> </span><span style="color:#6272a4">类</span><span style="color:#6272a4">型</span><span style="color:#6272a4">的</span><span style="color:#6272a4">值</span><span style="color:#6272a4">到</span><span style="color:#6272a4">期</span><span style="color:#6272a4">望</span><span style="color:#6272a4">的</span><span style="color:#6272a4">形</span><span style="color:#6272a4">参</span><span style="color:#6272a4">类</span><span style="color:#6272a4">型</span><span style="color:#6272a4"> </span><span style="color:#6272a4">‘</span><span style="color:#6272a4">I</span><span style="color:#6272a4">n</span><span style="color:#6272a4">t</span><span style="color:#6272a4">’</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">错</span><span style="color:#6272a4">误</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">调</span><span style="color:#6272a4">用</span><span style="color:#6272a4"> </span><span style="color:#6272a4">(</span><span style="color:#6272a4">h</span><span style="color:#6272a4">a</span><span style="color:#6272a4">v</span><span style="color:#6272a4">e</span><span style="color:#6272a4"> </span><span style="color:#6272a4">&#39;</span><span style="color:#6272a4">u</span><span style="color:#6272a4">s</span><span style="color:#6272a4">e</span><span style="color:#6272a4">r</span><span style="color:#6272a4">n</span><span style="color:#6272a4">a</span><span style="color:#6272a4">m</span><span style="color:#6272a4">e</span><span style="color:#6272a4">:</span><span style="color:#6272a4">&#39;</span><span style="color:#6272a4">,</span><span style="color:#6272a4"> </span><span style="color:#6272a4">e</span><span style="color:#6272a4">x</span><span style="color:#6272a4">p</span><span style="color:#6272a4">e</span><span style="color:#6272a4">c</span><span style="color:#6272a4">t</span><span style="color:#6272a4">e</span><span style="color:#6272a4">d</span><span style="color:#6272a4"> </span><span style="color:#6272a4">&#39;</span><span style="color:#6272a4">u</span><span style="color:#6272a4">s</span><span style="color:#6272a4">e</span><span style="color:#6272a4">r</span><span style="color:#6272a4">:</span><span style="color:#6272a4">&#39;</span><span style="color:#6272a4">)</span><span style="color:#6272a4">实</span><span style="color:#6272a4">参</span><span style="color:#6272a4">标</span><span style="color:#6272a4">签</span><span style="color:#6272a4">不</span><span style="color:#6272a4">正</span><span style="color:#6272a4">确</span>
+</code></pre></div><h2 id="heading-1">这仅仅只是个开始</h2>
 <p>这个新的设计打开了一大串脑洞让你去实现自己的 <code>ExpressibleByStringInterpolation</code> 类型。这些想法包括：</p>
-
 <ul>
 <li>创建一个 <code>HTML</code> 类型并遵循，你就可以用插值写 HTML</li>
 <li>创建一个 <code>SQLStatement</code> 类型并遵循，你就可以写更简单的 SQL 语句</li>
@@ -353,14 +338,12 @@
 <li>创建一个 <code>RegEX</code> 类型并遵循，你就可以用花里胡哨的语法写正则表达式</li>
 <li>创建一个 <code>AttributedString</code> 类型并遵循，就可以用字符串插值构建 <code>NSAttributedString</code></li>
 </ul>
-
 <p>带来新的字符串插值设计的 <a href="https://github.com/brentdax">Brent Royal-Gordon</a> 和 <a href="https://github.com/milseman">Michael Ilseman</a>，提供了更多例子在这个 <a href="https://gist.github.com/brentdax/0b46ce25b7da1049e61b4669352094b6">要点列表</a> 中。</p>
-
-<p>我个人尝试了一下支持 <code>NSAttributedString</code> 的实现，并想 <a href="https://nemocdz.github.io/post/译-swift-5-字符串插值-attributedstrings/">在专门的一篇文章里分享它的初步实现</a>，因为我发现它非常优雅。我们下一篇文章再见！</p></article>
+<p>我个人尝试了一下支持 <code>NSAttributedString</code> 的实现，并想 <a href="https://nemocdz.github.io/post/%E8%AF%91-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC-attributedstrings/">在专门的一篇文章里分享它的初步实现</a>，因为我发现它非常优雅。我们下一篇文章再见！</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>256</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>257</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

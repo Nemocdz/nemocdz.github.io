@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.58.1">
+<meta name="generator" content="Hugo 0.62.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81%E5%B0%8F%E6%95%B0%E7%9A%84%E6%98%9F%E6%98%9F%E8%AF%84%E5%88%86%E7%BB%84%E4%BB%B6/">
@@ -220,28 +220,24 @@
     
 	
 	<nav id="TableOfContents">
-<ul>
-<li><a href="#单个星星的实现">单个星星的实现</a></li>
-<li><a href="#uicontrol-部分的实现">UIControl 部分的实现</a>
-<ul>
-<li><a href="#布局">布局</a></li>
-<li><a href="#处理触摸事件">处理触摸事件</a></li>
-</ul></li>
-<li><a href="#封装">封装</a></li>
-<li><a href="#最后">最后</a></li>
-</ul>
+  <ul>
+    <li><a href="#heading">单个星星的实现</a></li>
+    <li><a href="#uicontrol-">UIControl 部分的实现</a>
+      <ul>
+        <li><a href="#heading-1">布局</a></li>
+        <li><a href="#heading-2">处理触摸事件</a></li>
+      </ul>
+    </li>
+    <li><a href="#heading-3">封装</a></li>
+    <li><a href="#heading-4">最后</a></li>
+  </ul>
 </nav>
 
     <article class="post-content"><p>在很多电商，外卖，餐饮型应用里，都会在商品结束后评价中有一个星星组件。核心思路就是用 <code>UIControl</code> 并自定义实现其中的 trackTouch 的几个方法。而显示不到一个的星星，比如半个星星的思路是根据分数切割星星的图像并显示其中一部分。实现后效果如下。</p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fft73ku93og30da0n0tfa.gif" alt="2017-05-21 19_12_04" /></p>
-
-<h2 id="单个星星的实现">单个星星的实现</h2>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fft73ku93og30da0n0tfa.gif" alt="2017-05-21 19_12_04"></p>
+<h2 id="heading">单个星星的实现</h2>
 <p>对于单个星星的实现，先考虑星星有三个状态，完全置灰状态，完全高亮状态，根据百分比半高亮状态。而我这边用的是 <code>UIButton</code> 来实现，因为 <code>UIButton</code> 本身已经有普通，高亮，选择的状态。主要实现的就是百分比高亮状态。我们可以根据百分比将图像进行裁剪，让新图像的宽度只有百分比所占的整个图像的宽度。但是这时候调用 setImage，会发现图片处于整个 button 中间。这是因为 <code>UIButton</code> 的 ImageView 的 contentMode 默认是 AspectFit 的，而 AspectFit 是默认居中的。ContentMode 中的 <code>UIViewContentModeLeft</code>，是不会把长边缩放到 ImageView 的边长的。况且，直接改变 UIButton 里的 ImageView 的 ContentMode 是没有效果的。要通过 <code>UIControl</code> 的 contentVerticalAlignment 属性（垂直）和 contentHorizontalAlignment 属性（水平）来达到类似 ImageView 的 contentMode 的效果。但是这两个属性都没有带 Fit 后缀的选项，也就是说并不会根据边长等比缩放。所以需要先把图片缩放到和 Button 大小一致。</p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fft5yrflcoj30dl06c3za.jpg" alt="屏幕快照 2017-05-21 下午6.32.58" /></p>
-
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fft5yrflcoj30dl06c3za.jpg" alt="屏幕快照 2017-05-21 下午6.32.58"></p>
 <p>之后，我们就可以按百分比裁剪图片</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">+ (UIImage <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">croppedImage:</span>(UIImage <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">image</span> <span style="color:#50fa7b">fraction:</span>(CGFloat)<span style="color:#8be9fd;font-style:italic">fractonPart</span>{
     CGFloat width <span style="color:#ff79c6">=</span> image.size.width <span style="color:#ff79c6">*</span> fractonPart <span style="color:#ff79c6">*</span> image.scale;
@@ -250,10 +246,10 @@
     UIImage <span style="color:#ff79c6">*</span>result <span style="color:#ff79c6">=</span> [UIImage <span style="color:#8be9fd;font-style:italic">imageWithCGImage</span>:resultImage <span style="color:#8be9fd;font-style:italic">scale</span>:image.scale <span style="color:#8be9fd;font-style:italic">orientation</span>:image.imageOrientation];
     CGImageRelease(resultImage);
     <span style="color:#ff79c6">return</span> result;
-}</code></pre></div>
-<p>并在 BackgroundImage 设置为灰色的星星图像，设置为 Button 的 highlighted 状态</p>
+}
+</code></pre></div><p>并在 BackgroundImage 设置为灰色的星星图像，设置为 Button 的 highlighted 状态</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">setFractionPart:</span>(CGFloat)<span style="color:#8be9fd;font-style:italic">fractionPart</span>{
-    <span style="color:#ff79c6">if</span> (fractionPart <span style="color:#ff79c6">==</span> <span style="color:#bd93f9">0</span>) {
+    <span style="color:#ff79c6">if</span> (fractionPart <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>) {
         <span style="color:#ff79c6">return</span>;
     }
     UIImage <span style="color:#ff79c6">*</span>image <span style="color:#ff79c6">=</span> [CDZStarButton <span style="color:#8be9fd;font-style:italic">croppedImage</span>:<span style="color:#8be9fd;font-style:italic">self</span>.highlightedImage <span style="color:#8be9fd;font-style:italic">fraction</span>:fractionPart];
@@ -264,30 +260,25 @@
     [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">setBackgroundImage</span>:<span style="color:#8be9fd;font-style:italic">self</span>.normalImage <span style="color:#8be9fd;font-style:italic">forState</span>:UIControlStateHighlighted];
     <span style="color:#8be9fd;font-style:italic">self</span>.selected <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
     <span style="color:#8be9fd;font-style:italic">self</span>.highlighted <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
-}</code></pre></div>
-<p>而全高亮的状态可以设置为 <code>UIButton</code> 的点击态</p>
+}
+</code></pre></div><p>而全高亮的状态可以设置为 <code>UIButton</code> 的点击态</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">setHighlightedImage:</span>(UIImage <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">highlightedImage</span>{
     _highlightedImage <span style="color:#ff79c6">=</span> [CDZStarButton <span style="color:#8be9fd;font-style:italic">reSizeImage</span>:highlightedImage <span style="color:#8be9fd;font-style:italic">toSize</span>:<span style="color:#8be9fd;font-style:italic">self</span>.frame.size];
     [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">setImage</span>:_highlightedImage <span style="color:#8be9fd;font-style:italic">forState</span>:UIControlStateSelected];
-}</code></pre></div>
-<p>而点击事件交由给上层的 <code>UIControl</code> 去处理，因为点击的时候，除了点击的星星本身，之前的星星也应该处于完全高亮状态。在上层初始化按钮的时候把其 userInteractionEnabled 属性设置为 NO 即可，这样触摸事件就会忽略传递到 Button 去做事件处理，从而从响应者链传递上去交由父视图的 <code>UIControl</code> 处理。</p>
-
+}
+</code></pre></div><p>而点击事件交由给上层的 <code>UIControl</code> 去处理，因为点击的时候，除了点击的星星本身，之前的星星也应该处于完全高亮状态。在上层初始化按钮的时候把其 userInteractionEnabled 属性设置为 NO 即可，这样触摸事件就会忽略传递到 Button 去做事件处理，从而从响应者链传递上去交由父视图的 <code>UIControl</code> 处理。</p>
 <p>如果点击到星星的一半，我们应该把点击点转换成小数部分给上层。C 语言的 <code>round</code> 函数可以四舍五入，这里的 10 代表保留一位小数，可以根据实际情况保留位数，一般评分很少需要更高精度的。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (CGFloat)<span style="color:#50fa7b">fractionPartOfPoint:</span>(CGPoint)<span style="color:#8be9fd;font-style:italic">point</span>{
     CGFloat fractionPart <span style="color:#ff79c6">=</span>  (point.x <span style="color:#ff79c6">-</span> <span style="color:#8be9fd;font-style:italic">self</span>.frame.origin.x) <span style="color:#ff79c6">/</span> <span style="color:#8be9fd;font-style:italic">self</span>.frame.size.width;
     <span style="color:#ff79c6">return</span> round(fractionPart <span style="color:#ff79c6">*</span> <span style="color:#bd93f9">10</span>) <span style="color:#ff79c6">/</span> <span style="color:#bd93f9">10</span>;
-}</code></pre></div>
-<p>到这里一个可以显示分数的星星按钮就完成了，接下来就是在上层的 <code>UIControl</code> 去处理触摸事件的响应。</p>
-
-<h2 id="uicontrol-部分的实现">UIControl 部分的实现</h2>
-
+}
+</code></pre></div><p>到这里一个可以显示分数的星星按钮就完成了，接下来就是在上层的 <code>UIControl</code> 去处理触摸事件的响应。</p>
+<h2 id="uicontrol-">UIControl 部分的实现</h2>
 <p>主要分两块，星星按钮的布局，触摸事件响应。</p>
-
-<h3 id="布局">布局</h3>
-
+<h3 id="heading-1">布局</h3>
 <p>首先根据星星的数量一个个添加上视图，用 <code>UIView</code> 的 tag 来表示对应第几个星星按钮。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">setupView</span> {
-    <span style="color:#ff79c6">for</span> (NSInteger index <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; index <span style="color:#ff79c6">&lt;</span> <span style="color:#8be9fd;font-style:italic">self</span>.numberOfStars; index<span style="color:#ff79c6">++</span>) {
+    <span style="color:#ff79c6">for</span> (NSInteger index <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; index <span style="color:#ff79c6">&lt;</span> <span style="color:#8be9fd;font-style:italic">self</span>.numberOfStars; index<span style="color:#ff79c6">+</span><span style="color:#ff79c6">+</span>) {
         CDZStarButton <span style="color:#ff79c6">*</span>starButton <span style="color:#ff79c6">=</span> [CDZStarButton.alloc <span style="color:#8be9fd;font-style:italic">initWithSize</span>:<span style="color:#8be9fd;font-style:italic">self</span>.starSize];
         starButton.tag <span style="color:#ff79c6">=</span> index;
         starButton.normalImage <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.normalStarImage;
@@ -295,11 +286,11 @@
 	    starButton.userInteractionEnabled <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">NO</span>;<span style="color:#6272a4">//关闭事件响应，交由UIControl本身处理
 </span><span style="color:#6272a4"></span>        [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">addSubview</span>:starButton];
     }
-}</code></pre></div>
-<p>然后是计算每个星星的位置，计算间隔和上下边距并 Layout。</p>
+}
+</code></pre></div><p>然后是计算每个星星的位置，计算间隔和上下边距并 Layout。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">layoutSubviews</span> {
     [<span style="color:#8be9fd;font-style:italic">super</span> layoutSubviews];
-    <span style="color:#ff79c6">for</span> (NSInteger index <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; index <span style="color:#ff79c6">&lt;</span> <span style="color:#8be9fd;font-style:italic">self</span>.numberOfStars; index <span style="color:#ff79c6">++</span>) {
+    <span style="color:#ff79c6">for</span> (NSInteger index <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; index <span style="color:#ff79c6">&lt;</span> <span style="color:#8be9fd;font-style:italic">self</span>.numberOfStars; index <span style="color:#ff79c6">+</span><span style="color:#ff79c6">+</span>) {
         CDZStarButton <span style="color:#ff79c6">*</span>starButton <span style="color:#ff79c6">=</span>  [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">starForTag</span>:index];
         CGFloat newY <span style="color:#ff79c6">=</span> (<span style="color:#8be9fd;font-style:italic">self</span>.frame.size.height <span style="color:#ff79c6">-</span> <span style="color:#8be9fd;font-style:italic">self</span>.starSize.height) <span style="color:#ff79c6">/</span> <span style="color:#bd93f9">2</span>;
         CGFloat margin <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>;
@@ -308,10 +299,10 @@
         }
         starButton.frame <span style="color:#ff79c6">=</span> CGRectMake((<span style="color:#8be9fd;font-style:italic">self</span>.starSize.width <span style="color:#ff79c6">+</span> margin) <span style="color:#ff79c6">*</span> index, newY, <span style="color:#8be9fd;font-style:italic">self</span>.starSize.width, <span style="color:#8be9fd;font-style:italic">self</span>.starSize.height);
     }
-}</code></pre></div>
-<p>这时，我们可以加上两个方法去找到对应的星星 Button，根据 tag 和根据点击的 <code>CGPoint</code></p>
+}
+</code></pre></div><p>这时，我们可以加上两个方法去找到对应的星星 Button，根据 tag 和根据点击的 <code>CGPoint</code></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (CDZStarButton <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">starForPoint:</span>(CGPoint)<span style="color:#8be9fd;font-style:italic">point</span> {
-    <span style="color:#ff79c6">for</span> (NSInteger i <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; i <span style="color:#ff79c6">&lt;</span> <span style="color:#8be9fd;font-style:italic">self</span>.numberOfStars; i<span style="color:#ff79c6">++</span>) {
+    <span style="color:#ff79c6">for</span> (NSInteger i <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; i <span style="color:#ff79c6">&lt;</span> <span style="color:#8be9fd;font-style:italic">self</span>.numberOfStars; i<span style="color:#ff79c6">+</span><span style="color:#ff79c6">+</span>) {
         CDZStarButton <span style="color:#ff79c6">*</span>starButton <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">starForTag</span>:i];
         <span style="color:#ff79c6">if</span> (CGRectContainsPoint(starButton.frame, point)) {
             <span style="color:#ff79c6">return</span> starButton;
@@ -323,18 +314,17 @@
 - (CDZStarButton <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">starForTag:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">tag</span> {
     <span style="color:#ff79c6">__block</span> UIView <span style="color:#ff79c6">*</span>target;
     [<span style="color:#8be9fd;font-style:italic">self</span>.subviews <span style="color:#8be9fd;font-style:italic">enumerateObjectsUsingBlock</span>:<span style="color:#ff79c6">^</span>(__kindof UIView <span style="color:#ff79c6">*</span> _Nonnull obj, NSUInteger idx, <span style="color:#8be9fd">BOOL</span> <span style="color:#ff79c6">*</span> _Nonnull stop) {
-        <span style="color:#ff79c6">if</span> (obj.tag <span style="color:#ff79c6">==</span> tag) {
+        <span style="color:#ff79c6">if</span> (obj.tag <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> tag) {
             target <span style="color:#ff79c6">=</span> obj;
             <span style="color:#ff79c6">*</span>stop <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
         }
     }];
     <span style="color:#ff79c6">return</span> (CDZStarButton <span style="color:#ff79c6">*</span>)target;
-}</code></pre></div>
-<h3 id="处理触摸事件">处理触摸事件</h3>
-
+}
+</code></pre></div><h3 id="heading-2">处理触摸事件</h3>
 <p>我们先加上两个方法。一个是从第一个到某个星星开始从左到右依次点亮，一个是从最后一个星星到某个星星从右到左依次熄灭。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">starsDownToIndex:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">index</span> {
-    <span style="color:#ff79c6">for</span> (NSInteger i <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.numberOfStars; i <span style="color:#ff79c6">&gt;</span> index; <span style="color:#ff79c6">--</span>i) {
+    <span style="color:#ff79c6">for</span> (NSInteger i <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.numberOfStars; i <span style="color:#ff79c6">&gt;</span> index; <span style="color:#ff79c6">-</span><span style="color:#ff79c6">-</span>i) {
         CDZStarButton <span style="color:#ff79c6">*</span>starButton <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">starForTag</span>:i];
         starButton.selected <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
         starButton.highlighted <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
@@ -342,22 +332,22 @@
 }
 
 - (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">starsUpToIndex:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">index</span> {
-    <span style="color:#ff79c6">for</span> (NSInteger i <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; i <span style="color:#ff79c6">&lt;=</span> index; i<span style="color:#ff79c6">++</span>) {
+    <span style="color:#ff79c6">for</span> (NSInteger i <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; i <span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">=</span> index; i<span style="color:#ff79c6">+</span><span style="color:#ff79c6">+</span>) {
         CDZStarButton <span style="color:#ff79c6">*</span>starButton <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">starForTag</span>:i];
         starButton.selected <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
         starButton.highlighted <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
     }
-}</code></pre></div>
-<p>然后设置一个评分的属性，重写其 setter 方法。allowFraction，用来判断组件是否需要分数表示，<code>floor</code> 函数是取最大整数，相当于直接去除小数点后面的数字。判断评分的整数部分是否已经亮着，亮着那么说明从左到右最后一个亮着的右边，反之在左边，分别调用从右到左依次熄灭，或从左到右依次点亮的方法，最后再设置分数部分。</p>
+}
+</code></pre></div><p>然后设置一个评分的属性，重写其 setter 方法。allowFraction，用来判断组件是否需要分数表示，<code>floor</code> 函数是取最大整数，相当于直接去除小数点后面的数字。判断评分的整数部分是否已经亮着，亮着那么说明从左到右最后一个亮着的右边，反之在左边，分别调用从右到左依次熄灭，或从左到右依次点亮的方法，最后再设置分数部分。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">setScore:</span>(CGFloat)<span style="color:#8be9fd;font-style:italic">score</span>{
-    <span style="color:#ff79c6">if</span> (_score <span style="color:#ff79c6">==</span> score) {
+    <span style="color:#ff79c6">if</span> (_score <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> score) {
         <span style="color:#ff79c6">return</span>;
     }
     _score <span style="color:#ff79c6">=</span> score;
     NSInteger index <span style="color:#ff79c6">=</span> floor(score);
     CGFloat fractionPart <span style="color:#ff79c6">=</span> score <span style="color:#ff79c6">-</span> index;;
-    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span><span style="color:#8be9fd;font-style:italic">self</span>.isAllowFraction <span style="color:#ff79c6">||</span> fractionPart <span style="color:#ff79c6">==</span> <span style="color:#bd93f9">0</span>) {
-        index <span style="color:#ff79c6">-=</span> <span style="color:#bd93f9">1</span>;
+    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span><span style="color:#8be9fd;font-style:italic">self</span>.isAllowFraction <span style="color:#ff79c6">|</span><span style="color:#ff79c6">|</span> fractionPart <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>) {
+        index <span style="color:#ff79c6">-</span><span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span>;
     }
     CDZStarButton <span style="color:#ff79c6">*</span>starButton <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">starForTag</span>:index];
     <span style="color:#ff79c6">if</span> (starButton.selected) {
@@ -367,13 +357,10 @@
         [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">starsUpToIndex</span>:index];
     }
     starButton.fractionPart <span style="color:#ff79c6">=</span> fractionPart;
-}</code></pre></div>
-<p>主要用到 <code>UIControl</code> 的四个方法</p>
-
-<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fft5y5gq92j30vt02475g.jpg" alt="屏幕快照 2017-05-21 下午6.31.56" /></p>
-
+}
+</code></pre></div><p>主要用到 <code>UIControl</code> 的四个方法</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fft5y5gq92j30vt02475g.jpg" alt="屏幕快照 2017-05-21 下午6.31.56"></p>
 <p>第一个是开始点击的时候的事件处理，第二个是手指未抬起在屏幕上继续移动的事件处理，第三个是离开屏幕，第四个是因为别的特殊情况事件被结束的处理。</p>
-
 <p>点击时候只要确定点击的星星，确定其小数部分，然后调用评分属性的 setter 方法就好了。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">BOOL</span>)<span style="color:#50fa7b">beginTrackingWithTouch:</span>(UITouch <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">touch</span> <span style="color:#50fa7b">withEvent:</span>(UIEvent <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">event</span> {
     CGPoint point <span style="color:#ff79c6">=</span> [touch <span style="color:#8be9fd;font-style:italic">locationInView</span>:<span style="color:#8be9fd;font-style:italic">self</span>];
@@ -388,8 +375,8 @@
         <span style="color:#8be9fd;font-style:italic">self</span>.score <span style="color:#ff79c6">=</span> index <span style="color:#ff79c6">+</span> fractionPart;
     }
     <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
-}</code></pre></div>
-<p>移动处理除了和点击一样的判断逻辑，还要注意手指移开了星星之外的地方，分为所在星星的左边（当前星星熄灭），右边（当前星星完全点亮）两种。</p>
+}
+</code></pre></div><p>移动处理除了和点击一样的判断逻辑，还要注意手指移开了星星之外的地方，分为所在星星的左边（当前星星熄灭），右边（当前星星完全点亮）两种。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">BOOL</span>)<span style="color:#50fa7b">continueTrackingWithTouch:</span>(UITouch <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">touch</span> <span style="color:#50fa7b">withEvent:</span>(UIEvent <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">event</span> {
     CGPoint point <span style="color:#ff79c6">=</span> [touch <span style="color:#8be9fd;font-style:italic">locationInView</span>:<span style="color:#8be9fd;font-style:italic">self</span>];
     CDZStarButton <span style="color:#ff79c6">*</span>pressedStar <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">starForPoint</span>:point];
@@ -413,8 +400,8 @@
         }
     }
     <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
-}</code></pre></div>
-<p>而完成触摸操作时，我们就可以用一个回调将当前的评分传给外界。</p>
+}
+</code></pre></div><p>而完成触摸操作时，我们就可以用一个回调将当前的评分传给外界。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@protocol</span> <span style="color:#50fa7b">CDZStarsControlDelegate</span><span style="color:#ff79c6">&lt;</span>NSObject<span style="color:#ff79c6">&gt;</span>
 <span style="color:#ff79c6">@optional</span>
 
@@ -425,7 +412,8 @@
 </span><span style="color:#6272a4"> @param score 分数
 </span><span style="color:#6272a4"> */</span>
 <span style="color:#ff79c6">-</span> (<span style="color:#8be9fd">void</span>)<span style="color:#8be9fd;font-style:italic">starsControl</span>:(CDZStarsControl <span style="color:#ff79c6">*</span>)starsControl <span style="color:#8be9fd;font-style:italic">didChangeScore</span>:(CGFloat)score;
-<span style="color:#ff79c6">@end</span></code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">endTrackingWithTouch:</span>(UITouch <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">touch</span> <span style="color:#50fa7b">withEvent:</span>(UIEvent <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">event</span> {
+<span style="color:#ff79c6">@end</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">endTrackingWithTouch:</span>(UITouch <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">touch</span> <span style="color:#50fa7b">withEvent:</span>(UIEvent <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">event</span> {
     [<span style="color:#8be9fd;font-style:italic">super</span> <span style="color:#8be9fd;font-style:italic">endTrackingWithTouch</span>:touch <span style="color:#8be9fd;font-style:italic">withEvent</span>:event];
     <span style="color:#ff79c6">if</span> ([<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">starsControl</span>:<span style="color:#8be9fd;font-style:italic">didChangeScore</span>:)]) {
         [<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">starsControl</span>:<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">didChangeScore</span>:<span style="color:#8be9fd;font-style:italic">self</span>.score];
@@ -438,8 +426,8 @@
     <span style="color:#ff79c6">if</span> ([<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">starsControl</span>:<span style="color:#8be9fd;font-style:italic">didChangeScore</span>:)]) {
         [<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">starsControl</span>:<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">didChangeScore</span>:<span style="color:#8be9fd;font-style:italic">self</span>.score];
     }
-}</code></pre></div>
-<h2 id="封装">封装</h2>
+}
+</code></pre></div><h2 id="heading-3">封装</h2>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">instancetype</span>)<span style="color:#50fa7b">initWithFrame:</span>(CGRect)<span style="color:#8be9fd;font-style:italic">frame</span>
                         <span style="color:#50fa7b">stars:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">number</span>
                      <span style="color:#50fa7b">starSize:</span>(CGSize)<span style="color:#8be9fd;font-style:italic">size</span>
@@ -456,26 +444,23 @@
         [<span style="color:#8be9fd;font-style:italic">self</span> setupView];
     }
     <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">self</span>;
-}</code></pre></div>
-<p>开放 score 属性和 allowFraction 属性即可。使用起来也很简单。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"> CDZStarsControl <span style="color:#ff79c6">*</span>starsControl <span style="color:#ff79c6">=</span> [CDZStarsControl.alloc <span style="color:#8be9fd;font-style:italic">initWithFrame</span>:CGRectMake(<span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">100</span>, <span style="color:#8be9fd;font-style:italic">self</span>.view.frame.size.width, <span style="color:#bd93f9">50</span>) <span style="color:#8be9fd;font-style:italic">stars</span>:<span style="color:#bd93f9">5</span> <span style="color:#8be9fd;font-style:italic">starSize</span>:CGSizeMake(<span style="color:#bd93f9">50</span>, <span style="color:#bd93f9">50</span>) <span style="color:#8be9fd;font-style:italic">noramlStarImage</span>:[UIImage <span style="color:#8be9fd;font-style:italic">imageNamed</span>:<span style="color:#f1fa8c">@&#34;star_normal&#34;</span>] <span style="color:#8be9fd;font-style:italic">highlightedStarImage</span>:[UIImage <span style="color:#8be9fd;font-style:italic">imageNamed</span>:<span style="color:#f1fa8c">@&#34;star_highlighted&#34;</span>]];
+}
+</code></pre></div><p>开放 score 属性和 allowFraction 属性即可。使用起来也很简单。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"> CDZStarsControl <span style="color:#ff79c6">*</span>starsControl <span style="color:#ff79c6">=</span> [CDZStarsControl.alloc <span style="color:#8be9fd;font-style:italic">initWithFrame</span>:CGRectMake(<span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">100</span>, <span style="color:#8be9fd;font-style:italic">self</span>.view.frame.size.width, <span style="color:#bd93f9">50</span>) <span style="color:#8be9fd;font-style:italic">stars</span>:<span style="color:#bd93f9">5</span> <span style="color:#8be9fd;font-style:italic">starSize</span>:CGSizeMake(<span style="color:#bd93f9">50</span>, <span style="color:#bd93f9">50</span>) <span style="color:#8be9fd;font-style:italic">noramlStarImage</span>:[UIImage <span style="color:#8be9fd;font-style:italic">imageNamed</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">star_normal</span><span style="color:#f1fa8c">&#34;</span>] <span style="color:#8be9fd;font-style:italic">highlightedStarImage</span>:[UIImage <span style="color:#8be9fd;font-style:italic">imageNamed</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">star_highlighted</span><span style="color:#f1fa8c">&#34;</span>]];
     starsControl.delegate <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>;
     starsControl.allowFraction <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
     starsControl.score <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">2.6f</span>;
-    [<span style="color:#8be9fd;font-style:italic">self</span>.view <span style="color:#8be9fd;font-style:italic">addSubview</span>:starsControl];</code></pre></div>
-<p>然后在 Delegate 里处理分数改变后的操作即可。</p>
-
-<h2 id="最后">最后</h2>
-
+    [<span style="color:#8be9fd;font-style:italic">self</span>.view <span style="color:#8be9fd;font-style:italic">addSubview</span>:starsControl];
+</code></pre></div><p>然后在 Delegate 里处理分数改变后的操作即可。</p>
+<h2 id="heading-4">最后</h2>
 <p>所有源码和 <a href="https://github.com/Nemocdz/CDZStarsControl">Demo</a>
 可以直接拿文件去使用或修改，也支持 Cocoapods.</p>
-
 <p>如果您觉得有帮助,不妨给个 star 鼓励一下,欢迎关注&amp;交流
 有任何问题欢迎评论私信或者提 issue</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>957</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>958</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
