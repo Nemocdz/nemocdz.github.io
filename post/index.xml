@@ -7,10 +7,29 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>© Nemocdz. </copyright>
-    <lastBuildDate>Fri, 03 Jan 2020 19:15:13 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 04 Jan 2020 19:11:00 +0800</lastBuildDate>
     
 	<atom:link href="https://nemocdz.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>浅谈 WebRTC NetEQ</title>
+      <link>https://nemocdz.github.io/post/%E6%B5%85%E8%B0%88-webrtc-neteq/</link>
+      <pubDate>Sat, 04 Jan 2020 19:11:00 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/post/%E6%B5%85%E8%B0%88-webrtc-neteq/</guid>
+      <description>&lt;p&gt;WebRTC Native 代码里面有很多值得学习的宝藏，其中一个就是 WebRTC 的 NetEQ 模块。根据 &lt;a href=&#34;https://webrtcglossary.com/neteq/&#34;&gt;WebRTC 术语表&lt;/a&gt; 对 NetEQ 的解释：&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;A dynamic jitter buffer and error concealment algorithm used for concealing the negative effects of network jitter and packet loss. Keeps latency as low as possible while maintaining the highest voice quality.&lt;/p&gt;
+
+&lt;p&gt;一种动态抖动缓冲区和错误隐藏（丢包补偿）算法，用于去除网络抖动和数据包丢失的负面影响。在保持最高语音质量的同时，保持尽可能低的延迟。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;NetEQ 其实就是音视频处理中的 Jitter Buffer 模块，在 WebRTC 的语音引擎中使用。这个模块很重要，会影响播放时的体验，同时也相当复杂。&lt;/p&gt;
+
+&lt;p&gt;本文源码参考 &lt;a href=&#34;https://webrtc.googlesource.com/src&#34;&gt;WebRTC Native&lt;/a&gt; M78 版本。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>如何假装写过 Swift</title>
