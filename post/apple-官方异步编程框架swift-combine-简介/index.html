@@ -56,7 +56,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E7%AE%80%E4%BB%8B/">
@@ -71,7 +71,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -228,37 +228,37 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#heading">引言</a></li>
+    <li><a href="#引言">引言</a></li>
     <li><a href="#what-is-combine">What is Combine</a></li>
-    <li><a href="#combine-">Combine 特性</a>
+    <li><a href="#combine-特性">Combine 特性</a>
       <ul>
-        <li><a href="#heading-1">泛型支持</a></li>
-        <li><a href="#heading-2">类型安全</a></li>
-        <li><a href="#heading-3">组合优先</a></li>
-        <li><a href="#heading-4">请求驱动</a></li>
+        <li><a href="#泛型支持">泛型支持</a></li>
+        <li><a href="#类型安全">类型安全</a></li>
+        <li><a href="#组合优先">组合优先</a></li>
+        <li><a href="#请求驱动">请求驱动</a></li>
       </ul>
     </li>
-    <li><a href="#combine--1">Combine 核心</a>
+    <li><a href="#combine-核心">Combine 核心</a>
       <ul>
-        <li><a href="#publisher">发布者(Publisher)</a></li>
-        <li><a href="#subscriber">订阅者（Subscriber）</a></li>
-        <li><a href="#operator">运算符（Operator）</a></li>
+        <li><a href="#发布者publisher">发布者(Publisher)</a></li>
+        <li><a href="#订阅者subscriber">订阅者（Subscriber）</a></li>
+        <li><a href="#运算符operator">运算符（Operator）</a></li>
       </ul>
     </li>
-    <li><a href="#combine----">Combine 设计理念 - 组合优先</a>
+    <li><a href="#combine-设计理念---组合优先">Combine 设计理念 - 组合优先</a>
       <ul>
-        <li><a href="#heading-5">组合多个发布者</a></li>
+        <li><a href="#组合多个发布者">组合多个发布者</a></li>
       </ul>
     </li>
-    <li><a href="#heading-6">总结</a></li>
-    <li><a href="#heading-7">延伸阅读</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#延伸阅读">延伸阅读</a></li>
   </ul>
 </nav>
 
     <article class="post-content"><blockquote>
 <p>WWDC 2019 Session 722 - <a href="https://developer.apple.com/videos/play/wwdc2019/722/">Introducing Combine</a></p>
 </blockquote>
-<h2 id="heading">引言</h2>
+<h2 id="引言">引言</h2>
 <p>在现代 GUI 编程中，开发者会处理大量事件（包括网络，屏幕输入，系统通知等），根据事件去让界面变化。而对异步事件的处理，会让代码和状态变得复杂。而现有的 Cocoa 框架中，异步编程的接口主要有以下这几种：</p>
 <ul>
 <li>Target/Action</li>
@@ -277,15 +277,15 @@
 <blockquote>
 <p>响应式编程（Reactive Programming）：面向异步数据流的编程思想。业界比较知名的响应式框架是 ReactiveX 系列。Rx 也有 Swift 版本的 RxSwift。</p>
 </blockquote>
-<h2 id="combine-">Combine 特性</h2>
+<h2 id="combine-特性">Combine 特性</h2>
 <p>由于 Combine 是一个 Swift 编写的框架，所以 Combine 可以受益于 Swift 的一些语言特性。</p>
-<h3 id="heading-1">泛型支持</h3>
+<h3 id="泛型支持">泛型支持</h3>
 <p>Combine 享受 Swift 泛型带来的便利性。泛型可以帮助开发者提取更多模板代码，这也意味着我们可以让异步操作的代码支持泛型，然后适配到各个种类的异步操作中。</p>
-<h3 id="heading-2">类型安全</h3>
+<h3 id="类型安全">类型安全</h3>
 <p>同样受惠于 Swift，可以让编译器和 Runtime 帮助我们检查类型安全问题。</p>
-<h3 id="heading-3">组合优先</h3>
+<h3 id="组合优先">组合优先</h3>
 <p>Combine 的主要设计理念，使用组合。组合的优点是可以将核心设计得简单又便于理解，但当放在一起使用时，能产生 <code>1 + 1 &gt; 2</code> 的效果。</p>
-<h3 id="heading-4">请求驱动</h3>
+<h3 id="请求驱动">请求驱动</h3>
 <blockquote>
 <p>请求驱动(Request Driven)：基于请求和响应的设计思想，消费者向生产者请求某个事务的变化，当变化时生产者给消费者对应的响应。</p>
 </blockquote>
@@ -293,14 +293,14 @@
 <p>事件驱动(Event Driven)：基于事件通知的设计思想。在事务发生变化时，生产者将通知提交给事件管道进行分发，而不关心谁去消费事件。消费者需要到事件管道中订阅关心的通知。</p>
 </blockquote>
 <p>Combine 是基于请求和响应的设计思想的，这允许你更精准的控制 App 的内存使用和性能。(这一块苹果没有详细解释)</p>
-<h2 id="combine--1">Combine 核心</h2>
+<h2 id="combine-核心">Combine 核心</h2>
 <p>Combine 框架有三个核心概念</p>
 <ul>
 <li>发布者(Publisher)</li>
 <li>订阅者(Subscriber)</li>
 <li>操作符(Operator)</li>
 </ul>
-<h3 id="publisher">发布者(Publisher)</h3>
+<h3 id="发布者publisher">发布者(Publisher)</h3>
 <p>发布者在 Combine 框架中是一个协议：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">Publisher</span> {
 
@@ -329,7 +329,7 @@
                 <span style="color:#8be9fd;font-style:italic">init</span>(center: NotificationCenter, name: Notification.Name, object: <span style="color:#8be9fd;font-style:italic">Any</span>? = <span style="color:#ff79c6">nil</span>)
         }
 }
-</code></pre></div><h3 id="subscriber">订阅者（Subscriber）</h3>
+</code></pre></div><h3 id="订阅者subscriber">订阅者（Subscriber）</h3>
 <p>和发布者配对的，就是订阅者。同样的，在 Combine 框架中是一个协议：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">Subscriber</span> : CustomCombineIdentifierConvertible {
 
@@ -369,7 +369,7 @@
 			<span style="color:#6272a4">//</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
     }
 }
-</code></pre></div><h3 id="operator">运算符（Operator）</h3>
+</code></pre></div><h3 id="运算符operator">运算符（Operator）</h3>
 <p>当有了发布者和订阅者后，它们之间是怎么配合起来运作的呢，如下图所示：</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014519.png" alt=""></p>
 <ul>
@@ -410,23 +410,23 @@ publisher.subscribe(subsciber)
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">map</span>&lt;T&gt;(<span style="color:#ff79c6">_</span> transform: @escaping (Output) -&gt; T) -&gt; Publishers.Map&lt;Upstream, T&gt;
 }
 </code></pre></div><p>Combine 框架中，有以下几类声明式操作符 API：</p>
-<h4 id="1-">1. 函数式转换</h4>
+<h4 id="1-函数式转换">1. 函数式转换</h4>
 <p>比如 <code>map</code>、<code>filter</code>、<code>reduce</code> 等函数式思想里的常见的高阶函数的操作符。</p>
-<h4 id="2-">2. 列表操作</h4>
+<h4 id="2-列表操作">2. 列表操作</h4>
 <p>比如 <code>first</code>、<code>drop</code>、<code>append</code> 等在产生值序列的中使用便捷方法的操作符。</p>
-<h4 id="3-">3. 错误处理</h4>
+<h4 id="3-错误处理">3. 错误处理</h4>
 <p>比如 <code>catch</code>，<code>retry</code> 等进行错处理的操作符。</p>
-<h4 id="4-">4. 线程/队列行为</h4>
+<h4 id="4-线程队列行为">4. 线程/队列行为</h4>
 <p>比如 <code>subscribeOn</code>，<code>receiveOn</code> 等对订阅和接受时线程进行指定的操作符。</p>
-<h4 id="5-">5. 调度和时间处理</h4>
+<h4 id="5-调度和时间处理">5. 调度和时间处理</h4>
 <p>比如 <code>delay</code>，<code>debounce</code>（去抖动），<code>throttle</code>(节流) 等操作符。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014532.png" alt=""></p>
-<h2 id="combine----">Combine 设计理念 - 组合优先</h2>
+<h2 id="combine-设计理念---组合优先">Combine 设计理念 - 组合优先</h2>
 <p>Combine 的设计理念就是优先是使用<strong>组合</strong>。</p>
 <p>如果把 Combine 的思想对应到同步编程里面的概念，就是这样下面的图。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014615.png" alt=""></p>
 <p>也就是发布者可以使用的操作符，大部分和 Foundation 框架里 Collection 类型的操作符相似，举个例子：我们知道可以对集合类型进行 <code>filter</code> 操作，那么 Combine 操作符里也有对应的 <code>filter</code> 方法。通过方法链（Method Chaning），组合大量的操作符，可以让异步操作更加统一，代码更加整洁。</p>
-<h3 id="heading-5">组合多个发布者</h3>
+<h3 id="组合多个发布者">组合多个发布者</h3>
 <p>有时候，我们希望将一些异步操作汇合，并统一处理响应。组合多个发布者有两种方式：<code>Zip</code> 和 <code>CombineLastest</code>。</p>
 <h4 id="zip">Zip</h4>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190617014652.png" alt=""></p>
@@ -456,16 +456,16 @@ publisher.subscribe(subsciber)
     }
 }
 </code></pre></div><p><code>CombineLatest</code> 使用两个发布者加上一个 <code>transform</code> 的转换闭包(在闭包中将两个产生的值处理并返回)进行初始化(<del>截止目前 beta1 版本的 Xcode，苹果还没将声明公开 init 方法，预计可能还会调整，这一部分来自官方幻灯片中的例子，有待订正</del>beta 2 版本已支持)，同样也要求多个组合发布者的错误类型一致，输出是 <code>transform</code> 闭包里的 <code>Output</code> 类型。<code>CombineLastest</code> 的意思是，当多个发布者中<strong>任意一个</strong>发布者产生值时，都会执行 <code>transform</code> 闭包的操作并将结果发送给订阅者。</p>
-<h2 id="heading-6">总结</h2>
+<h2 id="总结">总结</h2>
 <p>Combine 作为官方出品的响应式框架，无疑是令人惊喜的。整个框架的思想虽然现有的响应式框架(如 RxSwift）差不多，但无论是接口上隐藏掉序列，冷热信号等理解难度较大的概念，还是更方便的事件设计，清晰简洁的命名规范，都觉得 Apple 很用心的在打磨这个框架。同时，最具杀伤力的的是，Apple 可以让他和 Cocoa 框架更紧密的结合，打造出类似 UIKit+Combine，Foundation+Combine 的官方支持，这也意味着 Combine 有望成为类似 JavaScript 里面 Promise 这样的规范特性。如果你错过了 ReactiveCocoa，也错过了 RxSwift，也没使用过响应式编程，那么我强烈建议你了解一下今年的 Combine 框架。而剩下最大的问题，是国内什么时候能够 iOS 13 Only 和迁移到 Swift 了。</p>
-<h2 id="heading-7">延伸阅读</h2>
+<h2 id="延伸阅读">延伸阅读</h2>
 <p><a href="https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E5%BA%94%E7%94%A8/">Apple 官方异步编程框架：Swift Combine 应用</a></p>
 <p><a href="https://github.com/freak4pc/rxswift-to-combine-cheatsheet">RXSwift 和 Combine 对应关系速查表</a></p>
 <p><a href="https://xiaozhuanlan.com/topic/8362954017">WWDC 19 专栏文章目录</a></p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>103</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>104</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

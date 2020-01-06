@@ -59,7 +59,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E8%AF%91-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC-attributedstrings/">
@@ -74,7 +74,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -232,12 +232,12 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#heading">目标</a></li>
-    <li><a href="#heading-1">初步实现</a></li>
-    <li><a href="#heading-2">方便的样式添加</a></li>
-    <li><a href="#heading-3">支持图像</a></li>
-    <li><a href="#heading-4">样式嵌套</a></li>
-    <li><a href="#heading-5">结论</a></li>
+    <li><a href="#目标">目标</a></li>
+    <li><a href="#初步实现">初步实现</a></li>
+    <li><a href="#方便的样式添加">方便的样式添加</a></li>
+    <li><a href="#支持图像">支持图像</a></li>
+    <li><a href="#样式嵌套">样式嵌套</a></li>
+    <li><a href="#结论">结论</a></li>
   </ul>
 </nav>
 
@@ -247,7 +247,7 @@
 <p>原文日期：2018-12-16</p>
 </blockquote>
 <p>我们已经在 <a href="https://nemocdz.github.io/post/%E8%AF%91-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC-%E7%AE%80%E4%BB%8B/">前文</a> 里介绍了 Swift 5 全新的 StringInterpolation 设计。在这第二部分中，我会着眼于 <code>ExpressibleByStringInterpolation</code> 其中一种应用，让 <code>NSAttributedString</code> 变得更优雅。</p>
-<h2 id="heading">目标</h2>
+<h2 id="目标">目标</h2>
 <p>在看到 <a href="https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md">Swift 5 这个全新的 StringInterpolation 设计</a> 时，我马上想到的应用之一就是简化 <code>NSAttributedString</code> 的生成。</p>
 <p>我的目标是做到用类似下面的语法创建一个 attributed 字符串：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">username</span> = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">AliGator</span><span style="color:#f1fa8c">&#34;</span>
@@ -265,7 +265,7 @@
 <p>这个 <code>NSAttributedString</code> 如果在一个 <code>UILabel</code> 或者 <code>NSTextView</code> 中渲染，结果是这个样子的：</p>
 <p><img src="https://alisoftware.github.io/assets/StringInterpolation-AttrString.png" alt="image"></p>
 <p>☝️ 是的，上面的文字和图片……真的<strong>只</strong>是一个 <code>NSAttributedString</code>(而不是一个复杂的视图布局或者其他)！ 🤯</p>
-<h2 id="heading-1">初步实现</h2>
+<h2 id="初步实现">初步实现</h2>
 <p>所以，从哪里开始实现？当然和第一部分中如何实现 <code>GitHubComment</code> 差不多！</p>
 <p>好的，在实际解决字符串插值之前，我们先从声明特有类型开始。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">AttrString</span> {
@@ -313,7 +313,7 @@
 </span><span style="color:#f1fa8c">  Hello </span><span style="color:#f1fa8c">\(</span>user, attributes: [.foregroundColor: NSColor.blue]<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">!
 </span><span style="color:#f1fa8c">  </span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span>
 </code></pre></div><p>这看起来已经优雅多了吧？</p>
-<h2 id="heading-2">方便的样式添加</h2>
+<h2 id="方便的样式添加">方便的样式添加</h2>
 <p>但用字典 <code>[NAttributedString.Key: Any]</code> 的方式处理属性不够优雅。特别是由于 <code>Any</code> 没有明确类型，要求了解每一个键值的明确类型……</p>
 <p>所以可以通过创建特有的 <code>Style</code> 类型让它变得更优雅，并帮助我们构建属性的字典：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">AttrString</span> {
@@ -374,7 +374,7 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">str</span>: AttrString = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">
 </span><span style="color:#f1fa8c">  Hello </span><span style="color:#f1fa8c">\(</span>user, .color<span style="color:#f1fa8c">(</span>.blue<span style="color:#f1fa8c">)</span>, .underline<span style="color:#f1fa8c">(</span>.red, .single<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">, how do you like this?
 </span><span style="color:#f1fa8c">  </span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span>
-</code></pre></div><h2 id="heading-3">支持图像</h2>
+</code></pre></div><h2 id="支持图像">支持图像</h2>
 <p><code>NSAttributedString</code> 的另一种能力是使用 <code>NSAttributedString(attachment: NSTextAttachment)</code> 添加图像，让它成为字符串的一部分。要实现它，仅需要实现 <code>appendInterpolation(image: NSImage)</code> 并调用它。</p>
 <p>我希望为这个特性顺便加上缩放图像的能力。由于我是在 macOS 的 playground 上尝试的，它的图形上下文是翻转的，所以也得将图像翻转回来（注意这个细节可能会和 iOS 上实现对 UIImage 的支持时不一样）。这里是我的做法：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">AttrString</span>.StringInterpolation {
@@ -393,7 +393,7 @@
     <span style="color:#ff79c6">self</span>.attributedString.append(NSAttributedString(attachment: attachment))
   }
 }
-</code></pre></div><h2 id="heading-4">样式嵌套</h2>
+</code></pre></div><h2 id="样式嵌套">样式嵌套</h2>
 <p>最后，有时候你会希望应用一个样式在一大段文字上，但里面可能也包含了子段落的样式。就像 HTML 里的 <code>&quot;&lt;b&gt;Hello &lt;i&gt;world&lt;/i&gt;&lt;/b&gt;&quot;</code>，整段是粗体但包含了一部分斜体的。</p>
 <p>现在我们的 API 还不支持这样，所以让我们来加上它。思路是允许将一串 <code>Style…</code> 不止应用在 <code>String</code> 上，还能应用在已经存在属性的 <code>AttrString</code> 上。</p>
 <p>这个实现和 <code>appendInterpolation(_ string: String, _ style: Style…)</code> 相似，但会修改 <code>AttrString.attributedString</code> 来<em>添加</em>属性到上面，而不是单纯用 <code>String</code> 创建一个全新的 <code>NSAttributedString</code>。</p>
@@ -420,7 +420,7 @@
 </span><span style="color:#f1fa8c">  Go there to </span><span style="color:#f1fa8c">\(</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">learn more about String Interpolation</span><span style="color:#f1fa8c">&#34;</span>, .link<span style="color:#f1fa8c">(</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">)</span>, .underline<span style="color:#f1fa8c">(</span>.blue, .single<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">!
 </span><span style="color:#f1fa8c">  </span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span>
 </code></pre></div><p><img src="http://alisoftware.github.io/assets/StringInterpolation-AttrString.png" alt="imgage"></p>
-<h2 id="heading-5">结论</h2>
+<h2 id="结论">结论</h2>
 <p>期待你享受这一系列 <code>StringInterpolation</code> 文章，并且能从中瞥到这个新设计威力的冰山一角。</p>
 <p>你可以 <a href="http://alisoftware.github.io/assets/StringInterpolation.playground.zip">在这下载我的 Playground 文件</a>，里面有 <code>GitHubComment</code>(见 <a href="http://alisoftware.github.io/swift/2018/12/15/swift5-stringinterpolation-part1/">第一部分</a>)，<code>AttrString</code> 的全部实现，说不定还能从我简单实现 <code>RegEX</code> 的尝试中得到一些灵感。</p>
 <p>这里还有更多更好的思路去使用 Swift 5 中新的 <code>ExpressibleByStringInterpolation</code> API - 包括 <a href="https://ericasadun.com/2018/12/12/the-beauty-of-swift-5-string-interpolation/">Erica Sadun 博客里这篇</a>、<a href="https://ericasadun.com/2018/12/14/more-fun-with-swift-5-string-interpolation-radix-formatting/">这篇</a> 和 <a href="https://ericasadun.com/2018/12/16/swift-5-interpolation-part-3-dates-and-number-formatters/">这篇</a> - 还在犹豫什么，阅读更多……从中感受乐趣吧！</p>
@@ -432,7 +432,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>256</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>257</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

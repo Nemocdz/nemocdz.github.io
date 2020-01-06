@@ -59,7 +59,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E5%BE%81%E6%9C%8D-c-%E6%8C%87%E9%92%88%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
@@ -74,19 +74,19 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
 <meta name="keywords" content="Swift, iOS, OC, Objective-C" >
 
-<meta name='description' itemprop="description" content="&lt;h2 id=&#34;-c-&#34;&gt;用英语来解读 C 的声明&lt;/h2&gt;
+<meta name='description' itemprop="description" content="&lt;h2 id=&#34;用英语来解读-c-的声明&#34;&gt;用英语来解读 C 的声明&lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;首先着眼于识别符（变量名或者函数名）。&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;从距离识别符最近的地方开始，依照优先">
+&lt;p&gt;从距离识别符最近的">
 
 
 <meta name="theme-color" content="#02b875">
@@ -236,20 +236,20 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#-c-">用英语来解读 C 的声明</a></li>
-    <li><a href="#-const-">解读 const 修饰符</a></li>
-    <li><a href="#heading">解读数组</a>
+    <li><a href="#用英语来解读-c-的声明">用英语来解读 C 的声明</a></li>
+    <li><a href="#解读-const-修饰符">解读 const 修饰符</a></li>
+    <li><a href="#解读数组">解读数组</a>
       <ul>
-        <li><a href="#-sizeof-">数组为 sizeof 运算符的操作数</a></li>
-        <li><a href="#--">数组为 & 运算符的操作数</a></li>
+        <li><a href="#数组为-sizeof-运算符的操作数">数组为 sizeof 运算符的操作数</a></li>
+        <li><a href="#数组为--运算符的操作数">数组为 & 运算符的操作数</a></li>
       </ul>
     </li>
-    <li><a href="#heading-1">关于运算符</a></li>
-    <li><a href="#heading-2">参考链接</a></li>
+    <li><a href="#关于运算符">关于运算符</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
   </ul>
 </nav>
 
-    <article class="post-content"><h2 id="-c-">用英语来解读 C 的声明</h2>
+    <article class="post-content"><h2 id="用英语来解读-c-的声明">用英语来解读 C 的声明</h2>
 <ol>
 <li>
 <p>首先着眼于识别符（变量名或者函数名）。</p>
@@ -305,7 +305,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="-const-">解读 const 修饰符</h2>
+<h2 id="解读-const-修饰符">解读 const 修饰符</h2>
 <p><code>const</code> 代表变量只读。在指针作为参数的时候，<code>const</code> 常用于将指针指向的对象设定为只读。</p>
 <ul>
 <li><code>const</code> 修饰解读声明时 <code>const</code> 外一层修饰符。</li>
@@ -313,14 +313,14 @@
 </ul>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#8be9fd">char</span> <span style="color:#ff79c6">const</span> <span style="color:#ff79c6">*</span>src;<span style="color:#6272a4">//src is a pointer to read-only char
 </span><span style="color:#6272a4"></span><span style="color:#ff79c6">const</span> <span style="color:#8be9fd">char</span> <span style="color:#ff79c6">*</span>src;<span style="color:#6272a4">//src is a pointer to read-only char
-</span></code></pre></div><h2 id="heading">解读数组</h2>
+</span></code></pre></div><h2 id="解读数组">解读数组</h2>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#8be9fd">int</span> hoge[<span style="color:#bd93f9">10</span>];<span style="color:#6272a4">//hoge == &amp;hoge[0]
 </span></code></pre></div><p><strong>由*声明的指针是指针变量，它可以随意修改指向的方向</strong>，包括用 <code>new</code> 建立一片空间然后让指针指向它；然而用 <code>[]</code> 声明的指针是指针常量（然而<strong>它指向的量却可以是一个变量</strong>），你不能修改指针常量，但是<strong>你可以借助这个指针常量去修改它所指向的指针变量</strong>。</p>
-<h3 id="-sizeof-">数组为 sizeof 运算符的操作数</h3>
+<h3 id="数组为-sizeof-运算符的操作数">数组为 sizeof 运算符的操作数</h3>
 <p>通过“ <code>sizeof</code> 表达式”的方式使用 <code>sizeof</code> 运算符的情况下，如果操作数是“表达式”，数组会被当成指针，这时对数组使用 <code>sizeof</code>，返回的是<strong>数组全体的尺寸而不是指针长度</strong>。</p>
-<h3 id="--">数组为 &amp; 运算符的操作数</h3>
+<h3 id="数组为--运算符的操作数">数组为 &amp; 运算符的操作数</h3>
 <p>通过对数组使用 <code>&amp;</code>，可以返回指向整体数组的指针。</p>
-<h2 id="heading-1">关于运算符</h2>
+<h2 id="关于运算符">关于运算符</h2>
 <p>运算符和声明不可混淆，声明左侧有返回类型。</p>
 <p><strong>两侧表达式必须指针层级相等才可赋值。</strong></p>
 <ul>
@@ -345,14 +345,14 @@
 <p>``&amp;`在表达式中，是<strong>地址</strong>运算符，返回该值的指针。表达式指针层级+1。</p>
 </li>
 </ul>
-<h2 id="heading-2">参考链接</h2>
+<h2 id="参考链接">参考链接</h2>
 <ul>
 <li><a href="http://avnpc.com/pages/c-pointer">《征服 C 指针》Web版</a></li>
 </ul></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>866</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>868</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

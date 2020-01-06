@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/swift-ui-%E5%88%9D%E6%8E%A2/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -221,8 +221,8 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#heading">视图的默认行为</a></li>
-    <li><a href="#heading-1">数据交互</a>
+    <li><a href="#视图的默认行为">视图的默认行为</a></li>
+    <li><a href="#数据交互">数据交互</a>
       <ul>
         <li><a href="#state">@State</a></li>
         <li><a href="#binding">@Binding</a></li>
@@ -230,23 +230,23 @@
         <li><a href="#observedobject--observableobject">@ObservedObject & ObservableObject</a></li>
       </ul>
     </li>
-    <li><a href="#heading-2">实现模态展示视图</a></li>
-    <li><a href="#uikit-">UIKit 的适配</a>
+    <li><a href="#实现模态展示视图">实现模态展示视图</a></li>
+    <li><a href="#uikit-的适配">UIKit 的适配</a>
       <ul>
         <li><a href="#swiftui---uiview">SwiftUI -> UIView</a></li>
         <li><a href="#uiview---swiftui">UIView -> SwiftUI</a></li>
       </ul>
     </li>
-    <li><a href="#-combine">接入 Combine</a></li>
-    <li><a href="#heading-3">最后</a></li>
-    <li><a href="#heading-4">参考链接</a></li>
+    <li><a href="#接入-combine">接入 Combine</a></li>
+    <li><a href="#最后">最后</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
   </ul>
 </nav>
 
     <article class="post-content"><p>十月份参加极光黑客马拉松一天时间写了个简单的 <a href="https://github.com/Nemocdz/TrainTicket-SwiftUI">火车票 OCR 应用“票夹”</a>，当时由于时间和熟练程度原因，并没有试下今年 WWDC 刚推出的 SwiftUI 框架。最近抽空用了 SwiftUI + Combine 进行重写，顺便感受了一下这两个新框架的魅力。先说个人感受，SwiftUI 看起来挺美好的，但是目前有 Bug 和完善度不高，比较适合用在不关心设计的 Demo 或者个人功能性项目上。Combine 完成度尚可，但 Xcode 对复杂闭包的自动推断经常失效，比较影响编码体验。</p>
 <p>SwiftUI 总体使用起来和 React 框架很像，都有对应的概念，一般就是 <code>HStack</code> 和 <code>VStack</code> 当作视图层级使用，<code>Spacer</code> 用于自动填充剩余部分，比如在一个水平 <code>HStack</code> 中，A-Spacer-B，那么 A 靠最左，B 靠最右。</p>
 <p>在使用 Swift UI 的过程中，碰到了一些问题，分享一下。</p>
-<h2 id="heading">视图的默认行为</h2>
+<h2 id="视图的默认行为">视图的默认行为</h2>
 <ol>
 <li>
 <p>常用的 <code>padding</code> 是有默认值，且不为 0。</p>
@@ -279,7 +279,7 @@ HStack {
 </code></pre></div><p>要实现想要的效果，得使用第一种，第二种会是没有边距的蓝色矩形，这个我怀疑是 Bug。</p>
 </li>
 </ol>
-<h2 id="heading-1">数据交互</h2>
+<h2 id="数据交互">数据交互</h2>
 <h3 id="state">@State</h3>
 <p>这个修饰符和 React 的 State 差不多，就当 State 改变时会触发所有使用了 State 地方的 UI 刷新。比 React 好用的地方是可以用多个修饰符分别修饰多个变量，而不用放在一起，然后也不用调用 <code>setState</code> 进行刷新，只需要正常赋值就会触发刷新。</p>
 <h3 id="binding">@Binding</h3>
@@ -302,7 +302,7 @@ HStack {
         }
     }
 }
-</code></pre></div><h2 id="heading-2">实现模态展示视图</h2>
+</code></pre></div><h2 id="实现模态展示视图">实现模态展示视图</h2>
 <p>在 App 开发中，必不可少有需要 Modal 方式弹出 UIViewController 的情况，在 UIKit 中，只需要简单的 <code>vc1.present(vc2, animated: true)</code> 一行代码就能完成，但是在 SwiftUI 中，要完成这个操作却显繁琐。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">ContentView</span>: View {
     @State <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">isShowModal</span> = <span style="color:#ff79c6">false</span>
@@ -359,7 +359,7 @@ HStack {
         }
     }
 }
-</code></pre></div><h2 id="uikit-">UIKit 的适配</h2>
+</code></pre></div><h2 id="uikit-的适配">UIKit 的适配</h2>
 <p>在现阶段，即便是没有任何历史的新应用，全用 SwiftUI 进行构建也是不太现实的，在某些系统的视图和第三方库没有适配 SwiftUI 之前，继续和 UIKit 打交道是很正常的。</p>
 <p>SwiftUI 分别为 UIView 和 UIViewController 提供了 <code>UIViewRepresentable</code> 和 <code>UIViewControllerRepresentable</code> 协议进行适配。这两个协议的要求几乎一致，只需要在某个类型里遵循协议，在要求的方法里处理需要适配的 <code>UIView</code> 或 <code>UIViewController</code>，这个类型就能用于 SwiftUI 的视图中。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">BView</span>: UIView {
@@ -447,7 +447,7 @@ HStack {
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">updateUIView</span>(<span style="color:#ff79c6">_</span> uiView: BView, context: UIViewRepresentableContext&lt;AView&gt;) {
     }
 }
-</code></pre></div><h2 id="-combine">接入 Combine</h2>
+</code></pre></div><h2 id="接入-combine">接入 Combine</h2>
 <p>Combine 和 SwiftUI 直接结合还是有点别扭，特别是对于常见的网络请求，建议通过 <code>@ObservedObject</code> 和  <code>ObservableObject</code> 进行中转一下。下面给出了 Combine 和 SwiftUI 直接结合的例子，SwiftUI 只提供了 <code>onReceive</code> 方法进行接收。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">ContentView</span>: View {
   	<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">请</span><span style="color:#6272a4">求</span><span style="color:#6272a4">参</span><span style="color:#6272a4">数</span>
@@ -489,9 +489,9 @@ HStack {
         }
     }
 }
-</code></pre></div><h2 id="heading-3">最后</h2>
+</code></pre></div><h2 id="最后">最后</h2>
 <p><a href="https://github.com/Nemocdz/TrainTicket-SwiftUI">“票夹” App</a> 可以识别照片里的火车票并自动整理展示和汇总，用 SwiftUI + Combine 编写，基本不使用第三方库。可以作为 SwiftUI 实际运用的例子参考。</p>
-<h2 id="heading-4">参考链接</h2>
+<h2 id="参考链接">参考链接</h2>
 <ul>
 <li>
 <p><a href="https://developer.apple.com/tutorials/swiftui/interfacing-with-uikit">Interfacing with UIKit</a></p>

@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E6%8A%8A-setstate-%E6%95%B4%E6%98%8E%E7%99%BD/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -221,13 +221,13 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#setstate-">setState 的入口</a></li>
+    <li><a href="#setstate-的入口">setState 的入口</a></li>
     <li><a href="#transaction">Transaction</a></li>
-    <li><a href="#-transaction">更新策略里的 Transaction</a></li>
-    <li><a href="#-setstate-">好像 setState 是同步的耶</a></li>
-    <li><a href="#setstate--1">setState 为什么这么设计</a></li>
-    <li><a href="#heading">最后</a></li>
-    <li><a href="#heading-1">参考链接</a></li>
+    <li><a href="#更新策略里的-transaction">更新策略里的 Transaction</a></li>
+    <li><a href="#好像-setstate-是同步的耶">好像 setState 是同步的耶</a></li>
+    <li><a href="#setstate-为什么这么设计">setState 为什么这么设计</a></li>
+    <li><a href="#最后">最后</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
   </ul>
 </nav>
 
@@ -241,7 +241,7 @@
 <li><code>setState</code> 的最佳实践是什么</li>
 </ul>
 <p>以下源码基于我们团队在用的 React 16.0.0 版本，目前最新的 React 16.4.0 版本的类名和文件结构均有很大变化，但设计思想应该还是差不多的，可供参考。</p>
-<h2 id="setstate-">setState 的入口</h2>
+<h2 id="setstate-的入口">setState 的入口</h2>
 <p><code>setState</code> 的最上层自然在 <code>ReactBaseClasses</code> 中。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#6272a4">//ReactBaseClasses.js
 </span><span style="color:#6272a4"></span>ReactComponent.prototype.setState <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">function</span>(partialState, callback) {
@@ -374,7 +374,7 @@
 </code></pre></div><p>简单来说，事务相当于对某个方法（anyMethod）执行前和执行后的多组钩子的集合。</p>
 <p>可以方便的在某个方法前后分别做一些事情，而且可以分 Wrapper 定义，一个 Wrapper 一对钩子。</p>
 <p>具体来说，可以在 Wrapper  里定义 <code>initialize</code> 和 <code>close</code> 方法，<code>initialize</code> 会在 anyMethod 执行前执行，<code>close</code> 会在执行后执行。</p>
-<h2 id="-transaction">更新策略里的 Transaction</h2>
+<h2 id="更新策略里的-transaction">更新策略里的 Transaction</h2>
 <p>回到刚刚的 <code>batchedUpdates</code> 方法，里面那个 transaction 其实执行前都是空方法，而 callback 是外界传入的 <code>enqueueUpdate</code> 方法本身，也就是说，执行时会被 <code>isBatchingUpdates</code> 卡住进入加入 dirtyCompoments 中。之后就会执行 <code>close</code> 方法里面去改变 <code>isBatchingUpdates</code> 的值和执行 <code>flushBatchedUpdates</code> 方法。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#6272a4">//ReactDefaultBatchingStrategy.js
 </span><span style="color:#6272a4"></span>
@@ -574,7 +574,7 @@ _performComponentUpdate<span style="color:#ff79c6">:</span> <span style="color:#
     }
     <span style="color:#ff79c6">return</span> nextState;
 },
-</code></pre></div><h2 id="-setstate-">好像 setState 是同步的耶</h2>
+</code></pre></div><h2 id="好像-setstate-是同步的耶">好像 setState 是同步的耶</h2>
 <p>而如果按照这个流程看完，<code>setState</code> 应该是同步的呀？是哪里出了问题呢。</p>
 <p>别急，还记得更新策略里面那个 <code>Transaction</code> 么。那里中间调用的 callback 是外层传入的，也就说有可能还有其它调用了 <code>batchedUpdates</code> 呢。那么也就是说，中间的 callback，并不止 <code>setState</code> 会引起。在代码里搜索后发现，果真还有几处调用了 <code>batchedUpdates</code> 方法。</p>
 <p>比如 ReactMount 的这两个方法</p>
@@ -631,9 +631,9 @@ unmountComponentAtNode<span style="color:#ff79c6">:</span> <span style="color:#8
   ReactUpdates.batchedUpdates,
 );
 </code></pre></div><p>所以比如在 <code>componentDidMount</code> 中直接调用时，ReactMount.js  中的 <strong><code>_renderNewRootComponent</code></strong>   方法已经调用了，也就是说，整个将 React 组件渲染到 DOM 中的过程就处于一个大的 <code>Transaction</code> 中，而其中的 callback 没有马上被执行，那么自然 state 没有被马上更新。</p>
-<h2 id="setstate--1">setState 为什么这么设计</h2>
+<h2 id="setstate-为什么这么设计">setState 为什么这么设计</h2>
 <p>在 React 中，state 代表 UI 的状态，也就是 UI 由 state 改变而改变，也就是 UI=function（state）。笔者觉得，这体现了一种响应式的思想，而响应式与命令式的不同，在于命令式着重看如何命令的过程，而响应式看中数据变化如何输出。而 React 中对 Rerender 做出的努力，对渲染的优化，响应式的 <code>setState</code> 设计，其实也是其中搭配而不可少的一环。</p>
-<h2 id="heading">最后</h2>
+<h2 id="最后">最后</h2>
 <p>最前面的问题，相信每个人都有自己的答案，我这里给出我自己的理解。</p>
 <p>Q：<code>setState</code> 是异步还是同步的？</p>
 <p>A：同步的，但有时候是异步的表现。</p>
@@ -645,14 +645,14 @@ unmountComponentAtNode<span style="color:#ff79c6">:</span> <span style="color:#8
 <p>A：为了以响应式的方式改变 UI。</p>
 <p>Q：<code>setState</code> 的最佳实践是什么？</p>
 <p>A：以响应式的思路使用。</p>
-<h2 id="heading-1">参考链接</h2>
+<h2 id="参考链接">参考链接</h2>
 <p><a href="https://zhuanlan.zhihu.com/p/20328570">React 源码剖析系列 － 解密 setState</a></p>
 <p><a href="https://zhuanlan.zhihu.com/p/25954470">setState：这个API设计到底怎么样</a></p>
 <p><a href="https://zhuanlan.zhihu.com/p/25990883">setState为什么不会同步更新组件状态</a></p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>516</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>517</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

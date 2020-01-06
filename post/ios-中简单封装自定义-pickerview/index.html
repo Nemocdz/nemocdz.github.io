@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89-pickerview/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -221,11 +221,11 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#1">1.数据</a></li>
-    <li><a href="#2">2.视图</a></li>
-    <li><a href="#3">3.响应按钮点击事件</a></li>
-    <li><a href="#4">4.封装成工厂方法</a></li>
-    <li><a href="#heading">最后</a></li>
+    <li><a href="#1数据">1.数据</a></li>
+    <li><a href="#2视图">2.视图</a></li>
+    <li><a href="#3响应按钮点击事件">3.响应按钮点击事件</a></li>
+    <li><a href="#4封装成工厂方法">4.封装成工厂方法</a></li>
+    <li><a href="#最后">最后</a></li>
   </ul>
 </nav>
 
@@ -240,7 +240,7 @@
     }];
     }
 </code></pre></div><p>实现思路从数据，视图，按钮处理三个方面说</p>
-<h2 id="1">1.数据</h2>
+<h2 id="1数据">1.数据</h2>
 <ul>
 <li>传入数据（上层 View 对象，数组 Array，最后的值）</li>
 <li>改变的值（利用 block 传值回调）</li>
@@ -301,7 +301,7 @@
 这个方法的优先级比
 <code>- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component</code>
 这个方法优先级高，也就是说会覆盖后面那个方法里的设置，后面的方法只能确定每行返回的方法的值，没办法对字体大小，颜色，分割线等进行自定义，需要自定义就使用第一个方法。</p>
-<h2 id="2">2.视图</h2>
+<h2 id="2视图">2.视图</h2>
 <p>视图上，由一个压黑背景的 View 上面加上一个包含确定和取消两个按钮和 pickerview 的 containview 组成。
 先在最开始进行一些颜色，屏幕大小的宏定义和全局静态变量定义，方便使用</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">#define SCREEN_WIDTH ([UIScreen mainScreen].bounds.size.width)
@@ -337,7 +337,7 @@ static const int toolBarHeight = 44;
     self.backgroundColor = BACKGROUND_BLACK_COLOR;
     [self addSubview:containerView];
 }
-</code></pre></div><h2 id="3">3.响应按钮点击事件</h2>
+</code></pre></div><h2 id="3响应按钮点击事件">3.响应按钮点击事件</h2>
 <p>很简单，见代码即可。取消的话把传进来的 lastString 传回去即可。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">#pragma mark - event response
 - (void)pickerViewBtnOk:(UIButton *)btn{
@@ -348,7 +348,7 @@ static const int toolBarHeight = 44;
     self.block (self.lastString);
     [self removeFromSuperview];
 }
-</code></pre></div><h2 id="4">4.封装成工厂方法</h2>
+</code></pre></div><h2 id="4封装成工厂方法">4.封装成工厂方法</h2>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">+ (void)showPickerInView:(UIView *)view
         withObjectsArray:(NSArray *)array
           withlastString:(NSString *)string
@@ -361,14 +361,14 @@ static const int toolBarHeight = 44;
     [pickerView initView];
     [view addSubview:pickerView];
 }
-</code></pre></div><h2 id="heading">最后</h2>
+</code></pre></div><h2 id="最后">最后</h2>
 <p>所有源码和 <a href="https://github.com/Nemocdz/CDZPickerViewDemo">Demo</a>
 这是我第一次写技术类文章，虽然不是什么很深入的问题，但希望能分享给有需要的人。</p>
 <p>如果您觉得有帮助,不妨给个 star 鼓励一下,欢迎关注&amp;交流</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1141</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1143</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

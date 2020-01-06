@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/webrtc-native-%E6%A8%A1%E5%9D%97%E5%8D%95%E7%8B%AC%E7%BC%96%E8%AF%91%E9%9D%99%E6%80%81%E5%BA%93ios/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -221,19 +221,19 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#webrtc-">WebRTC 编译流程</a></li>
+    <li><a href="#webrtc-编译流程">WebRTC 编译流程</a></li>
     <li><a href="#ninja">Ninja</a></li>
     <li><a href="#gn">GN</a></li>
-    <li><a href="#heading">单独编译</a></li>
-    <li><a href="#heading-1">提取头文件</a></li>
-    <li><a href="#heading-2">最后</a></li>
-    <li><a href="#heading-3">参考链接</a></li>
+    <li><a href="#单独编译">单独编译</a></li>
+    <li><a href="#提取头文件">提取头文件</a></li>
+    <li><a href="#最后">最后</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
   </ul>
 </nav>
 
     <article class="post-content"><p>项目里面用到了 WebRTC 某些模块，以前是源码拷贝集成的。这样不仅需要处理平台的宏（WebRTC Native 跨平台），而且升级版本也会涉及依赖等问题，所以探索了一下怎么用编码编译出可用的静态库。</p>
 <p>网上相关的资料很少，且大部分都是 Android 平台编译单独的 apm（Audio Processing Module）进行使用，但我想找到更通用的方法。</p>
-<h2 id="webrtc-">WebRTC 编译流程</h2>
+<h2 id="webrtc-编译流程">WebRTC 编译流程</h2>
 <p>要编译单独的模块，首先要了解完整的 WebRTC 源码是如何编译的。根据 <a href="https://webrtc.org/native-code/development/">官网教程</a>，WebRTC 项目出自于 Chromium，所以使用的工具和流程基本都一致。</p>
 <ul>
 <li>安装 <a href="http://dev.chromium.org/developers/how-tos/install-depot-tools">Chromium depot tools</a>，这是 Chromium 特有的工具集，包含 git 管理，编译工具等</li>
@@ -245,7 +245,7 @@
 <p>Ninja 是一个小型轻量的 C++ 构建系统，使用 build.ninja （类似 Makefile）来进行编译。而一般需要用工具来生成这个描述文件，而不是手动编写。而官方采用的就是 GN（Generate Ninja）工具。</p>
 <h2 id="gn">GN</h2>
 <p>GN 是专门用于创建 Ninja 描述文件的工具。可以对项目多个模块分别编写 BUILD.gn 文件，对模块描述依赖，编译文件，头文件，可见性，命名空间等。算是一种 DSL，用于描述模块，和 Cocoapods 里的 Podspec 文件作用差不多。</p>
-<h2 id="heading">单独编译</h2>
+<h2 id="单独编译">单独编译</h2>
 <p>虽然可以进行整体编译了，但是单独编译有没有办法呢？先查看 <a href="https://ninja-build.org/manual.html">Ninja 官方文档</a> 发现 ninja 命令是可以带上编译目标的。编译目标的名字，是用 GN 生成的。查看 BUILD.gn 文件，发现基本都有 <code>rtc_static_library</code>。这个模版被定义在 webrtc.gni 文件里。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">template(&#34;rtc_static_library&#34;) {
   static_library(target_name) {
@@ -269,11 +269,11 @@
 <p>但这样编译出来的静态库大小不大，怀疑是没有包含依赖的编译产物的。使用命令 nm 查看</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">nm -u libaudio_processing.a
 </code></pre></div><p>发现有未定义的符号，联想 ninja 是个轻量构建系统，感觉很合理。只能再翻翻文档，最后在 <a href="https://gn.googlesource.com/gn/+/master/docs/reference.md">GN 文档</a> 中发现，BUILD.gn 定义了 complete_static_lib 参数，可以用来设置在编译时是否链接依赖产物。在 BUILD.gn 中 rtc_static_library 中加上 <code>omplete_static_lib = true</code>，再次尝试，发现正常了。</p>
-<h2 id="heading-1">提取头文件</h2>
+<h2 id="提取头文件">提取头文件</h2>
 <p>WebRTC 的头文件有文件层次结构，C++ 依赖头文件的路径，所以按照原始文件目录层次提出头文件就是必要的。Linux 系统可以是用 <code>cp --parents</code> 来进行保留文件目录的拷贝，但 Mac 上的 cp 命令并不支持 &ndash;parents 参数，只有 ditto 命令代替。</p>
-<h2 id="heading-2">最后</h2>
+<h2 id="最后">最后</h2>
 <p>笔者写了一个 <a href="https://github.com/Nemocdz/WebRTC-Hack">脚本</a>，包含编译，提取头文件，合并架构来完成这整个流程。欢迎使用～</p>
-<h2 id="heading-3">参考链接</h2>
+<h2 id="参考链接">参考链接</h2>
 <ul>
 <li><a href="https://gn.googlesource.com/gn/+/master/docs/reference.md#">GN Reference</a></li>
 <li><a href="https://docs.google.com/presentation/d/15Zwb53JcncHfEwHpnG_PoIbbzQ3GQi_cpujYwbpcbZo/edit#slide=id.g1199fa62d0_2_6">Using GN build</a></li>

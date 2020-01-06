@@ -71,7 +71,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E8%AF%91-%E5%9B%BE%E5%83%8F%E4%BC%98%E5%8C%96/">
@@ -86,7 +86,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -244,13 +244,13 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#heading">理论知识</a></li>
-    <li><a href="#heading-1">渲染流程</a></li>
-    <li><a href="#heading-2">尺寸正是问题所在</a></li>
-    <li><a href="#heading-3">色彩空间</a></li>
-    <li><a href="#-vs-">缩小图片 vs 向下采样</a></li>
-    <li><a href="#heading-4">附赠内容</a></li>
-    <li><a href="#heading-5">总结</a></li>
+    <li><a href="#理论知识">理论知识</a></li>
+    <li><a href="#渲染流程">渲染流程</a></li>
+    <li><a href="#尺寸正是问题所在">尺寸正是问题所在</a></li>
+    <li><a href="#色彩空间">色彩空间</a></li>
+    <li><a href="#缩小图片-vs-向下采样">缩小图片 vs 向下采样</a></li>
+    <li><a href="#附赠内容">附赠内容</a></li>
+    <li><a href="#总结">总结</a></li>
   </ul>
 </nav>
 
@@ -264,7 +264,7 @@
 <p>出现爆炸新闻？查看 Twitter，就可以知道是哪些媒体正在报道，通过他们揭露事件的实时照片。</p>
 <p>等等……</p>
 <p>正因为图像在平台上无处不在，如果管理不当，很容易出现性能和内存问题。稍微了解下 UIKit，搞清楚它处理图像的机制，可以节省大量时间，避免做无用功。</p>
-<h2 id="heading">理论知识</h2>
+<h2 id="理论知识">理论知识</h2>
 <p>快问快答 - 这是一张我漂亮（且时髦）女儿的照片，大小为 266KB，在一个 iOS 应用中展示它需要多少内存？</p>
 <p><img src="https://www.swiftjectivec.com/assets/images/baylor.jpg" alt=""></p>
 <p>剧透警告 - 答案不是 266KB，也不是 2.66MB，而是接近 14MB。</p>
@@ -272,7 +272,7 @@
 <p>iOS 实际上是从一幅图像的<em>尺寸</em>计算它占用的内存 - 实际的文件大小会比这小很多。这张照片的尺寸是 1718 像素宽和 2048 像素高。假设每个像素会消耗我们 4 个比特：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">1718 * 2048 * 4 / 1000000 = 14.07 MB 占用
 </code></pre></div><p>假设你有一个用户列表 table view，并且在每一行左边使用常见的圆角头像来展示他们的照片。如果你认为这些图像会像洁食（犹太人的食品，比喻事情完美无瑕）一样，每个都被类似 ImageOptim 的工具压缩过，那可就大错特错了。即使每个头像的大小只有 256x256，也会占用相当一部分内存。</p>
-<h2 id="heading-1">渲染流程</h2>
+<h2 id="渲染流程">渲染流程</h2>
 <p>综上所述 - 了解幕后原理是值得的。当你加载一张图片时，会执行以下三个步骤：</p>
 <p>1）<strong>加载</strong> - iOS 获取压缩的图像并加载到 266KB 的内存（在我们这个例子中）。这一步没啥问题。</p>
 <p>2）<strong>解码</strong> - 这时，iOS 获取图像并转换成 GPU 能读取和理解的方式。这里会解压图片，像上面提到那样占用 14MB。</p>
@@ -284,7 +284,7 @@
 <blockquote>
 <p><em>觉得 1/60 秒太短不够用？Pro Motion 设备已经将上限拉到了 1/120 秒。</em></p>
 </blockquote>
-<h2 id="heading-2">尺寸正是问题所在</h2>
+<h2 id="尺寸正是问题所在">尺寸正是问题所在</h2>
 <p>我们可以很简单地将这个过程和内存的消耗可视化。我创建了一个简单的应用，可以在一个 image view 上展示需要的图像，这里用的是我女儿的照片：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">filePath</span> = Bundle.main.path(forResource:<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">baylor</span><span style="color:#f1fa8c">&#34;</span>, ofType: <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">jpg</span><span style="color:#f1fa8c">&#34;</span>)<span style="color:#ff79c6">!</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">url</span> = NSURL(fileURLWithPath: filePath)
@@ -319,7 +319,7 @@ Image IO  13.4M   13.4M   13.4M    0K  0K  0K   0K  <span style="color:#bd93f9">
 </code></pre></div><p>啊哈 - 这里有大约 14MB 的脏内存，和我们前面的估算一致。如果你不清楚每一列表示什么，可以看下面这个截图：</p>
 <p><img src="https://www.swiftjectivec.com/assets/images/vmmap.jpg" alt=""></p>
 <p>通过这个例子可以清楚地看到，哪怕展示在 300x400 image view 中，图像也需要完整的内存消耗。图像尺寸很重要，但是尺寸并不是唯一的问题。</p>
-<h2 id="heading-3">色彩空间</h2>
+<h2 id="色彩空间">色彩空间</h2>
 <p>能确定的是，有一部分内存消耗来源于另一个重要因素 - 色彩空间。在上面的例子中，我们的计算基于以下假设 - 图像使用 sRGB 格式，但大部分 iPhone 不符合这种情况。sRGB 每个像素有 4 个字节，分别表示红、蓝、绿、透明度。</p>
 <p>如果你用支持宽色域的设备进行拍摄（比如 iPhone 8+ 或 iPhone X），那么内存消耗将变成两倍，反之亦然。Metal 会用仅有一个 8 位透明通道的 Alpha 8 格式。</p>
 <p>这里有很多可以把控和值得思考的地方。这也是为什么你应该用 <a href="https://www.swiftjectivec.com/uigraphicsimagerenderer/">UIGraphicsImageRenderer</a> 代替 <code>UIGraphicsBeginImageContextWithOptions</code> 的原因之一。后者<em>总是</em>会使用 sRGB，因此无法使用宽色域，也无法在不需要的时候节省空间。在 iOS 12 中，<code>UIGraphicsImageRenderer</code> 会为你做正确的选择。</p>
@@ -347,7 +347,7 @@ UIGraphicsEndImageContext()
     ctx.cgContext.addEllipse(<span style="color:#ff79c6">in</span>: CGRect(x: <span style="color:#bd93f9">0</span>, y: <span style="color:#bd93f9">0</span>, width: circleSize.width, height: circleSize.height))
     ctx.cgContext.drawPath(using: .fill)
 }
-</code></pre></div><h2 id="-vs-">缩小图片 vs 向下采样</h2>
+</code></pre></div><h2 id="缩小图片-vs-向下采样">缩小图片 vs 向下采样</h2>
 <p>现在我们从简单的绘图场景回到现实世界 - 许多图片其实并不是艺术作品，只是自拍或者风景照。</p>
 <p>因此有些人可能会假设（并且确实相信）通过 <code>UIImage</code> 简单地缩小图片就够了。但我们前面已经解释过，缩小尺寸并不管用。而且根据 Apple 工程师 kyle Howarth 的说法，由于内部坐标转换的原因，缩小图片的优化效果并不太好。</p>
 <p><code>UIImage</code> 导致性能问题的根本原因，我们在渲染流程里已经讲过，它会解压<em>原始图像</em>到内存中。理想情况下，我们需要一个方法来减少图像缓冲区的尺寸。</p>
@@ -396,7 +396,7 @@ Physical footprint <span style="color:#ff79c6">(</span>peak<span style="color:#f
 </blockquote>
 <p>所以上面发生了什么？简而言之，我们将缩放的结果放入缩略图中，从而创建的是比之前小很多的图像解码缓冲区。回顾之前提到的渲染流程，在第一个环节（加载）中，我们给 UIImage 传入的缓冲区是需要绘制的图片尺寸，不是图片的真实尺寸。</p>
 <p>如何用一句话总结本文？想办法对图像进行向下采样，而不是使用 UIImage 去缩小尺寸。</p>
-<h2 id="heading-4">附赠内容</h2>
+<h2 id="附赠内容">附赠内容</h2>
 <p>除了向下采样，我自己还经常使用 iOS 11 引入的 <a href="https://developer.apple.com/documentation/uikit/uitableviewdatasourceprefetching?language=swift">预加载 API</a>。请记住，我们是在解码图像，哪怕是放在 Cell 展示之前执行，也会消耗大量 CPU 资源。</p>
 <p>如果应用持续耗电，iOS 可以优化电量消耗。但是我们做的向下采样一般不会持续执行，所以最好在一个队列中执行采样操作。与此同时，你的解码过程也实现了后台执行，一石多鸟。</p>
 <p>做好准备，下面即将为您呈现的是——我自己业余项目里的 Objective-C 代码示例：</p>
@@ -433,7 +433,7 @@ Physical footprint <span style="color:#ff79c6">(</span>peak<span style="color:#f
 <li><a href="https://developer.apple.com/videos/play/wwdc2018/416/?time=1074">iOS Memory Deep Dive</a></li>
 <li><a href="https://developer.apple.com/videos/play/wwdc2018/219/">Images and Graphics Best Practices</a></li>
 </ul>
-<h2 id="heading-5">总结</h2>
+<h2 id="总结">总结</h2>
 <p>学无止境。如果选择了编程，你就必须每小时跑一万英里才能跟得上这个领域创新和变化的步伐……换句话说，一定会有很多你根本不知道的 API、框架、模式或者优化技巧。</p>
 <p>在图像领域也是如此。大多数时候，你初始化一个了大小合适的 UIImageView 就不管了。我当然知道摩尔定律。现在手机确实很快，内存也很大，但是你要知道 - 将人类送上月球的计算机只有不到 100KB 内存。</p>
 <p>长期和魔鬼共舞（译者注：比喻不管内存问题），它总有露出獠牙的那天。等到一张自拍就占掉 1G 内存的时候，后悔也来不及了。希望上述的知识和技术能帮你节省一些 debug 时间。</p>
@@ -441,7 +441,7 @@ Physical footprint <span style="color:#ff79c6">(</span>peak<span style="color:#f
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>103</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>105</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

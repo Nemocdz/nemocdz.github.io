@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E6%B5%85%E6%9E%90-ssh/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -221,27 +221,27 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#heading">传输协议</a>
+    <li><a href="#传输协议">传输协议</a>
       <ul>
-        <li><a href="#heading-1">算法协商</a></li>
-        <li><a href="#heading-2">会话密钥交换</a></li>
-        <li><a href="#heading-3">完整性</a></li>
-        <li><a href="#heading-4">服务器认证</a></li>
-        <li><a href="#heading-5">压缩</a></li>
+        <li><a href="#算法协商">算法协商</a></li>
+        <li><a href="#会话密钥交换">会话密钥交换</a></li>
+        <li><a href="#完整性">完整性</a></li>
+        <li><a href="#服务器认证">服务器认证</a></li>
+        <li><a href="#压缩">压缩</a></li>
       </ul>
     </li>
-    <li><a href="#heading-6">认证协议</a>
+    <li><a href="#认证协议">认证协议</a>
       <ul>
-        <li><a href="#heading-7">公钥认证</a></li>
-        <li><a href="#heading-8">基于主机的认证</a></li>
-        <li><a href="#heading-9">密码认证</a></li>
+        <li><a href="#公钥认证">公钥认证</a></li>
+        <li><a href="#基于主机的认证">基于主机的认证</a></li>
+        <li><a href="#密码认证">密码认证</a></li>
       </ul>
     </li>
-    <li><a href="#heading-10">连接协议</a>
+    <li><a href="#连接协议">连接协议</a>
       <ul>
-        <li><a href="#heading-11">远程程序执行</a></li>
-        <li><a href="#tcp--x-">TCP 端口转发和 X 转发</a></li>
-        <li><a href="#heading-12">认证代理转发</a></li>
+        <li><a href="#远程程序执行">远程程序执行</a></li>
+        <li><a href="#tcp-端口转发和-x-转发">TCP 端口转发和 X 转发</a></li>
+        <li><a href="#认证代理转发">认证代理转发</a></li>
       </ul>
     </li>
   </ul>
@@ -262,15 +262,15 @@
 <li>SSH 认证协议（SSH-AUTH）</li>
 <li>SSH 连接协议（SSH-CONN）</li>
 </ul>
-<h2 id="heading">传输协议</h2>
-<h3 id="heading-1">算法协商</h3>
+<h2 id="传输协议">传输协议</h2>
+<h3 id="算法协商">算法协商</h3>
 <p>主机密钥、消息认证、Hash 函数、服务器密钥交换、数据压缩这些过程所使用的算法均可以进行协商，并在默认支持一种方法的基础上定义了几种推荐方法和可选方法。</p>
-<h3 id="heading-2">会话密钥交换</h3>
+<h3 id="会话密钥交换">会话密钥交换</h3>
 <p>可以协商使用的密钥交换方法，该方法生成一段共享密文，用于生成会话密钥的过程。</p>
 <p>默认定义了 <code>diffie-hellman-group1-sha1</code> 这种方法。</p>
-<h3 id="heading-3">完整性</h3>
+<h3 id="完整性">完整性</h3>
 <p>使用强加密的消息认证算法（MAC，Message Authentication Code）来保证完整性。MAC 算法和普通 Hash 算法不同的地方在于，其 Hash 函数和双方都知道的一个密钥来控制。</p>
-<h3 id="heading-4">服务器认证</h3>
+<h3 id="服务器认证">服务器认证</h3>
 <p>分为以下几个步骤</p>
 <ol>
 <li>
@@ -299,11 +299,11 @@
 <p>发送一个用会话密钥加密的确认消息给客户端，完成服务器认证</p>
 </li>
 </ol>
-<h3 id="heading-5">压缩</h3>
+<h3 id="压缩">压缩</h3>
 <p>使用 gzip 工具的 <code>deflate</code> 算法堆会话数据进行压缩，又名 <code>zlib</code> 算法。</p>
-<h2 id="heading-6">认证协议</h2>
+<h2 id="认证协议">认证协议</h2>
 <p>SSH 服务端可以在交换过程的任意时机都通知客户端可用的认证方法，主要支持以下三种。</p>
-<h3 id="heading-7">公钥认证</h3>
+<h3 id="公钥认证">公钥认证</h3>
 <p>客户端持有私钥，服务端持有公钥。常用的非对称加密算法（RSA、DSA、OpenPGP）</p>
 <p>分为以下步骤</p>
 <ol>
@@ -314,44 +314,44 @@
 <li>客户端用私钥解密并和会话标识符合并并使用MD5，结果返回给服务端</li>
 <li>服务器检验该 MD5 是否符合，符合则认证成功</li>
 </ol>
-<h3 id="heading-8">基于主机的认证</h3>
+<h3 id="基于主机的认证">基于主机的认证</h3>
 <p>SSH 服务端通过一些主机的标识符来执行基于主机的认证。</p>
 <p>分为以下步骤</p>
 <ol>
 <li>查找客户端主机密钥：客户端将主机名和公钥提供给服务端，服务端维护了一个已知主机和公钥的列表，查找列表中判断是否为可信主机</li>
 <li>在通过的控制文件时进行认证时匹配客户端主机：服务器上为可信主机认证提供访问控制的文件</li>
 </ol>
-<h3 id="heading-9">密码认证</h3>
+<h3 id="密码认证">密码认证</h3>
 <p>用户输入一个密码给 SSH 客户端，客户端通过加密的连接发送给服务器，服务器检查密码是否可接受。</p>
-<h2 id="heading-10">连接协议</h2>
-<h3 id="heading-11">远程程序执行</h3>
+<h2 id="连接协议">连接协议</h2>
+<h3 id="远程程序执行">远程程序执行</h3>
 <p>最简单的应用，建立 SSH 连接后，对远程 Shell 执行命令</p>
-<h3 id="tcp--x-">TCP 端口转发和 X 转发</h3>
-<h4 id="tcp-">TCP 端口转发</h4>
+<h3 id="tcp-端口转发和-x-转发">TCP 端口转发和 X 转发</h3>
+<h4 id="tcp-端口转发">TCP 端口转发</h4>
 <p>在应用程序客户端所使用的 TCP 端口截获连接，通过SSH连接传输请求，传输到应用程序服务器主机上的 SSH 服务端，再返回给应用程序服务器。</p>
 <ul>
 <li>本地转发：应用程序客户端发起，设置一个端口，监听该端口的外出流量并进行 SSH 连接转发</li>
 <li>远程转发：应用程序服务器发起，设置一个端口，监听该端口的进入流量并进行 SSH 连接转发</li>
 </ul>
 <p>应用程序客户端位于 SSH 客户端所在的主机时，使用本地连接，反之用远程连接。</p>
-<h4 id="x-">X 转发</h4>
+<h4 id="x-转发">X 转发</h4>
 <p>X：X Window系统，是 Unix 机器上应用最广泛的图形显示系统。拥有客户端和服务端，X 客户端是窗口化的应用程序，X 服务器是后台运行的显示引擎，负责处理处理客户端请求，用 X 协议进行网络通信。</p>
 <p>将 X 协议的连接导入 SSH 连接来保证其安全性和增强认证被称为 X 转发。</p>
-<h3 id="heading-12">认证代理转发</h3>
-<h4 id="heading-13">代理</h4>
+<h3 id="认证代理转发">认证代理转发</h3>
+<h4 id="代理">代理</h4>
 <p>SSH 代理是一个管理私钥缓存区，并对 SSH 客户端发出的认证请求作出响应的程序。</p>
 <ul>
 <li>在内存中存储私钥</li>
 <li>回答 SSH 客户端提出和密钥有关的问题</li>
 </ul>
-<h4 id="heading-14">代理转发</h4>
+<h4 id="代理转发">代理转发</h4>
 <p>若两主机之间无法直接建立 SSH 连接，需要通过中间主机。</p>
 <p>那么在中间主机中运行 SSH 代理，并拆分成主机 A 到中间主机的 SSH 连接和中间主机到主机 B 的 SSH 连接。</p>
 <p>通过中间主机的代理进行转发 SSH 连接。</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>334</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>336</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

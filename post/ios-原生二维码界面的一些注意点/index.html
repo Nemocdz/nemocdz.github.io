@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E5%8E%9F%E7%94%9F%E4%BA%8C%E7%BB%B4%E7%A0%81%E7%95%8C%E9%9D%A2%E7%9A%84%E4%B8%80%E4%BA%9B%E6%B3%A8%E6%84%8F%E7%82%B9/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -221,18 +221,18 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#1">1.扫描区域的扫描线动画</a></li>
-    <li><a href="#2">2.扫描线的渐变色拖尾</a></li>
-    <li><a href="#3-avfoundation-">3.设置 AVFoundation 原生二维码类的一些容易崩溃的地方</a></li>
-    <li><a href="#4">4.关于扫描区域的正确计算方法</a></li>
-    <li><a href="#5">5.耗时操作放在异步并发线程中处理</a></li>
-    <li><a href="#heading">最后</a></li>
+    <li><a href="#1扫描区域的扫描线动画">1.扫描区域的扫描线动画</a></li>
+    <li><a href="#2扫描线的渐变色拖尾">2.扫描线的渐变色拖尾</a></li>
+    <li><a href="#3设置-avfoundation-原生二维码类的一些容易崩溃的地方">3.设置 AVFoundation 原生二维码类的一些容易崩溃的地方</a></li>
+    <li><a href="#4关于扫描区域的正确计算方法">4.关于扫描区域的正确计算方法</a></li>
+    <li><a href="#5耗时操作放在异步并发线程中处理">5.耗时操作放在异步并发线程中处理</a></li>
+    <li><a href="#最后">最后</a></li>
   </ul>
 </nav>
 
     <article class="post-content"><p>之前的 <a href="https://nemocdz.github.io/post/ios%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/">文章</a> 是在 ViewController 里实现了原生二维码扫描的功能，后来觉得 VC 太重了，便把功能抽成了一个 View，在抽象的过程中也仔细捉摸了一些没有仔细思考过的问题，特此记录下来。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNbRwly1ffk93o9dj4j30ku112afv.jpg" alt="IMG_1130"></p>
-<h2 id="1">1.扫描区域的扫描线动画</h2>
+<h2 id="1扫描区域的扫描线动画">1.扫描区域的扫描线动画</h2>
 <p>像微信等很多二维码扫描界面，总有一个上下移动的扫描线动画。一开始用我用 <code>NSTimer</code> 配合 View 的 frame 改变实现，后来发现不仅容易导致 <code>NSTimer</code> 的循环引用，外界调用也容易开启多个定时器，已经在某些时候动画会卡顿。便换成了用 <code>CABasicAnimation</code> 实现，通过改变 View 的 y 值，并把设置 repeatCount 为最大，达到扫描线上下动的效果。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">addScanLineAnimation</span>{
     <span style="color:#8be9fd;font-style:italic">self</span>.scanLine.hidden <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
@@ -253,7 +253,7 @@
     <span style="color:#8be9fd;font-style:italic">self</span>.scanLine.hidden <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
 }
 </code></pre></div><p>取消时把动画移除即可。</p>
-<h2 id="2">2.扫描线的渐变色拖尾</h2>
+<h2 id="2扫描线的渐变色拖尾">2.扫描线的渐变色拖尾</h2>
 <p>这个用 <code>CAGradientLayer</code> 实现即可，设置渐变起始点和终止点，传入颜色数组和对应的起始位置（0~1），即可。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (UIView <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">scanLine</span>{
     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>_scanLine) {
@@ -269,7 +269,7 @@
     }
     <span style="color:#ff79c6">return</span> _scanLine;
 }
-</code></pre></div><h2 id="3-avfoundation-">3.设置 AVFoundation 原生二维码类的一些容易崩溃的地方</h2>
+</code></pre></div><h2 id="3设置-avfoundation-原生二维码类的一些容易崩溃的地方">3.设置 AVFoundation 原生二维码类的一些容易崩溃的地方</h2>
 <p>具体相关类别在上篇 <a href="http://www.jianshu.com/p/ad7827a8a0e6">文章</a> 已经有所介绍，讲讲一些容易崩溃的点，崩溃主要集中在设置 <code>AVCaptureMetadataOutput</code> 的 metadaObjectTypes 属性时，所以在设置这个数组时，最好先检查数组里的值是否在其 availableMetaDataObjectTypes 属性里。像这样</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>[<span style="color:#8be9fd;font-style:italic">self</span>.dataOutput.availableMetadataObjectTypes <span style="color:#8be9fd;font-style:italic">containsObject</span>:AVMetadataObjectTypeQRCode]) {
      NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">The camera unsupport for QRCode.</span><span style="color:#f1fa8c">&#34;</span>);
@@ -283,13 +283,13 @@
     [<span style="color:#8be9fd;font-style:italic">self</span>.session <span style="color:#8be9fd;font-style:italic">setSessionPreset</span>:AVCaptureSessionPresetHigh];
 }    
 </code></pre></div><p><code>AVCaptureSessionPresetHigh</code> 就是该设备所支持最高的分辨率。而单纯通过设备 ScreenHigh 来区分是否支持 1080p 视频分辨率并不可靠，4s 以后是支持 1080p 的，但是还有一些 touch 设备，iPad 设备，已经某些后摄像头坏掉的手机（会自动调用前摄像头，比如我的 5s TAT）上，就会出现分辨率不支持，canAddInput 返回 NO，没有 input，availavleMetadataObjectTypes 为空，如果不注意就会产生崩溃。</p>
-<h2 id="4">4.关于扫描区域的正确计算方法</h2>
+<h2 id="4关于扫描区域的正确计算方法">4.关于扫描区域的正确计算方法</h2>
 <p>之前提到扫描区域的 interestedRect 是一个值是 0~1 的 <code>CGRect</code>，后来我实验发现，这个 0~1 相对的并不是屏幕的 Frame，而是 <code>AVCaptureVideoPreviewLayer</code> 的 Frame 值，而我们习惯把 <code>AVCaptureVideoPreviewLayer</code> 的 frame 值等于 View 的 frame 值，从而才在计算时用 View 的 frame 值去算百分比。但后来我发现正确的转换方法是用 <code>AVCaptureVideoPreviewLayer</code> 里的 <code>metadataOutputRectOfInterestForRect</code> 进行正常 Rect -&gt; 扫描区域坐标系 Rect 转换，另外 <code>AVCaptureVideoPreviewLayer</code> 还提供了 <code>rectForMetadataOutputRectOfInterest</code> 进行扫描区域 Rect -&gt; 正常坐标系 Rect 的转换，以及 <code>CGPoint</code> 的相关转换方法。而且这个转换需要放在 Session 的 <code>startRunning</code> 方法之后才会生效。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">[<span style="color:#8be9fd;font-style:italic">self</span>.session startRunning];
 <span style="color:#8be9fd;font-style:italic">self</span>.dataOutput.rectOfInterest <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span>.previewLayer <span style="color:#8be9fd;font-style:italic">metadataOutputRectOfInterestForRect</span>:<span style="color:#8be9fd;font-style:italic">self</span>.scanRect];
-</code></pre></div><h2 id="5">5.耗时操作放在异步并发线程中处理</h2>
+</code></pre></div><h2 id="5耗时操作放在异步并发线程中处理">5.耗时操作放在异步并发线程中处理</h2>
 <p>AVFoundation 里设置相机相关的方法比较耗时，可以放在异步并发线程中处理。</p>
-<h2 id="heading">最后</h2>
+<h2 id="最后">最后</h2>
 <p>个人封装了一个 CDZQRScanView 简单易用。支持  Cocoapods也可以直接把两个文件拉进项目里。</p>
 <p>所有源码和 <a href="https://github.com/Nemocdz/CDZQRScanView">Demo</a></p>
 <p>使用时可以把 VC 两个文件拖进项目里就可。</p>
@@ -297,7 +297,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>965</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>967</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/foundation-%E6%A1%86%E6%9E%B6%E7%9A%84%E6%96%B0%E4%BA%AE%E7%82%B9md/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -222,54 +222,54 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#-diff">有序集合的 Diff</a></li>
+    <li><a href="#有序集合的-diff">有序集合的 Diff</a></li>
     <li><a href="#data">Data</a>
       <ul>
-        <li><a href="#heading">连续性</a></li>
-        <li><a href="#heading-2">压缩</a></li>
+        <li><a href="#连续性">连续性</a></li>
+        <li><a href="#压缩">压缩</a></li>
       </ul>
     </li>
     <li><a href="#units">Units</a>
       <ul>
-        <li><a href="#unitduration">时间（UnitDuration）</a></li>
-        <li><a href="#unitfrequency">频率（UnitFrequency）</a></li>
-        <li><a href="#unitinformationstorage">存储（UnitInformationStorage）</a></li>
+        <li><a href="#时间unitduration">时间（UnitDuration）</a></li>
+        <li><a href="#频率unitfrequency">频率（UnitFrequency）</a></li>
+        <li><a href="#存储unitinformationstorage">存储（UnitInformationStorage）</a></li>
       </ul>
     </li>
     <li><a href="#formatter">Formatter</a>
       <ul>
-        <li><a href="#relateivedatetimeformatter">相对日期时间格式（RelateiveDateTimeFormatter）</a></li>
-        <li><a href="#listformatter">列表格式（ListFormatter）</a></li>
+        <li><a href="#相对日期时间格式relateivedatetimeformatter">相对日期时间格式（RelateiveDateTimeFormatter）</a></li>
+        <li><a href="#列表格式listformatter">列表格式（ListFormatter）</a></li>
       </ul>
     </li>
     <li><a href="#operationqueue">OperationQueue</a>
       <ul>
-        <li><a href="#heading-3">栅栏</a></li>
-        <li><a href="#heading-4">进度反馈</a></li>
+        <li><a href="#栅栏">栅栏</a></li>
+        <li><a href="#进度反馈">进度反馈</a></li>
       </ul>
     </li>
-    <li><a href="#ios--usb--smb">iOS 上的 USB 和 SMB</a>
+    <li><a href="#ios-上的-usb-和-smb">iOS 上的 USB 和 SMB</a>
       <ul>
-        <li><a href="#heading-5">写入操作</a></li>
-        <li><a href="#heading-6">读取操作</a></li>
-        <li><a href="#heading-7">测试文件系统能力</a></li>
+        <li><a href="#写入操作">写入操作</a></li>
+        <li><a href="#读取操作">读取操作</a></li>
+        <li><a href="#测试文件系统能力">测试文件系统能力</a></li>
       </ul>
     </li>
-    <li><a href="#foundation--swift-api-">Foundation 的 Swift API 更新</a>
+    <li><a href="#foundation-的-swift-api-更新">Foundation 的 Swift API 更新</a>
       <ul>
         <li><a href="#scanner">Scanner</a></li>
         <li><a href="#filehandle">FileHandle</a></li>
       </ul>
     </li>
-    <li><a href="#heading-8">总结</a></li>
-    <li><a href="#heading-9">延伸阅读</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#延伸阅读">延伸阅读</a></li>
   </ul>
 </nav>
 
     <article class="post-content"><blockquote>
 <p>WWDC 2019 Session 723 - <a href="https://developer.apple.com/videos/play/wwdc2019/723/">Advances in Foundation</a></p>
 </blockquote>
-<h2 id="-diff">有序集合的 Diff</h2>
+<h2 id="有序集合的-diff">有序集合的 Diff</h2>
 <p>Foudation 框架为有序集合添加了 Diff 能力，用非常简单的方式，就能比对两个集合的差异，也能将差异应用到集合上。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190621154614.png" alt=""></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">bird</span> = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">bird</span><span style="color:#f1fa8c">&#34;</span>
@@ -278,15 +278,15 @@
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">diff</span> = bird.difference(from: bear)
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">newBird</span> = bear.applying(diff) <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">&#34;</span><span style="color:#6272a4">b</span><span style="color:#6272a4">i</span><span style="color:#6272a4">r</span><span style="color:#6272a4">d</span><span style="color:#6272a4">&#34;</span>
 </code></pre></div><h2 id="data">Data</h2>
-<h3 id="heading">连续性</h3>
+<h3 id="连续性">连续性</h3>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190623011539.png" alt=""></p>
 <p>磁盘上的数据，比如一张图片，这种数据大多可以很简单在内存里用连续区域表示。另一方面，从网络下载的数据，可能会分成多段的字节流进行传输，并占领一整块连续的内存。在 Swift 5 之前，<code>Data</code> 既可能连续的，又可能是非连续的。这个统一接口虽然用起来很方便，但在访问整个缓冲区时，底层的原始数据需要拷贝到一个连续的区域，这意味着有时候性能会变得不可预测。在实际使用时，磁盘上的连续数据就会在有些时候占用比想象中大的内存。</p>
-<h4 id="data-">Data 是连续的</h4>
+<h4 id="data-是连续的">Data 是连续的</h4>
 <p>从 Swift 5 开始，<code>Data</code> 只用于表达连续的数据。Apple 引入了 <code>ContiguousBytes</code> 协议来表示数据的连续。遵循这个协议表示该类型提供以连续的方式直接访问底层原始数据的能力。<code>Data</code> 是遵守这个协议的，所以以后不需要担心有的时候内存占用会变大。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">ContiguousBytes</span> {
 		<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">withUnsafeBytes</span>&lt;R&gt;(<span style="color:#ff79c6">_</span> body: (UnsafeRawBufferPointer) <span style="color:#ff79c6">throws</span> -&gt; R) <span style="color:#ff79c6">rethrows</span> -&gt; R
 }
-</code></pre></div><h4 id="heading-1">通用数据协议</h4>
+</code></pre></div><h4 id="通用数据协议">通用数据协议</h4>
 <p>那非连续的数据怎么办呢？ Foundation 新引入的通用数据协议，分别有可变和不可变的版本：<code>DataProtocol</code> 和 <code>MutableDataProtocol</code> 。非连续数据可以通过这两个新的协议表达（但这两个协议也可以表达连续数据）。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">DataProtocol</span> : RandomAccessCollection <span style="color:#ff79c6">where</span> <span style="color:#ff79c6">Self</span>.Element == <span style="color:#8be9fd;font-style:italic">UInt8</span>, <span style="color:#ff79c6">Self</span>.SubSequence : DataProtocol {
 
@@ -318,7 +318,7 @@
 <li>GCD：<code>DispatchData</code></li>
 </ul>
 <p>以后在开发者编写数据处理的接口的时候，尽量使用遵循通用数据协议的泛型参数。</p>
-<h3 id="heading-2">压缩</h3>
+<h3 id="压缩">压缩</h3>
 <p>在 App 中，开发者有时候需要对数据进行压缩（比如对老设备优化或者资源需要上传）。Foundation 框架引入了数据压缩的接口来简化开发者的工作（截止至 beta2 版本的 Xcode，相关 API 还没提供）。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">data</span> = <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">compressed</span> = <span style="color:#ff79c6">try</span> data.compressed(using: .lzfse)
@@ -332,7 +332,7 @@
 <h2 id="units">Units</h2>
 <p><code>Unit</code> 是 Foundation 框架在 iOS 10/macOS 10.12 新增的抽象类型，用于表示现实中使用的度量单位。具体介绍可以参考这篇<a href="https://swift.gg/2016/09/22/measurements-and-units/">文章</a>。</p>
 <p>这次 <code>Unit</code> 增加了更多种常用的度量单位。</p>
-<h3 id="unitduration">时间（UnitDuration）</h3>
+<h3 id="时间unitduration">时间（UnitDuration）</h3>
 <p>时间单位增加了以下几种单位</p>
 <ul>
 <li><code>milliseconds</code>：毫秒</li>
@@ -340,12 +340,12 @@
 <li><code>nanoseconds</code>：纳秒</li>
 <li><code>picoseconds</code>：皮秒</li>
 </ul>
-<h3 id="unitfrequency">频率（UnitFrequency）</h3>
+<h3 id="频率unitfrequency">频率（UnitFrequency）</h3>
 <p>频率单位新增了一种单位</p>
 <ul>
 <li><code>framesPerSecond</code>：FPS，每秒帧数</li>
 </ul>
-<h3 id="unitinformationstorage">存储（UnitInformationStorage）</h3>
+<h3 id="存储unitinformationstorage">存储（UnitInformationStorage）</h3>
 <p>新增了储存单位的类型</p>
 <ul>
 <li>拥有 <code>bits</code>（位）、<code>bytes</code>（字节）、<code>nibbles</code>(半字节)这三种基本单位</li>
@@ -353,7 +353,7 @@
 <li>支持使用 <code>MeasurementFormatter</code> 和 <code>ByteCountFormatter</code> 进行格式化</li>
 </ul>
 <h2 id="formatter">Formatter</h2>
-<h3 id="relateivedatetimeformatter">相对日期时间格式（RelateiveDateTimeFormatter）</h3>
+<h3 id="相对日期时间格式relateivedatetimeformatter">相对日期时间格式（RelateiveDateTimeFormatter）</h3>
 <p>这个新增的类可以方便的计算出两个时间的相对时间，并返回字符描述（支持多个语言）：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">aDate</span> = <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">两</span><span style="color:#6272a4">周</span><span style="color:#6272a4">前</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">formatter</span> = RelativeDateTimeFormatter()
@@ -361,7 +361,7 @@
 
 <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">e</span><span style="color:#6272a4">n</span><span style="color:#6272a4">_</span><span style="color:#6272a4">U</span><span style="color:#6272a4">S</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">&#34;</span><span style="color:#6272a4">2</span><span style="color:#6272a4"> </span><span style="color:#6272a4">w</span><span style="color:#6272a4">e</span><span style="color:#6272a4">e</span><span style="color:#6272a4">k</span><span style="color:#6272a4">s</span><span style="color:#6272a4"> </span><span style="color:#6272a4">a</span><span style="color:#6272a4">g</span><span style="color:#6272a4">o</span><span style="color:#6272a4">&#34;</span>
 <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">z</span><span style="color:#6272a4">h</span><span style="color:#6272a4">_</span><span style="color:#6272a4">C</span><span style="color:#6272a4">N</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">&#34;</span><span style="color:#6272a4">2</span><span style="color:#6272a4"> </span><span style="color:#6272a4">周</span><span style="color:#6272a4">前</span><span style="color:#6272a4">&#34;</span>
-</code></pre></div><h3 id="listformatter">列表格式（ListFormatter）</h3>
+</code></pre></div><h3 id="列表格式listformatter">列表格式（ListFormatter）</h3>
 <p>这个新增的类可以方便的返回列表多个事物的描述：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">string</span> = ListFormatter.localizedString(byJoining: [<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">😀</span><span style="color:#f1fa8c">&#34;</span>,<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">😳</span><span style="color:#f1fa8c">&#34;</span>,<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">😢</span><span style="color:#f1fa8c">&#34;</span>])
 
@@ -378,12 +378,12 @@ listFormatter.itemFormatter = dateFormatter
 <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">e</span><span style="color:#6272a4">n</span><span style="color:#6272a4">_</span><span style="color:#6272a4">U</span><span style="color:#6272a4">S</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">&#34;</span><span style="color:#6272a4">6</span><span style="color:#6272a4">/</span><span style="color:#6272a4">7</span><span style="color:#6272a4">/</span><span style="color:#6272a4">1</span><span style="color:#6272a4">9</span><span style="color:#6272a4">,</span><span style="color:#6272a4"> </span><span style="color:#6272a4">6</span><span style="color:#6272a4">/</span><span style="color:#6272a4">1</span><span style="color:#6272a4">1</span><span style="color:#6272a4">/</span><span style="color:#6272a4">1</span><span style="color:#6272a4">9</span><span style="color:#6272a4">,</span><span style="color:#6272a4"> </span><span style="color:#6272a4">a</span><span style="color:#6272a4">n</span><span style="color:#6272a4">d</span><span style="color:#6272a4"> </span><span style="color:#6272a4">6</span><span style="color:#6272a4">/</span><span style="color:#6272a4">2</span><span style="color:#6272a4">1</span><span style="color:#6272a4">/</span><span style="color:#6272a4">1</span><span style="color:#6272a4">9</span><span style="color:#6272a4">&#34;</span>
 <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">z</span><span style="color:#6272a4">h</span><span style="color:#6272a4">_</span><span style="color:#6272a4">C</span><span style="color:#6272a4">N</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">&#34;</span><span style="color:#6272a4">2</span><span style="color:#6272a4">0</span><span style="color:#6272a4">1</span><span style="color:#6272a4">9</span><span style="color:#6272a4">/</span><span style="color:#6272a4">6</span><span style="color:#6272a4">/</span><span style="color:#6272a4">7</span><span style="color:#6272a4">、</span><span style="color:#6272a4">2</span><span style="color:#6272a4">0</span><span style="color:#6272a4">1</span><span style="color:#6272a4">9</span><span style="color:#6272a4">/</span><span style="color:#6272a4">6</span><span style="color:#6272a4">/</span><span style="color:#6272a4">1</span><span style="color:#6272a4">1</span><span style="color:#6272a4">和</span><span style="color:#6272a4">2</span><span style="color:#6272a4">0</span><span style="color:#6272a4">1</span><span style="color:#6272a4">9</span><span style="color:#6272a4">/</span><span style="color:#6272a4">6</span><span style="color:#6272a4">/</span><span style="color:#6272a4">2</span><span style="color:#6272a4">1</span><span style="color:#6272a4">&#34;</span>
 </code></pre></div><h2 id="operationqueue">OperationQueue</h2>
-<h3 id="heading-3">栅栏</h3>
+<h3 id="栅栏">栅栏</h3>
 <p>有时候我们希望在某一些任务执行完后，执行一个任务，如下图所示：</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190621193001.png" alt=""></p>
 <p>如果使用类似上图的代码进行判断，是不正确的。因为在执行判断代码和执行你需要的任务代码的中间时刻，可能有别的任务代码执行。<code>OperationQueue</code> 新增了类似 GCD 栅栏作用的 <code>addBarrierBlock</code> 方法，帮助开发者简单的完成这种需求。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190621193636.png" alt=""></p>
-<h3 id="heading-4">进度反馈</h3>
+<h3 id="进度反馈">进度反馈</h3>
 <p>有时候我们需要根据任务的完成情况来改变进度，从而改变一些 UI(如进度条)。<code>OperationQueue</code> 新增了 <code>progress</code> 属性，并支持设置总共任务数，这样就可以在任务完成时，就可以通过 <code>progress</code> 来反馈进度情况。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">queue</span> = OperationQueue()
 queue.progress.totalUnitCount = <span style="color:#bd93f9">3</span>
@@ -399,21 +399,21 @@ queue.addOperation {
 queue.addOperation {
     task()  <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">完</span><span style="color:#6272a4">成</span><span style="color:#6272a4">时</span><span style="color:#6272a4">，</span><span style="color:#6272a4">进</span><span style="color:#6272a4">度</span><span style="color:#6272a4"> </span><span style="color:#6272a4">3</span><span style="color:#6272a4">/</span><span style="color:#6272a4">3</span>
 }
-</code></pre></div><h2 id="ios--usb--smb">iOS 上的 USB 和 SMB</h2>
+</code></pre></div><h2 id="ios-上的-usb-和-smb">iOS 上的 USB 和 SMB</h2>
 <p>iOS 的文件系统开始支持 USB 和 SMB 的卷宗了。这也就意味着开发者需要开始准备支持处理其他卷宗中的文件了。</p>
 <blockquote>
 <p>SMB(Server Message Block，服务器消息块):一种网络传输协议，能在网络上共享机器上的文件等资源。也就是可以访问网络计算机的卷宗。</p>
 </blockquote>
-<h3 id="heading-5">写入操作</h3>
+<h3 id="写入操作">写入操作</h3>
 <p>因此在选择新文件的写入路径时，为了保证是原子性的安全保存，建议使用 <code>FileManager.SearchPathDirectory.itemReplacementDirectory</code> 来建立临时路径（因为固定的路径可能会不存在）。想要了解更多可参考 <a href="https://developer.apple.com/documentation/foundation/filemanager/1407693-url">Apple 官方文档</a>。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">path</span> = <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">父</span><span style="color:#6272a4">目</span><span style="color:#6272a4">录</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">url</span> = FileManager.<span style="color:#ff79c6">default</span>.url(<span style="color:#ff79c6">for</span>: .itemReplacementDirectory, <span style="color:#ff79c6">in</span>: .userDomainMask, appropriateFor: path, create: <span style="color:#ff79c6">true</span>)
-</code></pre></div><h3 id="heading-6">读取操作</h3>
+</code></pre></div><h3 id="读取操作">读取操作</h3>
 <p>因为 USB 可能被用户推出，SMB 可能因为网络连接失败而访问丢失，所以开发者要做好卷宗会整个消失的准备。所以在读取 <code>Data</code> 时，要使用 <code>Data.ReadingOptions.mappedIfSafe</code> （允许系统将文件映射到虚拟内存，只当文件存在可被移出的卷宗时生效）。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">url</span> = <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span><span style="color:#6272a4">路</span><span style="color:#6272a4">径</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">data</span> = <span style="color:#ff79c6">try</span> Data(contentsOf: url, options: .mappedIfSafe)
 </code></pre></div><p>由于访问 USB 或 SMB 上的文件会比访问设备内部的文件明显慢很多，所以建议将访问操作放到非主线程中进行。</p>
-<h3 id="heading-7">测试文件系统能力</h3>
+<h3 id="测试文件系统能力">测试文件系统能力</h3>
 <p>由于有些文件系统能力在设备内部卷宗是存在的，但在外部卷宗不一定存在。比如 NTFS 文件系统上大家都知道的克隆，但在 USB 或者 SMB 上是不存在的，所以开发者需要在使用前对文件系统的能力进行测试并处理错误。具体可以参考 <a href="https://developer.apple.com/documentation/foundation/urlresourcekey/checking_volume_storage_capacity">Apple 官方文档</a>。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">fileURL</span> = <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4"> </span><span style="color:#6272a4">文</span><span style="color:#6272a4">件</span><span style="color:#6272a4">路</span><span style="color:#6272a4">径</span>
 <span style="color:#ff79c6">do</span> {
@@ -427,7 +427,7 @@ queue.addOperation {
     print(error.localizedDescription)
 }
 </code></pre></div><p>更多具体细节可以在 <a href="https://developer.apple.com/videos/play/wwdc2019/719/">Session 719 - What’s New in File Management and Quick Look</a> 中找到。</p>
-<h2 id="foundation--swift-api-">Foundation 的 Swift API 更新</h2>
+<h2 id="foundation-的-swift-api-更新">Foundation 的 Swift API 更新</h2>
 <p>由于 Foundation 框架已经存在很久了，里面很多接口的设计还是 Objective-C 的思想。Apple 一直在改进 Foundation 框架里面的接口，使之更加 Swift 化。</p>
 <h3 id="scanner">Scanner</h3>
 <p>字符串扫描不再需要使用 Foundation 框架里的 <code>NSString</code>，可以使用 Swift 原生 <code>String</code> 类型，也不需要传入引用，更 Swift，更简单。</p>
@@ -450,14 +450,14 @@ queue.addOperation {
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">FileHandle</span> {
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">write</span>&lt;T: DataProtocol&gt;(contentsOf data: T) <span style="color:#ff79c6">throws</span> 
 }
-</code></pre></div><h2 id="heading-8">总结</h2>
+</code></pre></div><h2 id="总结">总结</h2>
 <p>Foundation 框架这次的更新还是诚意十足的，比如 diff、数据压缩、格式化、队列栅栏，都是日常开发中使用频率较高的操作。同时，Apple 也一直在努力推动废弃一些设计不合理或者不符合 Swift 思想的 API，让开发者用起来更加简单，友好，高效。</p>
-<h2 id="heading-9">延伸阅读</h2>
+<h2 id="延伸阅读">延伸阅读</h2>
 <p><a href="https://xiaozhuanlan.com/topic/8362954017">WWDC 19 专栏文章目录</a></p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>103</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>104</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

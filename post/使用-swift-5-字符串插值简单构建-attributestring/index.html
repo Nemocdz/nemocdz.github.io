@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E4%BD%BF%E7%94%A8-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC%E7%AE%80%E5%8D%95%E6%9E%84%E5%BB%BA-attributestring/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -221,16 +221,16 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#swift-5-">Swift 5 的字符串插值</a></li>
-    <li><a href="#-attributestring-">实现 AttributeString 处理</a></li>
-    <li><a href="#easytext-">EasyText 使用</a></li>
-    <li><a href="#heading">最后</a></li>
-    <li><a href="#heading-1">参考链接</a></li>
+    <li><a href="#swift-5-的字符串插值">Swift 5 的字符串插值</a></li>
+    <li><a href="#实现-attributestring-处理">实现 AttributeString 处理</a></li>
+    <li><a href="#easytext-使用">EasyText 使用</a></li>
+    <li><a href="#最后">最后</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
   </ul>
 </nav>
 
     <article class="post-content"><p>一直以来，在 Cocoa 体系里构建富文本是一件很繁琐的事情，使用 Foundation 框架里的 <code>NSAttributeString</code> 来进行构建，有着要区分可变与不可变，传入需要查阅文档的参数字典，没有类型检查等种种别扭之处。Swift 5 出现的新字符串插值特性，让处理自定义字符串字面量成为可能。</p>
-<h2 id="swift-5-">Swift 5 的字符串插值</h2>
+<h2 id="swift-5-的字符串插值">Swift 5 的字符串插值</h2>
 <p>简单来说，这个特性能让开发者自己实现对字面量中插值的解析和逻辑实现。例如：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">string</span>:CustomString = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">\(</span>num: <span style="color:#bd93f9">10</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">&#34;</span>
 </code></pre></div><p>这样的字符串字面量，开发者可以通过实现类似 <code>func appendInterpolation(num: Int)</code> 这样的方法，实现对 <code>num</code> 的处理。要实现这样的效果，大概分为以下几个步骤：</p>
@@ -240,7 +240,7 @@
 <li>插值类型自定义一到多个不同参数的 <code> func appenInterpolation(...)</code> 重载方法，并处理对应参数的逻辑</li>
 </ol>
 <p>这样通过字符串插值，理论上可以实现任意的功能，比如通过字符串构建成 SQL 操作，正则操作，生成 HTML 网页，甚至感觉可以实现一些运行时的黑科技。</p>
-<h2 id="-attributestring-">实现 AttributeString 处理</h2>
+<h2 id="实现-attributestring-处理">实现 AttributeString 处理</h2>
 <p>首先自定义类型，并先实现 <code>ExpressibleByStringLiteral</code> 用于支持字符串字面量（<code>ExpressibleByStringLiteral</code> 是 <code>ExpressibleByStringLiteral</code> 的子协议）。这样我们就可以通过字符串字面量构建一个没有任何属性的 <code>NSAttributedString</code>。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">EasyText</span> {
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">attributedString</span>: NSAttributedString
@@ -278,7 +278,7 @@
     		rawAttributedString.append(NSAttributedString(attachment: attachment))
     }
 }
-</code></pre></div><h2 id="easytext-">EasyText 使用</h2>
+</code></pre></div><h2 id="easytext-使用">EasyText 使用</h2>
 <p>笔者将 <code>NSAttributedString</code> 里的属性都使用字符串插值进行了支持，实现了一个几百行的库。使用这个库，可以做到以下面简单的方式构建 <code>NSAttributedString</code>：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">text</span>:EasyText = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">\(</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">font is 30 pt and color is yellow</span><span style="color:#f1fa8c">&#34;</span>, .font<span style="color:#f1fa8c">(</span>.systemFont<span style="color:#f1fa8c">(</span>ofSize: <span style="color:#bd93f9">20</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">)</span>, .color<span style="color:#f1fa8c">(</span>.blue<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">&#34;</span>
 
@@ -292,17 +292,17 @@ textView.attributedText = text.attributedString
 <li>支持插入图片</li>
 </ul>
 <p>更多使用方法详见 <a href="https://github.com/Nemocdz/EasyText/blob/master/Example/iOS/EasyTextExample/ViewController.swift">例子</a>。</p>
-<h2 id="heading">最后</h2>
+<h2 id="最后">最后</h2>
 <p><a href="https://github.com/Nemocdz/EasyText">EasyText</a> 已开源，可以通过 Cocoapods、Cathrage、SwiftPackageManager 进行集成。</p>
 <p>如果您觉得有帮助，不妨给个 star 鼓励一下，有任何问题欢迎评论。</p>
-<h2 id="heading-1">参考链接</h2>
+<h2 id="参考链接">参考链接</h2>
 <p><a href="https://nemocdz.github.io/post/%E8%AF%91-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC-%E7%AE%80%E4%BB%8B/">[译] Swift 5 字符串插值-简介</a></p>
 <p><a href="https://nemocdz.github.io/post/%E8%AF%91-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC-attributedstrings/">[译] Swift 5 字符串插值-AttributedStrings</a></p>
 <p><a href="https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md">Fix <code>ExpressibleByStringInterpolation</code></a></p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>121</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>122</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

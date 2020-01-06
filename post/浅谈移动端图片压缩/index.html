@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E6%B5%85%E8%B0%88%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -221,56 +221,56 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#heading">图片格式基础</a>
+    <li><a href="#图片格式基础">图片格式基础</a>
       <ul>
-        <li><a href="#heading-1">点阵图&矢量图</a></li>
-        <li><a href="#heading-2">颜色</a></li>
-        <li><a href="#heading-3">移动端常用图片格式</a></li>
-        <li><a href="#heading-6">移动端系统图片处理架构</a></li>
+        <li><a href="#点阵图矢量图">点阵图&矢量图</a></li>
+        <li><a href="#颜色">颜色</a></li>
+        <li><a href="#移动端常用图片格式">移动端常用图片格式</a></li>
+        <li><a href="#移动端系统图片处理架构">移动端系统图片处理架构</a></li>
       </ul>
     </li>
-    <li><a href="#ios--imageio">iOS 的 ImageIO</a>
+    <li><a href="#ios-的-imageio">iOS 的 ImageIO</a>
       <ul>
-        <li><a href="#heading-7">解码</a></li>
-        <li><a href="#heading-8">编码</a></li>
+        <li><a href="#解码">解码</a></li>
+        <li><a href="#编码">编码</a></li>
       </ul>
     </li>
-    <li><a href="#heading-9">压缩思路分析</a>
+    <li><a href="#压缩思路分析">压缩思路分析</a>
       <ul>
-        <li><a href="#heading-10">判断图片格式</a></li>
-        <li><a href="#heading-11">色彩深度改变</a></li>
-        <li><a href="#jpg-">JPG 的压缩系数改变</a></li>
-        <li><a href="#gif-">GIF 的压缩</a></li>
-        <li><a href="#heading-12">分辨率压缩</a></li>
+        <li><a href="#判断图片格式">判断图片格式</a></li>
+        <li><a href="#色彩深度改变">色彩深度改变</a></li>
+        <li><a href="#jpg-的压缩系数改变">JPG 的压缩系数改变</a></li>
+        <li><a href="#gif-的压缩">GIF 的压缩</a></li>
+        <li><a href="#分辨率压缩">分辨率压缩</a></li>
       </ul>
     </li>
-    <li><a href="#heading-13">限制大小的压缩方式</a>
+    <li><a href="#限制大小的压缩方式">限制大小的压缩方式</a>
       <ul>
         <li><a href="#ios-5">iOS</a></li>
         <li><a href="#android-3">Android</a></li>
       </ul>
     </li>
-    <li><a href="#heading-14">最后</a></li>
-    <li><a href="#heading-15">参考链接</a></li>
+    <li><a href="#最后">最后</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
   </ul>
 </nav>
 
     <article class="post-content"><p>在 App 中，如果分享、发布、上传功能涉及到图片，必不可少会对图片进行一定程度的压缩。笔者最近在公司项目中恰好重构了双端（iOS&amp;Android）的图片压缩模块。本文会非常基础的讲解一些图片压缩的方式和思路。</p>
-<h2 id="heading">图片格式基础</h2>
-<h3 id="heading-1">点阵图&amp;矢量图</h3>
+<h2 id="图片格式基础">图片格式基础</h2>
+<h3 id="点阵图矢量图">点阵图&amp;矢量图</h3>
 <ul>
 <li>点阵图：也叫位图。用像素为单位，像素保存颜色信息，排列像素实现显示。</li>
 <li>矢量图：记录元素形状和颜色的算法，显示时展示算法运算的结果。</li>
 </ul>
-<h3 id="heading-2">颜色</h3>
+<h3 id="颜色">颜色</h3>
 <p>表示颜色时，有两种形式，一种为索引色（Index Color），一种为直接色（Direct Color）</p>
 <ul>
 <li>索引色：用一个数字索引代表一种颜色，在图像信息中存储数字到颜色的映射关系表（调色盘 Palette）。每个像素保存该像素颜色对应的数字索引。一般调色盘只能存储有限种类的颜色，通常为 256 种。所以每个像素的数字占用 1 字节（8 bit）大小。</li>
 <li>直接色：用四个数字来代表一种颜色，数字分别对应颜色中红色，绿色，蓝色，透明度（RGBA）。每个像素保存这四个纬度的信息来代表该像素的颜色。根据色彩深度（每个像素存储颜色信息的 bit 数不同），最多可以支持的颜色种类也不同，常见的有 8 位（R3+G3+B2）、16 位（R5+G6+B5）、24 位（R8+G8+B8）、32 位（A8+R8+G8+B8）。所以每个像素占用 1~4 字节大小。</li>
 </ul>
-<h3 id="heading-3">移动端常用图片格式</h3>
+<h3 id="移动端常用图片格式">移动端常用图片格式</h3>
 <p>图片格式中一般分为静态图和动态图</p>
-<h4 id="heading-4">静态图</h4>
+<h4 id="静态图">静态图</h4>
 <ul>
 <li>
 <p>JPG：是支持 JPEG（ 一种有损压缩方法）标准中最常用的图片格式。采用点阵图。常见的是使用 24 位的颜色深度的直接色（不支持透明）。</p>
@@ -306,7 +306,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="heading-5">动态图</h4>
+<h4 id="动态图">动态图</h4>
 <ul>
 <li>
 <p>GIF：是支持无损压缩的图片格式。采用点阵图。使用索引色，并有 1 位透明度通道（透明与否）。</p>
@@ -367,34 +367,34 @@
 </tbody>
 </table>
 <p>而由于一般项目需要兼容三端（iOS、Android、Web 的关系），最简单就是支持 JPG、PNG、GIF 这三种通用的格式。所以本文暂不讨论其余图片格式的压缩。</p>
-<h3 id="heading-6">移动端系统图片处理架构</h3>
+<h3 id="移动端系统图片处理架构">移动端系统图片处理架构</h3>
 <p>根据我的了解，画了一下 iOS&amp;Android 图片处理架构。iOS 这边，也是可以直接调用底层一点的框架的。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fz5abubavwj31pg0u0gsk.jpg" alt="屏幕快照 2019-01-13 下午9.37.00"></p>
-<h2 id="ios--imageio">iOS 的 ImageIO</h2>
+<h2 id="ios-的-imageio">iOS 的 ImageIO</h2>
 <p>本文 iOS 端处理图片主要用 ImageIO 框架，使用的原因主要是静态图动态图 API 调用保持一致，且不会因为 UIImage 转换时会丢失一部分数据的信息。</p>
 <p>ImageIO 主要提供了图片编解码功能，封装了一套 C 语言接口。在 Swift 中不需要对 C 对象进行内存管理，会比 Objective-C 中使用方便不少，但 api 结果返回都是 Optional（实际上非空），需要用 <code>guard</code>/<code>if</code>，或者 <code>!</code>进行转换。</p>
-<h3 id="heading-7">解码</h3>
-<h4 id="1--cgimagesource">1. 创建 CGImageSource</h4>
+<h3 id="解码">解码</h3>
+<h4 id="1-创建-cgimagesource">1. 创建 CGImageSource</h4>
 <p><code>CGImageSource</code> 相当于 ImageIO 数据来源的抽象类。通用的使用方式 <code>CGImageSourceCreateWithDataProvider:</code> 需要提供一个 DataProvider，可以指定文件、URL、Data 等输入。也有通过传入 CFData 来进行创建的便捷方法 <code>CGImageSourceCreateWithData:</code>。方法的第二个参数 options 传入一个字典进行配置。根据 Apple 在 WWDC 2018 上的 <a href="https://developer.apple.com/videos/play/wwdc2018/219/">Image and Graphics Best Practices</a> 上的例子，当不需要解码仅需要创建 <code>CGImageSource</code> 的时候，应该将 <code>kCGImageSourceShouldCache</code> 设为 false。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fz7jhd3o50j30yg0fnwlf.jpg" alt="11994763-6f25c32bd4d3b427"></p>
-<h4 id="2--cgimage">2. 解码得到 CGImage</h4>
+<h4 id="2-解码得到-cgimage">2. 解码得到 CGImage</h4>
 <p>用 <code>CGImageSourceCreateImageAtIndex:</code> 或者 <code>CGImageSourceCreateThumbnailAtIndex:</code> 来获取生成的 <code>CGImage</code>，这里参数的 Index 就是第几帧图片，静态图传入 0 即可。</p>
-<h3 id="heading-8">编码</h3>
-<h4 id="1--cgimagedestination">1. 创建 CGImageDestination</h4>
+<h3 id="编码">编码</h3>
+<h4 id="1-创建-cgimagedestination">1. 创建 CGImageDestination</h4>
 <p><code>CGImageDestination</code> 相当于 ImageIO 数据输出的抽象类。通用的使用方式 <code>CGImageDestinationCreateWithDataConsumer:</code> 需要提供一个 DataConsumer，可以置顶 URL、Data 等输入。也有通过传入 CFData 来进行创建的便捷方法 <code>CGImageDestinationCreateWithData:</code>，输出会写入到传入的 Data 中。方法还需要提供图片类型，图片帧数。</p>
-<h4 id="2--cgimage-1">2. 添加 CGImage</h4>
+<h4 id="2-添加-cgimage">2. 添加 CGImage</h4>
 <p>添加 <code>CGImage</code> 使用 <code>CGImageDestinationAddImage:</code> 方法，动图的话，按顺序多次调用就行了。</p>
 <p>而且还有一个特别的 <code>CGImageDestinationAddImageFromSource:</code> 方法，添加的其实是一个 <code>CGImageSource</code>，有什么用呢，通过 options 参数，达到改变图像设置的作用。比如改变 JPG 的压缩参数，用上这个功能后，就不需要转换成更顶层的对象（比如 <code>UIImage</code>），减少了转换时的编解码的损耗，达到性能更优的目的。</p>
-<h4 id="3-">3. 进行编码</h4>
+<h4 id="3-进行编码">3. 进行编码</h4>
 <p>调用 <code>CGImageDestinationFinalize:</code> ，表示开始编码，完成后会返回一个 <code>Bool</code> 值，并将数据写入 <code>CGImageDestination</code> 提供的 DataConsumer 中。</p>
-<h2 id="heading-9">压缩思路分析</h2>
+<h2 id="压缩思路分析">压缩思路分析</h2>
 <p>位图占用的空间大小，其实就是像素数量 x 单像素占用空间 x 帧数。所以减小图片空间大小，其实就从这三个方向下手。其中单像素占用空间，在直接色的情况下，主要和色彩深度相关。在实际项目中，改变色彩深度会导致图片颜色和原图没有保持完全一致，笔者并不建议对色彩深度进行更改。而像素数量就是平时非常常用的图片分辨率缩放。除此之外，JPG 格式还有特有的通过指定压缩系数来进行有损压缩。</p>
 <ul>
 <li>JPG：压缩系数 + 分辨率缩放 + 色彩深度降低</li>
 <li>PNG： 分辨率缩放 + 降低色彩深度</li>
 <li>GIF：减少帧数 + 每帧分辨率缩放 + 减小调色盘</li>
 </ul>
-<h3 id="heading-10">判断图片格式</h3>
+<h3 id="判断图片格式">判断图片格式</h3>
 <p>后缀扩展名来判断其实并不保险，真实的判断方式应该是通过文件头里的信息进行判断。</p>
 <table>
 <thead>
@@ -478,7 +478,7 @@
     }
     <span style="color:#ff79c6">return</span> imageFormat
 }
-</code></pre></div><h3 id="heading-11">色彩深度改变</h3>
+</code></pre></div><h3 id="色彩深度改变">色彩深度改变</h3>
 <p>实际上，减少深度一般也就是从 32 位减少至 16 位，但颜色的改变并一定能让产品、用户、设计接受，所以笔者在压缩过程并没有实际使用改变色彩深度的方法，仅仅研究了做法。</p>
 <h4 id="ios-1">iOS</h4>
 <p>在 iOS 中，改变色彩深度，原生的 <code>CGImage</code> 库中，没有简单的方法。需要自己设置参数，重新生成 <code>CGImage</code>。</p>
@@ -665,7 +665,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="jpg-">JPG 的压缩系数改变</h3>
+<h3 id="jpg-的压缩系数改变">JPG 的压缩系数改变</h3>
 <p>JPG 的压缩算法相当复杂，以至于主流使用均是用 <a href="http://libjpeg.sourceforge.net/">libjpeg</a> 这个广泛的库进行编解码（在 Android 7.0 上开始使用性能更好的 <a href="https://libjpeg-turbo.org/">libjpeg-turbo</a>，iOS 则是用 Apple 自己开发未开源的 AppleJPEG）。而在 iOS 和 Android 上，都有 Api 输入压缩系数，来压缩 JPG。但具体压缩系数如何影响压缩大小，笔者并未深究。这里只能简单给出使用方法。</p>
 <h4 id="ios-2">iOS</h4>
 <p>iOS 里面压缩系数为 0-1 之间的数值，据说 iOS 相册中采用的压缩系数是 0.9。同时，png 不支持有损压缩，所以 <code>kCGImageDestinationLossyCompressionQuality</code> 这个参数是无效。</p>
@@ -690,7 +690,7 @@
 <span style="color:#ff79c6">val</span> image = BitmapFactory.decodeByteArray(rawData,<span style="color:#bd93f9">0</span>,rawData.count())
 image.compress(Bitmap.CompressFormat.JPEG, compression, outputStream)
 resultData = outputStream.toByteArray()
-</code></pre></div><h3 id="gif-">GIF 的压缩</h3>
+</code></pre></div><h3 id="gif-的压缩">GIF 的压缩</h3>
 <p>GIF 压缩上有很多种思路。参考开源项目 <a href="https://github.com/kohler/gifsicle">gifsicle</a> 和 <a href="https://github.com/ImageMagick/ImageMagick">ImageMagick</a> 中的做法，大概有以下几种。</p>
 <ol>
 <li>
@@ -951,7 +951,7 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
         }
         <span style="color:#ff79c6">return</span> resultData
     }
-</code></pre></div><h3 id="heading-12">分辨率压缩</h3>
+</code></pre></div><h3 id="分辨率压缩">分辨率压缩</h3>
 <p>这个是最常用的，而且也比较简单。</p>
 <h4 id="ios-4">iOS</h4>
 <p>iOS 的 ImageIO 提供了 <code>CGImageSourceCreateThumbnailAtIndex</code> 的 API 来创建缩放的缩略图。在 options 中添加需要缩放的长边参数即可。</p>
@@ -1054,7 +1054,7 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
             <span style="color:#ff79c6">return</span> resultData
         }
     }
-</code></pre></div><h2 id="heading-13">限制大小的压缩方式</h2>
+</code></pre></div><h2 id="限制大小的压缩方式">限制大小的压缩方式</h2>
 <p>也就是将前面讲的方法综合起来，笔者这边给出一种方案，没有对色彩进行改变，JPG 先用二分法减少最多 6 次的压缩系数，GIF 先抽帧，抽帧间隔参考前文，最后采用逼近目标大小缩小分辨率。</p>
 <h3 id="ios-5">iOS</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">同</span><span style="color:#6272a4">步</span><span style="color:#6272a4">压</span><span style="color:#6272a4">缩</span><span style="color:#6272a4">图</span><span style="color:#6272a4">片</span><span style="color:#6272a4">到</span><span style="color:#6272a4">指</span><span style="color:#6272a4">定</span><span style="color:#6272a4">文</span><span style="color:#6272a4">件</span><span style="color:#6272a4">大</span><span style="color:#6272a4">小</span>
@@ -1204,9 +1204,9 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
         <span style="color:#ff79c6">return</span> resultData
     }
 </code></pre></div><p>注意在异步线程中使用，毕竟是耗时操作。</p>
-<h2 id="heading-14">最后</h2>
+<h2 id="最后">最后</h2>
 <p>所有代码均封装成文件在 <a href="https://github.com/Nemocdz/ImageCompress-iOS">iOS</a> 和 <a href="https://github.com/Nemocdz/ImageCompress-Android">Android</a> 中了，如有错误和建议，欢迎指出。</p>
-<h2 id="heading-15">参考链接</h2>
+<h2 id="参考链接">参考链接</h2>
 <ul>
 <li>
 <p><a href="https://www.secaibi.com/tools/2013/08/06/%E6%97%A0%E6%8D%9F%E5%8E%8B%E7%BC%A9-vs-%E6%9C%89%E6%8D%9F%E5%8E%8B%E7%BC%A9-vs-%E6%8D%9F%E5%A4%9A%E5%B0%91/">无损压缩 vs 有损压缩 vs 损多少</a></p>
@@ -1236,7 +1236,7 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>349</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>350</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

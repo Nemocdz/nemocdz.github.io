@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-10-%E9%80%9A%E7%9F%A5%E6%A1%86%E6%9E%B6-usernotifications-%E5%AD%A6%E4%B9%A0%E5%8F%8A%E5%85%BC%E5%AE%B9%E7%AC%94%E8%AE%B0/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -221,25 +221,25 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#1">1.申请权限/注册配置</a>
+    <li><a href="#1申请权限注册配置">1.申请权限/注册配置</a>
       <ul>
-        <li><a href="#-category-">配置 Category 并注册</a></li>
+        <li><a href="#配置-category-并注册">配置 Category 并注册</a></li>
       </ul>
     </li>
-    <li><a href="#2">2.发送本地通知</a>
+    <li><a href="#2发送本地通知">2.发送本地通知</a>
       <ul>
         <li><a href="#unnotificationcontent">UNNotificationContent</a></li>
         <li><a href="#unnotificationtrigger">UNNotificationTrigger</a></li>
         <li><a href="#unnotificationrequest">UNNotificationRequest</a></li>
       </ul>
     </li>
-    <li><a href="#3">3.展示和响应</a>
+    <li><a href="#3展示和响应">3.展示和响应</a>
       <ul>
-        <li><a href="#heading">收到通知</a></li>
-        <li><a href="#heading-1">点击通知本身</a></li>
-        <li><a href="#heading-2">点击自定义按钮</a></li>
-        <li><a href="#heading-3">通知的收到</a></li>
-        <li><a href="#heading-4">点击通知或按钮的操作响应</a></li>
+        <li><a href="#收到通知">收到通知</a></li>
+        <li><a href="#点击通知本身">点击通知本身</a></li>
+        <li><a href="#点击自定义按钮">点击自定义按钮</a></li>
+        <li><a href="#通知的收到">通知的收到</a></li>
+        <li><a href="#点击通知或按钮的操作响应">点击通知或按钮的操作响应</a></li>
       </ul>
     </li>
     <li><a href="#4app-extension">4.App Extension</a>
@@ -249,12 +249,12 @@
       </ul>
     </li>
     <li><a href="#ios-11-new">iOS 11 New</a></li>
-    <li><a href="#heading-5">总结</a>
+    <li><a href="#总结">总结</a>
       <ul>
         <li></li>
       </ul>
     </li>
-    <li><a href="#heading-6">参考链接</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
   </ul>
 </nav>
 
@@ -267,7 +267,7 @@
 <li>App Extension</li>
 </ul>
 <p>在 UserNotifications 框架中，最核心的类是 <strong>UNUserNotificationCenter</strong>，这个类的是这三项功能的管理类，通过注入到 currentNotificationCenter 进行对消息的管理。而在之前，大部分操作的管理者 <code>UIApplication</code> 的单例。</p>
-<h2 id="1">1.申请权限/注册配置</h2>
+<h2 id="1申请权限注册配置">1.申请权限/注册配置</h2>
 <p>在新框架中，将申请权限和注册配置拆分为两个 API，使得职责更加分明。先看旧框架的实现。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">UIUserNotificationType types <span style="color:#ff79c6">=</span> ...<span style="color:#6272a4">//通知可显示的样式
 </span><span style="color:#6272a4"></span>
@@ -291,7 +291,7 @@ UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span st
   ....
 }
 </code></pre></div><p>获取操作被放在 <code>AppDelegate</code> 的回调中，如果按照新框架的设计，应该会被设计成一个带 callBack 的 API。所以笔者猜测沿用旧设计的原因是，在以后，获取 token 的操作不一定由发起请求后产生，也许可能会有多种情况下产生获取操作，也可能 token 会过期可以进行更新，重置操作。所以 delegate 的集中式管理更加拥有拓展性，当然也有可能这个 API 忘记迁移哈哈。</p>
-<h3 id="-category-">配置 Category 并注册</h3>
+<h3 id="配置-category-并注册">配置 Category 并注册</h3>
 <p>对于 Category 的作用，上文已经有介绍，而 Category 中目前主要的功能，是对应一组按钮操作。</p>
 <p>Category 的使用分四步</p>
 <ol>
@@ -340,7 +340,7 @@ UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span st
 
 - (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">getNotificationSettingsWithCompletionHandler:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)(UNNotificationSettings <span style="color:#ff79c6">*</span>settings))<span style="color:#8be9fd;font-style:italic">completionHandler</span>;
 </code></pre></div><p>而对于按钮的操作响应，将在第三部分响应通知中介绍。</p>
-<h2 id="2">2.发送本地通知</h2>
+<h2 id="2发送本地通知">2.发送本地通知</h2>
 <p>在 iOS 10 以前，本地通知的类用的是 <code>UILocalNotification</code>。而在 <code>UserNotifications</code> 框架中，将本地通知和远程通知统一起来，然后将通知拆分成 request=content（内容）+trigger（触发器）的模式，十分像网络请求的思路。这样设计的好处是对于远程通知和本地通知对于响应的处理得到统一，同时也不会像以前一样，将本地特有的功能随意堆砌在本地通知类中，而是通过差异化配置类去进行注入。</p>
 <h3 id="unnotificationcontent">UNNotificationContent</h3>
 <p>新的通知内容类，有可变子类。同时有以下新功能</p>
@@ -381,7 +381,7 @@ UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span st
 - (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">getDeliveredNotificationsWithCompletionHandler:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)(NSArray<span style="color:#ff79c6">&lt;</span>UNNotification <span style="color:#ff79c6">*</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">*</span>notifications))<span style="color:#8be9fd;font-style:italic">completionHandler</span>;<span style="color:#6272a4">//获取已展示通知
 </span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">removeDeliveredNotificationsWithIdentifiers:</span>(NSArray<span style="color:#ff79c6">&lt;</span>NSString <span style="color:#ff79c6">*</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">identifiers</span>;<span style="color:#6272a4">//从通知中心中移除已展示通知
 </span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">removeAllDeliveredNotifications</span>;<span style="color:#6272a4">//移除所有通知中心里的通知
-</span></code></pre></div><h2 id="3">3.展示和响应</h2>
+</span></code></pre></div><h2 id="3展示和响应">3.展示和响应</h2>
 <p>在旧框架里面，这部分 API 是最为混乱的部分。一共有 1..2&hellip;..7 个 delegate&hellip;&hellip;而且之中有的还有取代关系，也就是有其中一个另一个不执行&hellip;&hellip;</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">application:</span>(UIApplication <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">application</span> <span style="color:#50fa7b">didReceiveRemoteNotification:</span>(NSDictionary <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">userInfo</span>;<span style="color:#6272a4">//前台收到远程通知
 </span><span style="color:#6272a4"></span>
@@ -402,14 +402,14 @@ UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span st
 <li>点击通知本身</li>
 <li>点击通知的自定义按钮</li>
 </ul>
-<h3 id="heading">收到通知</h3>
+<h3 id="收到通知">收到通知</h3>
 <p>在触发本地通知时，App 并不会被唤醒，所以本地只有前台时才有回调。</p>
 <ul>
 <li>本地+前台-<code>didReceiveLocalNotification</code></li>
 <li>远程+前台-<code>didReceiveRemoteNotification</code> 和  <code>didReceiveRemoteNotification:fetchCompletionHandler</code> 若有后面则只执行后面那个</li>
 <li>远程+后台-唤醒并执行 <code>didReceiveRemoteNotification:fetchCompletionHandler</code></li>
 </ul>
-<h3 id="heading-1">点击通知本身</h3>
+<h3 id="点击通知本身">点击通知本身</h3>
 <ul>
 <li>
 <p>本地+App 存活：<code>didReceiveLocalNotification</code></p>
@@ -424,14 +424,14 @@ UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span st
 <p>远程+App 未存活：<code>didReceiveRemoteNotification:fetchCompletionHandler</code> 有则执行，无则 <code>-(BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions</code>，其中 lanchOptions 中 <code>UIApplicationLaunchOptionsRemoteNotificationKey</code> 为通知的 userInfo</p>
 </li>
 </ul>
-<h3 id="heading-2">点击自定义按钮</h3>
+<h3 id="点击自定义按钮">点击自定义按钮</h3>
 <ul>
 <li>iOS 9 <code>handleActionWithIdentifier</code>，有 responseInfo 后缀的优先调，无则调用无后缀的</li>
 <li>iOS 8 调用无后缀的</li>
 </ul>
 <p>整理完感觉就是，乱，还涉及到 lauchOptions 等无关 API，APi 之间还会覆盖，还有一些不是收到和响应都会调。</p>
 <p>而新框架单纯拆分为收到消息+点击事件响应，且不再在 API 层面区分远程与本地通知，使对待通知的路径变得统一。</p>
-<h3 id="heading-3">通知的收到</h3>
+<h3 id="通知的收到">通知的收到</h3>
 <p>在前台的时候，收到不管是本地还是远程通知都会被新的 delegate 接管。以前的通知框架，在前台收到通知时，默认是不展示（没有横幅等）的。而新 delegate 可以在前台收到通知后，展示前，做一些处理，包括以什么形式展示，已经做一些自定义操作。而这个 Delegate 只有 App 在前台才会执行。因为在后台 App 收到通知时，通知不会唤醒 App（不是唤起），而 App 可能是被杀死的，所以这个 Delegate 没有被赋值，所以统一只在 App 在前台时才执行。而将新的 API 对应旧的 API 转换起来的话，就是下面的代码。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">userNotificationCenter:</span>(UNUserNotificationCenter <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">center</span> <span style="color:#50fa7b">willPresentNotification:</span>(UNNotification <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">notification</span> <span style="color:#50fa7b">withCompletionHandler:</span>(<span style="color:#8be9fd">void</span> (<span style="color:#ff79c6">^</span>)(UNNotificationPresentationOptions))<span style="color:#8be9fd;font-style:italic">completionHandler</span>{
     <span style="color:#8be9fd">BOOL</span> isRemote <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
@@ -456,7 +456,7 @@ UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span st
     completionHandler(UNNotificationPresentationOptionBadge<span style="color:#ff79c6">|</span>UNNotificationPresentationOptionAlert);<span style="color:#6272a4">//决定前台展示形式
 </span><span style="color:#6272a4"></span>}
 </code></pre></div><p>而 CompletionHandler 里传入希望通知支持的类型（横幅、红点、声音），在自定义操作完成后执行这个 block 就可。当然可以在这里为不同消息定制不同的支持类型。</p>
-<h3 id="heading-4">点击通知或按钮的操作响应</h3>
+<h3 id="点击通知或按钮的操作响应">点击通知或按钮的操作响应</h3>
 <p>新框架中，点击操作和收到通知的 API 的响应终于被区分开了。而且点击操作也包含点击通知本身，以及有了点清除关闭通知的事件响应。拆分点击和收到的 API 是很好的，因为点击通知和按钮时，实际上会将 App 唤起到前台，一般这时候需要进行页面跳转，界面状态恢复等等，这些在收到通知时是没有必要的。</p>
 <p>新的 API 和就的转换的话就是下面这样</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">userNotificationCenter:</span>(UNUserNotificationCenter <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">center</span> <span style="color:#50fa7b">didReceiveNotificationResponse:</span>(UNNotificationResponse <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">response</span> <span style="color:#50fa7b">withCompletionHandler:</span>(<span style="color:#8be9fd">void</span> (<span style="color:#ff79c6">^</span>)())<span style="color:#8be9fd;font-style:italic">completionHandler</span>{
@@ -557,8 +557,8 @@ UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span st
 <h2 id="ios-11-new">iOS 11 New</h2>
 <p>都是一些小改动，增加一些细分化API 等，可以在苹果官方文档找到。</p>
 <p><a href="https://developer.apple.com/documentation/usernotifications?changes=latest_major&amp;language=objc">https://developer.apple.com/documentation/usernotifications?changes=latest_major&amp;language=objc</a></p>
-<h2 id="heading-5">总结</h2>
-<h4 id="ios-10-">iOS 10 新通知框架和旧框架差异性</h4>
+<h2 id="总结">总结</h2>
+<h4 id="ios-10-新通知框架和旧框架差异性">iOS 10 新通知框架和旧框架差异性</h4>
 <table>
 <thead>
 <tr>
@@ -740,7 +740,7 @@ UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span st
 <p>PPPS：此文又名《iOS 10 通知框架，你真的懂么？》</p>
 <p>所有源码和 <a href="https://github.com/Nemocdz/iOS10NotificationTest">Demo</a>
 如果您觉得有帮助,不妨给个 star 鼓励一下,欢迎关注&amp;交流</p>
-<h2 id="heading-6">参考链接</h2>
+<h2 id="参考链接">参考链接</h2>
 <ul>
 <li>
 <p><a href="https://onevcat.com/2016/08/notification/">活久见的重构 - iOS 10 UserNotifications 框架解析</a></p>
@@ -752,7 +752,7 @@ UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span st
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>890</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>891</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

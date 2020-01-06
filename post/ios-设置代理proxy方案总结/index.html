@@ -53,7 +53,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86proxy%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93/">
@@ -68,7 +68,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -225,24 +225,24 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#-urlprotocol">使用 URLProtocol</a>
+    <li><a href="#使用-urlprotocol">使用 URLProtocol</a>
       <ul>
-        <li><a href="#1--urlprotocol">1. 自定义 URLProtocol</a></li>
-        <li><a href="#2--urlsessionmanager">2. 自定义 URLSessionManager</a></li>
-        <li><a href="#3-wkwebview-">3. WKWebView 的特别处理</a></li>
+        <li><a href="#1-自定义-urlprotocol">1. 自定义 URLProtocol</a></li>
+        <li><a href="#2-自定义-urlsessionmanager">2. 自定义 URLSessionManager</a></li>
+        <li><a href="#3-wkwebview-的特别处理">3. WKWebView 的特别处理</a></li>
       </ul>
     </li>
-    <li><a href="#-wkweburlschemehandlerios-122-">使用 WKWebURLSchemeHandler（iOS 12.2 该方法已失效）</a></li>
-    <li><a href="#-networkextension">使用 NetworkExtension</a></li>
-    <li><a href="#heading">最后</a></li>
-    <li><a href="#heading-1">参考链接</a></li>
+    <li><a href="#使用-wkweburlschemehandlerios-122-该方法已失效">使用 WKWebURLSchemeHandler（iOS 12.2 该方法已失效）</a></li>
+    <li><a href="#使用-networkextension">使用 NetworkExtension</a></li>
+    <li><a href="#最后">最后</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
   </ul>
 </nav>
 
     <article class="post-content"><p>最近因为项目需要，需要在打开某个网址时设置 HTTP 代理。所以做了相关的技术方案调研，并总结下来。</p>
 <p>在 WebView 设置 Proxy 的方式，就是对请求进行拦截并重新处理。还有一种全局的实现方案，使用 iOS 9 以后才有的 NetworkExtension，但是这种方案会在用户看来像是个微皮恩的 App，不友好且太重了。</p>
-<h2 id="-urlprotocol">使用 URLProtocol</h2>
-<h3 id="1--urlprotocol">1. 自定义 URLProtocol</h3>
+<h2 id="使用-urlprotocol">使用 URLProtocol</h2>
+<h3 id="1-自定义-urlprotocol">1. 自定义 URLProtocol</h3>
 <p><code>URLProtocol</code> 是拦截可以拦截网络请求的抽象类，实际使用时需要自定义其子类使用。</p>
 <p>使用时，需要将子类 <code>URLProtocol</code> 的类型进行注册。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">isRegistered</span> = <span style="color:#ff79c6">false</span>
@@ -348,7 +348,7 @@
         client?.urlProtocol(<span style="color:#ff79c6">self</span>, didFailWithError: error)
     }
 </code></pre></div><p>到此完整的 <code>URLProtocol</code> 定义完了。但是里面有一点不好的地方是，每次发送一个请求时就会新建一个 <code>URLSession</code>，非常低效。苹果也不推荐这种做法，而且某些情况下由于请求未完全发送完还有可能造成内存泄露等问题。因此，我们需要共享一个 Session，并仅在代理的 Host 或者 Port 发生改变时，才重新生成新的实例。笔者模仿 iOS 上网络框架 <a href="https://github.com/Alamofire/Alamofire/">Alamofire</a> 的做法，简单写了一个 SessionManager 进行管理。</p>
-<h3 id="2--urlsessionmanager">2. 自定义 URLSessionManager</h3>
+<h3 id="2-自定义-urlsessionmanager">2. 自定义 URLSessionManager</h3>
 <p>主要分两个类</p>
 <ul>
 <li>ProxySessionManager：负责持有 <code>URLSession</code>，对 Session 是否需要重新生成或者共享进行管理</li>
@@ -551,7 +551,7 @@ fileprivate <span style="color:#8be9fd;font-style:italic">let</span> <span style
     }
 }
 </code></pre></div><p>这样，只要调用 ProxySessionManager 或者直接使用 Alamofire 进行网络请求，就可以做到 <code>URLSession</code> 尽量少创建了。苹果官方也有一个 <a href="https://developer.apple.com/library/archive/samplecode/CustomHTTPProtocol/Introduction/Intro.html">SampleProject</a> 讲自定义 URLProtocol，做法也是用类似用一个单例进行管理。</p>
-<h3 id="3-wkwebview-">3. WKWebView 的特别处理</h3>
+<h3 id="3-wkwebview-的特别处理">3. WKWebView 的特别处理</h3>
 <p>和 <code>UIWebView</code> 不一样，<code>WKWebView</code> 中的 http&amp;https 的 Scheme 默认不走 URLPrococol。需要让 <code>WKWebView</code> 支持 <code>NSURLProtocol</code> 的话，需要调用苹果私用方法，让 <code>WKWebview</code> 放行 http&amp;https 的 Scheme。</p>
 <p>通过 Webkit 的源码发现，需要调用的私有方法如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">[WKBrowsingContextController <span style="color:#8be9fd;font-style:italic">registerSchemeForCustomProtocol</span>:<span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">http</span><span style="color:#f1fa8c">&#34;</span>];
@@ -599,7 +599,7 @@ fileprivate <span style="color:#8be9fd;font-style:italic">let</span> <span style
 </ul>
 </li>
 </ul>
-<h2 id="-wkweburlschemehandlerios-122-">使用 WKWebURLSchemeHandler（iOS 12.2 该方法已失效）</h2>
+<h2 id="使用-wkweburlschemehandlerios-122-该方法已失效">使用 WKWebURLSchemeHandler（iOS 12.2 该方法已失效）</h2>
 <p>iOS 11 以上，苹果为 <code>WKWebView</code> 增加了 <code>WKURLSchemeHandler</code> 协议，可以为自定义的 Scheme 增加遵循 <code>WKURLSchemeHandler</code> 协议的处理。其中可以在 start 和 stop 的时机增加自己的处理。</p>
 <p>遵循协议中的两个方法</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">webView</span>(<span style="color:#ff79c6">_</span> webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
@@ -662,7 +662,7 @@ config.setURLSchemeHandler(HttpProxyHandler(), forURLScheme: <span style="color:
 <li>仅支持 iOS 11 以上</li>
 <li>官方不支持非自定义 Scheme，非正规设置方法可能出现其他问题</li>
 </ul>
-<h2 id="-networkextension">使用 NetworkExtension</h2>
+<h2 id="使用-networkextension">使用 NetworkExtension</h2>
 <p>使用 NetworkExtension，需要开发者额外申请权限（证书）。</p>
 <p>可以建立全局 VPN，影响全局流量，可以获取全局 Wifi 列表，抓包，等和网络相关的功能。</p>
 <p>其中可以使用第三方库 <a href="https://github.com/zhuhaow/NEKit">NEKit</a>，进行开发，已经处理了大部分坑和进行封装。</p>
@@ -677,9 +677,9 @@ config.setURLSchemeHandler(HttpProxyHandler(), forURLScheme: <span style="color:
 <li>仅支持 iOS 9 以上（iOS 8 上仅支持系统自带的 IPSec 和 IKEv2 协议的 VPN）</li>
 <li>原生接口实现复杂，第三方库 NEKit 坑不知道有多少</li>
 </ul>
-<h2 id="heading">最后</h2>
+<h2 id="最后">最后</h2>
 <p>总结了相关代码在 <a href="https://github.com/Nemocdz/iOSHttpProxyDemo">Demo</a> 里，可以直接使用 HttpProxyProtocol，HttpProxyHandler，HttpProxySessionManager。</p>
-<h2 id="heading-1">参考链接</h2>
+<h2 id="参考链接">参考链接</h2>
 <ul>
 <li>
 <p><a href="https://www.jianshu.com/p/4012c8a4bee9">iOS App 通过代理服务器访问网络</a></p>
@@ -712,7 +712,7 @@ config.setURLSchemeHandler(HttpProxyHandler(), forURLScheme: <span style="color:
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>465</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>467</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

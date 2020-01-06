@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BF-snapseed-%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -221,12 +221,12 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#1-tableview">1.功能按钮的 Tableview</a></li>
-    <li><a href="#2-collecionview">2.展示照片的 Collecionview</a></li>
-    <li><a href="#3">3.透明图层（用于实现空白处点击消失）</a></li>
-    <li><a href="#4">4.收尾&封装</a></li>
-    <li><a href="#5">5.使用方法</a></li>
-    <li><a href="#heading">最后</a></li>
+    <li><a href="#1功能按钮的-tableview">1.功能按钮的 Tableview</a></li>
+    <li><a href="#2展示照片的-collecionview">2.展示照片的 Collecionview</a></li>
+    <li><a href="#3透明图层用于实现空白处点击消失">3.透明图层（用于实现空白处点击消失）</a></li>
+    <li><a href="#4收尾封装">4.收尾&封装</a></li>
+    <li><a href="#5使用方法">5.使用方法</a></li>
+    <li><a href="#最后">最后</a></li>
   </ul>
 </nav>
 
@@ -235,7 +235,7 @@
 <img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006y8mN6gw1fae4wlsm89g30ku1121gx.gif" alt="">
 实现原理从界面说起。
 界面可以分解为一个背景图层用于点击关闭（空白处点击消失），一个横向可滚动的 Collectionview 用于显示图库里的图片，一个 Tableview 用于存放功能按钮。</p>
-<h2 id="1-tableview">1.功能按钮的 Tableview</h2>
+<h2 id="1功能按钮的-tableview">1.功能按钮的 Tableview</h2>
 <p>先从简单的 Tableview说起，从小模块到大模块应该是以下方面。</p>
 <ul>
 <li>自定义数组数据对象 item 方便调整按钮的文字图片数量功能</li>
@@ -400,7 +400,7 @@
     }
     <span style="color:#ff79c6">return</span> _actionView;
 }
-</code></pre></div><h2 id="2-collecionview">2.展示照片的 Collecionview</h2>
+</code></pre></div><h2 id="2展示照片的-collecionview">2.展示照片的 Collecionview</h2>
 <p>Collecionview 的实现思路和 Tableview 类似</p>
 <ul>
 <li>自定义 Collectionview 的 cell 实现样式调整</li>
@@ -529,7 +529,7 @@
     <span style="color:#ff79c6">return</span> _photosDataSource;
 }
 </code></pre></div><hr>
-<h2 id="3">3.透明图层（用于实现空白处点击消失）</h2>
+<h2 id="3透明图层用于实现空白处点击消失">3.透明图层（用于实现空白处点击消失）</h2>
 <p>比较简单，增加一个 tap 手势即可，直接上代码（记得实现 <code>UIGestureRecognizerDelegate</code>）</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (UIView <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">backgroundView</span>{
     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>_backgroundView){
@@ -542,7 +542,7 @@
     }
     <span style="color:#ff79c6">return</span> _backgroundView;
 }
-</code></pre></div><h2 id="4">4.收尾&amp;封装</h2>
+</code></pre></div><h2 id="4收尾封装">4.收尾&amp;封装</h2>
 <p>定义一个 block 用于回调传照片
 <code>typedef void (^CDZImageResultBlock) (UIImage *image);</code>
 一个内部block属性
@@ -558,7 +558,7 @@
     <span style="color:#8be9fd;font-style:italic">self</span>.block(<span style="color:#8be9fd;font-style:italic">self</span>.resultImage);
     NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">ImagePicker已销毁</span><span style="color:#f1fa8c">&#34;</span>);
 }
-</code></pre></div><h2 id="5">5.使用方法</h2>
+</code></pre></div><h2 id="5使用方法">5.使用方法</h2>
 <p>将 CDZImagePicker 文件夹拖入项目</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">CDZImagePickerViewController <span style="color:#ff79c6">*</span>imagePickerController <span style="color:#ff79c6">=</span> [[CDZImagePickerViewController alloc]init];
 [imagePickerController <span style="color:#8be9fd;font-style:italic">openPickerInController</span>:<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">withImageBlock</span>:<span style="color:#ff79c6">^</span>(UIImage <span style="color:#ff79c6">*</span>image) {
@@ -575,7 +575,7 @@
                       <span style="color:#8be9fd;font-style:italic">nil</span>];
 </code></pre></div><p>效果就和 Snapseed 很像啦！
 <img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006y8mN6gw1fae4wt2mk0g30ku1124oj.gif" alt=""></p>
-<h2 id="heading">最后</h2>
+<h2 id="最后">最后</h2>
 <p>所有源码和 <a href="https://github.com/Nemocdz/CDZImagePickerDemo">Demo</a>
 虽然不是什么很难的轮子，但希望能分享给有需要的人。</p>
 <p>关于后续的处理照片变更和获取相册权限另写了一篇 <a href="https://nemocdz.github.io/My-blog/post/ios%E4%B8%AD%E6%9D%83%E9%99%90%E5%B0%81%E8%A3%85%E5%B0%8Ftips%E5%92%8C%E7%9B%91%E6%B5%8B%E7%9B%B8%E5%86%8C%E5%8F%98%E5%8C%96/">文章</a>，欢迎阅读。</p>
@@ -583,7 +583,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1126</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1128</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

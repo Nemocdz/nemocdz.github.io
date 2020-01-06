@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/afnetworking-%E7%9A%84%E6%BC%82%E4%BA%AE%E7%BB%86%E8%8A%82/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -221,25 +221,25 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#1dispatch-once--c-">1.Dispatch_once 方法声明 C 语言变量方法</a></li>
-    <li><a href="#2-keypath">2.使用反射机制来确定 KeyPath</a></li>
-    <li><a href="#3---unused--delegate-">3.用 __unused 修饰符修饰不用的 Delegate 中的变量</a></li>
-    <li><a href="#4-cocoa-">4.避开 Cocoa 类族的坑</a></li>
-    <li><a href="#5-method-swizzling">5.增加方法到类中再进行 Method Swizzling</a></li>
-    <li><a href="#6-gcd-">6.用 GCD 的同步方法来封装代码块</a></li>
-    <li><a href="#7-respondstoselector--delegate-">7.重写 respondsToSelector 更改 Delegate 实现的判断依据</a></li>
-    <li><a href="#8dynamic--settergetter">8.@dynamic 关键字实现默认调用父类 setter&getter</a></li>
-    <li><a href="#9kvo--context-">9.KVO 用 Context 区分父类与子类</a></li>
-    <li><a href="#10-gcd-">10.用 GCD 实现同步属性</a></li>
-    <li><a href="#11-nsstream-">11.对 NSStream 类的操作</a></li>
-    <li><a href="#12category-">12.Category 中实现属性懒加载</a></li>
-    <li><a href="#13-nonull--nullable">13.头文件明确声明 Nonull 和 Nullable</a></li>
-    <li><a href="#heading">最后</a></li>
+    <li><a href="#1dispatch_once-方法声明-c-语言变量方法">1.Dispatch_once 方法声明 C 语言变量方法</a></li>
+    <li><a href="#2使用反射机制来确定-keypath">2.使用反射机制来确定 KeyPath</a></li>
+    <li><a href="#3用-__unused-修饰符修饰不用的-delegate-中的变量">3.用 __unused 修饰符修饰不用的 Delegate 中的变量</a></li>
+    <li><a href="#4避开-cocoa-类族的坑">4.避开 Cocoa 类族的坑</a></li>
+    <li><a href="#5增加方法到类中再进行-method-swizzling">5.增加方法到类中再进行 Method Swizzling</a></li>
+    <li><a href="#6用-gcd-的同步方法来封装代码块">6.用 GCD 的同步方法来封装代码块</a></li>
+    <li><a href="#7重写-respondstoselector-更改-delegate-实现的判断依据">7.重写 respondsToSelector 更改 Delegate 实现的判断依据</a></li>
+    <li><a href="#8dynamic-关键字实现默认调用父类-settergetter">8.@dynamic 关键字实现默认调用父类 setter&getter</a></li>
+    <li><a href="#9kvo-用-context-区分父类与子类">9.KVO 用 Context 区分父类与子类</a></li>
+    <li><a href="#10用-gcd-实现同步属性">10.用 GCD 实现同步属性</a></li>
+    <li><a href="#11对-nsstream-类的操作">11.对 NSStream 类的操作</a></li>
+    <li><a href="#12category-中实现属性懒加载">12.Category 中实现属性懒加载</a></li>
+    <li><a href="#13头文件明确声明-nonull-和-nullable">13.头文件明确声明 Nonull 和 Nullable</a></li>
+    <li><a href="#最后">最后</a></li>
   </ul>
 </nav>
 
     <article class="post-content"><p>最近重读了 AFNetworking 源码，发现很多以前读不懂，也不知道为啥这么写的代码慢慢读懂了。过程中被 AFNetworking 作者的对细节，舒服，整洁的追求所折服。把一些个人觉得写的漂亮的用法总结下来，本文不在于探讨 AFNetworking 源码的具体业余实现，尽量从代码本身和设计角度进行总结（源码解析推荐 <a href="http://www.jianshu.com/p/856f0e26279d">AFNetworking 到底做了什么？</a> 这篇文章）。</p>
-<h2 id="1dispatch-once--c-">1.Dispatch_once 方法声明 C 语言变量方法</h2>
+<h2 id="1dispatch_once-方法声明-c-语言变量方法">1.Dispatch_once 方法声明 C 语言变量方法</h2>
 <p>感觉很像 OC 的 <code>property</code> 的 getter 方法，一种 C 语言懒加载的感觉，static 修饰符意味只在该编译单元可见（对应 OC 就是 .m 文件），配合单例，只会被执行一次。类似于 <code>if(!object)</code> 的感觉。</p>
 <p>如下面例子创建了一个 queue 的方法，调用后返回是同一个变量。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#ff79c6">static</span> dispatch_queue_t <span style="color:#50fa7b">url_session_manager_creation_queue</span>() {
@@ -251,20 +251,20 @@
 
     <span style="color:#ff79c6">return</span> af_url_session_manager_creation_queue;
 }
-</code></pre></div><h2 id="2-keypath">2.使用反射机制来确定 KeyPath</h2>
+</code></pre></div><h2 id="2使用反射机制来确定-keypath">2.使用反射机制来确定 KeyPath</h2>
 <p>在 KVO 中，我们一般会观察通过一个属性，而 <code>@property</code> 其实是一个语法糖，属性=ivar（实例对象）+setter 方法+getter 方法。而 getter 方法名就是属性的名字。利用 OC 中的反射机制 <code>NSStringFromSelector</code> 方法获取属性的 getter 方法的字符串，其实就是属性的 KeyPath。这样的 KeyPath 不容易写错，也容易跳转去看属性的定义。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"> [progress <span style="color:#8be9fd;font-style:italic">addObserver</span>:<span style="color:#8be9fd;font-style:italic">self</span>
             <span style="color:#8be9fd;font-style:italic">forKeyPath</span>:NSStringFromSelector(<span style="color:#ff79c6">@selector</span>(fractionCompleted))
                       <span style="color:#8be9fd;font-style:italic">options</span>:NSKeyValueObservingOptionNew
                       <span style="color:#8be9fd;font-style:italic">context</span>:<span style="color:#8be9fd;font-style:italic">NULL</span>];
-</code></pre></div><h2 id="3---unused--delegate-">3.用 __unused 修饰符修饰不用的 Delegate 中的变量</h2>
+</code></pre></div><h2 id="3用-__unused-修饰符修饰不用的-delegate-中的变量">3.用 __unused 修饰符修饰不用的 Delegate 中的变量</h2>
 <p>一般协议 delegate 声明时，会把 delegate 弱持有者作为第一个参数传入 delegate 方法中，可是有时候 delegate 的实现者并不关心或不区分 delegate 对象是谁持有的。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">URLSession:</span>(__unused NSURLSession <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">session</span>
               <span style="color:#50fa7b">task:</span>(NSURLSessionTask <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">task</span>
 <span style="color:#50fa7b">didCompleteWithError:</span>(NSError <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">error</span>{
     <span style="color:#6272a4">//......
 </span><span style="color:#6272a4"></span>}
-</code></pre></div><h2 id="4-cocoa-">4.避开 Cocoa 类族的坑</h2>
+</code></pre></div><h2 id="4避开-cocoa-类族的坑">4.避开 Cocoa 类族的坑</h2>
 <p>在 Foudation 框架中，某些类其实是类族，比如 <code>NSArray</code>，生成的某一个 <code>NSArray</code> 对象实际上可能是 <code>NSArray</code> 的子类。所以用 Method Swizzling 的去 Hook 一些系统类方法的时候，要注意某些类实际上是子类，甚至不同系统版本继承链和方法实现都不一样（不一定调用了父类的同名方法）。在 <code>AFURLSessionManager</code> 中为了 Hook 系统的 <code>NSURLSessionTask</code> 的 <code>resume</code> 和 <code>suspend</code> 的方法实现中加上通知。由于 <code>NSURLSessionTask</code> 是一个类族，且 iOS 7 和 iOS 8 上 <code>Task</code> 类的继承链不同，于是有了以下严谨的代码。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">if</span> (NSClassFromString(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">NSURLSessionTask</span><span style="color:#f1fa8c">&#34;</span>)) {
         NSURLSessionConfiguration <span style="color:#ff79c6">*</span>configuration <span style="color:#ff79c6">=</span> [NSURLSessionConfiguration ephemeralSessionConfiguration];
@@ -291,7 +291,7 @@
         [localDataTask cancel];
         [session finishTasksAndInvalidate];
 }
-</code></pre></div><h2 id="5-method-swizzling">5.增加方法到类中再进行 Method Swizzling</h2>
+</code></pre></div><h2 id="5增加方法到类中再进行-method-swizzling">5.增加方法到类中再进行 Method Swizzling</h2>
 <p>同时为了避免直接换带来多次交换把原来方法弄乱的问题，是先将需要换的方法加到需要替换类中（相当于生成一个副本），然后让那个类里面的副本方法去交换，也就是不影响原来拥有这个方法的类里的方法。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">+ (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">swizzleResumeAndSuspendMethodForClass:</span>(<span style="color:#8be9fd">Class</span>)<span style="color:#8be9fd;font-style:italic">theClass</span> {
     Method afResumeMethod <span style="color:#ff79c6">=</span> class_getInstanceMethod(<span style="color:#8be9fd;font-style:italic">self</span>, <span style="color:#ff79c6">@selector</span>(af_resume));
@@ -305,7 +305,7 @@
         af_swizzleSelector(theClass, <span style="color:#ff79c6">@selector</span>(suspend), <span style="color:#ff79c6">@selector</span>(af_suspend));
     }
 }
-</code></pre></div><h2 id="6-gcd-">6.用 GCD 的同步方法来封装代码块</h2>
+</code></pre></div><h2 id="6用-gcd-的同步方法来封装代码块">6.用 GCD 的同步方法来封装代码块</h2>
 <p>iOS 8 以下 <code>dataTaskWithRequest</code> 是生成的 task 时是并发执行的，造成 taskIdentifer 偶发不唯一，解决办法是使这个方法串行执行，同时用 Dispatch_sync 等待结果返回。调用时封装了一个 C 方法。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"> url_session_manager_create_task_safely(<span style="color:#ff79c6">^</span>{
         downloadTask <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span>.session <span style="color:#8be9fd;font-style:italic">downloadTaskWithRequest</span>:request];
@@ -328,7 +328,7 @@
         block();
     }
 }
-</code></pre></div><h2 id="7-respondstoselector--delegate-">7.重写 respondsToSelector 更改 Delegate 实现的判断依据</h2>
+</code></pre></div><h2 id="7重写-respondstoselector-更改-delegate-实现的判断依据">7.重写 respondsToSelector 更改 Delegate 实现的判断依据</h2>
 <p>AFNetworking 内部的 <code>AFURLSessionManager</code> 将所有 <code>NSURLSessionDelegate</code> 的方法都接管了并转换成外界 Set 进来的 Block 实现，其中有一些转换并没有做任何处理，单纯转换成 Block。所以是否响应这个 Delegate 方法其实是 block 是否存在，于是内部就重写了 <code>respondsToSelector</code>。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">BOOL</span>)<span style="color:#50fa7b">respondsToSelector:</span>(<span style="color:#8be9fd">SEL</span>)<span style="color:#8be9fd;font-style:italic">selector</span> {
     <span style="color:#ff79c6">if</span> (selector <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> <span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">URLSession</span>:<span style="color:#8be9fd;font-style:italic">task</span>:<span style="color:#8be9fd;font-style:italic">willPerformHTTPRedirection</span>:<span style="color:#8be9fd;font-style:italic">newRequest</span>:<span style="color:#8be9fd;font-style:italic">completionHandler</span>:)) {
@@ -343,7 +343,7 @@
 
     <span style="color:#ff79c6">return</span> [[<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#ff79c6">class</span>] <span style="color:#8be9fd;font-style:italic">instancesRespondToSelector</span>:selector];
 }
-</code></pre></div><h2 id="8dynamic--settergetter">8.@dynamic 关键字实现默认调用父类 setter&amp;getter</h2>
+</code></pre></div><h2 id="8dynamic-关键字实现默认调用父类-settergetter">8.@dynamic 关键字实现默认调用父类 setter&amp;getter</h2>
 <p>当子类重新声明一个父类的属性时，其实默认合成了 setter&amp;getter 并覆盖了父类的默认实现。对于想子类声明属性却希望默认调用父类属性的 setter&amp;getter，可以用 <code>@dynamic</code> 关键字。</p>
 <p><code>AFHTTPSessionManger</code> 是 <code>AFURLSessionManger</code> 的子类，也声明了 securityPolicy 属性并重写其 setter 方法，但希望 getter 方法调用父类的。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@dynamic</span> securityPolicy;
@@ -361,7 +361,7 @@
     }
     [<span style="color:#8be9fd;font-style:italic">super</span> <span style="color:#8be9fd;font-style:italic">setSecurityPolicy</span>:securityPolicy];
 }
-</code></pre></div><h2 id="9kvo--context-">9.KVO 用 Context 区分父类与子类</h2>
+</code></pre></div><h2 id="9kvo-用-context-区分父类与子类">9.KVO 用 Context 区分父类与子类</h2>
 <p>KVO 中的 API <code>- (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(nullable void *)context</code> 总是在 dealloc 方法中配合 <code>- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath context:(nullable void *)context</code> 成对使用来移除观察者。但如果父类和子类都同时观察一个 keyPath，那么容易导致 addObserver 和 removeObserver 的个数不匹配（子类未调用父类的 addObserver 方法但调用了父类的 dealloc），导致重复调用 remove 同一个 keyPath 而 Crash。所以加上 context 作为类别唯一标识才是比较安全的做法。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">dealloc</span> {
     <span style="color:#ff79c6">for</span> (NSString <span style="color:#ff79c6">*</span>keyPath <span style="color:#ff79c6">in</span> AFHTTPRequestSerializerObservedKeyPaths()) {
@@ -370,7 +370,7 @@
         }
     }
 }
-</code></pre></div><h2 id="10-gcd-">10.用 GCD 实现同步属性</h2>
+</code></pre></div><h2 id="10用-gcd-实现同步属性">10.用 GCD 实现同步属性</h2>
 <p>实现某个属性值 setter 方法和 getter 方法的同步除了用 <code>NSLock</code> 或者 <code>@synchronized</code> 关键字加锁外，可以使用在并发队列里 setter 配合 <code>dispatch_barrier_async</code> 加上 getter 配合 dispatch_sync 实现。这样读取是同步并发的，写入是在没有读取都完成后，同步执行的，并且性能比加锁更好。<code>AFHTTPRequestSerializer</code> 里的 <code>HTTPHeaderField</code> 就是这样的。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">setValue:</span>(NSString <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">value</span>
 <span style="color:#50fa7b">forHTTPHeaderField:</span>(NSString <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">field</span>
@@ -387,7 +387,7 @@
     });
     <span style="color:#ff79c6">return</span> value;
 }
-</code></pre></div><h2 id="11-nsstream-">11.对 NSStream 类的操作</h2>
+</code></pre></div><h2 id="11对-nsstream-类的操作">11.对 NSStream 类的操作</h2>
 <p><code>AFHTTPRequestSerizlizer</code> 进行 Multipart 协议支持时，使用了 <code>NSStream</code> 对象。</p>
 <p>一般使用方法是</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#6272a4">//创建流对象
@@ -421,7 +421,7 @@
 <span style="color:#6272a4">//关闭流-----引用计数 -2
 </span><span style="color:#6272a4"></span>[stream close];
 </code></pre></div><p>也就是说 <code>open</code> 和 <code>close</code> 对引用计数的影响不是一对的，从一定程度上解释只调用 <code>close</code> 也可以达到 <code>removeFromRunLoop</code> 的原因，个人猜测 <code>close</code> 和 <code>removeFromRunLoop</code> 调用任意一个都可以。顺便提一句 <code>AFMultipartBodyStream</code> 还对 <code>NSStreamStauts</code> 一些只读属性改成读写的，并自定义了所有流的方法。</p>
-<h2 id="12category-">12.Category 中实现属性懒加载</h2>
+<h2 id="12category-中实现属性懒加载">12.Category 中实现属性懒加载</h2>
 <p>使用了 OC 的关联对象，先获取判断是否为空，不然就生成并关联上。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (AFRefreshControlNotificationObserver <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">af_notificationObserver</span> {
     AFRefreshControlNotificationObserver <span style="color:#ff79c6">*</span>notificationObserver <span style="color:#ff79c6">=</span> objc_getAssociatedObject(<span style="color:#8be9fd;font-style:italic">self</span>, <span style="color:#ff79c6">@selector</span>(af_notificationObserver));
@@ -431,7 +431,7 @@
     }
     <span style="color:#ff79c6">return</span> notificationObserver;
 }
-</code></pre></div><h2 id="13-nonull--nullable">13.头文件明确声明 Nonull 和 Nullable</h2>
+</code></pre></div><h2 id="13头文件明确声明-nonull-和-nullable">13.头文件明确声明 Nonull 和 Nullable</h2>
 <p>自从支持 Swift 后，和 Swift 中的 ? 和 ! 对应，OC 引入了 <code>Nonull</code> 和 <code>Nullable</code> 关键字，当然对每个方法参数和属性声明关键字是很大工作量的，这时我们可以用一对系统宏包含在最前和最后，中间的默认关键字就是 <code>Nonull</code> 了，这时候针对 <code>Nullable</code> 的参数或属性进行补充就可以了。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#6272a4">//.h
 </span><span style="color:#6272a4"></span>NS_ASSUME_NONNULL_BEGIN
@@ -441,12 +441,12 @@
 <span style="color:#6272a4">//...
 </span><span style="color:#6272a4"></span>
 NS_ASSUME_NONNULL_END
-</code></pre></div><h2 id="heading">最后</h2>
+</code></pre></div><h2 id="最后">最后</h2>
 <p>AFNetworking 是一份写得十分严谨漂亮的源码，其中对 KVO&amp;KVC，GCD，Block，关联对象的运用十分巧妙且准确，同时接口的封装，代码的划分也很恰当。阅读之后对于代码规范又有了新的理解。</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>871</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>873</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

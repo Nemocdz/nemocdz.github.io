@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E7%94%A8-cocoapods-%E7%AE%A1%E7%90%86%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%A1%AB%E5%9D%91%E4%B9%8B%E6%97%85/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -221,17 +221,17 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#-pod--target--xctest">让 Pod 的 target 类型变为 XCTest</a></li>
-    <li><a href="#-pod-">让 Pod 识别到别的静态库</a></li>
-    <li><a href="#-test-">曲线救国解决 Test 库编译问题</a></li>
-    <li><a href="#heading">最后</a></li>
-    <li><a href="#heading-1">参考链接</a></li>
+    <li><a href="#让-pod-的-target-类型变为-xctest">让 Pod 的 target 类型变为 XCTest</a></li>
+    <li><a href="#让-pod-识别到别的静态库">让 Pod 识别到别的静态库</a></li>
+    <li><a href="#曲线救国解决-test-库编译问题">曲线救国解决 Test 库编译问题</a></li>
+    <li><a href="#最后">最后</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
   </ul>
 </nav>
 
     <article class="post-content"><p>Cocoapods 1.3.0 版本之后官方已经支持用 pod 集成单元测试，详情看 <a href="https://guides.cocoapods.org/using/test-specs.html">官方指南</a>，此篇文章只针对当时 1.0.0 版本下的情况，仅做保存记录。**</p>
 <p>上周接到了个需求，老大要我把项目代码里某个库覆盖上单元测试。而那个库没 Demo，平时都是集成在工程里开发的。为啥没有 Demo，因为那个库依赖很重，说是个库，实际只是把代码用 Cocoapods 拆分罢了……平时开发的时候，大家都是把库集成在主工程里运行。我想，单测写在主工程的 target 里，这样会显得很杂，给人感觉是给整个工程做单元测试。那能不能弄一个 Pod，专门把单测代码写在里面呢，既能 git 管理，又可以分类管理。殊不知，这个过程，坑如此多。</p>
-<h2 id="-pod--target--xctest">让 Pod 的 target 类型变为 XCTest</h2>
+<h2 id="让-pod-的-target-类型变为-xctest">让 Pod 的 target 类型变为 XCTest</h2>
 <p>像往常一样我在命令行里，敲下一个熟悉的命令</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">pod lib create UnitTestPod
 </code></pre></div><p>经过简单的四个问题后，一个 Pod 生成了。</p>
@@ -331,7 +331,7 @@
 </code></pre></div><p>就是对 installer 的 pod_project 这个 project 对象的 targerts 数组每一个执行一个循环，当找到我们需要的 target 时，改变 target 的类型。<code>puts</code> 是 ruby 里的 log，相当于 <code>NSLog</code>，<code>printf</code>。</p>
 <p>好了，重新 pod install，可以发现，target 已经变成了 test 的 type 了，而 Xcode 里的 test 栏也有了库里的 Test 了。<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgt6s3rj30ea070mxj.jpg" alt="屏幕快照 2017-04-13 01.18.45"></p>
 <p>但这个时候，我们是无法引入并识别其它第三方库的方法的，也找不到其它第三方库的符号表。</p>
-<h2 id="-pod-">让 Pod 识别到别的静态库</h2>
+<h2 id="让-pod-识别到别的静态库">让 Pod 识别到别的静态库</h2>
 <p>这个时候，我们其它普通静态库的方法，在 podspec 里写上 <code>s.dependency 'CDZPicker'</code> 某个库，再次 pod install。这次，IDE 识别了，再次运行 test，发现编译报错了，找不到符号表。如下图：</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgnopmsj30uo05q769.jpg" alt="屏幕快照 2017-04-13 01.26.59"></p>
 <p>同时可以发现，实际上运行 test 的时候，把依赖的库编译了一遍。也就是说，现在这个 test 的 target 没办法找到编译的产物（.o）。而在 Cocoapods 里生成的主工程的 target 里，为啥就能找到第三方库的编译后产物呢？先讲讲正常引用静态库的因素，一个是告诉 Xcode 去哪里找，也就是 Target 里 Building Setting 里的 Library SearchPaths，里面指定了找编译产物的路径，另一个是告诉 Xcode，要链接的静态库的名字，也就是 Building Setting 里的 Other Linker Flags 里用 -l &ldquo;静态库编译产物名（去掉前面 lib）&ldquo;标识。查看其 BuildingSetting，发现其两个决定的因素，都被 Cocoapods 配置好了，也就是 target xxx do 里做的。</p>
@@ -353,17 +353,17 @@
 </code></pre></div><p>就好了。重新 pod install 一下，写上单元测试代码，点击 test，OK，一切顺利。</p>
 <p>等等，点击主工程的 Run，好像跑不起来了……</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgu5x1nj30xq03eab6.jpg" alt="屏幕快照 2017-04-13 02.05.31"></p>
-<h2 id="-test-">曲线救国解决 Test 库编译问题</h2>
+<h2 id="曲线救国解决-test-库编译问题">曲线救国解决 Test 库编译问题</h2>
 <p>看看报错，找不到库的编译产物。思考了一下，应该是因为 Test 的 target 比较特殊，并不会编译自己并产生编译产物。而记得刚才主工程的 Other Linker Flag 吗，里面因为 Cocoapods 认为这个库是个静态库，是有编译产物的且要链接的，所以有&rdquo;-l'UnitTestPod&rsquo;&quot;。去掉之后，果然就可以编译成功了。</p>
 <p>但是这样不够优雅，每次 Pod install 之后，难道都要这样删掉吗？</p>
 <p>这时我想起 Podfile 里一个参数 configurations，一般我们会指定例如 <code>:configurations =&gt; ['Debug']</code> 这样来说明这个库在 Debug 下才被编译并链接进主工程。既然这样 Release 模式下就不会被链接，我们就可以利用这个特性，新建一个没用的 Configuration，让 Podfile 指定就可以了。在 Project 的 Info 里新建一个 Test 的 Configuration，并在 Podfile 里的 Pod 指定 <code>:configurations =&gt; ['Test']</code>。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgvz3jgj31ac0dcdhs.jpg" alt="屏幕快照 2017-04-13 02.23.54"></p>
 <p>重新 Pod install，可以看到 Debug 的 Other Linker Flag 里已经没有 &ldquo;-l'UnitTestPod&rsquo;&rdquo; 来指定链接 Pod 了。编译自然也就成功了。</p>
-<h2 id="heading">最后</h2>
+<h2 id="最后">最后</h2>
 <p>最后的结果是，因为我们工程里有很多预编译的库，而预编译的库通过我们公司的一套方案来设置，可以根据每个人的设置，可以选择源码或预编译，而生成的编译产物预编译的有一个前缀。因为没办法确定每个人某个库的依赖的库是否是预编译的，所以静态库的名字是不确定的，可能是有前缀可能没有，和每个人开发环境有关。在 podspec 里也没办法通过“-l‘静态库编译产物名’”来链接到正确的编译产物，也就没办法用这种方式进行下去管理单元测试。没想到最后填坑的结果，却和公司另一套别的方案冲突了。虽然有些难过，但是在研究这个问题的几天里，我一个完全没看过 Ruby 也不了解链接，Cocoapods 也是按着例子写的小白，开始到了解一些 Ruby，Cocoapods 做了什么，Bulding Setting，XCConfig，静态库怎么被链接的知识，还是感觉很开心的。</p>
 <p>所有源码和 <a href="https://github.com/Nemocdz/UnitTestPodDemo">Demo</a>
 如果您觉得有帮助,不妨给个 star 鼓励一下,欢迎关注&amp;交流</p>
-<h2 id="heading-1">参考链接</h2>
+<h2 id="参考链接">参考链接</h2>
 <ul>
 <li><a href="https://bestswifter.com/cocoapods/">细聊 Cocoapods 与 Xcode 工程配置 </a></li>
 <li><a href="http://draveness.me/cocoapods.html">CocoaPods都做了什么</a></li>
@@ -373,7 +373,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>996</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>998</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

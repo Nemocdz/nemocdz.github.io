@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/tableview-%E5%92%8C-collectionview-%E9%80%9A%E7%94%A8-datasource-%E5%92%8C-cell/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -221,16 +221,16 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#-datasource">打造一个通用性更强的 DataSource</a></li>
-    <li><a href="#heading">使用方法</a></li>
-    <li><a href="#collecitonviewdatasource-">CollecitonViewDatasource 其实也类似</a></li>
-    <li><a href="#heading-1">最后</a></li>
+    <li><a href="#打造一个通用性更强的-datasource">打造一个通用性更强的 DataSource</a></li>
+    <li><a href="#使用方法">使用方法</a></li>
+    <li><a href="#collecitonviewdatasource-其实也类似">CollecitonViewDatasource 其实也类似</a></li>
+    <li><a href="#最后">最后</a></li>
   </ul>
 </nav>
 
     <article class="post-content"><p>刚进公司不到一个月，接到一个需求，把一个项目的界面改一下。看了项目里的视图，耦合性强，没有复用，改起 UI 来很费劲。新的界面是个列表视图，就寻思怎么写出一个后面接手的人改起 UI 不那么费劲的 Tableview，顺便把项目里老的 CollectionView 也进行了类比，偷偷进行了重构。毕竟 UI 总是改来改去的，而常用的 Tableview 和 Collecitonview 更是应该让其扩展性更好，复用性更强。</p>
 <p>先从 Tableview 讲起，Tableview 都很熟悉，一般就是由 datasource，delegate，cell，cellitem 这几部分组成。</p>
-<h2 id="-datasource">打造一个通用性更强的 DataSource</h2>
+<h2 id="打造一个通用性更强的-datasource">打造一个通用性更强的 DataSource</h2>
 <p>新建一个 <code>NSObject</code> 的子类，命名为 CDZTableDataSource，并遵循  <code>UITableViewDataSource</code>  协议。对于 datasource 来说，必须实现的方法是 <code>-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section</code>  和 <code>-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</code>。</p>
 <p>先看看第一个方法，返回每个 section 的 row 的数目，这个数字怎么来呢，就是 section 里的数据条数。如果不实现 optional 方法 <code>- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView</code> 的话，默认只有一个 section。所以我们首先要确定的就是 section 的数目，所以对应的，我们应该有 Section 的 Model。新建一个 <code>NSObject</code> 的子类，命名为 CDZSectionObject。那么这个 Section 应该有些什么属性呢？对于一个 Section 对象来说，应该持有一个 row 对应的 Model 的数组，这样就可以确定每个 section 的 row 的数量了。可能还有一些 sectionHeader 是数据等等。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">copy</span>) NSString <span style="color:#ff79c6">*</span>headerTitle;
@@ -310,7 +310,7 @@
     <span style="color:#ff79c6">return</span> cell;
 }
 </code></pre></div><p>到此 DataSource 就完成了。</p>
-<h2 id="heading">使用方法</h2>
+<h2 id="使用方法">使用方法</h2>
 <p>让自定义的 cell 遵守 CDZTableCell 协议，内部实现 setItem 方法去配置 View。一些老的 cell 也可以简单的遵守协议并把以前配置视图的方法写到 setItem 方法里就可以了。协议比继承耦合性更低些，即加即用。</p>
 <p>让 Tableview 的 Datasouce 指定为一个 CDZTabeDataSource，并设置 item 对应的 cell 类型就可以。更换 cell 和 item 只要重新建立关系即可，达到了 Datasource 的复用和拓展性。对于各种 Tableview，就不用重复写 Datasource 的代码了。例子如 Demo：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (CGFloat)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">heightForRowAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>{
@@ -336,7 +336,7 @@
     }
     <span style="color:#ff79c6">return</span> _tableDataSource;
 }
-</code></pre></div><h2 id="collecitonviewdatasource-">CollecitonViewDatasource 其实也类似</h2>
+</code></pre></div><h2 id="collecitonviewdatasource-其实也类似">CollecitonViewDatasource 其实也类似</h2>
 <p>区别在于 collecitonview 的 cell 要注册，所以 cellForRow 方法有所不同</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (UICollectionViewCell <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">collectionView:</span>(UICollectionView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">collectionView</span> <span style="color:#50fa7b">cellForItemAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>{
     <span style="color:#8be9fd">Class</span> cellClass <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">collectionView</span>:collectionView <span style="color:#8be9fd;font-style:italic">cellClassForRowAtIndexPath</span>:indexPath];
@@ -347,14 +347,14 @@
     <span style="color:#ff79c6">return</span> cell;
 }
 </code></pre></div><p>其它基本类似，且 Collectionview 和 Tableview 还可以共用一个 sectionobject。</p>
-<h2 id="heading-1">最后</h2>
+<h2 id="最后">最后</h2>
 <p>所有源码和 <a href="https://github.com/Nemocdz/CDZDataSourceDemo">Demo</a>
 工作里，我们经常会因为赶需求而做一些复制粘贴。但也别忘了多思考如何复用，如何类比，虽然花掉现在一些时间，却会在日后的重构，修改，别人的修改上带来很多便利。</p>
 <p>如果您觉得有帮助,不妨给个 star 鼓励一下,欢迎关注&amp;交流</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1015</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1016</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

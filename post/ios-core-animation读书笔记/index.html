@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-core-animation%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -225,26 +225,26 @@
 	<nav id="TableOfContents">
   <ul>
     <li><a href="#calayer">CALayer</a></li>
-    <li><a href="#heading">图形和几何</a></li>
-    <li><a href="#heading-1">视觉效果</a>
+    <li><a href="#图形和几何">图形和几何</a></li>
+    <li><a href="#视觉效果">视觉效果</a>
       <ul>
-        <li><a href="#heading-2">拉伸过滤</a></li>
+        <li><a href="#拉伸过滤">拉伸过滤</a></li>
       </ul>
     </li>
     <li><a href="#cashapelayer">CAShapeLayer</a></li>
     <li><a href="#catextlayer">CATextLayer</a></li>
-    <li><a href="#heading-3">性能调优</a>
+    <li><a href="#性能调优">性能调优</a>
       <ul>
-        <li><a href="#heading-4">动画发生过程</a></li>
-        <li><a href="#gpu">可能影响GPU绘制的情况</a></li>
-        <li><a href="#cpu">可能影响CPU计算的情况</a></li>
-        <li><a href="#io">图像IO</a></li>
-        <li><a href="#heading-5">文本</a></li>
-        <li><a href="#heading-6">光栅化</a></li>
-        <li><a href="#heading-7">离屏渲染</a></li>
-        <li><a href="#heading-8">图层混合</a></li>
-        <li><a href="#heading-9">颜色格式</a></li>
-        <li><a href="#heading-10">图像大小缩放</a></li>
+        <li><a href="#动画发生过程">动画发生过程</a></li>
+        <li><a href="#可能影响gpu绘制的情况">可能影响GPU绘制的情况</a></li>
+        <li><a href="#可能影响cpu计算的情况">可能影响CPU计算的情况</a></li>
+        <li><a href="#图像io">图像IO</a></li>
+        <li><a href="#文本">文本</a></li>
+        <li><a href="#光栅化">光栅化</a></li>
+        <li><a href="#离屏渲染">离屏渲染</a></li>
+        <li><a href="#图层混合">图层混合</a></li>
+        <li><a href="#颜色格式">颜色格式</a></li>
+        <li><a href="#图像大小缩放">图像大小缩放</a></li>
       </ul>
     </li>
   </ul>
@@ -265,13 +265,13 @@
 <li>透明遮罩</li>
 <li>多级非线性动画</li>
 </ul>
-<h2 id="heading">图形和几何</h2>
+<h2 id="图形和几何">图形和几何</h2>
 <p>frame：外部坐标，父图层坐标，大小为边与 xy 轴平行能完全容纳图层的最小矩形</p>
 <p>bounds：内部坐标，自身坐标，大小为图层大小的矩形</p>
 <p>anchorPoint：锚点，旋转基点，左上角{0，0}，右下角{1，1}</p>
 <p>center（<code>CALayer</code> 的 position）:anchorPoint 在父图层的坐标</p>
-<h2 id="heading-1">视觉效果</h2>
-<h3 id="heading-2">拉伸过滤</h3>
+<h2 id="视觉效果">视觉效果</h2>
+<h3 id="拉伸过滤">拉伸过滤</h3>
 <p>以正确比例和 1：1 像素显示图片在屏幕上的好处</p>
 <ul>
 <li>画质好，像素无压缩拉伸</li>
@@ -290,9 +290,9 @@
 <h2 id="catextlayer">CATextLayer</h2>
 <p><code>CALayer</code> 的子类，几乎拥有 <code>UILabel</code> 所有绘制特性</p>
 <p>渲染快于 <code>UILabel</code>，运用 Core text</p>
-<h2 id="heading-3">性能调优</h2>
+<h2 id="性能调优">性能调优</h2>
 <p>动画和图层被单独的渲染服务进程处理</p>
-<h3 id="heading-4">动画发生过程</h3>
+<h3 id="动画发生过程">动画发生过程</h3>
 <ol>
 <li>布局</li>
 <li>显示</li>
@@ -301,32 +301,32 @@
 <li>对所有图层属性计算中间值，设置 OpenGL 几何形状（纹理化三角形）进行渲染</li>
 <li>在屏幕上渲染可见三角形（GPU 执行，前面都在 CPU）</li>
 </ol>
-<h3 id="gpu">可能影响GPU绘制的情况</h3>
+<h3 id="可能影响gpu绘制的情况">可能影响GPU绘制的情况</h3>
 <ul>
 <li>过多几何结构</li>
 <li>重绘-重叠半透明图层</li>
 <li>离屏渲染-为屏幕外渲染的图片分配额外内存，切换屏幕内外的绘制上下文</li>
 <li>过大的图片</li>
 </ul>
-<h3 id="cpu">可能影响CPU计算的情况</h3>
+<h3 id="可能影响cpu计算的情况">可能影响CPU计算的情况</h3>
 <ul>
 <li>布局计算：自动布局</li>
 <li>视图懒加载：涉及 IO 的图片显示</li>
 <li>Core Graphics 绘制：<code>drawRect</code>（为支持图层任意绘制需要在内存中创建一个等大小的寄宿图）</li>
 <li>解压图片</li>
 </ul>
-<h3 id="io">图像IO</h3>
+<h3 id="图像io">图像IO</h3>
 <ul>
 <li>线程加载：合适的后台线程</li>
 <li>分辨率交换：移动时低分辨率，静态时加载高分辨率</li>
 <li>缓存：考虑因素（合适缓存键、缓存时机、失效、回收）</li>
 <li>图像格式</li>
 </ul>
-<h3 id="heading-5">文本</h3>
+<h3 id="文本">文本</h3>
 <p>尽可能避免改变文本的 frame，因为需要重绘</p>
-<h3 id="heading-6">光栅化</h3>
+<h3 id="光栅化">光栅化</h3>
 <p>将图层及其所有效果绘制成一个屏幕外的图像并缓存，避免运用在内容不断变动的图层上</p>
-<h3 id="heading-7">离屏渲染</h3>
+<h3 id="离屏渲染">离屏渲染</h3>
 <p>在混合复杂效果无法直接渲染时，会通过分步渲染，会把分布渲染的结果临时储存在屏幕外的内存中等待组合渲染</p>
 <p>影响性能在于</p>
 <ul>
@@ -339,19 +339,19 @@
 <li>图层蒙版</li>
 <li>阴影</li>
 </ul>
-<h3 id="heading-8">图层混合</h3>
+<h3 id="图层混合">图层混合</h3>
 <ul>
 <li>设定固定不透明的背景颜色</li>
 <li>设置 layer 的 opaue 属性默认为 YES（非 view 的）</li>
 </ul>
-<h3 id="heading-9">颜色格式</h3>
+<h3 id="颜色格式">颜色格式</h3>
 <p>苹果的 GPU 只解析 <strong>32bit</strong> 的颜色格式，其余的格式 CPU 会先进行颜色格式转换，再让 GPU 渲染。</p>
-<h3 id="heading-10">图像大小缩放</h3>
+<h3 id="图像大小缩放">图像大小缩放</h3>
 <p>image 和 imageView 的大小尽量保持一致，避免在改变 view 大小时重复计算缩放</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>905</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>907</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81-cell-%E9%80%9A%E7%94%A8%E7%9A%84-tableviewmanager/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -221,12 +221,12 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#-tableviewdatasource-">关于 TableViewDatasource 的思考</a></li>
-    <li><a href="#-tableviewdelegate">接管 TableViewDelegate</a></li>
-    <li><a href="#cell-">Cell 的协议里有啥</a></li>
-    <li><a href="#heading">初始化方法</a></li>
-    <li><a href="#item-">item 的一些小技巧</a></li>
-    <li><a href="#heading-1">最后</a></li>
+    <li><a href="#关于-tableviewdatasource-的思考">关于 TableViewDatasource 的思考</a></li>
+    <li><a href="#接管-tableviewdelegate">接管 TableViewDelegate</a></li>
+    <li><a href="#cell-的协议里有啥">Cell 的协议里有啥</a></li>
+    <li><a href="#初始化方法">初始化方法</a></li>
+    <li><a href="#item-的一些小技巧">item 的一些小技巧</a></li>
+    <li><a href="#最后">最后</a></li>
   </ul>
 </nav>
 
@@ -234,7 +234,7 @@
 <p>像笔者所在的项目里的侧边栏模块，里面有很多 tableView，由于没有使用 StoryBoard 且很久之前写的，充斥着各种if&hellip;else  if 用 model 的某个key值进行判断的逻辑去让 cell 去显示和隐藏某些视图，已经进行点击跳转逻辑，更有甚者，有 <code>if (indexPath == 0)</code> 之类的通过行数判断去处理的逻辑。增加新的cell时，便要在各种地方再加上 else if  的新判断，而做新界面时，也没有很好的方法进行复用。</p>
 <p>笔者结合之前 <a href="https://nemocdz.github.io/post/tableview%E5%92%8Ccollectionview%E9%80%9A%E7%94%A8datasource%E5%92%8Ccell/">文章</a> 进行进一步思考，抽象出一个适合这种特点 tableView 的管理类，记录一下思路供参考。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tKfTcly1fi1a1xvl8qj30p00r7ach.jpg" alt=""></p>
-<h2 id="-tableviewdatasource-">关于 TableViewDatasource 的思考</h2>
+<h2 id="关于-tableviewdatasource-的思考">关于 TableViewDatasource 的思考</h2>
 <p>在之前的文章中，已经对 Datasource 和 SectionObject 进行了抽象，datasource  本质是告诉 Cell 如何去处理 Model 的桥梁，之前笔者是通过维护一个字典去一一对应 Model 的种类和 Cell 种类的，但后来发现，有时候 Model 和 Cell 的种类并不一定是 1 对 1 的，比如有些时候 cell 只要只要展示一个 title，可能使用者只想写一个 String 去对应，而不用去建一个 Model，在静态不变的 Model 中，这种情况更突出，因为并不需要从网络解析数据，不用用反射机制去进行 json 转 model 的处理，有时候，一个 NSDictionary 甚至一个 NSString 或者 Bool 就可以满足一个 Cell 的展示需求，那么对于这种可能是多 Cell 对多 Model（String 也可以是一种 Model）的情况，且每个 TableView 的 Cell 数量不多（一般设置页不会超过 20 个），可以考虑为在字典里每个 Model 配置对应的 Cell 类型的键值对。而且因为 Model 种类不一，我们也需要手动 Add 到 SectionObject 里，那么我们可以把这个字典分在每个 sectionObject 里去管理。在 Section 类里添加以下方法，而 Model 的唯一性可以用 hash 属性标识，默认 hash  属性就是对象的内存地址。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">addItem:</span>(<span style="color:#8be9fd">id</span><span style="color:#ff79c6">&lt;</span>NSObject<span style="color:#ff79c6">&gt;</span>)<span style="color:#8be9fd;font-style:italic">item</span> <span style="color:#50fa7b">cellClass:</span>(<span style="color:#8be9fd">Class</span>)<span style="color:#8be9fd;font-style:italic">cellClass</span>{
     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>item) {
@@ -264,7 +264,7 @@
     }
     <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">nil</span>;
 }
-</code></pre></div><h2 id="-tableviewdelegate">接管 TableViewDelegate</h2>
+</code></pre></div><h2 id="接管-tableviewdelegate">接管 TableViewDelegate</h2>
 <p>和很多动态 Cell 会有一些奇奇怪怪的 Delegate 不同，静态 Cell 主要就是展示和点击事件，一般会用到以下原生 Delegate。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">didSelectRowAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>;
 - (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">willDisplayCell:</span>(UITableViewCell <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">cell</span> <span style="color:#50fa7b">forRowAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>;
@@ -294,7 +294,7 @@
         [<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">tableView</span>:tableView <span style="color:#8be9fd;font-style:italic">didSelectRowAtIndexPath</span>:indexPath];
     }
 }
-</code></pre></div><h2 id="cell-">Cell 的协议里有啥</h2>
+</code></pre></div><h2 id="cell-的协议里有啥">Cell 的协议里有啥</h2>
 <p>之前文章讲过，我们可以通过一个 CellProtocol 去指定 configItem 的方法让 Cell 自己去解析 Model，同时我们也可以让这个协议丰富一点，比如加上 CellDelegate 的回调，可以让 Cell 把信息传到外部，这在一些 Cell 里面的点击事件，或者开关（<code>UISwitch</code>），表单编辑时都很有用，所以我们可以加上 Delegate。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@protocol</span> <span style="color:#50fa7b">CDZTableViewCellDelegate</span> <span style="color:#ff79c6">&lt;</span>NSObject<span style="color:#ff79c6">&gt;</span>
 <span style="color:#ff79c6">@optional</span>
@@ -316,7 +316,7 @@
         [<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">receiveCellMessage</span>:message <span style="color:#8be9fd;font-style:italic">atIndexPath</span>:indexPath <span style="color:#8be9fd;font-style:italic">item</span>:item];
     }
 }
-</code></pre></div><h2 id="heading">初始化方法</h2>
+</code></pre></div><h2 id="初始化方法">初始化方法</h2>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">instancetype</span>)<span style="color:#50fa7b">initWithTableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">delegate:</span>(<span style="color:#8be9fd">id</span><span style="color:#ff79c6">&lt;</span>CDZTableViewManagerDelegate<span style="color:#ff79c6">&gt;</span>)<span style="color:#8be9fd;font-style:italic">objectDelegate</span>{
     <span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">super</span> init];
     <span style="color:#ff79c6">if</span> (<span style="color:#8be9fd;font-style:italic">self</span>){
@@ -330,7 +330,7 @@
     <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">self</span>;
 }
 </code></pre></div><p>最后外界只需要初始化一个 Manager，即可不用写 Datasource 和 Delegate了，因为都被 Manager 接管了。</p>
-<h2 id="item-">item 的一些小技巧</h2>
+<h2 id="item-的一些小技巧">item 的一些小技巧</h2>
 <p>对应一些初展示类或者开关操作的 item，我们可以用简单的 <code>Bool</code>，<code>NSString</code>，<code>NSDictionry</code> 作为 Model，而有点击事件的 Model，我们可以在 Model 类里增加一个 tapBlock，这样我们可以在配置 item 时顺便配置其点击事件。因为静态 Cell 中的点击事件往往各不相同，所以配置在 tapBlock 可以让代码更加统一。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">TestItem <span style="color:#ff79c6">*</span>itemD <span style="color:#ff79c6">=</span> [[TestItem alloc]init];
 itemD.title <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">itemD</span><span style="color:#f1fa8c">&#34;</span>;
@@ -347,7 +347,7 @@ itemD.tapBlock <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">
         }
     }
 }
-</code></pre></div><h2 id="heading-1">最后</h2>
+</code></pre></div><h2 id="最后">最后</h2>
 <p>通过这些的 Manager，就可以随心所欲搭配 Model 和 Cell，并把配置写在一起，方便修改，查找，同时也不用重复写 Delegate 和 Datasource，而对老的 Cell 和 Model 也有很好的兼容。底下是一个混搭的例子。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (NSMutableArray <span style="color:#ff79c6">&lt;</span>CDZTableViewSection <span style="color:#ff79c6">*</span><span style="color:#ff79c6">&gt;</span><span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">sections</span>{
     NSMutableArray <span style="color:#ff79c6">&lt;</span>CDZTableViewSection <span style="color:#ff79c6">*</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">*</span>sections <span style="color:#ff79c6">=</span> [NSMutableArray array];
@@ -382,7 +382,7 @@ itemD.tapBlock <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>965</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>966</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

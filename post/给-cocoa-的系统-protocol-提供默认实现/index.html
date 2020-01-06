@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E7%BB%99-cocoa-%E7%9A%84%E7%B3%BB%E7%BB%9F-protocol-%E6%8F%90%E4%BE%9B%E9%BB%98%E8%AE%A4%E5%AE%9E%E7%8E%B0/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -221,21 +221,21 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#objective-c-">Objective-C 的消息转发</a></li>
-    <li><a href="#-protocolproxy">实现 ProtocolProxy</a></li>
-    <li><a href="#tableview-">TableView 的实际使用</a></li>
-    <li><a href="#heading">最后</a></li>
+    <li><a href="#objective-c-的消息转发">Objective-C 的消息转发</a></li>
+    <li><a href="#实现-protocolproxy">实现 ProtocolProxy</a></li>
+    <li><a href="#tableview-的实际使用">TableView 的实际使用</a></li>
+    <li><a href="#最后">最后</a></li>
   </ul>
 </nav>
 
     <article class="post-content"><p>使用 Swift 时，如果是自定义的 Protocol，可以通过 Extension 来提供部分方法的默认实现，但系统原有的 Protocol 却不行，大概是因为系统的 Protocol 是 Objective-C 实现的缘故。</p>
 <p>但为 Protocol 提供默认实现在某些时候是很实用的。比如 iOS 开发中，Cocoa 框架里常用的 <code>UITableView</code> 使用时一般需要实现 <code>UITableViewDataSouce</code> 和 <code>UITableViewDelegate</code>。而 <code>UITableViewDelegate</code> 和 <code>UITableViewDataSource</code> 里面的一部分方法，又是可以抽离的，但剩下的一部分方法，使用得很少，且一般用起来都是有自定义的需要。那么有没有一种方法可以为一部分方法提供默认通用的实现，而又不影响其余的方法呢？</p>
 <p>这篇文章，笔者想分享一种通过消息转发的方式来实现差不多功能的方法。</p>
-<h2 id="objective-c-">Objective-C 的消息转发</h2>
+<h2 id="objective-c-的消息转发">Objective-C 的消息转发</h2>
 <p>本文假设读者已经了解 Runtime 基础，如不了解可自行阅读 <a href="https://www.ianisme.com/ios/2019.html">Objective-C Runtime 1小时入门教程</a>。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gy1fzvtz3lspsj30gc09j0tt.jpg" alt="691078-9049faadbcbbeac9"></p>
 <p>引用网上这张经典的图，可以知道在消息处理无法处理之前，有三个环节能进行抢救。第一步判断是否有动态添加方法，第二步可以对消息处理者重定向，第三步可以在返回方法签名的情况下，对封装消息的相关信息的 <code>NSInvocation</code> 进行处理。</p>
-<h2 id="-protocolproxy">实现 ProtocolProxy</h2>
+<h2 id="实现-protocolproxy">实现 ProtocolProxy</h2>
 <p>通过上面的消息转发的步骤，笔者的思路是，利用重定向，将 Protocol 里所有的实现进行转发，Protocol 如果有自定义实现者则交给它，否则交给默认实现者，如果都没有则不处理。</p>
 <p>用 Swift 简单的实现如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">ProtocolProxy</span>: NSObject {
@@ -257,7 +257,7 @@
     }
 }
 </code></pre></div><p>其中 <code>respondsToSelector</code> 方法用于判断方法是否有被实现者实现，有的话通过 <code>forwardingTarget</code> 方法进行消息处理者的重定向。</p>
-<h2 id="tableview-">TableView 的实际使用</h2>
+<h2 id="tableview-的实际使用">TableView 的实际使用</h2>
 <p>实现了 ProtocolProxy 之后，在设置 Protocol 时，就可以设置成 ProtocolProxy，然后将默认实现和自定义实现都设置给 ProtocolProxy。举个 <code>UITableView</code> 的例子：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">delegateKey</span> = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">delegate</span><span style="color:#f1fa8c">&#34;</span>
 <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">dataSourceKey</span> = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">dataSource</span><span style="color:#f1fa8c">&#34;</span>
@@ -320,12 +320,12 @@
         print(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">BaseTableViewDelegate</span><span style="color:#f1fa8c">&#34;</span>)
     }
 }
-</code></pre></div><h2 id="heading">最后</h2>
+</code></pre></div><h2 id="最后">最后</h2>
 <p>完整的 <a href="https://github.com/Nemocdz/ProxyTableView">Demo</a>，别的系统 Protocol 也可以用同样的方式进行扩展，提供一部分方法的默认实现。</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>332</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>333</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

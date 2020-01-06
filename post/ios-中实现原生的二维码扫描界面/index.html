@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -221,18 +221,18 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#heading">相机扫描二维码部分</a></li>
-    <li><a href="#heading-1">识别相册图片中二维码</a></li>
-    <li><a href="#heading-2">增加非相机识别区域的压暗层</a></li>
-    <li><a href="#heading-3">权限检查管理</a></li>
-    <li><a href="#heading-4">封装接口</a></li>
-    <li><a href="#heading-5">最后</a></li>
+    <li><a href="#相机扫描二维码部分">相机扫描二维码部分</a></li>
+    <li><a href="#识别相册图片中二维码">识别相册图片中二维码</a></li>
+    <li><a href="#增加非相机识别区域的压暗层">增加非相机识别区域的压暗层</a></li>
+    <li><a href="#权限检查管理">权限检查管理</a></li>
+    <li><a href="#封装接口">封装接口</a></li>
+    <li><a href="#最后">最后</a></li>
   </ul>
 </nav>
 
     <article class="post-content"><p>二维码扫描是很多应用都会实现的功能，比较著名的第三方开源库是 Google 出品的 <a href="https://github.com/zxing/zxing">ZXing</a>，其的 OC 的移植版本是 <a href="https://github.com/TheLevelUp/ZXingObjC">ZXingObjc</a>。但是从 iOS 7 开始，苹果就加入了原生 API 的相机二维码扫描功能，而在 iOS 8 中也加入了原生的从图片中识别二维码的功能，最近刚好接到一个需求开发一个二维码扫描的界面，把过程记录下来。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1feuhsfjbrsj30ku112q66.jpg" alt="IMG_0811"></p>
-<h2 id="heading">相机扫描二维码部分</h2>
+<h2 id="相机扫描二维码部分">相机扫描二维码部分</h2>
 <p>要调用系统的摄像头识别二维码，首先需要导入系统的 AVFoundation 库。其中我们用到最关键到类是 <code>AVCaptureSession</code>。流程如下：</p>
 <ul>
 <li>初始化一个 <code>AVCaptureSession</code></li>
@@ -335,7 +335,7 @@
  	NSString <span style="color:#ff79c6">*</span>result <span style="color:#ff79c6">=</span> [metadataObjects.firstObject stringValue];
 	<span style="color:#6272a4">//信息处理
 </span><span style="color:#6272a4"></span>}
-</code></pre></div><h2 id="heading-1">识别相册图片中二维码</h2>
+</code></pre></div><h2 id="识别相册图片中二维码">识别相册图片中二维码</h2>
 <p>识别图片中的二维码就调用打开相册的接口，然后调用 Core Image 框架里的 <code>CIDetector</code> 类进行识别。<code>CIDetector</code> 只能处理 <code>CIImage</code> 类，所以我们要对 <code>UIImage</code> 进行转换。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (NSString <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">messageFromQRCodeImage:</span>(UIImage <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">image</span>{
     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>image) {
@@ -376,7 +376,7 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">UIBarButtonItem <span style="color:#ff79c6">*</span>libaryItem <span style="color:#ff79c6">=</span> [[UIBarButtonItem alloc]<span style="color:#8be9fd;font-style:italic">initWithTitle</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">相册</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#8be9fd;font-style:italic">style</span>:UIBarButtonItemStylePlain <span style="color:#8be9fd;font-style:italic">target</span>:<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">action</span>:<span style="color:#ff79c6">@selector</span>(openLibary)];
 <span style="color:#8be9fd;font-style:italic">self</span>.navigationItem.rightBarButtonItem <span style="color:#ff79c6">=</span> libaryItem;
 <span style="color:#8be9fd;font-style:italic">self</span>.navigationItem.title <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.navigationTitle;
-</code></pre></div><h2 id="heading-2">增加非相机识别区域的压暗层</h2>
+</code></pre></div><h2 id="增加非相机识别区域的压暗层">增加非相机识别区域的压暗层</h2>
 <p>像微信一样，很多应用的二维码视图都有把除了扫描区域的外部区域的压暗层。这个压暗层就像一个镂空的图层一样，中间区域是没有的。我们可以用贝塞尔曲线绘制两个矩形路径，大矩形就是视图大小的矩形路径，小的就是扫描区域的路径。然后大路径去掉小路径，剩下部分就是一个镂空的视图区域的路径。并创建对应的 Layer。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (UIView <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">maskView</span>{
     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>_maskView) {
@@ -391,7 +391,7 @@
     }
     <span style="color:#ff79c6">return</span> _maskView;
 }
-</code></pre></div><h2 id="heading-3">权限检查管理</h2>
+</code></pre></div><h2 id="权限检查管理">权限检查管理</h2>
 <p>基本功能实现后，可以考虑一下整个 ViewController 有没有会崩溃或者需要弹窗提示的地方。大概有以下这些情况</p>
 <ul>
 <li>相机是否存在</li>
@@ -485,7 +485,7 @@
     }
     [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">presentViewController</span>:<span style="color:#8be9fd;font-style:italic">self</span>.imagePicker <span style="color:#8be9fd;font-style:italic">animated</span>:<span style="color:#8be9fd;font-style:italic">YES</span> <span style="color:#8be9fd;font-style:italic">completion</span>:<span style="color:#8be9fd;font-style:italic">nil</span>];
 }
-</code></pre></div><h2 id="heading-4">封装接口</h2>
+</code></pre></div><h2 id="封装接口">封装接口</h2>
 <p>最后一步了，对于这个 ViewController 我们需要开放什么接口对外呢，怎么把值传出去呢？外界可以改变的是扫描区域，标题，以及亚暗层的 View（往上面加字等等），外界得到的结果应该是一个字符串。这里可以用 Deleagte，头文件代码如下。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@protocol</span> <span style="color:#50fa7b">CDZQRCodeDelegate</span><span style="color:#ff79c6">&lt;</span>NSObject<span style="color:#ff79c6">&gt;</span>
 <span style="color:#ff79c6">@required</span>
@@ -526,14 +526,14 @@
 - (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">pickUpMessage:</span>(NSString <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">message</span>{
     <span style="color:#8be9fd;font-style:italic">self</span>.resultLabel.text <span style="color:#ff79c6">=</span> message;
 }
-</code></pre></div><h2 id="heading-5">最后</h2>
+</code></pre></div><h2 id="最后">最后</h2>
 <p>所有源码和 <a href="https://github.com/Nemocdz/CDZQRScanView">Demo</a></p>
 <p>使用时可以把 VC 两个文件拖进项目里就可。</p>
 <p>如果您觉得有帮助,不妨给个 star 鼓励一下,欢迎关注&amp;交流</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>988</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>989</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

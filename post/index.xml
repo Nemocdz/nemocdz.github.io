@@ -7,25 +7,10 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>© Nemocdz. </copyright>
-    <lastBuildDate>Sat, 04 Jan 2020 19:11:00 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 03 Jan 2020 19:15:13 +0800</lastBuildDate>
     
 	<atom:link href="https://nemocdz.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>浅谈 WebRTC NetEQ</title>
-      <link>https://nemocdz.github.io/post/%E6%B5%85%E8%B0%88-webrtc-neteq/</link>
-      <pubDate>Sat, 04 Jan 2020 19:11:00 +0800</pubDate>
-      
-      <guid>https://nemocdz.github.io/post/%E6%B5%85%E8%B0%88-webrtc-neteq/</guid>
-      <description>&lt;p&gt;WebRTC Native 代码里面有很多值得学习的宝藏，其中一个就是 WebRTC 的 NetEQ 模块。根据 &lt;a href=&#34;https://webrtcglossary.com/neteq/&#34;&gt;WebRTC 术语表&lt;/a&gt; 对 NetEQ 的解释：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;A dynamic jitter buffer and error concealment algorithm used for concealing the negative effects of network jitter and packet loss. Keeps latency as low as possible while maintaining the highest voice quality.&lt;/p&gt;
-&lt;p&gt;一种动态抖动缓冲区和错误隐藏（丢包补偿）算法，用于去除网络抖动和数据包丢失的负面影响。在保持最高语音质量的同时，保持尽可能低的延迟。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;NetEQ 其实就是音视频处理中的 Jitter Buffer 模块，在 WebRTC 的语音引擎中使用。这个模块很重要，会影响播放时的体验，同时也相当复杂。&lt;/p&gt;
-&lt;p&gt;本文源码参考 &lt;a href=&#34;https://webrtc.googlesource.com/src&#34;&gt;WebRTC Native&lt;/a&gt; M78 版本。&lt;/p&gt;</description>
-    </item>
     
     <item>
       <title>如何假装写过 Swift</title>
@@ -63,7 +48,7 @@
       <description>&lt;blockquote&gt;
 &lt;p&gt;WWDC 2019 Session 721 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2019/721/&#34;&gt;Combine in Practice&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;h2 id=&#34;heading&#34;&gt;引言&lt;/h2&gt;
+&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;
 &lt;p&gt;Combine 是 WWDC2019 推出的异步编程框架，在上篇 &lt;a href=&#34;https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E7%AE%80%E4%BB%8B/&#34;&gt;文章&lt;/a&gt; 中，介绍了 Combine 的基本概念。在这篇文章中，着重介绍一些 Combine 的实际应用。&lt;/p&gt;</description>
     </item>
     
@@ -76,7 +61,7 @@
       <description>&lt;blockquote&gt;
 &lt;p&gt;WWDC 2019 Session 722 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2019/722/&#34;&gt;Introducing Combine&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;h2 id=&#34;heading&#34;&gt;引言&lt;/h2&gt;
+&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;
 &lt;p&gt;在现代 GUI 编程中，开发者会处理大量事件（包括网络，屏幕输入，系统通知等），根据事件去让界面变化。而对异步事件的处理，会让代码和状态变得复杂。而现有的 Cocoa 框架中，异步编程的接口主要有以下这几种：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Target/Action&lt;/li&gt;
@@ -297,7 +282,7 @@
       <pubDate>Mon, 21 Aug 2017 01:35:21 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/post/%E5%BE%81%E6%9C%8D-c-%E6%8C%87%E9%92%88%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-      <description>&lt;h2 id=&#34;-c-&#34;&gt;用英语来解读 C 的声明&lt;/h2&gt;
+      <description>&lt;h2 id=&#34;用英语来解读-c-的声明&#34;&gt;用英语来解读 C 的声明&lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;首先着眼于识别符（变量名或者函数名）。&lt;/p&gt;
@@ -352,7 +337,7 @@
       <pubDate>Thu, 20 Jul 2017 03:31:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/post/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-      <description>&lt;h2 id=&#34;heading&#34;&gt;线程&lt;/h2&gt;
+      <description>&lt;h2 id=&#34;线程&#34;&gt;线程&lt;/h2&gt;
 &lt;p&gt;线程是程序执行流的最小单元。&lt;/p&gt;
 &lt;p&gt;各个线程之间共享程序的内存空间和进程级资源。&lt;/p&gt;</description>
     </item>
@@ -378,7 +363,7 @@
       <pubDate>Thu, 13 Jul 2017 01:28:13 +0800</pubDate>
       
       <guid>https://nemocdz.github.io/post/c-%E9%99%B7%E9%98%B1%E4%B8%8E%E7%BC%BA%E9%99%B7%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-      <description>&lt;h2 id=&#34;heading&#34;&gt;多字符记号&lt;/h2&gt;
+      <description>&lt;h2 id=&#34;多字符记号&#34;&gt;多字符记号&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号&lt;/li&gt;
 &lt;li&gt;组合赋值运算符是两个记号，如 &lt;code&gt;+=&lt;/code&gt;&lt;/li&gt;

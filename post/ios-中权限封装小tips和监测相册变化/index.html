@@ -53,7 +53,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E6%9D%83%E9%99%90%E5%B0%81%E8%A3%85%E5%B0%8Ftips%E5%92%8C%E7%9B%91%E6%B5%8B%E7%9B%B8%E5%86%8C%E5%8F%98%E5%8C%96/">
@@ -68,7 +68,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -224,15 +224,15 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#-tips">权限 Tips</a></li>
-    <li><a href="#heading">相册变化</a></li>
-    <li><a href="#heading-1">最后</a></li>
+    <li><a href="#权限-tips">权限 Tips</a></li>
+    <li><a href="#相册变化">相册变化</a></li>
+    <li><a href="#最后">最后</a></li>
   </ul>
 </nav>
 
     <article class="post-content"><p>之前写了一个仿 Snapseed 的 ImagePicker，见 <a href="https://github.com/Nemocdz/CDZImagePickerDemo">Demo</a> 和之前的 <a href="https://nemocdz.github.io/post/ios%E4%B8%AD%E5%AE%9E%E7%8E%B0%E4%BB%BFsnapseed%E7%9A%84%E7%85%A7%E7%89%87%E9%80%89%E6%8B%A9%E5%99%A8/">文章</a>。</p>
 <p>之后发现有人说第一次未授权时 <code>UICCollectionview</code> 会加载不出照片，发现没有在合适时候调用权限管理。iOS 10 的这个权限管理是 info.plist 的一个键值，没有回调方法。查询 PhotosKit 方法里，发现有一个权限回调方法，就想封装一个方法来友好的询问用户权限。</p>
-<h2 id="-tips">权限 Tips</h2>
+<h2 id="权限-tips">权限 Tips</h2>
 <p>查询文档，相册权限<code> PHAuthorizationStatus</code> 枚举类型有这么几种。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">typedef</span> <span style="color:#50fa7b">NS_ENUM</span>(NSInteger, PHAuthorizationStatus) {
     PHAuthorizationStatusNotDetermined <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>, <span style="color:#6272a4">// User has not yet made a choice with regards to this application 用户未决定
@@ -271,7 +271,7 @@
 </code></pre></div><p>再在需要用到权限的地方加上判断就好</p>
 <p><code>if ([PHPhotoLibrary authorizationStatus] == PHAuthorizationStatusAuthorized)</code></p>
 <hr>
-<h2 id="heading">相册变化</h2>
+<h2 id="相册变化">相册变化</h2>
 <p>后来发现如果调用选择器时在外部改变了照片（增加，删除）后 Collectionview 不会改变，就研究了一下 PhotosKit，发现有个 <code>- (void)photoLibraryDidChange:(PHChange *)changeInfo</code> 检测相册变动，但之前需要注册为观察者并实现协议</p>
 <p><code>PHPhotoLibraryChangeObserver</code></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">viewDidLoad</span>{
@@ -295,12 +295,12 @@
 </code></pre></div><p>这个方法默认所有相册的变更都会通知，但是有些变动是我们不需要的，比如用户新建了一个新空相册，删除了一个旧相册等，这时我们可以用 <code>PHChange</code> 里的 ChangeDetails 去区分，比如 <code>changeDetailsForFetchResult:(PHFetchResult *)object;</code> 就是传入一组 FetchResult，如果这组 Result 有变化，比如这组 Result 是 Asset 的集合，Asset 增加减少，那么就会返回一个 ChangeDetails，可以用此区分，但是如果是 Asset 内部的变化，就不会返回一个 ChangeDetails。同样的如果这组 Result 是 Collection 的集合，那么 Collection 内部的变化，比如 Collection 里的 Asset 对象增加减少，就不会有返回。</p>
 <p>具体可以见苹果官方的 <a href="https://developer.apple.com/reference/photos/phphotolibrarychangeobserver?language=objc">例子</a>。</p>
 <hr>
-<h2 id="heading-1">最后</h2>
+<h2 id="最后">最后</h2>
 <p>这篇文章篇幅不多，作为一些补充，希望能帮到有需要的人。</p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1116</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1117</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

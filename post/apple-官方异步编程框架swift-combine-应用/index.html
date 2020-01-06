@@ -53,7 +53,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E5%BA%94%E7%94%A8/">
@@ -68,7 +68,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -225,32 +225,32 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#heading">引言</a></li>
-    <li><a href="#publisher">发布者（Publisher）</a>
+    <li><a href="#引言">引言</a></li>
+    <li><a href="#发布者publisher">发布者（Publisher）</a>
       <ul>
         <li></li>
-        <li><a href="#heading-1">总结</a></li>
+        <li><a href="#总结">总结</a></li>
       </ul>
     </li>
-    <li><a href="#subscriber">订阅者（Subscriber）</a>
+    <li><a href="#订阅者subscriber">订阅者（Subscriber）</a>
       <ul>
-        <li><a href="#heading-2">规则</a></li>
-        <li><a href="#swiftui-">SwiftUI 中的发布者</a></li>
+        <li><a href="#规则">规则</a></li>
+        <li><a href="#swiftui-中的发布者">SwiftUI 中的发布者</a></li>
         <li><a href="#cancellation">Cancellation</a></li>
-        <li><a href="#heading-3">复杂的例子</a></li>
+        <li><a href="#复杂的例子">复杂的例子</a></li>
       </ul>
     </li>
-    <li><a href="#heading-4">总结</a></li>
-    <li><a href="#heading-5">延伸阅读</a></li>
+    <li><a href="#总结-1">总结</a></li>
+    <li><a href="#延伸阅读">延伸阅读</a></li>
   </ul>
 </nav>
 
     <article class="post-content"><blockquote>
 <p>WWDC 2019 Session 721 - <a href="https://developer.apple.com/videos/play/wwdc2019/721/">Combine in Practice</a></p>
 </blockquote>
-<h2 id="heading">引言</h2>
+<h2 id="引言">引言</h2>
 <p>Combine 是 WWDC2019 推出的异步编程框架，在上篇 <a href="https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E7%AE%80%E4%BB%8B/">文章</a> 中，介绍了 Combine 的基本概念。在这篇文章中，着重介绍一些 Combine 的实际应用。</p>
-<h2 id="publisher">发布者（Publisher）</h2>
+<h2 id="发布者publisher">发布者（Publisher）</h2>
 <p>假设有一个 <code>MagicTrick</code> 类型的 JSON 数据，这个数据的来源是 <code>NotificationCenter</code>，数据会以 <code>Data</code> 的形式放在 <code>Notification</code> 的 <code>UserInfo</code> 中。让我们使用 Combine 的发布者来改造这个数据的发送。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Notification</span>.Name{
     <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">newTrickDownloaded</span>:Notification.Name {
@@ -439,7 +439,7 @@
         <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">data</span><span style="color:#f1fa8c">&#34;</span>] <span style="color:#ff79c6">as</span>! Data
     }
     .eraseToAnyPublisher()
-</code></pre></div><h3 id="heading-1">总结</h3>
+</code></pre></div><h3 id="总结">总结</h3>
 <p>发布者有以下的特点</p>
 <ul>
 <li>用操作符生成每一小部分的发布者，最后组成事件流</li>
@@ -448,8 +448,8 @@
 <li>既可以异步产生值，也可以同步产生值</li>
 <li>可以添加其兼容的订阅者</li>
 </ul>
-<h2 id="subscriber">订阅者（Subscriber）</h2>
-<h3 id="heading-2">规则</h3>
+<h2 id="订阅者subscriber">订阅者（Subscriber）</h2>
+<h3 id="规则">规则</h3>
 <ol>
 <li>只会接收到一次订阅通知</li>
 <li>发布者可以产生 0 或多个值，所以订阅者可能收到 0 或多个值</li>
@@ -508,7 +508,7 @@ magicWordsSubject.sink { value <span style="color:#ff79c6">in</span>
 magicWordsSubject.send(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">magic!</span><span style="color:#f1fa8c">&#34;</span>)
 </code></pre></div><h5 id="currentvalue">CurrentValue</h5>
 <p>在订阅时，会将上游发布者发送的值中最新一个发送给下游订阅者，之后和正常一样进行发送值。</p>
-<h3 id="swiftui-">SwiftUI 中的发布者</h3>
+<h3 id="swiftui-中的发布者">SwiftUI 中的发布者</h3>
 <p>在今年发布的重磅框架 SwiftUI 中，底层的数据流也运用了 Combine 框架。SwiftUI 内部已经拥有订阅者，只需要开发者提供发布者用于描述你的数据在何时，如何变化，剩下的更新操作都有框架内部完成。</p>
 <h4 id="bindableobject">BindableObject</h4>
 <p>对自定义的数据类型适配，只需要遵循 <code>BindableObject</code> 协议，提供发布者具体类型，并提供一个 <code>didChange</code> 的发布者实例用于在数据改变时能发送消息。</p>
@@ -540,7 +540,7 @@ magicWordsSubject.send(<span style="color:#f1fa8c">&#34;</span><span style="colo
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>&lt;C&gt;(<span style="color:#ff79c6">_</span> canceller: C) <span style="color:#ff79c6">where</span> C : Cancellable
     <span style="color:#ff79c6">final</span> <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">cancel</span>()
 }
-</code></pre></div><h3 id="heading-3">复杂的例子</h3>
+</code></pre></div><h3 id="复杂的例子">复杂的例子</h3>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190620143224.png" alt=""></p>
 <p>假设有一个登录界面，里面需要输入用户名和密码，用户名需要经过服务器的检验，密码需要超过 8 个字符且需要和重复密码匹配。用户名和密码都符合要求时，下面的按钮状态将变成可点击状态。用 Combine 来完成这个例子吧！</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">用</span><span style="color:#6272a4">注</span><span style="color:#6272a4">解</span><span style="color:#6272a4">给</span><span style="color:#6272a4">属</span><span style="color:#6272a4">性</span><span style="color:#6272a4">添</span><span style="color:#6272a4">加</span><span style="color:#6272a4">发</span><span style="color:#6272a4">布</span><span style="color:#6272a4">者</span>
@@ -607,7 +607,7 @@ magicWordsSubject.send(<span style="color:#f1fa8c">&#34;</span><span style="colo
                                             .assign(to: \.isEnabled, on: signupButton)
 </code></pre></div><p>总的来说，就是使用组合，将各种小的功能组合成完整的数据流。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/f2e2f58f700e32981157a98cc09e4eb8.png" alt=""></p>
-<h2 id="heading-4">总结</h2>
+<h2 id="总结-1">总结</h2>
 <p>Apple 官方对接入 Combine 给了以下一些建议：</p>
 <ul>
 <li>使用多个自定义发布者将小部分的事情组合起来</li>
@@ -619,7 +619,7 @@ magicWordsSubject.send(<span style="color:#f1fa8c">&#34;</span><span style="colo
 <p>Use Combine Toady</p>
 </blockquote>
 <p>Combine 清晰，易用，还有着苹果爸爸承诺对 Cocoa 框架 buff 加持，为什么不马上试试呢？</p>
-<h2 id="heading-5">延伸阅读</h2>
+<h2 id="延伸阅读">延伸阅读</h2>
 <p><a href="https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E7%AE%80%E4%BB%8B/">Apple 官方异步编程框架：Swift Combine 简介</a></p>
 <p><a href="https://github.com/broadwaylamb/OpenCombine">Combine 的非官方实现</a></p>
 <p><a href="https://github.com/sergdort/CombineFeedback">CombineFeedback</a></p>
@@ -627,7 +627,7 @@ magicWordsSubject.send(<span style="color:#f1fa8c">&#34;</span><span style="colo
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>103</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>104</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

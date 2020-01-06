@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81%E5%B0%8F%E6%95%B0%E7%9A%84%E6%98%9F%E6%98%9F%E8%AF%84%E5%88%86%E7%BB%84%E4%BB%B6/">
@@ -65,7 +65,7 @@
 <meta name="referrer" content="origin-when-cross-origin">
 <meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
 <meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
-<meta name="baidu-site-verification" content="iVpH4VhHBT">
+<meta name="baidu-site-verification" content="34ePxBjAgm">
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
@@ -221,21 +221,21 @@
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#heading">单个星星的实现</a></li>
-    <li><a href="#uicontrol-">UIControl 部分的实现</a>
+    <li><a href="#单个星星的实现">单个星星的实现</a></li>
+    <li><a href="#uicontrol-部分的实现">UIControl 部分的实现</a>
       <ul>
-        <li><a href="#heading-1">布局</a></li>
-        <li><a href="#heading-2">处理触摸事件</a></li>
+        <li><a href="#布局">布局</a></li>
+        <li><a href="#处理触摸事件">处理触摸事件</a></li>
       </ul>
     </li>
-    <li><a href="#heading-3">封装</a></li>
-    <li><a href="#heading-4">最后</a></li>
+    <li><a href="#封装">封装</a></li>
+    <li><a href="#最后">最后</a></li>
   </ul>
 </nav>
 
     <article class="post-content"><p>在很多电商，外卖，餐饮型应用里，都会在商品结束后评价中有一个星星组件。核心思路就是用 <code>UIControl</code> 并自定义实现其中的 trackTouch 的几个方法。而显示不到一个的星星，比如半个星星的思路是根据分数切割星星的图像并显示其中一部分。实现后效果如下。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fft73ku93og30da0n0tfa.gif" alt="2017-05-21 19_12_04"></p>
-<h2 id="heading">单个星星的实现</h2>
+<h2 id="单个星星的实现">单个星星的实现</h2>
 <p>对于单个星星的实现，先考虑星星有三个状态，完全置灰状态，完全高亮状态，根据百分比半高亮状态。而我这边用的是 <code>UIButton</code> 来实现，因为 <code>UIButton</code> 本身已经有普通，高亮，选择的状态。主要实现的就是百分比高亮状态。我们可以根据百分比将图像进行裁剪，让新图像的宽度只有百分比所占的整个图像的宽度。但是这时候调用 setImage，会发现图片处于整个 button 中间。这是因为 <code>UIButton</code> 的 ImageView 的 contentMode 默认是 AspectFit 的，而 AspectFit 是默认居中的。ContentMode 中的 <code>UIViewContentModeLeft</code>，是不会把长边缩放到 ImageView 的边长的。况且，直接改变 UIButton 里的 ImageView 的 ContentMode 是没有效果的。要通过 <code>UIControl</code> 的 contentVerticalAlignment 属性（垂直）和 contentHorizontalAlignment 属性（水平）来达到类似 ImageView 的 contentMode 的效果。但是这两个属性都没有带 Fit 后缀的选项，也就是说并不会根据边长等比缩放。所以需要先把图片缩放到和 Button 大小一致。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fft5yrflcoj30dl06c3za.jpg" alt="屏幕快照 2017-05-21 下午6.32.58"></p>
 <p>之后，我们就可以按百分比裁剪图片</p>
@@ -273,9 +273,9 @@
     <span style="color:#ff79c6">return</span> round(fractionPart <span style="color:#ff79c6">*</span> <span style="color:#bd93f9">10</span>) <span style="color:#ff79c6">/</span> <span style="color:#bd93f9">10</span>;
 }
 </code></pre></div><p>到这里一个可以显示分数的星星按钮就完成了，接下来就是在上层的 <code>UIControl</code> 去处理触摸事件的响应。</p>
-<h2 id="uicontrol-">UIControl 部分的实现</h2>
+<h2 id="uicontrol-部分的实现">UIControl 部分的实现</h2>
 <p>主要分两块，星星按钮的布局，触摸事件响应。</p>
-<h3 id="heading-1">布局</h3>
+<h3 id="布局">布局</h3>
 <p>首先根据星星的数量一个个添加上视图，用 <code>UIView</code> 的 tag 来表示对应第几个星星按钮。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">setupView</span> {
     <span style="color:#ff79c6">for</span> (NSInteger index <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; index <span style="color:#ff79c6">&lt;</span> <span style="color:#8be9fd;font-style:italic">self</span>.numberOfStars; index<span style="color:#ff79c6">+</span><span style="color:#ff79c6">+</span>) {
@@ -321,7 +321,7 @@
     }];
     <span style="color:#ff79c6">return</span> (CDZStarButton <span style="color:#ff79c6">*</span>)target;
 }
-</code></pre></div><h3 id="heading-2">处理触摸事件</h3>
+</code></pre></div><h3 id="处理触摸事件">处理触摸事件</h3>
 <p>我们先加上两个方法。一个是从第一个到某个星星开始从左到右依次点亮，一个是从最后一个星星到某个星星从右到左依次熄灭。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">starsDownToIndex:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">index</span> {
     <span style="color:#ff79c6">for</span> (NSInteger i <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.numberOfStars; i <span style="color:#ff79c6">&gt;</span> index; <span style="color:#ff79c6">-</span><span style="color:#ff79c6">-</span>i) {
@@ -427,7 +427,7 @@
         [<span style="color:#8be9fd;font-style:italic">self</span>.delegate <span style="color:#8be9fd;font-style:italic">starsControl</span>:<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">didChangeScore</span>:<span style="color:#8be9fd;font-style:italic">self</span>.score];
     }
 }
-</code></pre></div><h2 id="heading-3">封装</h2>
+</code></pre></div><h2 id="封装">封装</h2>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">instancetype</span>)<span style="color:#50fa7b">initWithFrame:</span>(CGRect)<span style="color:#8be9fd;font-style:italic">frame</span>
                         <span style="color:#50fa7b">stars:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">number</span>
                      <span style="color:#50fa7b">starSize:</span>(CGSize)<span style="color:#8be9fd;font-style:italic">size</span>
@@ -452,7 +452,7 @@
     starsControl.score <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">2.6f</span>;
     [<span style="color:#8be9fd;font-style:italic">self</span>.view <span style="color:#8be9fd;font-style:italic">addSubview</span>:starsControl];
 </code></pre></div><p>然后在 Delegate 里处理分数改变后的操作即可。</p>
-<h2 id="heading-4">最后</h2>
+<h2 id="最后">最后</h2>
 <p>所有源码和 <a href="https://github.com/Nemocdz/CDZStarsControl">Demo</a>
 可以直接拿文件去使用或修改，也支持 Cocoapods.</p>
 <p>如果您觉得有帮助,不妨给个 star 鼓励一下,欢迎关注&amp;交流
@@ -460,7 +460,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>958</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>959</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
