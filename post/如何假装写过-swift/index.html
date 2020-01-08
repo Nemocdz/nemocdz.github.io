@@ -289,7 +289,7 @@
 <p>多使用 <code>String</code>、<code>Array</code>、<code>Dictionary</code>、<code>Int</code>、<code>Bool</code>，少使用 Foundation 里面的 <code>NSString</code>、<code>NSArray</code>、<code>NSDictionary</code>、<code>NSNumber</code>。Cocoa Foundation 里面的都是类类型，而 Swift 标准库的是值类型，有很多标准库的方便方法。</p>
 <p>还有用 <code>print</code> 代替 <code>NSLog</code>。</p>
 <h3 id="5-优先使用内置高阶函数">5. 优先使用内置高阶函数</h3>
-<p><code>forEach</code>，<code>map</code>，<code>conpactMap</code>，<code>flatMap</code>，<code>zip</code>，<code>reduce</code> 是好帮手，代替一些使用变量并在循环中处理的例子吧。用上高阶函数，不仅代码更清晰，还能将状态控制在更小的作用域内。</p>
+<p><code>forEach</code>，<code>map</code>，<code>compactMap</code>，<code>flatMap</code>，<code>zip</code>，<code>reduce</code> 是好帮手，代替一些使用变量并在循环中处理的例子吧。用上高阶函数，不仅代码更清晰，还能将状态控制在更小的作用域内。</p>
 <h3 id="6-使用-try-catch-捕获错误">6. 使用 try catch 捕获错误</h3>
 <p>和 ObjC 基本都在函数的回调中返回 <code>NSError</code> 不一样，Swift 函数可以使用 <code>throw</code> 关键字抛出错误。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">test</span>() <span style="color:#ff79c6">throws</span> {
@@ -345,7 +345,8 @@ view.contentMode = .center
     <span style="color:#6272a4">//</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
 }
 </code></pre></div><h3 id="13-使用-_-表示不使用的返回值">13. 使用 _ 表示不使用的返回值</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">_</span> = [<span style="color:#bd93f9">0</span>].removeLast()
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">a</span> = [<span style="color:#bd93f9">0</span>]
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">_</span> = a.removeLast()
 
 [<span style="color:#bd93f9">0</span>].forEach{ <span style="color:#ff79c6">_</span> <span style="color:#ff79c6">in</span> print(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">hh</span><span style="color:#f1fa8c">&#34;</span>)}
 </code></pre></div><p>而对于自己设计的接口，如果返回值无关紧要，只是附加功能的话，可以使用 <code>@discardableResult</code> 进行标注。</p>
