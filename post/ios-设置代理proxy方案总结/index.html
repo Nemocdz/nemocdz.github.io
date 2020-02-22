@@ -232,7 +232,7 @@
         <li><a href="#3-wkwebview-的特别处理">3. WKWebView 的特别处理</a></li>
       </ul>
     </li>
-    <li><a href="#使用-wkweburlschemehandlerios-122-该方法已失效">使用 WKWebURLSchemeHandler~~（iOS 12.2 该方法已失效）~~</a></li>
+    <li><a href="#使用-wkweburlschemehandler">使用 WKWebURLSchemeHandler</a></li>
     <li><a href="#使用-networkextension">使用 NetworkExtension</a></li>
     <li><a href="#最后">最后</a></li>
     <li><a href="#参考链接">参考链接</a></li>
@@ -599,7 +599,7 @@ fileprivate <span style="color:#8be9fd;font-style:italic">let</span> <span style
 </ul>
 </li>
 </ul>
-<h2 id="使用-wkweburlschemehandlerios-122-该方法已失效">使用 WKWebURLSchemeHandler~~（iOS 12.2 该方法已失效）~~</h2>
+<h2 id="使用-wkweburlschemehandler">使用 WKWebURLSchemeHandler</h2>
 <p>iOS 11 以上，苹果为 <code>WKWebView</code> 增加了 <code>WKURLSchemeHandler</code> 协议，可以为自定义的 Scheme 增加遵循 <code>WKURLSchemeHandler</code> 协议的处理。其中可以在 start 和 stop 的时机增加自己的处理。</p>
 <p>遵循协议中的两个方法</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">webView</span>(<span style="color:#ff79c6">_</span> webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
@@ -638,7 +638,7 @@ fileprivate <span style="color:#8be9fd;font-style:italic">let</span> <span style
 <p>然后生成 <code>WKWebviewConfiguration</code>，并使用官方 API 将 handler 设置进去。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">config</span> = WKWebViewConfiguration()
 config.setURLSchemeHandler(HttpProxyHandler(), forURLScheme: <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">http</span><span style="color:#f1fa8c">&#34;</span>)<span style="color:#6272a4">//</span><span style="color:#6272a4">抛</span><span style="color:#6272a4">出</span><span style="color:#6272a4">异</span><span style="color:#6272a4">常</span>
-</code></pre></div><p>但因为苹果的 <code>setURLSchemeHandler</code> 只能对自定义的 Scheme 进行设置，所以像 http 和 https 这种 Scheme，已经默认处理了，不能调用这个 API，<del>需要用 KVC 取值进行设置（iOS 12.2 上该方法已经失效，不存在此属性）</del>。</p>
+</code></pre></div><p>但因为苹果的 <code>setURLSchemeHandler</code> 只能对自定义的 Scheme 进行设置，所以像 http 和 https 这种 Scheme，已经默认处理了，不能调用这个 API。<del>需要用 KVC 取值进行设置（iOS 12.2 上该方法已经失效，不存在此属性）</del>。</p>
 <p><strong>2020.2.22 新增解决方法：</strong></p>
 <p>可以通过 Hook <code>WKWebView</code> 的 <code>handlesURLScheme:</code> 来达到绕过系统的限制检查。具体代码如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@implementation</span> <span style="color:#50fa7b">WKWebView</span> <span style="color:#8be9fd;font-style:italic">(Hook)</span>
