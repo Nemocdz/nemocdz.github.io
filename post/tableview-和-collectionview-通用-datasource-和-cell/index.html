@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.68.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/tableview-%E5%92%8C-collectionview-%E9%80%9A%E7%94%A8-datasource-%E5%92%8C-cell/">
@@ -237,7 +237,7 @@
 <span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">copy</span>) NSString <span style="color:#ff79c6">*</span>headerReuseIdentifer;
 <span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">strong</span>) NSMutableArray <span style="color:#ff79c6">*</span>itemsArray;
 </code></pre></div><p>回到 Datasouce，那么 Datasouce 就可以加上这些属性。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">strong</span>) NSMutableArray<span style="color:#ff79c6">&lt;</span>CDZSectionObject <span style="color:#ff79c6">*</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">*</span>sectionsArray;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">strong</span>) NSMutableArray<span style="color:#ff79c6">&lt;</span>CDZSectionObject <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>sectionsArray;
 <span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">strong</span>) CDZSectionObject <span style="color:#ff79c6">*</span>firstSection;	
 </code></pre></div><p>那么现在就可以实现第一个方法了，为了方便我们还可以默认有一个 firstSection，方便只有一个 section 的情况使用。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (NSInteger)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">numberOfRowsInSection:</span>(NSInteger)<span style="color:#8be9fd;font-style:italic">section</span>{
@@ -272,7 +272,7 @@
 </code></pre></div><p>这样，cell 的高度也可以由 cell 内部自己决定，适合各种各样的 cell，当然也可以让 Autolayout 决定。但是有一些老项目里的 cell 里面没有 Autolayout，所以返回高度通用性可能更强些。</p>
 <p>回到 Datasource，我们解决了 cell 的 Model 问题，下一个是，cell 的 class 怎么决定呢？其实对于 Datasouce 来说，cell 的类型，往往是由对应的 Model 决定的，也就是 Model 的类型，决定可以使用的 cell 的种类。那么我们在 Datasouce 里，只要给出一个接口，让使用者建立这种联系，item class - cell class 的联系，并在内部用一个类似哈希表的东西储存起来，我们便可以根据 item 找到 cell 的 class。简单的话用一个 <code>NSMutableDictionary</code> 就可以了。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">setCellClass:</span>(<span style="color:#8be9fd">Class</span>)<span style="color:#8be9fd;font-style:italic">cellClass</span> <span style="color:#50fa7b">forItemClass:</span>(<span style="color:#8be9fd">Class</span>)<span style="color:#8be9fd;font-style:italic">itemClass</span>{
-    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>itemClass <span style="color:#ff79c6">|</span><span style="color:#ff79c6">|</span> <span style="color:#ff79c6">!</span>cellClass) {
+    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>itemClass <span style="color:#ff79c6">||</span> <span style="color:#ff79c6">!</span>cellClass) {
         <span style="color:#ff79c6">return</span>;
     }
     [<span style="color:#8be9fd;font-style:italic">self</span>.cellDic <span style="color:#8be9fd;font-style:italic">setObject</span>:cellClass <span style="color:#8be9fd;font-style:italic">forKey</span>:NSStringFromClass(itemClass)];
@@ -315,7 +315,7 @@
 <p>让 Tableview 的 Datasouce 指定为一个 CDZTabeDataSource，并设置 item 对应的 cell 类型就可以。更换 cell 和 item 只要重新建立关系即可，达到了 Datasource 的复用和拓展性。对于各种 Tableview，就不用重复写 Datasource 的代码了。例子如 Demo：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (CGFloat)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">heightForRowAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>{
     <span style="color:#8be9fd">Class</span> cellClass <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span>.tableDataSource <span style="color:#8be9fd;font-style:italic">tableView</span>:tableView <span style="color:#8be9fd;font-style:italic">cellClassForRowAtIndexPath</span>:indexPath];
-    <span style="color:#ff79c6">return</span> (cellClass <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> [UITableViewCell <span style="color:#ff79c6">class</span>]) <span style="color:#ff79c6">?</span> <span style="color:#bd93f9">44.f</span> <span style="color:#ff79c6">:</span> [cellClass <span style="color:#8be9fd;font-style:italic">tableView</span>:tableView <span style="color:#8be9fd;font-style:italic">rowHeightForItem</span>:[<span style="color:#8be9fd;font-style:italic">self</span>.tableDataSource <span style="color:#8be9fd;font-style:italic">tableView</span>:tableView <span style="color:#8be9fd;font-style:italic">itemForRowAtIndexPath</span>:indexPath]];
+    <span style="color:#ff79c6">return</span> (cellClass <span style="color:#ff79c6">==</span> [UITableViewCell <span style="color:#ff79c6">class</span>]) <span style="color:#ff79c6">?</span> <span style="color:#bd93f9">44.f</span> <span style="color:#ff79c6">:</span> [cellClass <span style="color:#8be9fd;font-style:italic">tableView</span>:tableView <span style="color:#8be9fd;font-style:italic">rowHeightForItem</span>:[<span style="color:#8be9fd;font-style:italic">self</span>.tableDataSource <span style="color:#8be9fd;font-style:italic">tableView</span>:tableView <span style="color:#8be9fd;font-style:italic">itemForRowAtIndexPath</span>:indexPath]];
 }
 
 
@@ -354,7 +354,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1086</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1094</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

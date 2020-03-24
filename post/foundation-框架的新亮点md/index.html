@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.68.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/foundation-%E6%A1%86%E6%9E%B6%E7%9A%84%E6%96%B0%E4%BA%AE%E7%82%B9md/">
@@ -272,11 +272,11 @@
 <h2 id="有序集合的-diff">有序集合的 Diff</h2>
 <p>Foudation 框架为有序集合添加了 Diff 能力，用非常简单的方式，就能比对两个集合的差异，也能将差异应用到集合上。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190621154614.png" alt=""></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">bird</span> = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">bird</span><span style="color:#f1fa8c">&#34;</span>
-<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">bear</span> = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">bear</span><span style="color:#f1fa8c">&#34;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">bird</span> = <span style="color:#f1fa8c">&#34;bird&#34;</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">bear</span> = <span style="color:#f1fa8c">&#34;bear&#34;</span>
 
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">diff</span> = bird.difference(from: bear)
-<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">newBird</span> = bear.applying(diff) <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">&#34;</span><span style="color:#6272a4">b</span><span style="color:#6272a4">i</span><span style="color:#6272a4">r</span><span style="color:#6272a4">d</span><span style="color:#6272a4">&#34;</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">newBird</span> = bear.applying(diff) <span style="color:#6272a4">// &#34;bird&#34;</span>
 </code></pre></div><h2 id="data">Data</h2>
 <h3 id="连续性">连续性</h3>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190623011539.png" alt=""></p>
@@ -320,7 +320,7 @@
 <p>以后在开发者编写数据处理的接口的时候，尽量使用遵循通用数据协议的泛型参数。</p>
 <h3 id="压缩">压缩</h3>
 <p>在 App 中，开发者有时候需要对数据进行压缩（比如对老设备优化或者资源需要上传）。Foundation 框架引入了数据压缩的接口来简化开发者的工作（截止至 beta2 版本的 Xcode，相关 API 还没提供）。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">data</span> = <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">data</span> = <span style="color:#6272a4">// ...数据</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">compressed</span> = <span style="color:#ff79c6">try</span> data.compressed(using: .lzfse)
 </code></pre></div><p>一共提供了四种压缩算法让开发者选择：</p>
 <ul>
@@ -355,28 +355,28 @@
 <h2 id="formatter">Formatter</h2>
 <h3 id="相对日期时间格式relateivedatetimeformatter">相对日期时间格式（RelateiveDateTimeFormatter）</h3>
 <p>这个新增的类可以方便的计算出两个时间的相对时间，并返回字符描述（支持多个语言）：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">aDate</span> = <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">两</span><span style="color:#6272a4">周</span><span style="color:#6272a4">前</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">aDate</span> = <span style="color:#6272a4">// ...两周前</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">formatter</span> = RelativeDateTimeFormatter()
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">dateString</span> = formatter.localizedString(<span style="color:#ff79c6">for</span>: aDate, relativeTo: Date())
 
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">e</span><span style="color:#6272a4">n</span><span style="color:#6272a4">_</span><span style="color:#6272a4">U</span><span style="color:#6272a4">S</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">&#34;</span><span style="color:#6272a4">2</span><span style="color:#6272a4"> </span><span style="color:#6272a4">w</span><span style="color:#6272a4">e</span><span style="color:#6272a4">e</span><span style="color:#6272a4">k</span><span style="color:#6272a4">s</span><span style="color:#6272a4"> </span><span style="color:#6272a4">a</span><span style="color:#6272a4">g</span><span style="color:#6272a4">o</span><span style="color:#6272a4">&#34;</span>
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">z</span><span style="color:#6272a4">h</span><span style="color:#6272a4">_</span><span style="color:#6272a4">C</span><span style="color:#6272a4">N</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">&#34;</span><span style="color:#6272a4">2</span><span style="color:#6272a4"> </span><span style="color:#6272a4">周</span><span style="color:#6272a4">前</span><span style="color:#6272a4">&#34;</span>
+<span style="color:#6272a4">// en_US: &#34;2 weeks ago&#34;</span>
+<span style="color:#6272a4">// zh_CN: &#34;2 周前&#34;</span>
 </code></pre></div><h3 id="列表格式listformatter">列表格式（ListFormatter）</h3>
 <p>这个新增的类可以方便的返回列表多个事物的描述：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">string</span> = ListFormatter.localizedString(byJoining: [<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">😀</span><span style="color:#f1fa8c">&#34;</span>,<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">😳</span><span style="color:#f1fa8c">&#34;</span>,<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">😢</span><span style="color:#f1fa8c">&#34;</span>])
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">string</span> = ListFormatter.localizedString(byJoining: [<span style="color:#f1fa8c">&#34;😀&#34;</span>,<span style="color:#f1fa8c">&#34;😳&#34;</span>,<span style="color:#f1fa8c">&#34;😢&#34;</span>])
 
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">e</span><span style="color:#6272a4">n</span><span style="color:#6272a4">_</span><span style="color:#6272a4">U</span><span style="color:#6272a4">S</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">&#34;</span><span style="color:#6272a4">😀</span><span style="color:#6272a4">,</span><span style="color:#6272a4"> </span><span style="color:#6272a4">😳</span><span style="color:#6272a4">,</span><span style="color:#6272a4"> </span><span style="color:#6272a4">a</span><span style="color:#6272a4">n</span><span style="color:#6272a4">d</span><span style="color:#6272a4"> </span><span style="color:#6272a4">😢</span><span style="color:#6272a4">&#34;</span>
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">z</span><span style="color:#6272a4">h</span><span style="color:#6272a4">_</span><span style="color:#6272a4">C</span><span style="color:#6272a4">N</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">&#34;</span><span style="color:#6272a4">😀</span><span style="color:#6272a4">、</span><span style="color:#6272a4">😳</span><span style="color:#6272a4">和</span><span style="color:#6272a4">😢</span><span style="color:#6272a4">&#34;</span>
+<span style="color:#6272a4">// en_US: &#34;😀, 😳, and 😢&#34;</span>
+<span style="color:#6272a4">// zh_CN: &#34;😀、😳和😢&#34;</span>
 </code></pre></div><p>同时，列表格式还可以定义列表里元素的格式(如果有的话)：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">dates</span> = <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">dates</span> = <span style="color:#6272a4">// ...</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">listFormatter</span> = ListFormatter()
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">dateFormatter</span> = DateFormatter()
 dateFormatter.dateStyle = .short
 listFormatter.itemFormatter = dateFormatter
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">string</span> = listFormatter.string(from: dates)
 
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">e</span><span style="color:#6272a4">n</span><span style="color:#6272a4">_</span><span style="color:#6272a4">U</span><span style="color:#6272a4">S</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">&#34;</span><span style="color:#6272a4">6</span><span style="color:#6272a4">/</span><span style="color:#6272a4">7</span><span style="color:#6272a4">/</span><span style="color:#6272a4">1</span><span style="color:#6272a4">9</span><span style="color:#6272a4">,</span><span style="color:#6272a4"> </span><span style="color:#6272a4">6</span><span style="color:#6272a4">/</span><span style="color:#6272a4">1</span><span style="color:#6272a4">1</span><span style="color:#6272a4">/</span><span style="color:#6272a4">1</span><span style="color:#6272a4">9</span><span style="color:#6272a4">,</span><span style="color:#6272a4"> </span><span style="color:#6272a4">a</span><span style="color:#6272a4">n</span><span style="color:#6272a4">d</span><span style="color:#6272a4"> </span><span style="color:#6272a4">6</span><span style="color:#6272a4">/</span><span style="color:#6272a4">2</span><span style="color:#6272a4">1</span><span style="color:#6272a4">/</span><span style="color:#6272a4">1</span><span style="color:#6272a4">9</span><span style="color:#6272a4">&#34;</span>
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">z</span><span style="color:#6272a4">h</span><span style="color:#6272a4">_</span><span style="color:#6272a4">C</span><span style="color:#6272a4">N</span><span style="color:#6272a4">:</span><span style="color:#6272a4"> </span><span style="color:#6272a4">&#34;</span><span style="color:#6272a4">2</span><span style="color:#6272a4">0</span><span style="color:#6272a4">1</span><span style="color:#6272a4">9</span><span style="color:#6272a4">/</span><span style="color:#6272a4">6</span><span style="color:#6272a4">/</span><span style="color:#6272a4">7</span><span style="color:#6272a4">、</span><span style="color:#6272a4">2</span><span style="color:#6272a4">0</span><span style="color:#6272a4">1</span><span style="color:#6272a4">9</span><span style="color:#6272a4">/</span><span style="color:#6272a4">6</span><span style="color:#6272a4">/</span><span style="color:#6272a4">1</span><span style="color:#6272a4">1</span><span style="color:#6272a4">和</span><span style="color:#6272a4">2</span><span style="color:#6272a4">0</span><span style="color:#6272a4">1</span><span style="color:#6272a4">9</span><span style="color:#6272a4">/</span><span style="color:#6272a4">6</span><span style="color:#6272a4">/</span><span style="color:#6272a4">2</span><span style="color:#6272a4">1</span><span style="color:#6272a4">&#34;</span>
+<span style="color:#6272a4">// en_US: &#34;6/7/19, 6/11/19, and 6/21/19&#34;</span>
+<span style="color:#6272a4">// zh_CN: &#34;2019/6/7、2019/6/11和2019/6/21&#34;</span>
 </code></pre></div><h2 id="operationqueue">OperationQueue</h2>
 <h3 id="栅栏">栅栏</h3>
 <p>有时候我们希望在某一些任务执行完后，执行一个任务，如下图所示：</p>
@@ -389,15 +389,15 @@ listFormatter.itemFormatter = dateFormatter
 queue.progress.totalUnitCount = <span style="color:#bd93f9">3</span>
 
 queue.addOperation {
-    task()   <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">完</span><span style="color:#6272a4">成</span><span style="color:#6272a4">时</span><span style="color:#6272a4">，</span><span style="color:#6272a4">进</span><span style="color:#6272a4">度</span><span style="color:#6272a4"> </span><span style="color:#6272a4">1</span><span style="color:#6272a4">/</span><span style="color:#6272a4">3</span>
+    task()   <span style="color:#6272a4">// 完成时，进度 1/3</span>
 }
 
 queue.addOperation {
-    task()   <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">完</span><span style="color:#6272a4">成</span><span style="color:#6272a4">时</span><span style="color:#6272a4">，</span><span style="color:#6272a4">进</span><span style="color:#6272a4">度</span><span style="color:#6272a4"> </span><span style="color:#6272a4">2</span><span style="color:#6272a4">/</span><span style="color:#6272a4">3</span>
+    task()   <span style="color:#6272a4">// 完成时，进度 2/3</span>
 }
 
 queue.addOperation {
-    task()  <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">完</span><span style="color:#6272a4">成</span><span style="color:#6272a4">时</span><span style="color:#6272a4">，</span><span style="color:#6272a4">进</span><span style="color:#6272a4">度</span><span style="color:#6272a4"> </span><span style="color:#6272a4">3</span><span style="color:#6272a4">/</span><span style="color:#6272a4">3</span>
+    task()  <span style="color:#6272a4">// 完成时，进度 3/3</span>
 }
 </code></pre></div><h2 id="ios-上的-usb-和-smb">iOS 上的 USB 和 SMB</h2>
 <p>iOS 的文件系统开始支持 USB 和 SMB 的卷宗了。这也就意味着开发者需要开始准备支持处理其他卷宗中的文件了。</p>
@@ -406,22 +406,22 @@ queue.addOperation {
 </blockquote>
 <h3 id="写入操作">写入操作</h3>
 <p>因此在选择新文件的写入路径时，为了保证是原子性的安全保存，建议使用 <code>FileManager.SearchPathDirectory.itemReplacementDirectory</code> 来建立临时路径（因为固定的路径可能会不存在）。想要了解更多可参考 <a href="https://developer.apple.com/documentation/foundation/filemanager/1407693-url">Apple 官方文档</a>。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">path</span> = <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">父</span><span style="color:#6272a4">目</span><span style="color:#6272a4">录</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">path</span> = <span style="color:#6272a4">// ...父目录</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">url</span> = FileManager.<span style="color:#ff79c6">default</span>.url(<span style="color:#ff79c6">for</span>: .itemReplacementDirectory, <span style="color:#ff79c6">in</span>: .userDomainMask, appropriateFor: path, create: <span style="color:#ff79c6">true</span>)
 </code></pre></div><h3 id="读取操作">读取操作</h3>
 <p>因为 USB 可能被用户推出，SMB 可能因为网络连接失败而访问丢失，所以开发者要做好卷宗会整个消失的准备。所以在读取 <code>Data</code> 时，要使用 <code>Data.ReadingOptions.mappedIfSafe</code> （允许系统将文件映射到虚拟内存，只当文件存在可被移出的卷宗时生效）。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">url</span> = <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span><span style="color:#6272a4">路</span><span style="color:#6272a4">径</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">url</span> = <span style="color:#6272a4">// ...数据路径</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">data</span> = <span style="color:#ff79c6">try</span> Data(contentsOf: url, options: .mappedIfSafe)
 </code></pre></div><p>由于访问 USB 或 SMB 上的文件会比访问设备内部的文件明显慢很多，所以建议将访问操作放到非主线程中进行。</p>
 <h3 id="测试文件系统能力">测试文件系统能力</h3>
 <p>由于有些文件系统能力在设备内部卷宗是存在的，但在外部卷宗不一定存在。比如 NTFS 文件系统上大家都知道的克隆，但在 USB 或者 SMB 上是不存在的，所以开发者需要在使用前对文件系统的能力进行测试并处理错误。具体可以参考 <a href="https://developer.apple.com/documentation/foundation/urlresourcekey/checking_volume_storage_capacity">Apple 官方文档</a>。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">fileURL</span> = <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4"> </span><span style="color:#6272a4">文</span><span style="color:#6272a4">件</span><span style="color:#6272a4">路</span><span style="color:#6272a4">径</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">fileURL</span> = <span style="color:#6272a4">// .. 文件路径</span>
 <span style="color:#ff79c6">do</span> {
     <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">values</span> = <span style="color:#ff79c6">try</span> fileURL.resourceValues(forKeys: [.volumeSupportsFileCloningKey])
     <span style="color:#ff79c6">if</span> values.volumeSupportsFileCloning {
-        print(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">能力存在</span><span style="color:#f1fa8c">&#34;</span>)
+        print(<span style="color:#f1fa8c">&#34;能力存在&#34;</span>)
     } <span style="color:#ff79c6">else</span> {
-        print(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">能力不存在</span><span style="color:#f1fa8c">&#34;</span>)
+        print(<span style="color:#f1fa8c">&#34;能力不存在&#34;</span>)
     }
 } <span style="color:#ff79c6">catch</span> {
     print(error.localizedDescription)
@@ -431,17 +431,17 @@ queue.addOperation {
 <p>由于 Foundation 框架已经存在很久了，里面很多接口的设计还是 Objective-C 的思想。Apple 一直在改进 Foundation 框架里面的接口，使之更加 Swift 化。</p>
 <h3 id="scanner">Scanner</h3>
 <p>字符串扫描不再需要使用 Foundation 框架里的 <code>NSString</code>，可以使用 Swift 原生 <code>String</code> 类型，也不需要传入引用，更 Swift，更简单。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">S</span><span style="color:#6272a4">w</span><span style="color:#6272a4">i</span><span style="color:#6272a4">f</span><span style="color:#6272a4">t</span><span style="color:#6272a4"> </span><span style="color:#6272a4">4</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// Swift 4</span>
 <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">string</span>:NSString?
 <span style="color:#ff79c6">if</span> scanner.scanUpToCharacters(from: .newlines, into: &amp;string) {
     <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">nameString</span> = string! <span style="color:#ff79c6">as</span> <span style="color:#8be9fd;font-style:italic">String</span>
 }
 
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">S</span><span style="color:#6272a4">w</span><span style="color:#6272a4">i</span><span style="color:#6272a4">f</span><span style="color:#6272a4">t</span><span style="color:#6272a4"> </span><span style="color:#6272a4">5</span><span style="color:#6272a4">.</span><span style="color:#6272a4">1</span>
+<span style="color:#6272a4">// Swift 5.1</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">nameString</span> = scanner.scanUpToCharacters(from: .newlines)
 
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">可</span><span style="color:#6272a4">以</span><span style="color:#6272a4">使</span><span style="color:#6272a4">用</span><span style="color:#6272a4"> </span><span style="color:#6272a4">S</span><span style="color:#6272a4">t</span><span style="color:#6272a4">r</span><span style="color:#6272a4">i</span><span style="color:#6272a4">n</span><span style="color:#6272a4">g</span><span style="color:#6272a4"> </span><span style="color:#6272a4">的</span><span style="color:#6272a4">特</span><span style="color:#6272a4">性</span><span style="color:#6272a4">，</span><span style="color:#6272a4">比</span><span style="color:#6272a4">如</span><span style="color:#6272a4"> </span><span style="color:#6272a4">E</span><span style="color:#6272a4">m</span><span style="color:#6272a4">o</span><span style="color:#6272a4">j</span><span style="color:#6272a4">i</span>
-<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">matchString</span> = scanner.scanString(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">😀, 😳, and 😢</span><span style="color:#f1fa8c">&#34;</span>)
+<span style="color:#6272a4">// 可以使用 String 的特性，比如 Emoji</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">matchString</span> = scanner.scanString(<span style="color:#f1fa8c">&#34;😀, 😳, and 😢&#34;</span>)
 </code></pre></div><h3 id="filehandle">FileHandle</h3>
 <p>以前，当文件描述符操作如果发生潜在的错误，会抛出异常。现在 Apple 提供了带错误接口，所以开发者可以在调用处马上处理错误（截止至 beta2 版本的 Xcode，相关 API 还没提供）。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">fileHandle</span> = FileHandle()
@@ -457,7 +457,7 @@ queue.addOperation {
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>174</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>183</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

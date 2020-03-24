@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.68.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F-typescript-%E5%B0%9D%E8%AF%95/">
@@ -230,7 +230,7 @@
     <li><a href="#小程序对-typescript-的支持">小程序对 TypeScript 的支持</a>
       <ul>
         <li><a href="#事件">事件</a></li>
-        <li><a href="#pagedata">Page&Data</a></li>
+        <li><a href="#pagedata">Page&amp;Data</a></li>
         <li><a href="#调用-javascript">调用 JavaScript</a></li>
       </ul>
     </li>
@@ -297,9 +297,9 @@ Page<span style="color:#ff79c6">&lt;</span>IIntroData, IIntroPage<span style="co
 </code></pre></div><p>如果这个页面不需要 data 或者不需要扩展 page，用 <code>IAnyObject</code> 代替 D 或者 T 即可。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#ff79c6">interface</span> PageInstanceBaseProps<span style="color:#ff79c6">&lt;</span>D <span style="color:#ff79c6">extends</span> IAnyObject <span style="color:#ff79c6">=</span> any<span style="color:#ff79c6">&gt;</span> {
     data?: <span style="color:#8be9fd">D</span>
-    setData<span style="color:#ff79c6">?</span><span style="color:#ff79c6">&lt;</span>K <span style="color:#ff79c6">extends</span> keyof D<span style="color:#ff79c6">&gt;</span>(
+    setData<span style="color:#ff79c6">?&lt;</span>K <span style="color:#ff79c6">extends</span> keyof D<span style="color:#ff79c6">&gt;</span>(
       data: <span style="color:#8be9fd">D</span> <span style="color:#ff79c6">|</span> Pick<span style="color:#ff79c6">&lt;</span>D, K<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">|</span> IAnyObject,
-      callback<span style="color:#ff79c6">?</span><span style="color:#ff79c6">:</span> () <span style="color:#ff79c6">=</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">void</span>
+      callback<span style="color:#ff79c6">?:</span> () <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">void</span>
     )<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">void</span>
 }
 </code></pre></div><p>同时，由于 <code>setData</code> 和 data 都被声明为可选项，使用时需要加上 <code>!</code>，<code>this.setData!({})</code> 和 <code>this.data!</code>。</p>
@@ -311,7 +311,7 @@ Page<span style="color:#ff79c6">&lt;</span>IIntroData, IIntroPage<span style="co
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>409</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>418</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

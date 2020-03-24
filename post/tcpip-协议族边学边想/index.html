@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.68.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/tcpip-%E5%8D%8F%E8%AE%AE%E6%97%8F%E8%BE%B9%E5%AD%A6%E8%BE%B9%E6%83%B3/">
@@ -238,6 +238,7 @@
         <li><a href="#udpuser-datagram-protocol">UDP（User Datagram Protocol）</a></li>
         <li><a href="#tcptransmission-control-protocol">TCP（Transmission Control Protocol）</a></li>
         <li><a href="#tcp-窗口">TCP 窗口</a></li>
+        <li><a href="#tcp-性能">TCP 性能</a></li>
       </ul>
     </li>
     <li><a href="#应用层">应用层</a>
@@ -245,6 +246,7 @@
         <li><a href="#www基本概念">WWW基本概念</a></li>
         <li><a href="#http">HTTP</a></li>
         <li><a href="#https">HTTPS</a></li>
+        <li><a href="#加密方式">加密方式</a></li>
         <li><a href="#浏览器输入-url-之后发生了什么">浏览器输入 URL 之后发生了什么</a></li>
       </ul>
     </li>
@@ -266,7 +268,7 @@
 </ul>
 <p>TCP/IP：定义了数据链路层以上的协议，包括网络层、传输层、应用层（会话层以上都包括）</p>
 <h2 id="网络层">网络层</h2>
-<p>网络层只关心起终点的整体传输，数据链路层关心每一个设备间的传输。</p>
+<p>网络层只关心起终点的整体传输（路由和寻址），数据链路层关心每一个设备间的传输。</p>
 <h3 id="ipinternet-protocol">IP（Internet Protocol）</h3>
 <p>Q：IP 为何面向无连接？</p>
 <p>A：1.简化 2.提速 3.为上层提供自定义</p>
@@ -328,6 +330,17 @@
 3. 根域名服务器再从上往下找到对应的域名服务器 B 地址并返回给域名服务器 A
 4. A 向 B 查询域名的 IP 地址并返回。
 </code></pre>
+<p>主要是用 UDP，用于查询，现在同时支持 TCP 和 UDP。</p>
+<h4 id="udp">UDP</h4>
+<ul>
+<li>DNS 查询数据包小，机制简单</li>
+<li>额外开销小，性能表现好</li>
+</ul>
+<h4 id="tcp">TCP</h4>
+<ul>
+<li>DNS 响应慢慢容易分片和丢失</li>
+<li>随着查询数据包大小增大，TCP 的额外开销比例降低</li>
+</ul>
 <h3 id="arpaddress-resolution-protocol">ARP（Address Resolution Protocol）</h3>
 <p>通过目标 IP 地址定位下一个接收的网络设备 MAC 地址。分为请求和响应两部分。一般获取到 Mac 地址后会缓存一段时间。</p>
 <h3 id="icmpinternet-control-message-protocol">ICMP（Internet Control Message Protocol）</h3>
@@ -367,7 +380,7 @@
 <p>传输层通过端口号标识请求发送给哪一个应用程序的守护进程（对消息进行监听）。</p>
 <p>标识唯一的通信的要素：源 IP、目标 IP、源端口号、目标端口号、协议号</p>
 <h3 id="udpuser-datagram-protocol">UDP（User Datagram Protocol）</h3>
-<p>面向无连接的通信，不保证通信可靠，不负责丢包重发等。</p>
+<p>面向无连接和基于包的通信，不保证通信可靠，不负责丢包重发等。</p>
 <p>主要用于高速传输和实时性要求较高的通信或广播：</p>
 <ul>
 <li>包总量小（DNS 等）</li>
@@ -376,7 +389,7 @@
 <li>广播、多播通信</li>
 </ul>
 <h3 id="tcptransmission-control-protocol">TCP（Transmission Control Protocol）</h3>
-<p>面向连接的通信，对传输、发送、通信进行控制，尽量保证通信可靠。</p>
+<p>面向连接和基于字节流的通信，对传输、发送、通信进行控制，尽量保证通信可靠。</p>
 <p>特点：通过序列号和确认应答（ACK）</p>
 <p>Q：序列号作用是？</p>
 <p>A：确认应答在途中被丢弃或者延迟到达，导致进行多次重传相同数据。序列号定义后可在确认应答中将下个应该发送的序列号带上，保证下次发送的是正确的。</p>
@@ -395,6 +408,7 @@
 <p>也就是中间那个包实际上包含两个功能。</p>
 <p>客户端和服务端都需要请求是因为建立连接前，两端配置（比如序列号）需要<strong>协商同步</strong>。</p>
 <ul>
+<li>避免历史重复连接的建立，需要由发起方来确定（有上下文）是否是当前连接。</li>
 <li>同步信号需要一个<strong>返回确保成功</strong>，所以就有了请求的应答。</li>
 <li>单纯一边的请求和应答并不能保证另一边也达到同步，所以就需要两边都请求。</li>
 </ul>
@@ -424,9 +438,7 @@
 <p>Q：为何需要发送窗口探测包？</p>
 <p>A：接收方缓存区即将满后会暂停接收并通知发送方暂停发送（窗口大小为 0）。接收方可以重新开始接受时发送一个窗口更新包通知。避免此包丢失导致通信无法重新开始，发送端时不时发送窗口探测包来获取最新的窗口大小信息。</p>
 <p>Q：TCP 粘包是什么？</p>
-<p>A：由于 TCP 是流协议，发送方后一包的头紧接着前一包的尾，粘成一包。</p>
-<p>发送方原因：上个确认才发下个并且确认时一起发送</p>
-<p>接收方原因：先缓存再读取，若读取速度小于接受速度</p>
+<p>A：由于 TCP 是基于字节流协议，没有定义消息边界，发送方后一包的头紧接着前一包的尾，粘成一包。TCP 的设计使发送方可能上个确认才发下个并且确认时一起发送，接收方先缓存再读取。</p>
 <h4 id="拥塞控制">拥塞控制</h4>
 <p>连接建立初期，突然发送大量数据容易造成网络瘫痪。</p>
 <p>调节拥塞时发送大小的量，定义了“拥塞窗口”，让发送方窗口大小等于拥塞窗口。</p>
@@ -438,6 +450,12 @@
 4. 一旦发生超时则将慢启动阀值设置成当时的拥塞窗口大小的一半，并重新步骤 1
 5. 一旦发生重复确认应答则将慢启动阀值设置成当时拥塞窗口的一半，之后将拥塞窗口设置为慢启动阀值大小 +3MSS，并重新步骤 3
 </code></pre>
+<h3 id="tcp-性能">TCP 性能</h3>
+<ul>
+<li>拥塞控制算法在丢包时降低吞吐量</li>
+<li>三次握手增加了额外开销</li>
+<li>应答机制导致可能重新发送已发送数据（引入快速重传）</li>
+</ul>
 <h2 id="应用层">应用层</h2>
 <h3 id="www基本概念">WWW基本概念</h3>
 <p>WWW=信息手段和位置-URI（Uniform Resource Identifer）+信息表现形式-HTML（HyperText Markup Language）+ 信息转发-HTTP（HyperText Transfer Protocol）</p>
@@ -509,14 +527,40 @@
 <li>篡改-消息校验（Hash）</li>
 <li>伪装-证书校验（证书验证链）</li>
 </ul>
+<h3 id="加密方式">加密方式</h3>
+<ul>
+<li>对称加密：速度快，缺点是如何管理和传递密钥，如 AES</li>
+<li>非对称加密：速度慢，分为公钥和私钥，一个加密另一个解密，如 RSA</li>
+</ul>
 <h4 id="tlsssl-30">TLS（SSL 3.0）</h4>
 <ol>
-<li>Client 发送版本配置，支持的加密算法给 Server</li>
-<li>Server 将自己的公钥（RSA） hash 后让 CA 的私钥加密生成证书</li>
-<li>Server 将证书和协商的配置发送给 Client</li>
-<li>Client 用 CA 的公钥解密并比对，获得 Server 公钥</li>
-<li>Client 用 Server 公钥加密生成的对称密钥（AES）后发送给 Server</li>
-<li>双方使用对称加密通信</li>
+<li>Client 发送给 Server
+<ul>
+<li>协议配置</li>
+<li>支持的加密算法</li>
+<li>生成的随机数 A</li>
+</ul>
+</li>
+<li>Server 将自己的公钥（RSA） hash 后让 CA 的私钥加密生成数字证书</li>
+<li>Server 发送给 Client
+<ul>
+<li>数字证书</li>
+<li>协商的协议配置</li>
+<li>加密算法</li>
+<li>生成的随机数 B</li>
+</ul>
+</li>
+<li>Client 用 CA 的公钥解密并比对确认，获得 Server 公钥</li>
+<li>Client 生成随机数 C，用 Server 公钥加密后发送给 Server</li>
+<li>Server 用私钥解密，获得随机数 C</li>
+<li>双方均有随机数 A、B、C，生成对称加密的对话密钥（AES）</li>
+<li>开始使用对话密钥通信</li>
+</ol>
+<p>Q：为什么需要三个随机数？</p>
+<p>A：</p>
+<ol>
+<li>需要随机数来使生成密钥随机性</li>
+<li>不能信任任何一端给出的随机数，三个可以增高概率</li>
 </ol>
 <h3 id="浏览器输入-url-之后发生了什么">浏览器输入 URL 之后发生了什么</h3>
 <ol>
@@ -532,7 +576,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>936</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>945</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

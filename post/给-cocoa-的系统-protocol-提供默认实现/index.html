@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.68.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E7%BB%99-cocoa-%E7%9A%84%E7%B3%BB%E7%BB%9F-protocol-%E6%8F%90%E4%BE%9B%E9%BB%98%E8%AE%A4%E5%AE%9E%E7%8E%B0/">
@@ -259,8 +259,8 @@
 </code></pre></div><p>其中 <code>respondsToSelector</code> 方法用于判断方法是否有被实现者实现，有的话通过 <code>forwardingTarget</code> 方法进行消息处理者的重定向。</p>
 <h2 id="tableview-的实际使用">TableView 的实际使用</h2>
 <p>实现了 ProtocolProxy 之后，在设置 Protocol 时，就可以设置成 ProtocolProxy，然后将默认实现和自定义实现都设置给 ProtocolProxy。举个 <code>UITableView</code> 的例子：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">delegateKey</span> = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">delegate</span><span style="color:#f1fa8c">&#34;</span>
-<span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">dataSourceKey</span> = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">dataSource</span><span style="color:#f1fa8c">&#34;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">delegateKey</span> = <span style="color:#f1fa8c">&#34;delegate&#34;</span>
+<span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">dataSourceKey</span> = <span style="color:#f1fa8c">&#34;dataSource&#34;</span>
 <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">ProxyTableView</span>: UITableView {
     <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">delegateProxy</span> = ProtocolProxy()
     <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">dataSourceProxy</span> = ProtocolProxy()
@@ -303,7 +303,7 @@
     <span style="color:#ff79c6">override</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">viewDidLoad</span>() {
         <span style="color:#ff79c6">super</span>.viewDidLoad()
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">tableView</span> = ProxyTableView(frame: view.frame, style: .plain)
-        <span style="color:#6272a4">//</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+        <span style="color:#6272a4">//...</span>
         tableView.defaultDelgate = BaseTableViewDelegate()
         tableView.delegate = <span style="color:#ff79c6">self</span>
     }
@@ -311,13 +311,13 @@
 
 <span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">ViewController</span>: UITableViewDelegate {
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">tableView</span>(<span style="color:#ff79c6">_</span> tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">CustomTableViewDelegate</span><span style="color:#f1fa8c">&#34;</span>)
+        print(<span style="color:#f1fa8c">&#34;CustomTableViewDelegate&#34;</span>)
     }
 }
 
 <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">BaseTableViewDelegate</span>: NSObject, UITableViewDelegate{
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">tableView</span>(<span style="color:#ff79c6">_</span> tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">BaseTableViewDelegate</span><span style="color:#f1fa8c">&#34;</span>)
+        print(<span style="color:#f1fa8c">&#34;BaseTableViewDelegate&#34;</span>)
     }
 }
 </code></pre></div><h2 id="最后">最后</h2>
@@ -325,7 +325,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>402</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>411</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

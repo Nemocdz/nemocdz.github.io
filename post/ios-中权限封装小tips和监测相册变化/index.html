@@ -53,7 +53,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.68.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E6%9D%83%E9%99%90%E5%B0%81%E8%A3%85%E5%B0%8Ftips%E5%92%8C%E7%9B%91%E6%B5%8B%E7%9B%B8%E5%86%8C%E5%8F%98%E5%8C%96/">
@@ -245,17 +245,17 @@
 </code></pre></div><p>其中，我们不希望用户去拒绝，达到 <code>PHAuthorizationStatusDenied</code> 这个状态，这样的话用户再要获取权限就要到设置里的隐私里找到我们的应用再手动打开，而没办法在 App 内去请求权限更改。那么我们希望暂时拒绝后的状态应该是 <code>PHAuthorizationStatusNotDetermined</code> 的，思路就是提示一个 <code>UIAlertViewController</code> 去询问，用户取消则不去调用真正的询问权限（相当于忽略），以便下次提醒在询问。用户同意则调用系统询问权限，这时一般用户也会再允许了。流程示意图如下。<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gw1faqpzkg83ej31kw0uv769.jpg" alt="屏幕快照 2016-12-14 22.15.02"></p>
 <p>代码很简单，直接贴上来</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">showPermissionAlertInController</span>{
-    UIAlertController <span style="color:#ff79c6">*</span>alert <span style="color:#ff79c6">=</span> [UIAlertController <span style="color:#8be9fd;font-style:italic">alertControllerWithTitle</span>:<span style="color:#8be9fd;font-style:italic">nil</span> <span style="color:#8be9fd;font-style:italic">message</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">需要你的图库的权限</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#8be9fd;font-style:italic">preferredStyle</span>:UIAlertControllerStyleAlert];
-    UIAlertAction <span style="color:#ff79c6">*</span>cancelAction <span style="color:#ff79c6">=</span> [UIAlertAction <span style="color:#8be9fd;font-style:italic">actionWithTitle</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">取消</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#8be9fd;font-style:italic">style</span>:UIAlertActionStyleCancel <span style="color:#8be9fd;font-style:italic">handler</span>:<span style="color:#ff79c6">^</span>(UIAlertAction <span style="color:#ff79c6">*</span>action) {
+    UIAlertController <span style="color:#ff79c6">*</span>alert <span style="color:#ff79c6">=</span> [UIAlertController <span style="color:#8be9fd;font-style:italic">alertControllerWithTitle</span>:<span style="color:#8be9fd;font-style:italic">nil</span> <span style="color:#8be9fd;font-style:italic">message</span>:<span style="color:#f1fa8c">@&#34;需要你的图库的权限&#34;</span> <span style="color:#8be9fd;font-style:italic">preferredStyle</span>:UIAlertControllerStyleAlert];
+    UIAlertAction <span style="color:#ff79c6">*</span>cancelAction <span style="color:#ff79c6">=</span> [UIAlertAction <span style="color:#8be9fd;font-style:italic">actionWithTitle</span>:<span style="color:#f1fa8c">@&#34;取消&#34;</span> <span style="color:#8be9fd;font-style:italic">style</span>:UIAlertActionStyleCancel <span style="color:#8be9fd;font-style:italic">handler</span>:<span style="color:#ff79c6">^</span>(UIAlertAction <span style="color:#ff79c6">*</span>action) {
         <span style="color:#6272a4">//do something
 </span><span style="color:#6272a4"></span>    }];
-    UIAlertAction <span style="color:#ff79c6">*</span>requestAction <span style="color:#ff79c6">=</span> [UIAlertAction <span style="color:#8be9fd;font-style:italic">actionWithTitle</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">同意</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#8be9fd;font-style:italic">style</span>:UIAlertActionStyleDefault <span style="color:#8be9fd;font-style:italic">handler</span>:<span style="color:#ff79c6">^</span>(UIAlertAction <span style="color:#ff79c6">*</span>action) {
+    UIAlertAction <span style="color:#ff79c6">*</span>requestAction <span style="color:#ff79c6">=</span> [UIAlertAction <span style="color:#8be9fd;font-style:italic">actionWithTitle</span>:<span style="color:#f1fa8c">@&#34;同意&#34;</span> <span style="color:#8be9fd;font-style:italic">style</span>:UIAlertActionStyleDefault <span style="color:#8be9fd;font-style:italic">handler</span>:<span style="color:#ff79c6">^</span>(UIAlertAction <span style="color:#ff79c6">*</span>action) {
         dispatch_async(dispatch_get_global_queue(<span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">0</span>), <span style="color:#ff79c6">^</span>{
             [PHPhotoLibrary <span style="color:#8be9fd;font-style:italic">requestAuthorization</span>:<span style="color:#ff79c6">^</span>(PHAuthorizationStatus status) {
-                <span style="color:#ff79c6">if</span> (status <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> PHAuthorizationStatusAuthorized) {
-                    NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">用户同意授权相册</span><span style="color:#f1fa8c">&#34;</span>);
+                <span style="color:#ff79c6">if</span> (status <span style="color:#ff79c6">==</span> PHAuthorizationStatusAuthorized) {
+                    NSLog(<span style="color:#f1fa8c">@&#34;用户同意授权相册&#34;</span>);
                 }<span style="color:#ff79c6">else</span> {
-                    NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">用户拒绝授权相册</span><span style="color:#f1fa8c">&#34;</span>);
+                    NSLog(<span style="color:#f1fa8c">@&#34;用户拒绝授权相册&#34;</span>);
                 }
                 dispatch_async(dispatch_get_main_queue(), <span style="color:#ff79c6">^</span>{
                     <span style="color:#6272a4">//do something
@@ -300,7 +300,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1186</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1195</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

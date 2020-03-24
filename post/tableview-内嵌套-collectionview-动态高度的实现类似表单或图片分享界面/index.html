@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.68.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/tableview-%E5%86%85%E5%B5%8C%E5%A5%97-collectionview-%E5%8A%A8%E6%80%81%E9%AB%98%E5%BA%A6%E7%9A%84%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BC%E8%A1%A8%E5%8D%95%E6%88%96%E5%9B%BE%E7%89%87%E5%88%86%E4%BA%AB%E7%95%8C%E9%9D%A2/">
@@ -245,7 +245,7 @@
 <p>接着自定义一个 CDZTableViewCell。<del>并用xib拖上一个collectionview并设置对contenview的autolayout约束。用Masonry之类的第三方布局库或原生进行代码约束也可以。然后在tableview里用<code>registerNib</code>方法注册一下自定义的cell。</del></p>
 <p><strong>因为 TableView 执行 reloadData 方法时，会把所有 Cell 从 VisableCells 池中移除，并从同一复用标识的复用池中取出 Cell 加入视图中，这个时候 Cell 的高度已经确定好，但 indexPath 的 row 顺序有可能不是原来的，所以不能复用。也就是虽然每一个 Cell 功能一致，但是由于高度和里面图片数量不一样，并不能互相复用。在 Storyboard 中可以用静态 cell 分别放入 CollectionView 实现。这里为了不重复放 CollectionView 用了代码书写 TableView。</strong></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (UITableViewCell <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">cellForRowAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>{
-    NSString <span style="color:#ff79c6">*</span>identifer <span style="color:#ff79c6">=</span> [NSString <span style="color:#8be9fd;font-style:italic">stringWithFormat</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">CDZTableViewCell%ld</span><span style="color:#f1fa8c">&#34;</span>,indexPath.row];<span style="color:#6272a4">//唯一复用标识，相当于不复用
+    NSString <span style="color:#ff79c6">*</span>identifer <span style="color:#ff79c6">=</span> [NSString <span style="color:#8be9fd;font-style:italic">stringWithFormat</span>:<span style="color:#f1fa8c">@&#34;CDZTableViewCell%ld&#34;</span>,indexPath.row];<span style="color:#6272a4">//唯一复用标识，相当于不复用
 </span><span style="color:#6272a4"></span>    CDZTableViewCell <span style="color:#ff79c6">*</span>cell <span style="color:#ff79c6">=</span> [tableView <span style="color:#8be9fd;font-style:italic">dequeueReusableCellWithIdentifier</span>:identifer];
     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>cell) {
         cell  <span style="color:#ff79c6">=</span> [CDZTableViewCell.alloc <span style="color:#8be9fd;font-style:italic">initWithStyle</span>:UITableViewCellStyleDefault <span style="color:#8be9fd;font-style:italic">reuseIdentifier</span>:identifer];
@@ -286,8 +286,8 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">collectionView:</span>(UICollectionView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">collectionView</span> <span style="color:#50fa7b">didSelectItemAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span>{
     <span style="color:#6272a4">//载入数据，如图片等
 </span><span style="color:#6272a4"></span>    CDZCollectionViewItem <span style="color:#ff79c6">*</span>item <span style="color:#ff79c6">=</span> [CDZCollectionViewItem new];
-    item.image <span style="color:#ff79c6">=</span> [UIImage <span style="color:#8be9fd;font-style:italic">imageNamed</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">example</span><span style="color:#f1fa8c">&#34;</span>];
-    <span style="color:#ff79c6">if</span> ((indexPath.row <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.itemsArray.count <span style="color:#ff79c6">-</span> <span style="color:#bd93f9">1</span>)) {
+    item.image <span style="color:#ff79c6">=</span> [UIImage <span style="color:#8be9fd;font-style:italic">imageNamed</span>:<span style="color:#f1fa8c">@&#34;example&#34;</span>];
+    <span style="color:#ff79c6">if</span> ((indexPath.row <span style="color:#ff79c6">==</span> <span style="color:#8be9fd;font-style:italic">self</span>.itemsArray.count <span style="color:#ff79c6">-</span> <span style="color:#bd93f9">1</span>)) {
         [<span style="color:#8be9fd;font-style:italic">self</span>.itemsArray <span style="color:#8be9fd;font-style:italic">insertObject</span>:item <span style="color:#8be9fd;font-style:italic">atIndex</span>:<span style="color:#8be9fd;font-style:italic">self</span>.itemsArray.count <span style="color:#ff79c6">-</span> <span style="color:#bd93f9">1</span>];
     }
     <span style="color:#ff79c6">else</span>{
@@ -336,7 +336,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1146</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1155</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
