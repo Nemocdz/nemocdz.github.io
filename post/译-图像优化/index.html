@@ -71,7 +71,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.68.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E8%AF%91-%E5%9B%BE%E5%83%8F%E4%BC%98%E5%8C%96/">
@@ -286,11 +286,11 @@
 </blockquote>
 <h2 id="尺寸正是问题所在">尺寸正是问题所在</h2>
 <p>我们可以很简单地将这个过程和内存的消耗可视化。我创建了一个简单的应用，可以在一个 image view 上展示需要的图像，这里用的是我女儿的照片：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">filePath</span> = Bundle.main.path(forResource:<span style="color:#f1fa8c">&#34;baylor&#34;</span>, ofType: <span style="color:#f1fa8c">&#34;jpg&#34;</span>)<span style="color:#ff79c6">!</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">filePath</span> = Bundle.main.path(forResource:<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">baylor</span><span style="color:#f1fa8c">&#34;</span>, ofType: <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">jpg</span><span style="color:#f1fa8c">&#34;</span>)<span style="color:#ff79c6">!</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">url</span> = NSURL(fileURLWithPath: filePath)
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">fileImage</span> = UIImage(contentsOfFile: filePath)
 
-<span style="color:#6272a4">// Image view</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">I</span><span style="color:#6272a4">m</span><span style="color:#6272a4">a</span><span style="color:#6272a4">g</span><span style="color:#6272a4">e</span><span style="color:#6272a4"> </span><span style="color:#6272a4">v</span><span style="color:#6272a4">i</span><span style="color:#6272a4">e</span><span style="color:#6272a4">w</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageView</span> = UIImageView(image: fileImage)
 imageView.translatesAutoresizingMaskIntoConstraints = <span style="color:#ff79c6">false</span>
 imageView.contentMode = .scaleAspectFit
@@ -328,7 +328,7 @@ Image IO  13.4M   13.4M   13.4M    0K  0K  0K   0K  <span style="color:#bd93f9">
 
 UIGraphicsBeginImageContextWithOptions(circleSize, <span style="color:#ff79c6">true</span>, <span style="color:#bd93f9">0</span>)
 
-<span style="color:#6272a4">// Draw a circle</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">D</span><span style="color:#6272a4">r</span><span style="color:#6272a4">a</span><span style="color:#6272a4">w</span><span style="color:#6272a4"> </span><span style="color:#6272a4">a</span><span style="color:#6272a4"> </span><span style="color:#6272a4">c</span><span style="color:#6272a4">i</span><span style="color:#6272a4">r</span><span style="color:#6272a4">c</span><span style="color:#6272a4">l</span><span style="color:#6272a4">e</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">ctx</span> = UIGraphicsGetCurrentContext()<span style="color:#ff79c6">!</span>
 UIColor.red.setFill()
 ctx.setFillColor(UIColor.red.cgColor)
@@ -401,10 +401,10 @@ Physical footprint <span style="color:#ff79c6">(</span>peak<span style="color:#f
 <p>如果应用持续耗电，iOS 可以优化电量消耗。但是我们做的向下采样一般不会持续执行，所以最好在一个队列中执行采样操作。与此同时，你的解码过程也实现了后台执行，一石多鸟。</p>
 <p>做好准备，下面即将为您呈现的是——我自己业余项目里的 Objective-C 代码示例：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#6272a4">// 不要用全局异步队列，使用你自己的队列，从而避免潜在的线程爆炸问题
-</span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">prefetchRowsAtIndexPaths:</span>(NSArray<span style="color:#ff79c6">&lt;</span>NSIndexPath <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPaths</span>
+</span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">prefetchRowsAtIndexPaths:</span>(NSArray<span style="color:#ff79c6">&lt;</span>NSIndexPath <span style="color:#ff79c6">*</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPaths</span>
 {
-    <span style="color:#ff79c6">if</span> (<span style="color:#8be9fd;font-style:italic">self</span>.downsampledImage <span style="color:#ff79c6">!=</span> <span style="color:#8be9fd;font-style:italic">nil</span> <span style="color:#ff79c6">||</span> 
-        <span style="color:#8be9fd;font-style:italic">self</span>.listItem.mediaAssetData <span style="color:#ff79c6">==</span> <span style="color:#8be9fd;font-style:italic">nil</span>) <span style="color:#ff79c6">return</span>;
+    <span style="color:#ff79c6">if</span> (<span style="color:#8be9fd;font-style:italic">self</span>.downsampledImage <span style="color:#ff79c6">!</span><span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">nil</span> <span style="color:#ff79c6">|</span><span style="color:#ff79c6">|</span> 
+        <span style="color:#8be9fd;font-style:italic">self</span>.listItem.mediaAssetData <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">nil</span>) <span style="color:#ff79c6">return</span>;
     
     NSIndexPath <span style="color:#ff79c6">*</span>mediaIndexPath <span style="color:#ff79c6">=</span> [NSIndexPath <span style="color:#8be9fd;font-style:italic">indexPathForRow</span>:<span style="color:#bd93f9">0</span>
                                                      <span style="color:#8be9fd;font-style:italic">inSection</span>:SECTION_MEDIA];
@@ -441,7 +441,7 @@ Physical footprint <span style="color:#ff79c6">(</span>peak<span style="color:#f
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>183</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>343</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

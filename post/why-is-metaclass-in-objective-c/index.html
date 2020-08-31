@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.68.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/why-is-metaclass-in-objective-c/">
@@ -257,7 +257,7 @@
     rwlock_writer_t lock(runtimeLock);
 
     <span style="color:#6272a4">// 如果 Class 名字已存在或父类没有通过认证则创建失败
-</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (getClass(name)  <span style="color:#ff79c6">||</span>  <span style="color:#ff79c6">!</span>verifySuperclass(superclass, <span style="color:#8be9fd;font-style:italic">true</span><span style="color:#6272a4">/*rootOK*/</span>)) {
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (getClass(name)  <span style="color:#ff79c6">|</span><span style="color:#ff79c6">|</span>  <span style="color:#ff79c6">!</span>verifySuperclass(superclass, <span style="color:#8be9fd;font-style:italic">true</span><span style="color:#6272a4">/*rootOK*/</span>)) {
         <span style="color:#ff79c6">return</span> nil;
     }
 
@@ -293,7 +293,7 @@
    <span style="color:#6272a4">//....
 </span><span style="color:#6272a4"></span>} PyTypeObject;
 
-<span style="color:#ff79c6">#define PyObject_VAR_HEAD      PyVarObject ob_base;
+<span style="color:#ff79c6">#</span><span style="color:#ff79c6">define PyObject_VAR_HEAD      PyVarObject ob_base;</span><span style="color:#ff79c6">
 </span><span style="color:#ff79c6"></span>
 <span style="color:#ff79c6">typedef</span> <span style="color:#ff79c6">struct</span> {
     PyObject ob_base;  
@@ -301,14 +301,14 @@
 </span><span style="color:#6272a4"></span>} PyVarObject;
 </code></pre></div><p><code>PyVarObject</code> 是一种可变长度对象，是在 <code>PyObject</code> 基础上加上了对象的长度。而开始的内存包括了 ob_base 这个 <code>PyObject</code>，就代表可以用 <code>PyObject</code> 指针进行引用。所以可以说，结构体中刚开始的部分是一个 <code>PyObject</code> 对象，在 Python 中引用就是一个对象。那么 <code>PyTypeObject</code> 开头是一个 <code>PyVarObject</code>，也就是一个对象。也就是说，Python 里的 Class，也是一个对象。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#6272a4">#在python中生成一个Class</span>
-MyClass <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">type</span>(<span style="color:#f1fa8c">&#39;MyClass&#39;</span>, (), {})           
+MyClass <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">type</span>(<span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">MyClass</span><span style="color:#f1fa8c">&#39;</span>, (), {})           
 </code></pre></div><p>先看看 Python 里面的 type 关键字是什么。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#6272a4">//bltinmodule.c
-</span><span style="color:#6272a4"></span>SETBUILTIN(<span style="color:#f1fa8c">&#34;type&#34;</span>,                  <span style="color:#ff79c6">&amp;</span>PyType_Type);
+</span><span style="color:#6272a4"></span>SETBUILTIN(<span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">type</span><span style="color:#f1fa8c">&#34;</span>,                  <span style="color:#ff79c6">&amp;</span>PyType_Type);
 </code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#6272a4">//typeobject.c
 </span><span style="color:#6272a4"></span>PyTypeObject PyType_Type <span style="color:#ff79c6">=</span> {
     PyVarObject_HEAD_INIT(<span style="color:#ff79c6">&amp;</span>PyType_Type, <span style="color:#bd93f9">0</span>)
-    <span style="color:#f1fa8c">&#34;type&#34;</span>,                                     <span style="color:#6272a4">/* tp_name */</span>
+    <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">type</span><span style="color:#f1fa8c">&#34;</span>,                                     <span style="color:#6272a4">/* tp_name */</span>
     <span style="color:#6272a4">//.....
 </span><span style="color:#6272a4"></span>    type_init,                                  <span style="color:#6272a4">/* tp_init */</span>
 	<span style="color:#6272a4">//....                                
@@ -359,7 +359,7 @@ MyClass <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-sty
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>921</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1081</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

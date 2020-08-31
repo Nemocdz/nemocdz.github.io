@@ -26,7 +26,7 @@
 
   
   
-  <meta name="description" content=" WWDC 2019 Session 721 - Combine in Practice
+  <meta name="description" content=" WWDC19 Session 721 - Combine in Practice
  引言 Combine 是 WWDC2019 推出的异步编程框架，在上篇 文章 中，介绍了 Combine 的基本概念。在这篇文章中，着重介绍一些 Combine 的实际应用。
 ">
 
@@ -35,7 +35,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
     <meta name="twitter:title" content="Apple 官方异步编程框架：Swift Combine 应用">
-    <meta name="twitter:description" content=" WWDC 2019 Session 721 - Combine in Practice
+    <meta name="twitter:description" content=" WWDC19 Session 721 - Combine in Practice
  引言 Combine 是 WWDC2019 推出的异步编程框架，在上篇 文章 中，介绍了 Combine 的基本概念。在这篇文章中，着重介绍一些 Combine 的实际应用。
 ">
     <meta name="twitter:image" content="/images/avatar.png">
@@ -44,7 +44,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:title" content="Apple 官方异步编程框架：Swift Combine 应用">
-  <meta property="og:description" content=" WWDC 2019 Session 721 - Combine in Practice
+  <meta property="og:description" content=" WWDC19 Session 721 - Combine in Practice
  引言 Combine 是 WWDC2019 推出的异步编程框架，在上篇 文章 中，介绍了 Combine 的基本概念。在这篇文章中，着重介绍一些 Combine 的实际应用。
 ">
   <meta property="og:url" content="https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E5%BA%94%E7%94%A8/">
@@ -53,7 +53,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.68.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E5%BA%94%E7%94%A8/">
@@ -75,7 +75,7 @@
 <meta name="keywords" content="WWDC, WWDC2019, WWDC19, Combine, Swift, iOS13, RxSwift, 响应式" >
 
 <meta name='description' itemprop="description" content="&lt;blockquote&gt;
-&lt;p&gt;WWDC 2019 Session 721 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2019/72">
+&lt;p&gt;WWDC19 Session 721 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2019/721/&#34;">
 
 
 <meta name="theme-color" content="#02b875">
@@ -246,7 +246,7 @@
 </nav>
 
     <article class="post-content"><blockquote>
-<p>WWDC 2019 Session 721 - <a href="https://developer.apple.com/videos/play/wwdc2019/721/">Combine in Practice</a></p>
+<p>WWDC19 Session 721 - <a href="https://developer.apple.com/videos/play/wwdc2019/721/">Combine in Practice</a></p>
 </blockquote>
 <h2 id="引言">引言</h2>
 <p>Combine 是 WWDC2019 推出的异步编程框架，在上篇 <a href="https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E7%AE%80%E4%BB%8B/">文章</a> 中，介绍了 Combine 的基本概念。在这篇文章中，着重介绍一些 Combine 的实际应用。</p>
@@ -254,12 +254,12 @@
 <p>假设有一个 <code>MagicTrick</code> 类型的 JSON 数据，这个数据的来源是 <code>NotificationCenter</code>，数据会以 <code>Data</code> 的形式放在 <code>Notification</code> 的 <code>UserInfo</code> 中。让我们使用 Combine 的发布者来改造这个数据的发送。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Notification</span>.Name{
     <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">newTrickDownloaded</span>:Notification.Name {
-        <span style="color:#ff79c6">return</span> Notification.Name(<span style="color:#f1fa8c">&#34;aa&#34;</span>)
+        <span style="color:#ff79c6">return</span> Notification.Name(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">aa</span><span style="color:#f1fa8c">&#34;</span>)
     }
 }
 
 <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">MagicTrick</span>:Codable {
-    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">name</span>:<span style="color:#8be9fd;font-style:italic">String</span> = <span style="color:#f1fa8c">&#34;&#34;</span>
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">name</span>:<span style="color:#8be9fd;font-style:italic">String</span> = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span>
 }
 
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
@@ -269,7 +269,7 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
     .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
-        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">data</span><span style="color:#f1fa8c">&#34;</span>] <span style="color:#ff79c6">as</span>! Data
     }
 </code></pre></div><p>这时候 Output 变成了 <code>Data</code> 类型，还不能实际使用。要转换成实际类型，可以用 <code>Codable</code> + <code>JSONDecoder</code> 进行解析，解析时可能会抛出错误，就需要使用 <code>try</code> 关键字。</p>
 <h4 id="trymap">tryMap</h4>
@@ -277,7 +277,7 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
     .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
-        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">data</span><span style="color:#f1fa8c">&#34;</span>] <span style="color:#ff79c6">as</span>! Data
     }.tryMap { data -&gt; MagicTrick <span style="color:#ff79c6">in</span>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">decoder</span> = JSONDecoder()
         <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">try</span> decoder.decode(MagicTrick.<span style="color:#ff79c6">self</span>, from: data)
@@ -287,7 +287,7 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
     .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
-        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">data</span><span style="color:#f1fa8c">&#34;</span>] <span style="color:#ff79c6">as</span>! Data
     }
     .decode(type: MagicTrick.<span style="color:#ff79c6">self</span>, decoder: JSONDecoder())
 </code></pre></div><hr>
@@ -297,7 +297,7 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
     .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
-        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">data</span><span style="color:#f1fa8c">&#34;</span>] <span style="color:#ff79c6">as</span>! Data
     }
     .decode(type: MagicTrick.<span style="color:#ff79c6">self</span>, decoder: JSONDecoder())
     .assertNoFailure()
@@ -306,7 +306,7 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
     .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
-        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">data</span><span style="color:#f1fa8c">&#34;</span>] <span style="color:#ff79c6">as</span>! Data
     }
     .decode(type: MagicTrick.<span style="color:#ff79c6">self</span>, decoder: JSONDecoder())
     .<span style="color:#ff79c6">catch</span>{ <span style="color:#ff79c6">_</span> <span style="color:#ff79c6">in</span>
@@ -322,7 +322,7 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
     .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
-        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">data</span><span style="color:#f1fa8c">&#34;</span>] <span style="color:#ff79c6">as</span>! Data
     }
     .flatMap{ data <span style="color:#ff79c6">in</span>
         <span style="color:#ff79c6">return</span> Publishers.Just(data)
@@ -339,7 +339,7 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
     .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
-        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">data</span><span style="color:#f1fa8c">&#34;</span>] <span style="color:#ff79c6">as</span>! Data
     }
     .flatMap{ data <span style="color:#ff79c6">in</span>
         <span style="color:#ff79c6">return</span> Publishers.Just(data)
@@ -356,7 +356,7 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
     .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
-        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">data</span><span style="color:#f1fa8c">&#34;</span>] <span style="color:#ff79c6">as</span>! Data
     }
     .flatMap{ data <span style="color:#ff79c6">in</span>
         <span style="color:#ff79c6">return</span> Publishers.Just(data)
@@ -374,7 +374,7 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
     .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
-        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">data</span><span style="color:#f1fa8c">&#34;</span>] <span style="color:#ff79c6">as</span>! Data
     }
     .flatMap{ data <span style="color:#ff79c6">in</span>
         <span style="color:#ff79c6">return</span> Publishers.Just(data)
@@ -398,10 +398,10 @@
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">value</span>: Value
 }
 </code></pre></div><p>有了这个特性，对已有的代码进行改造接入 Combine 框架就更方便了（截止至 beta2 版本的 Xcode，$ 符号还不能使用）：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">@Published <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">foo</span>:<span style="color:#8be9fd;font-style:italic">String</span> = <span style="color:#f1fa8c">&#34;test&#34;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">@Published <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">foo</span>:<span style="color:#8be9fd;font-style:italic">String</span> = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">test</span><span style="color:#f1fa8c">&#34;</span>
 
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">subscription</span> = $foo.sink {
-    print(<span style="color:#f1fa8c">&#34;foo is </span><span style="color:#f1fa8c">\(</span><span style="color:#8be9fd;font-style:italic">$0</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">&#34;</span>)
+    print(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">foo is </span><span style="color:#f1fa8c">\(</span><span style="color:#8be9fd;font-style:italic">$0</span><span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">&#34;</span>)
 }
 </code></pre></div><p>这个关键字其实印证了一点，Combine 和 Swift 语言生态的结合其实是很紧密的，也许将来为了 SwiftUI 和 Combine 这种重量级框架更方便使用，Apple 还会接纳更多社区优秀的提案。</p>
 <h4 id="future">Future</h4>
@@ -417,7 +417,7 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
     .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
-        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">data</span><span style="color:#f1fa8c">&#34;</span>] <span style="color:#ff79c6">as</span>! Data
     }
     .flatMap{ data <span style="color:#ff79c6">in</span>
         <span style="color:#ff79c6">return</span> Publishers.Future { promise <span style="color:#ff79c6">in</span>
@@ -436,7 +436,7 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
     .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
-        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">data</span><span style="color:#f1fa8c">&#34;</span>] <span style="color:#ff79c6">as</span>! Data
     }
     .eraseToAnyPublisher()
 </code></pre></div><h3 id="总结">总结</h3>
@@ -460,7 +460,7 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: .newTrickDownloaded)
     .map{ notification -&gt; Data <span style="color:#ff79c6">in</span>
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">userInfo</span> = notification.userInfo
-        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;data&#34;</span>] <span style="color:#ff79c6">as</span>! Data
+        <span style="color:#ff79c6">return</span> userInfo?[<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">data</span><span style="color:#f1fa8c">&#34;</span>] <span style="color:#ff79c6">as</span>! Data
     }
     .flatMap{ data <span style="color:#ff79c6">in</span>
         <span style="color:#ff79c6">return</span> Publishers.Just(data)
@@ -476,10 +476,10 @@ trickNamePublisher.assign(to: \.name, on: test)
 </code></pre></div><p>当接受到通知后，发布者就会改变 test 的 name 属性。</p>
 <h4 id="sinks">Sinks</h4>
 <p>这个订阅者提供了一个简单的从上游订阅数据的能力，错误类型采用上游的错误类型，使用一个闭包执行接收到值的行为，非常简单方便。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = ...<span style="color:#6272a4">// 上个例子里的发布者</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = ...<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">上</span><span style="color:#6272a4">个</span><span style="color:#6272a4">例</span><span style="color:#6272a4">子</span><span style="color:#6272a4">里</span><span style="color:#6272a4">的</span><span style="color:#6272a4">发</span><span style="color:#6272a4">布</span><span style="color:#6272a4">者</span>
 
 trickNamePublisher.sink { value <span style="color:#ff79c6">in</span>
-    print(<span style="color:#f1fa8c">&#34;name is </span><span style="color:#f1fa8c">\(</span>value<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">&#34;</span>)
+    print(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">name is </span><span style="color:#f1fa8c">\(</span>value<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">&#34;</span>)
 }
 </code></pre></div><h4 id="subject">Subject</h4>
 <p>有一些事物，它们同时承担着发布者和订阅者的角色，既可以发送消息，也可以接收消息。在 Combine 中，这类订阅者就是 <code>Subject</code>。它虽然是订阅者，却也有和发布者类似的发送值的能力。这可以让我们在数据流的过程中插入值给下游的订阅者。</p>
@@ -495,17 +495,17 @@ trickNamePublisher.sink { value <span style="color:#ff79c6">in</span>
 </code></pre></div><p><code>Subject</code> 有下面两种：</p>
 <h5 id="passthrough">Passthrough</h5>
 <p>发送订阅操作发生后，上游发送的值才会发送给下游订阅者。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = ...<span style="color:#6272a4">// 上个例子里的发布者</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">trickNamePublisher</span> = ...<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">上</span><span style="color:#6272a4">个</span><span style="color:#6272a4">例</span><span style="color:#6272a4">子</span><span style="color:#6272a4">里</span><span style="color:#6272a4">的</span><span style="color:#6272a4">发</span><span style="color:#6272a4">布</span><span style="color:#6272a4">者</span>
 
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">magicWordsSubject</span> = PassthroughSubject&lt;<span style="color:#8be9fd;font-style:italic">String</span>,Never&gt;()
 
 trickNamePublisher.subscribe(magicWordsSubject)
 
 magicWordsSubject.sink { value <span style="color:#ff79c6">in</span>
-    print(<span style="color:#f1fa8c">&#34;name is </span><span style="color:#f1fa8c">\(</span>value<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">&#34;</span>)
+    print(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">name is </span><span style="color:#f1fa8c">\(</span>value<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">&#34;</span>)
 }
 
-magicWordsSubject.send(<span style="color:#f1fa8c">&#34;magic!&#34;</span>)
+magicWordsSubject.send(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">magic!</span><span style="color:#f1fa8c">&#34;</span>)
 </code></pre></div><h5 id="currentvalue">CurrentValue</h5>
 <p>在订阅时，会将上游发布者发送的值中最新一个发送给下游订阅者，之后和正常一样进行发送值。</p>
 <h3 id="swiftui-中的发布者">SwiftUI 中的发布者</h3>
@@ -525,7 +525,7 @@ magicWordsSubject.send(<span style="color:#f1fa8c">&#34;magic!&#34;</span>)
 <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">TrickView</span>: View {
     @ObjectBinding <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">model</span>: WizardModel
     <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">body</span>: some View {
-        Text(model.trick?.name ?? <span style="color:#f1fa8c">&#34;&#34;</span>)
+        Text(model.trick?.name ?? <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span>)
     }
 }
 
@@ -543,51 +543,51 @@ magicWordsSubject.send(<span style="color:#f1fa8c">&#34;magic!&#34;</span>)
 </code></pre></div><h3 id="复杂的例子">复杂的例子</h3>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20190620143224.png" alt=""></p>
 <p>假设有一个登录界面，里面需要输入用户名和密码，用户名需要经过服务器的检验，密码需要超过 8 个字符且需要和重复密码匹配。用户名和密码都符合要求时，下面的按钮状态将变成可点击状态。用 Combine 来完成这个例子吧！</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 用注解给属性添加发布者</span>
-@Published <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">password</span>: <span style="color:#8be9fd;font-style:italic">String</span> = <span style="color:#f1fa8c">&#34;&#34;</span>
-@Published <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">passwordAgain</span>: <span style="color:#8be9fd;font-style:italic">String</span> = <span style="color:#f1fa8c">&#34;&#34;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">用</span><span style="color:#6272a4">注</span><span style="color:#6272a4">解</span><span style="color:#6272a4">给</span><span style="color:#6272a4">属</span><span style="color:#6272a4">性</span><span style="color:#6272a4">添</span><span style="color:#6272a4">加</span><span style="color:#6272a4">发</span><span style="color:#6272a4">布</span><span style="color:#6272a4">者</span>
+@Published <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">password</span>: <span style="color:#8be9fd;font-style:italic">String</span> = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span>
+@Published <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">passwordAgain</span>: <span style="color:#8be9fd;font-style:italic">String</span> = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span>
 
 <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">valiatedPassword</span>: AnyPublisher&lt;<span style="color:#8be9fd;font-style:italic">String</span>?, Never&gt; {
-  	<span style="color:#6272a4">// 合并密码和重复密码发布者，当其中一个产生值时检查密码是否符合要求</span>
+  	<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">合</span><span style="color:#6272a4">并</span><span style="color:#6272a4">密</span><span style="color:#6272a4">码</span><span style="color:#6272a4">和</span><span style="color:#6272a4">重</span><span style="color:#6272a4">复</span><span style="color:#6272a4">密</span><span style="color:#6272a4">码</span><span style="color:#6272a4">发</span><span style="color:#6272a4">布</span><span style="color:#6272a4">者</span><span style="color:#6272a4">，</span><span style="color:#6272a4">当</span><span style="color:#6272a4">其</span><span style="color:#6272a4">中</span><span style="color:#6272a4">一</span><span style="color:#6272a4">个</span><span style="color:#6272a4">产</span><span style="color:#6272a4">生</span><span style="color:#6272a4">值</span><span style="color:#6272a4">时</span><span style="color:#6272a4">检</span><span style="color:#6272a4">查</span><span style="color:#6272a4">密</span><span style="color:#6272a4">码</span><span style="color:#6272a4">是</span><span style="color:#6272a4">否</span><span style="color:#6272a4">符</span><span style="color:#6272a4">合</span><span style="color:#6272a4">要</span><span style="color:#6272a4">求</span>
     <span style="color:#ff79c6">return</span> Publishers.CombineLatest($password, $passwordAgain) { password, passwordAgain <span style="color:#ff79c6">in</span>
         <span style="color:#ff79c6">guard</span> password == passwordAgain, password.count <span style="color:#ff79c6">&gt;</span> <span style="color:#bd93f9">8</span> <span style="color:#ff79c6">else</span> {
             <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
         }
         <span style="color:#ff79c6">return</span> password
     }
-  	<span style="color:#6272a4">// 可以判断密码是不是太简单，比如 12345678</span>
-    .map { <span style="color:#8be9fd;font-style:italic">$0</span> == <span style="color:#f1fa8c">&#34;password1&#34;</span> ? <span style="color:#ff79c6">nil</span> : <span style="color:#8be9fd;font-style:italic">$0</span>}
-  	<span style="color:#6272a4">// 转换为 AnyPublisher</span>
+  	<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">可</span><span style="color:#6272a4">以</span><span style="color:#6272a4">判</span><span style="color:#6272a4">断</span><span style="color:#6272a4">密</span><span style="color:#6272a4">码</span><span style="color:#6272a4">是</span><span style="color:#6272a4">不</span><span style="color:#6272a4">是</span><span style="color:#6272a4">太</span><span style="color:#6272a4">简</span><span style="color:#6272a4">单</span><span style="color:#6272a4">，</span><span style="color:#6272a4">比</span><span style="color:#6272a4">如</span><span style="color:#6272a4"> </span><span style="color:#6272a4">1</span><span style="color:#6272a4">2</span><span style="color:#6272a4">3</span><span style="color:#6272a4">4</span><span style="color:#6272a4">5</span><span style="color:#6272a4">6</span><span style="color:#6272a4">7</span><span style="color:#6272a4">8</span>
+    .map { <span style="color:#8be9fd;font-style:italic">$0</span> == <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">password1</span><span style="color:#f1fa8c">&#34;</span> ? <span style="color:#ff79c6">nil</span> : <span style="color:#8be9fd;font-style:italic">$0</span>}
+  	<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">转</span><span style="color:#6272a4">换</span><span style="color:#6272a4">为</span><span style="color:#6272a4"> </span><span style="color:#6272a4">A</span><span style="color:#6272a4">n</span><span style="color:#6272a4">y</span><span style="color:#6272a4">P</span><span style="color:#6272a4">u</span><span style="color:#6272a4">b</span><span style="color:#6272a4">l</span><span style="color:#6272a4">i</span><span style="color:#6272a4">s</span><span style="color:#6272a4">h</span><span style="color:#6272a4">e</span><span style="color:#6272a4">r</span>
     .eraseToAnyPublisher()
 }
 
-@Published <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">username</span>: <span style="color:#8be9fd;font-style:italic">String</span> = <span style="color:#f1fa8c">&#34;&#34;</span>
+@Published <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">username</span>: <span style="color:#8be9fd;font-style:italic">String</span> = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span>
 
-<span style="color:#6272a4">// 提交给服务器判断用户名是否合法，网络请求等异步行为</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">提</span><span style="color:#6272a4">交</span><span style="color:#6272a4">给</span><span style="color:#6272a4">服</span><span style="color:#6272a4">务</span><span style="color:#6272a4">器</span><span style="color:#6272a4">判</span><span style="color:#6272a4">断</span><span style="color:#6272a4">用</span><span style="color:#6272a4">户</span><span style="color:#6272a4">名</span><span style="color:#6272a4">是</span><span style="color:#6272a4">否</span><span style="color:#6272a4">合</span><span style="color:#6272a4">法</span><span style="color:#6272a4">，</span><span style="color:#6272a4">网</span><span style="color:#6272a4">络</span><span style="color:#6272a4">请</span><span style="color:#6272a4">求</span><span style="color:#6272a4">等</span><span style="color:#6272a4">异</span><span style="color:#6272a4">步</span><span style="color:#6272a4">行</span><span style="color:#6272a4">为</span>
 <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">usernameAvailable</span>(<span style="color:#ff79c6">_</span> username:<span style="color:#8be9fd;font-style:italic">String</span>, completion:((<span style="color:#8be9fd;font-style:italic">Bool</span>) -&gt; ())) {
-   <span style="color:#6272a4">// ...</span>
+   <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
 }
 
 <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">validatedUsername</span>: AnyPublisher&lt;<span style="color:#8be9fd;font-style:italic">String</span>?, Never&gt; {
-  	<span style="color:#6272a4">// 限制产生值的频率</span>
+  	<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">限</span><span style="color:#6272a4">制</span><span style="color:#6272a4">产</span><span style="color:#6272a4">生</span><span style="color:#6272a4">值</span><span style="color:#6272a4">的</span><span style="color:#6272a4">频</span><span style="color:#6272a4">率</span>
     <span style="color:#ff79c6">return</span> $username.debounce(<span style="color:#ff79c6">for</span>: <span style="color:#bd93f9">0.5</span>, scheduler: RunLoop.main)
-  			<span style="color:#6272a4">// 去重，重复的不需要再次检验</span>
+  			<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">去</span><span style="color:#6272a4">重</span><span style="color:#6272a4">，</span><span style="color:#6272a4">重</span><span style="color:#6272a4">复</span><span style="color:#6272a4">的</span><span style="color:#6272a4">不</span><span style="color:#6272a4">需</span><span style="color:#6272a4">要</span><span style="color:#6272a4">再</span><span style="color:#6272a4">次</span><span style="color:#6272a4">检</span><span style="color:#6272a4">验</span>
         .removeDuplicates()
-  			<span style="color:#6272a4">// 转换成新的发布者</span>
+  			<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">转</span><span style="color:#6272a4">换</span><span style="color:#6272a4">成</span><span style="color:#6272a4">新</span><span style="color:#6272a4">的</span><span style="color:#6272a4">发</span><span style="color:#6272a4">布</span><span style="color:#6272a4">者</span>
         .flatMap { username <span style="color:#ff79c6">in</span>
-           	<span style="color:#6272a4">// 使用 Future 适配已有的异步操作</span>
+           	<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">使</span><span style="color:#6272a4">用</span><span style="color:#6272a4"> </span><span style="color:#6272a4">F</span><span style="color:#6272a4">u</span><span style="color:#6272a4">t</span><span style="color:#6272a4">u</span><span style="color:#6272a4">r</span><span style="color:#6272a4">e</span><span style="color:#6272a4"> </span><span style="color:#6272a4">适</span><span style="color:#6272a4">配</span><span style="color:#6272a4">已</span><span style="color:#6272a4">有</span><span style="color:#6272a4">的</span><span style="color:#6272a4">异</span><span style="color:#6272a4">步</span><span style="color:#6272a4">操</span><span style="color:#6272a4">作</span>
             <span style="color:#ff79c6">return</span> Publishers.Future { promise <span style="color:#ff79c6">in</span>
                 usernameAvailable(username) { available <span style="color:#ff79c6">in</span>
                     promise(.success(available ? username : <span style="color:#ff79c6">nil</span>))
                 }
             }
         }
-  			<span style="color:#6272a4">// 转换为 AnyPublisher</span>
+  			<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">转</span><span style="color:#6272a4">换</span><span style="color:#6272a4">为</span><span style="color:#6272a4"> </span><span style="color:#6272a4">A</span><span style="color:#6272a4">n</span><span style="color:#6272a4">y</span><span style="color:#6272a4">P</span><span style="color:#6272a4">u</span><span style="color:#6272a4">b</span><span style="color:#6272a4">l</span><span style="color:#6272a4">i</span><span style="color:#6272a4">s</span><span style="color:#6272a4">h</span><span style="color:#6272a4">e</span><span style="color:#6272a4">r</span>
         .eraseToAnyPublisher()
 }
 
 <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">validatedCredentials</span>: AnyPublisher<span style="color:#ff79c6">&lt;</span>(<span style="color:#8be9fd;font-style:italic">String</span>,<span style="color:#8be9fd;font-style:italic">String</span>)?,Never&gt; {
-  	<span style="color:#6272a4">// 合并检验密码和检验用户名发布者，均有合理值时发送</span>
+  	<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">合</span><span style="color:#6272a4">并</span><span style="color:#6272a4">检</span><span style="color:#6272a4">验</span><span style="color:#6272a4">密</span><span style="color:#6272a4">码</span><span style="color:#6272a4">和</span><span style="color:#6272a4">检</span><span style="color:#6272a4">验</span><span style="color:#6272a4">用</span><span style="color:#6272a4">户</span><span style="color:#6272a4">名</span><span style="color:#6272a4">发</span><span style="color:#6272a4">布</span><span style="color:#6272a4">者</span><span style="color:#6272a4">，</span><span style="color:#6272a4">均</span><span style="color:#6272a4">有</span><span style="color:#6272a4">合</span><span style="color:#6272a4">理</span><span style="color:#6272a4">值</span><span style="color:#6272a4">时</span><span style="color:#6272a4">发</span><span style="color:#6272a4">送</span>
     <span style="color:#ff79c6">return</span> Publishers.CombineLatest(validatedUsername, valiatedPassword) { username, password -&gt; (<span style="color:#8be9fd;font-style:italic">String</span>, <span style="color:#8be9fd;font-style:italic">String</span>)? <span style="color:#ff79c6">in</span>
         <span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">a</span> = username, <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">b</span> = password <span style="color:#ff79c6">else</span> {
             <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
@@ -599,11 +599,11 @@ magicWordsSubject.send(<span style="color:#f1fa8c">&#34;magic!&#34;</span>)
 
 <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">signupButton</span>:UIButton!
 
-<span style="color:#6272a4">// 检查是否有合理的值</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">检</span><span style="color:#6272a4">查</span><span style="color:#6272a4">是</span><span style="color:#6272a4">否</span><span style="color:#6272a4">有</span><span style="color:#6272a4">合</span><span style="color:#6272a4">理</span><span style="color:#6272a4">的</span><span style="color:#6272a4">值</span>
 <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">signupButtonStream</span> = validatedCredentials.map{ <span style="color:#8be9fd;font-style:italic">$0</span> <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> }
-																						<span style="color:#6272a4">// 指定接收的调度者</span>
+																						<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">指</span><span style="color:#6272a4">定</span><span style="color:#6272a4">接</span><span style="color:#6272a4">收</span><span style="color:#6272a4">的</span><span style="color:#6272a4">调</span><span style="color:#6272a4">度</span><span style="color:#6272a4">者</span>
                                             .receive(on: RunLoop.main)
-																						<span style="color:#6272a4">// 使用 KVO Assign 订阅者改变 UI 状态</span>
+																						<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">使</span><span style="color:#6272a4">用</span><span style="color:#6272a4"> </span><span style="color:#6272a4">K</span><span style="color:#6272a4">V</span><span style="color:#6272a4">O</span><span style="color:#6272a4"> </span><span style="color:#6272a4">A</span><span style="color:#6272a4">s</span><span style="color:#6272a4">s</span><span style="color:#6272a4">i</span><span style="color:#6272a4">g</span><span style="color:#6272a4">n</span><span style="color:#6272a4"> </span><span style="color:#6272a4">订</span><span style="color:#6272a4">阅</span><span style="color:#6272a4">者</span><span style="color:#6272a4">改</span><span style="color:#6272a4">变</span><span style="color:#6272a4"> </span><span style="color:#6272a4">U</span><span style="color:#6272a4">I</span><span style="color:#6272a4"> </span><span style="color:#6272a4">状</span><span style="color:#6272a4">态</span>
                                             .assign(to: \.isEnabled, on: signupButton)
 </code></pre></div><p>总的来说，就是使用组合，将各种小的功能组合成完整的数据流。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/f2e2f58f700e32981157a98cc09e4eb8.png" alt=""></p>
@@ -627,7 +627,7 @@ magicWordsSubject.send(<span style="color:#f1fa8c">&#34;magic!&#34;</span>)
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>182</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>343</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

@@ -53,7 +53,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.68.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
@@ -340,9 +340,7 @@
 <li>链接-地址和空间分配，符号决议，重定位</li>
 </ul>
 <h3 id="abi">ABI</h3>
-<p>Application Binary Interface，符号修饰标准，变量内存布局，函数调用方式等和可执行代码二进制兼容性相关的内容
-二进制层面的接口
-ABI互不兼容导致目标文件无法相互链接</p>
+<p>Application Binary Interface，符号修饰标准，变量内存布局，函数调用方式等和可执行代码二进制兼容性相关的内容，二进制层面的接口，ABI 互不兼容导致目标文件无法相互链接</p>
 <h3 id="api">API</h3>
 <p>Application Programing Interface，应用程序编程接口</p>
 <h2 id="目标文件">目标文件</h2>
@@ -359,11 +357,13 @@ ABI互不兼容导致目标文件无法相互链接</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fhpt13yk3bj30m00gq4dl.jpg" alt="2CD88E87-3225-4A58-AF20-535F19AC2E0E"></p>
 <p>目标文件中有相应的符号表。符号值为变量或函数的地址
 符号表里分为：全局符号，外部符号，编译器产生的段名，行号信息
-函数修饰和函数签名为了防止符号冲突
-强符号：不允许多次定义
-弱符号：选择占用最大的一个（可被强符号覆盖）
-强引用：符号需要被正确决议
-弱引用：未定义符号不报错（去掉模块不报错）</p>
+函数修饰和函数签名为了防止符号冲突</p>
+<ul>
+<li>强符号：不允许多次定义</li>
+<li>弱符号：选择占用最大的一个（可被强符号覆盖）</li>
+<li>强引用：符号需要被正确决议</li>
+<li>弱引用：未定义符号不报错（去掉模块不报错）</li>
+</ul>
 <h2 id="静态链接">静态链接</h2>
 <p>暂时搁置引用符号的目标地址（地址空间分配），根据引用的符号自动去查找模块里符号的真实地址（符号决议），并在对引用符号的地方进行重新修正为真实地址（重定位）</p>
 <h3 id="空间分配">空间分配</h3>
@@ -528,7 +528,7 @@ delete 实现：运行析构函数 -&gt; 释放堆空间</p>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>978</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1138</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

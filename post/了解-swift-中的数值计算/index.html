@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>了解 Swift 中的数值计算</title>
+
+  
+  
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
+
+  
+
+  
+  
+  <meta name="description" content=" WWDC20 Session 10217 - Explore numerical computing in Swift
+ Swift Numerics Numerics 是一个 Apple 开源的 Swift 包，通过范型约束，提供更简单的方式，来使用所有标准库里的浮点型进行数值计算。
+">
+
+  
+  
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="了解 Swift 中的数值计算">
+    <meta name="twitter:description" content=" WWDC20 Session 10217 - Explore numerical computing in Swift
+ Swift Numerics Numerics 是一个 Apple 开源的 Swift 包，通过范型约束，提供更简单的方式，来使用所有标准库里的浮点型进行数值计算。
+">
+    <meta name="twitter:image" content="/images/avatar.png">
+  
+
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="了解 Swift 中的数值计算">
+  <meta property="og:description" content=" WWDC20 Session 10217 - Explore numerical computing in Swift
+ Swift Numerics Numerics 是一个 Apple 开源的 Swift 包，通过范型约束，提供更简单的方式，来使用所有标准库里的浮点型进行数值计算。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/%E4%BA%86%E8%A7%A3-swift-%E4%B8%AD%E7%9A%84%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/">
+  <meta property="og:image" content="/images/avatar.png">
+
+
+
+
+<meta name="generator" content="Hugo 0.62.2">
+
+
+<link rel="canonical" href="https://nemocdz.github.io/post/%E4%BA%86%E8%A7%A3-swift-%E4%B8%AD%E7%9A%84%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
+
+
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="t6ukG5250x">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
+
+<meta name="keywords" content="WWDC, WWDC2020, WWDC20, Numerics, iOS14, Swift" >
+
+<meta name='description' itemprop="description" content="&lt;blockquote&gt;
+&lt;p&gt;WWDC20 Session 10217 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2020/102">
+
+
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
+
+
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
+
+
+  
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
+
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
+
+
+</head>
+  <body>
+    <div class="suspension">
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
+      
+        
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
+  
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
+  
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
+  </button>
+
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/post">首页</a>
+        </li>
+      
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">了解 Swift 中的数值计算</h1>
+      <p class="post-meta">@Nemocdz · Sep 1, 2020 · 4 min read</p>
+    </header>
+
+    
+	
+	<nav id="TableOfContents">
+  <ul>
+    <li><a href="#swift-numerics">Swift Numerics</a>
+      <ul>
+        <li><a href="#real-协议">Real 协议</a></li>
+        <li><a href="#algebraicfield-协议">AlgebraicField 协议</a></li>
+        <li><a href="#elementaryfunctions-协议">ElementaryFunctions 协议</a></li>
+        <li><a href="#realfunctions-协议">RealFunctions 协议</a></li>
+        <li><a href="#complex-类型">Complex 类型</a></li>
+      </ul>
+    </li>
+    <li><a href="#float16-类型">Float16 类型</a></li>
+    <li><a href="#最后">最后</a></li>
+  </ul>
+</nav>
+
+    <article class="post-content"><blockquote>
+<p>WWDC20 Session 10217 - <a href="https://developer.apple.com/videos/play/wwdc2020/10217/">Explore numerical computing in Swift</a></p>
+</blockquote>
+<h2 id="swift-numerics">Swift Numerics</h2>
+<p><a href="https://github.com/apple/swift-numerics">Numerics</a> 是一个 Apple 开源的 Swift 包，通过范型约束，提供更简单的方式，来使用所有标准库里的浮点型进行数值计算。</p>
+<p>下面通过一个例子来看下这个包的作用。比如我们要在 Swift 中实现一个 <a href="https://zhuanlan.zhihu.com/p/27188729">Logit 模型</a> 的函数，在没有 Numerics 的情况下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">import</span> <span style="color:#50fa7b">Darwin</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">L</span><span style="color:#6272a4">o</span><span style="color:#6272a4">g</span><span style="color:#6272a4">i</span><span style="color:#6272a4">t</span><span style="color:#6272a4"> </span><span style="color:#6272a4">模</span><span style="color:#6272a4">型</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">h</span><span style="color:#6272a4">t</span><span style="color:#6272a4">t</span><span style="color:#6272a4">p</span><span style="color:#6272a4">s</span><span style="color:#6272a4">:</span><span style="color:#6272a4">/</span><span style="color:#6272a4">/</span><span style="color:#6272a4">e</span><span style="color:#6272a4">n</span><span style="color:#6272a4">.</span><span style="color:#6272a4">w</span><span style="color:#6272a4">i</span><span style="color:#6272a4">k</span><span style="color:#6272a4">i</span><span style="color:#6272a4">p</span><span style="color:#6272a4">e</span><span style="color:#6272a4">d</span><span style="color:#6272a4">i</span><span style="color:#6272a4">a</span><span style="color:#6272a4">.</span><span style="color:#6272a4">o</span><span style="color:#6272a4">r</span><span style="color:#6272a4">g</span><span style="color:#6272a4">/</span><span style="color:#6272a4">w</span><span style="color:#6272a4">i</span><span style="color:#6272a4">k</span><span style="color:#6272a4">i</span><span style="color:#6272a4">/</span><span style="color:#6272a4">L</span><span style="color:#6272a4">o</span><span style="color:#6272a4">g</span><span style="color:#6272a4">i</span><span style="color:#6272a4">t</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">参</span><span style="color:#6272a4">数</span><span style="color:#6272a4"> </span><span style="color:#6272a4">p</span><span style="color:#6272a4">:</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4">取</span><span style="color:#6272a4">值</span><span style="color:#6272a4">范</span><span style="color:#6272a4">围</span><span style="color:#6272a4"> </span><span style="color:#6272a4">0</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">1</span><span style="color:#6272a4">。</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">返</span><span style="color:#6272a4">回</span><span style="color:#6272a4">值</span><span style="color:#6272a4">:</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4">l</span><span style="color:#6272a4">o</span><span style="color:#6272a4">g</span><span style="color:#6272a4">(</span><span style="color:#6272a4">p</span><span style="color:#6272a4">/</span><span style="color:#6272a4">(</span><span style="color:#6272a4">1</span><span style="color:#6272a4">-</span><span style="color:#6272a4">p</span><span style="color:#6272a4">)</span><span style="color:#6272a4">)</span><span style="color:#6272a4">。</span>
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">logit</span>(<span style="color:#ff79c6">_</span> p: <span style="color:#8be9fd;font-style:italic">Double</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Double</span> {
+    log(p) <span style="color:#ff79c6">-</span> log1p(<span style="color:#ff79c6">-</span>p)
+}
+</code></pre></div><p>为了实现 <code>log(p/(1-p))</code>，我们需要调用 Darwin 里的 <code>log</code> 和 <code>log1p</code>，这两个函数位于 Darwin.C 中，是 C 标准库所定义的接口，里面用一系列同名函数来支持不同的具体浮点型。当我们用这类函数编写功能时，为了支持所有的浮点型（<code>Double</code>、<code>Float</code>、<code>Float80</code> 以及后续标准库可能增加的类型）就需要将重复的代码拷贝多次，大大提高了维护成本。</p>
+<p>这时候可能你会想，要是能使用范型来代替这里面具体的浮点型就好了，这时候 Numerics 就派上用场了。</p>
+<h3 id="real-协议"><code>Real</code> 协议</h3>
+<p>Numerics 里面提供了一个全新的 <code>Real</code> 协议，对这类计算的类型提供支持。通过 <code>Real</code> 协议，上面的例子可以改造成：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">import</span> <span style="color:#50fa7b">Numerics</span>
+
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">logit</span>&lt;NumberType: Real&gt;(<span style="color:#ff79c6">_</span> p: NumberType) -&gt; NumberType {
+    .log(p) <span style="color:#ff79c6">-</span> .log(onePlus: <span style="color:#ff79c6">-</span>p)
+}
+</code></pre></div><p>给 <code>NumberType</code> 范型增加 <code>Real</code> 协议约束，并将 <code>log</code> 和 <code>log1p</code> 函数替换成 Numerics 里支持范型的 <code>log</code> 和 <code>log(one plus:)</code> 版本。所有浮点型都会遵循 <code>Real</code> 协议，这个改写后的 <code>logit</code> 函数，不仅能根据平台支持其对应的浮点型参数，在以后标准库增加新的浮点型时，也无需做额外的适配。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">Real</span>: FloatingPoint, RealFunctions, AlgebraicField {
+}
+</code></pre></div><p><code>Real</code> 协议是一个协议组合，其中 <code>FloatingPoint</code> 协议是标准库中的协议，其余两个协议是 Numerics 里所提供的新协议。这里需要注意的是，对于开发者而言，<strong>只应该使用 <code>Real</code> 协议本身</strong>。</p>
+<p>先来看看目前 Swift 标准库里已经存在关于数值的协议：</p>
+<p>![](<a href="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/">https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/</a>截屏2020-07-06 上午1.47.04.png)</p>
+<p>我们这里只关心其中关键的一部分：
+![](<a href="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/">https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/</a>截屏2020-07-06 上午1.47.27.png)</p>
+<ul>
+<li><a href="https://developer.apple.com/documentation/swift/additivearithmetic">AdditiveArithmetic</a>：用于支持加减法的类型，包括了大部分应该属于“数字”的概念，和数学领域的“代数群”几乎吻合。</li>
+<li><a href="https://developer.apple.com/documentation/swift/signednumeric">SignedNumeric</a>：拓展了乘法概念。</li>
+<li><a href="https://developer.apple.com/documentation/swift/floatingpoint">FloatingPoint</a>：拓展了计算机中浮点型实现所需要的各种概念，比如比较、幂运算和有效位数等，还有各种常用的变量 <code>infinity</code>（∞）、<code>nan</code> 和 <code>pi</code> 等。</li>
+</ul>
+<p>而 Numerics 是基于这些核心概念来构建的。
+![](<a href="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/">https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/</a>截屏2020-07-06 上午1.49.11.png)</p>
+<h3 id="algebraicfield-协议"><code>AlgebraicField</code> 协议</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">AlgebraicField</span>: SignedNumeric {
+  <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#ff79c6">/</span>(a: <span style="color:#ff79c6">Self</span>, b: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
+  
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">倒</span><span style="color:#6272a4">数</span>
+  <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">reciprocal</span>: <span style="color:#ff79c6">Self</span>? { <span style="color:#ff79c6">get</span> }
+  
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+}
+</code></pre></div><p>在 <code>SignedNumeric</code> 的基础上拓展了除法概念。这样就支持了全部四则运算，数学领域称为”代数数域“，这也是这个协议名字的由来。</p>
+<h3 id="elementaryfunctions-协议"><code>ElementaryFunctions</code> 协议</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">ElementaryFunctions</span>: AdditiveArithmetic {
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">指</span><span style="color:#6272a4">数</span>
+  <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">exp</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
+  
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">e</span><span style="color:#6272a4">x</span><span style="color:#6272a4">p</span><span style="color:#6272a4">(</span><span style="color:#6272a4">x</span><span style="color:#6272a4">)</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">1</span>
+  <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">expMinusOne</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
+  
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">三</span><span style="color:#6272a4">角</span><span style="color:#6272a4">函</span><span style="color:#6272a4">数</span>
+  <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">cos</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
+  <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">sin</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
+  <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">tan</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
+  
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">对</span><span style="color:#6272a4">数</span>
+  <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">log</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
+  
+	<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">l</span><span style="color:#6272a4">o</span><span style="color:#6272a4">g</span><span style="color:#6272a4">(</span><span style="color:#6272a4">1</span><span style="color:#6272a4"> </span><span style="color:#6272a4">+</span><span style="color:#6272a4"> </span><span style="color:#6272a4">x</span><span style="color:#6272a4">)</span>
+  <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">log</span>(onePlus x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
+  
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">e</span><span style="color:#6272a4">x</span><span style="color:#6272a4">p</span><span style="color:#6272a4">(</span><span style="color:#6272a4">y</span><span style="color:#6272a4"> </span><span style="color:#6272a4">*</span><span style="color:#6272a4"> </span><span style="color:#6272a4">l</span><span style="color:#6272a4">o</span><span style="color:#6272a4">g</span><span style="color:#6272a4">(</span><span style="color:#6272a4">x</span><span style="color:#6272a4">)</span><span style="color:#6272a4">)</span><span style="color:#6272a4"> </span>
+  <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">pow</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>, <span style="color:#ff79c6">_</span> y: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
+  
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">幂</span>
+  <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">pow</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>, <span style="color:#ff79c6">_</span> n: <span style="color:#8be9fd;font-style:italic">Int</span>) -&gt; <span style="color:#ff79c6">Self</span>
+  
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">次</span><span style="color:#6272a4">方</span><span style="color:#6272a4">根</span>
+  <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">root</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>, <span style="color:#ff79c6">_</span> n: <span style="color:#8be9fd;font-style:italic">Int</span>) -&gt; <span style="color:#ff79c6">Self</span>
+  
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+}
+
+</code></pre></div><p>在 <code>AdditiveArithmetic</code> 的基础上拓展了大量通用的浮点型函数，包括核心的三角函数、指数、对数、幂和次方根等。</p>
+<h3 id="realfunctions-协议"><code>RealFunctions</code> 协议</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">RealFunctions</span>: ElementaryFunctions {
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">误</span><span style="color:#6272a4">差</span><span style="color:#6272a4">函</span><span style="color:#6272a4">数</span>
+  <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">erf</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
+
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">s</span><span style="color:#6272a4">q</span><span style="color:#6272a4">r</span><span style="color:#6272a4">t</span><span style="color:#6272a4">(</span><span style="color:#6272a4">x</span><span style="color:#6272a4">*</span><span style="color:#6272a4">x</span><span style="color:#6272a4"> </span><span style="color:#6272a4">+</span><span style="color:#6272a4"> </span><span style="color:#6272a4">y</span><span style="color:#6272a4">*</span><span style="color:#6272a4">y</span><span style="color:#6272a4">)</span>
+  <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">hypot</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>, <span style="color:#ff79c6">_</span> y: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
+  
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">Γ</span><span style="color:#6272a4">(</span><span style="color:#6272a4">x</span><span style="color:#6272a4">)</span>
+  <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">gamma</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
+  
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">l</span><span style="color:#6272a4">o</span><span style="color:#6272a4">g</span><span style="color:#6272a4">(</span><span style="color:#6272a4">|</span><span style="color:#6272a4">Γ</span><span style="color:#6272a4">(</span><span style="color:#6272a4">x</span><span style="color:#6272a4">)</span><span style="color:#6272a4">|</span><span style="color:#6272a4">)</span>
+  <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">logGamma</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
+  
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+}
+</code></pre></div><p>在 <code>ElementaryFuctions</code> 的基础上拓展了更多类似但少用的函数，比如伽马函数、误差函数和更多底数的指数和对数等。</p>
+<p>组合而成的 <code>Real</code> 协议因此巧妙地定义了标准浮点型所应该有的通用功能。这就是 Numerics 是如何将标准浮点型变得更加有用和优雅的。</p>
+<p>虽然 <code>Real</code> 协议的概念很简单，但在实践中却格外强大。</p>
+<ul>
+<li>
+<p>范型支持</p>
+</li>
+<li>
+<p>解决重复的代码</p>
+</li>
+<li>
+<p>更低的维护成本</p>
+</li>
+<li>
+<p>更好的兼容性（支持新的浮点型）</p>
+</li>
+</ul>
+<h3 id="complex-类型"><code>Complex</code> 类型</h3>
+<p><code>Complex</code> 类型是 Numerics 中的一部分，为 Swift 提供了复数支持，且是使用 <code>Real</code> 协议作为范型约束的。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">import</span> <span style="color:#50fa7b">Numerics</span>
+
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">z</span> = Complex(<span style="color:#bd93f9">1.0</span>, <span style="color:#bd93f9">2.0</span>) <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">z</span><span style="color:#6272a4"> </span><span style="color:#6272a4">=</span><span style="color:#6272a4"> </span><span style="color:#6272a4">1</span><span style="color:#6272a4"> </span><span style="color:#6272a4">+</span><span style="color:#6272a4"> </span><span style="color:#6272a4">2</span><span style="color:#6272a4"> </span><span style="color:#6272a4">i</span><span style="color:#6272a4">，</span><span style="color:#6272a4">这</span><span style="color:#6272a4">里</span><span style="color:#6272a4">默</span><span style="color:#6272a4">认</span><span style="color:#6272a4">是</span><span style="color:#6272a4"> </span><span style="color:#6272a4">D</span><span style="color:#6272a4">o</span><span style="color:#6272a4">u</span><span style="color:#6272a4">b</span><span style="color:#6272a4">l</span><span style="color:#6272a4">e</span>
+</code></pre></div><p><code>Complex</code> 类型不仅本身很好用，同时也是一个使用 <code>Real</code> 协议进行范型数值编程的好范例。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">定</span><span style="color:#6272a4">义</span><span style="color:#6272a4"> </span><span style="color:#6272a4">N</span><span style="color:#6272a4">u</span><span style="color:#6272a4">m</span><span style="color:#6272a4">b</span><span style="color:#6272a4">e</span><span style="color:#6272a4">r</span><span style="color:#6272a4">T</span><span style="color:#6272a4">y</span><span style="color:#6272a4">p</span><span style="color:#6272a4">e</span><span style="color:#6272a4"> </span><span style="color:#6272a4">遵</span><span style="color:#6272a4">循</span><span style="color:#6272a4"> </span><span style="color:#6272a4">R</span><span style="color:#6272a4">e</span><span style="color:#6272a4">a</span><span style="color:#6272a4">l</span><span style="color:#6272a4"> </span><span style="color:#6272a4">协</span><span style="color:#6272a4">议</span>
+<span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">Complex</span>&lt;NumberType&gt; <span style="color:#ff79c6">where</span> NumberType: Real {
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">实</span><span style="color:#6272a4">数</span><span style="color:#6272a4">部</span><span style="color:#6272a4">分</span>
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">real</span>: NumberType
+  
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">虚</span><span style="color:#6272a4">数</span><span style="color:#6272a4">部</span><span style="color:#6272a4">分</span>
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">imaginary</span>: NumberType
+  
+		<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+}
+</code></pre></div><p>然后需要通过 <code>SignedNumeric</code> 协议支持基本运算函数。
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted --></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Complex</span>: SignedNumeric {
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#ff79c6">+</span>(z: Complex, w: Complex) -&gt; Complex {
+        <span style="color:#ff79c6">return</span> Complex(z.real <span style="color:#ff79c6">+</span> w.real, z.imaginary <span style="color:#ff79c6">+</span> w.imaginary)
+    }
+
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#ff79c6">-</span>(z: Complex, w: Complex) -&gt; Complex {
+        <span style="color:#ff79c6">return</span> Complex(z.real <span style="color:#ff79c6">-</span> w.real, z.imaginary <span style="color:#ff79c6">-</span> w.imaginary)
+    }
+
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#ff79c6">*</span>(z: Complex, w: Complex) -&gt; Complex {
+        <span style="color:#ff79c6">return</span> Complex(z.real <span style="color:#ff79c6">*</span> w.real <span style="color:#ff79c6">-</span> z.imaginary <span style="color:#ff79c6">*</span> w.imaginary,
+                       z.real <span style="color:#ff79c6">*</span> w.imaginary <span style="color:#ff79c6">+</span> z.imaginary <span style="color:#ff79c6">*</span> w.real)
+    }
+}
+</code></pre></div><p>复数通常使用极坐标表示，所以需要定义长度和相位角。由于 <code>Real</code> 协议的帮助，我们很容易地计算这两个概念的值。同时还能得到一个便捷的构造函数。
+<!-- raw HTML omitted --></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Complex</span> {
+  	<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">长</span><span style="color:#6272a4">度</span>
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">length</span>: NumberType {
+        <span style="color:#ff79c6">return</span> .hypot(real, imaginary)
+    }
+  	
+  	<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">相</span><span style="color:#6272a4">位</span><span style="color:#6272a4">角</span>
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">phase</span>: NumberType {
+        <span style="color:#ff79c6">return</span> .atan2(y: imaginary, x: real)
+    }
+  
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>(length: NumberType, phase: NumberType) {
+        <span style="color:#ff79c6">self</span> = Complex(.cos(phase), .sin(phase)).multiplied(by: length)
+    }
+}
+</code></pre></div><p><code>Complex</code> 类型是一个扁平的结构体，包含着两个浮点型的值。这样，和 C（<code>_Complex double</code>） 与 C++ （<code>std::complex&lt;double&gt;</code>）里的复数类型有着精确匹配的内存布局。这使得 Swift 的复数和 C/C++ 有互操作的可能。在 Swift 中创建的复数缓冲区，可以通过指针传递给 C/C++ 的库使用。</p>
+<p>来看这个使用 Accelerate 的 <a href="https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms">BLAS（线性代数计算标准）</a> 的例子：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">import</span> <span style="color:#50fa7b">Numerics</span>
+<span style="color:#8be9fd;font-style:italic">import</span> <span style="color:#50fa7b">Accelerate</span>
+
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">1</span><span style="color:#6272a4">0</span><span style="color:#6272a4">0</span><span style="color:#6272a4"> </span><span style="color:#6272a4">个</span><span style="color:#6272a4">随</span><span style="color:#6272a4">机</span><span style="color:#6272a4">的</span><span style="color:#6272a4">复</span><span style="color:#6272a4">数</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">z</span> = (<span style="color:#bd93f9">0</span> ..<span style="color:#ff79c6">&lt;</span> <span style="color:#bd93f9">100</span>).map {
+    Complex(length: <span style="color:#bd93f9">1.0</span>, phase: <span style="color:#8be9fd;font-style:italic">Double</span>.random(<span style="color:#ff79c6">in</span>: <span style="color:#ff79c6">-</span>.pi ... .pi))
+}
+
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">计</span><span style="color:#6272a4">算</span><span style="color:#6272a4"> </span><span style="color:#6272a4">L</span><span style="color:#6272a4">2</span><span style="color:#6272a4"> </span><span style="color:#6272a4">范</span><span style="color:#6272a4">数</span><span style="color:#6272a4">（</span><span style="color:#6272a4">欧</span><span style="color:#6272a4">几</span><span style="color:#6272a4">里</span><span style="color:#6272a4">得</span><span style="color:#6272a4">范</span><span style="color:#6272a4">数</span><span style="color:#6272a4">）</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">norm</span> = cblas_dznrm2(z.count, &amp;z, <span style="color:#bd93f9">1</span>)
+</code></pre></div><p>要注意的是，Swift 的 <code>Comple</code> <strong>对待 ∞ 和 NaN 值和 C/C++ 不同</strong>，在桥接代码的时候需要小心。但 Swift 的处理更加简单和高效。这里有一个只包含复数乘除法的性能测试：
+![](<a href="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/">https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/</a>截屏2020-07-06 上午1.54.30.png)</p>
+<p>从图中可以看到，和 C 对比，乘法有 1.3x、除法有 3.8x，常数作为除数时的除法更有 10x 的速度提升。</p>
+<p>同时，Numerics 还是一个持续维护的项目。</p>
+<p>最近增加了：</p>
+<ul>
+<li>改进的整型幂运算</li>
+<li>近似相等的新处理工具</li>
+</ul>
+<p>正在讨论中的有：</p>
+<ul>
+<li>
+<p>任意精度整型</p>
+</li>
+<li>
+<p><a href="https://www.tensorflow.org/swift/api_docs/Structs/ShapedArray">ShapedArray</a></p>
+</li>
+<li>
+<p>十进制浮点型</p>
+</li>
+</ul>
+<p>如果你有任何建议，可以在 Github 上参与贡献或者在 Swift 社区中参与讨论。</p>
+<h2 id="float16-类型"><code>Float16</code> 类型</h2>
+<p><code>Float16</code> 是 Swift 标准库中新增的数据类型，顾名思义占用 16 位（2 字节）。</p>
+<ul>
+<li>IEEE 754 标准格式</li>
+<li>基于 ARM 的平台已经支持，包括 iOS、iPadOS、tvOS、watchOS</li>
+<li>基于 x86 的平台正在支持中（和 Intel 在一起修复中）</li>
+</ul>
+<p><code>Float16</code> 是一个完整支持的标准浮点型。</p>
+<ul>
+<li>遵循 <code>BinaryFlatingPoint</code> 和 <code>SIMDScalar</code></li>
+<li>遵循 Numerics 的 <code>Real</code></li>
+<li>支持所有的标准浮点型函数
+![](<a href="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/">https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/</a>截屏2020-07-06 上午1.55.23.png)</li>
+</ul>
+<p>和其余数值类型一样，<code>Float16</code> 使用时也需要权衡利弊，这些得失大多仅和它的大小有关。</p>
+<p>优点：</p>
+<ul>
+<li>更好的性能</li>
+<li>与 C/Objective-C 里 <code>__fp16</code> 类型的互操性</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>低精度和小范围
+![](<a href="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/">https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/</a>截屏2020-07-06 上午1.56.45.png)</li>
+</ul>
+<p>在硬件支持上：</p>
+<ul>
+<li>Apple GPU 已经支持（且为偏向选择）</li>
+<li>Apple CPU 从 A11 Bionic 之后开始已经选择
+<ul>
+<li>Scalar（标量）性能与 <code>Float</code>/<code>Double</code> 相同</li>
+<li>SIMD 性能 2x 于 <code>Float</code></li>
+</ul>
+</li>
+<li>更老的 CPU 通过（用 <code>Float</code> 操作）模拟支持</li>
+</ul>
+<p>这里有一个简单的 <a href="https://developer.apple.com/documentation/accelerate/bnns">BNNS</a> 卷积计算性能测试：
+![](<a href="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/">https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/</a>截屏2020-07-06 上午1.58.04.png)</p>
+<p>可以看到 <code>Float16</code> 的运算速度相对于 <code>Float</code> 有 2x 还多的提升。</p>
+<h2 id="最后">最后</h2>
+<p><code>Float16</code> 加入标准库，让 Swift 本身选择余地更多，可以踏足的领域更加丰富。</p>
+<p>而 Swift Numerics 这个项目，和 Apple 对 Swift 的态度是高度一致的：</p>
+<ul>
+<li>开源开放</li>
+<li>多平台支持</li>
+<li>性能出众</li>
+<li>和 C 良好的互操性</li>
+</ul>
+<p>同时，Numerics 作为 Apple 开源的 Swift 包，也是一个给开发者学习如何编写和封装更优雅 Swift 代码的范例。</p>
+<p>可见未来 Swift Only 的包/框架会越来越多，Apple 每年都在告诉（国内大厂）开发者，Swift YES！</p></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © Nemocdz. 
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-nemocdz-github-io-my-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  
+<footer class="site-footer">
+  <p>© 2017-2020 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
+  
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
+
+
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+  </body>
+</html>

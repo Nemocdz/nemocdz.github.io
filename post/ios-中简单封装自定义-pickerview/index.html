@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.68.1">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85%E8%87%AA%E5%AE%9A%E4%B9%89-pickerview/">
@@ -234,7 +234,7 @@
 <img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79gw1f9wp3v4z00g30ku112agf.gif" alt="">
 最终目的是在 ViewController 中 Button 的 Event Reponse 中调用封装好的库的方法进行传值及操作。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objectivec" data-lang="objectivec">- (<span style="color:#8be9fd">IBAction</span>)<span style="color:#50fa7b">showPicker:</span>(UIButton <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">sender</span> {
-    NSArray <span style="color:#ff79c6">*</span>array <span style="color:#ff79c6">=</span> @[<span style="color:#f1fa8c">@&#34;电子科技大学&#34;</span>,<span style="color:#f1fa8c">@&#34;清华大学&#34;</span>,<span style="color:#f1fa8c">@&#34;四川大学&#34;</span>,<span style="color:#f1fa8c">@&#34;华中科技大学&#34;</span>,<span style="color:#f1fa8c">@&#34;西安电子科技大学&#34;</span>];
+    NSArray <span style="color:#ff79c6">*</span>array <span style="color:#ff79c6">=</span> @[<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">电子科技大学</span><span style="color:#f1fa8c">&#34;</span>,<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">清华大学</span><span style="color:#f1fa8c">&#34;</span>,<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">四川大学</span><span style="color:#f1fa8c">&#34;</span>,<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">华中科技大学</span><span style="color:#f1fa8c">&#34;</span>,<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">西安电子科技大学</span><span style="color:#f1fa8c">&#34;</span>];
     [CDZPicker <span style="color:#8be9fd;font-style:italic">showPickerInView</span>:<span style="color:#8be9fd;font-style:italic">self</span>.view <span style="color:#8be9fd;font-style:italic">withObjectsArray</span>:array <span style="color:#8be9fd;font-style:italic">withlastString</span>:<span style="color:#8be9fd;font-style:italic">self</span>.label.text <span style="color:#8be9fd;font-style:italic">withStringBlock</span>:<span style="color:#ff79c6">^</span>(NSString <span style="color:#ff79c6">*</span>string) {
         <span style="color:#8be9fd;font-style:italic">self</span>.label.text <span style="color:#ff79c6">=</span> string;
     }];
@@ -368,7 +368,7 @@ static const int toolBarHeight = 44;
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1221</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1381</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

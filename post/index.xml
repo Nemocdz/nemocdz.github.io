@@ -7,10 +7,23 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>© Nemocdz. </copyright>
-    <lastBuildDate>Sat, 04 Jan 2020 19:11:00 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 01 Sep 2020 00:19:13 +0800</lastBuildDate>
     
 	<atom:link href="https://nemocdz.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>了解 Swift 中的数值计算</title>
+      <link>https://nemocdz.github.io/post/%E4%BA%86%E8%A7%A3-swift-%E4%B8%AD%E7%9A%84%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/</link>
+      <pubDate>Tue, 01 Sep 2020 00:19:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/post/%E4%BA%86%E8%A7%A3-swift-%E4%B8%AD%E7%9A%84%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;WWDC20 Session 10217 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2020/10217/&#34;&gt;Explore numerical computing in Swift&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;swift-numerics&#34;&gt;Swift Numerics&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/apple/swift-numerics&#34;&gt;Numerics&lt;/a&gt; 是一个 Apple 开源的 Swift 包，通过范型约束，提供更简单的方式，来使用所有标准库里的浮点型进行数值计算。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>浅谈 WebRTC NetEQ</title>
@@ -61,7 +74,7 @@
       
       <guid>https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E5%BA%94%E7%94%A8/</guid>
       <description>&lt;blockquote&gt;
-&lt;p&gt;WWDC 2019 Session 721 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2019/721/&#34;&gt;Combine in Practice&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;WWDC19 Session 721 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2019/721/&#34;&gt;Combine in Practice&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;
 &lt;p&gt;Combine 是 WWDC2019 推出的异步编程框架，在上篇 &lt;a href=&#34;https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E7%AE%80%E4%BB%8B/&#34;&gt;文章&lt;/a&gt; 中，介绍了 Combine 的基本概念。在这篇文章中，着重介绍一些 Combine 的实际应用。&lt;/p&gt;</description>
@@ -74,7 +87,7 @@
       
       <guid>https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;blockquote&gt;
-&lt;p&gt;WWDC 2019 Session 722 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2019/722/&#34;&gt;Introducing Combine&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;WWDC19 Session 722 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2019/722/&#34;&gt;Introducing Combine&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;
 &lt;p&gt;在现代 GUI 编程中，开发者会处理大量事件（包括网络，屏幕输入，系统通知等），根据事件去让界面变化。而对异步事件的处理，会让代码和状态变得复杂。而现有的 Cocoa 框架中，异步编程的接口主要有以下这几种：&lt;/p&gt;
@@ -94,7 +107,7 @@
       
       <guid>https://nemocdz.github.io/post/foundation-%E6%A1%86%E6%9E%B6%E7%9A%84%E6%96%B0%E4%BA%AE%E7%82%B9md/</guid>
       <description>&lt;blockquote&gt;
-&lt;p&gt;WWDC 2019 Session 723 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2019/723/&#34;&gt;Advances in Foundation&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;WWDC19 Session 723 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2019/723/&#34;&gt;Advances in Foundation&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;</description>
     </item>
     
