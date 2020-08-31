@@ -272,16 +272,16 @@
 }
 </code></pre></div><p><code>Real</code> 协议是一个协议组合，其中 <code>FloatingPoint</code> 协议是标准库中的协议，其余两个协议是 Numerics 里所提供的新协议。这里需要注意的是，对于开发者而言，<strong>只应该使用 <code>Real</code> 协议本身</strong>。</p>
 <p>先来看看目前 Swift 标准库里已经存在关于数值的协议：</p>
-<p>![](<a href="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/">https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/</a>截屏2020-07-06 上午1.47.04.png)</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/swift_number_00.png" alt=""></p>
 <p>我们这里只关心其中关键的一部分：
-![](<a href="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/">https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/</a>截屏2020-07-06 上午1.47.27.png)</p>
+<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/swift_number_02.png" alt=""></p>
 <ul>
 <li><a href="https://developer.apple.com/documentation/swift/additivearithmetic">AdditiveArithmetic</a>：用于支持加减法的类型，包括了大部分应该属于“数字”的概念，和数学领域的“代数群”几乎吻合。</li>
 <li><a href="https://developer.apple.com/documentation/swift/signednumeric">SignedNumeric</a>：拓展了乘法概念。</li>
 <li><a href="https://developer.apple.com/documentation/swift/floatingpoint">FloatingPoint</a>：拓展了计算机中浮点型实现所需要的各种概念，比如比较、幂运算和有效位数等，还有各种常用的变量 <code>infinity</code>（∞）、<code>nan</code> 和 <code>pi</code> 等。</li>
 </ul>
 <p>而 Numerics 是基于这些核心概念来构建的。
-![](<a href="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/">https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/</a>截屏2020-07-06 上午1.49.11.png)</p>
+<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/swift_number_03.png" alt=""></p>
 <h3 id="algebraicfield-协议"><code>AlgebraicField</code> 协议</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">AlgebraicField</span>: SignedNumeric {
   <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#ff79c6">/</span>(a: <span style="color:#ff79c6">Self</span>, b: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
@@ -420,7 +420,7 @@
 <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">计</span><span style="color:#6272a4">算</span><span style="color:#6272a4"> </span><span style="color:#6272a4">L</span><span style="color:#6272a4">2</span><span style="color:#6272a4"> </span><span style="color:#6272a4">范</span><span style="color:#6272a4">数</span><span style="color:#6272a4">（</span><span style="color:#6272a4">欧</span><span style="color:#6272a4">几</span><span style="color:#6272a4">里</span><span style="color:#6272a4">得</span><span style="color:#6272a4">范</span><span style="color:#6272a4">数</span><span style="color:#6272a4">）</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">norm</span> = cblas_dznrm2(z.count, &amp;z, <span style="color:#bd93f9">1</span>)
 </code></pre></div><p>要注意的是，Swift 的 <code>Comple</code> <strong>对待 ∞ 和 NaN 值和 C/C++ 不同</strong>，在桥接代码的时候需要小心。但 Swift 的处理更加简单和高效。这里有一个只包含复数乘除法的性能测试：
-![](<a href="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/">https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/</a>截屏2020-07-06 上午1.54.30.png)</p>
+<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/swift_number_07.png" alt=""></p>
 <p>从图中可以看到，和 C 对比，乘法有 1.3x、除法有 3.8x，常数作为除数时的除法更有 10x 的速度提升。</p>
 <p>同时，Numerics 还是一个持续维护的项目。</p>
 <p>最近增加了：</p>
@@ -453,7 +453,7 @@
 <li>遵循 <code>BinaryFlatingPoint</code> 和 <code>SIMDScalar</code></li>
 <li>遵循 Numerics 的 <code>Real</code></li>
 <li>支持所有的标准浮点型函数
-![](<a href="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/">https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/</a>截屏2020-07-06 上午1.55.23.png)</li>
+<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/swift_number_08.png" alt=""></li>
 </ul>
 <p>和其余数值类型一样，<code>Float16</code> 使用时也需要权衡利弊，这些得失大多仅和它的大小有关。</p>
 <p>优点：</p>
@@ -464,7 +464,7 @@
 <p>缺点：</p>
 <ul>
 <li>低精度和小范围
-![](<a href="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/">https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/</a>截屏2020-07-06 上午1.56.45.png)</li>
+<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/swift_number_09.png" alt=""></li>
 </ul>
 <p>在硬件支持上：</p>
 <ul>
@@ -478,7 +478,7 @@
 <li>更老的 CPU 通过（用 <code>Float</code> 操作）模拟支持</li>
 </ul>
 <p>这里有一个简单的 <a href="https://developer.apple.com/documentation/accelerate/bnns">BNNS</a> 卷积计算性能测试：
-![](<a href="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/">https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/</a>截屏2020-07-06 上午1.58.04.png)</p>
+<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/swift_number_10.png" alt=""></p>
 <p>可以看到 <code>Float16</code> 的运算速度相对于 <code>Float</code> 有 2x 还多的提升。</p>
 <h2 id="最后">最后</h2>
 <p><code>Float16</code> 加入标准库，让 Swift 本身选择余地更多，可以踏足的领域更加丰富。</p>
