@@ -62,7 +62,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.74.3">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E6%B5%85%E8%B0%88-webrtc-neteq/">
@@ -381,7 +381,7 @@
 <p>MCU 模块就像指挥部一样。它在接收到数据包后，根据数据包的信息进行统计计算并分析，作出命令决策。主要包括：</p>
 <h3 id="网络延时统计算法">网络延时统计算法</h3>
 <p>这块算法位于 <code>neteq/delay_manager.cc</code>。在接收到包时，会调用</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> DelayManager<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>Update(<span style="color:#8be9fd">uint16_t</span> sequence_number,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> DelayManager<span style="color:#ff79c6">::</span>Update(<span style="color:#8be9fd">uint16_t</span> sequence_number,
                          <span style="color:#8be9fd">uint32_t</span> timestamp,
                          <span style="color:#8be9fd">int</span> sample_rate_hz)
 </code></pre></div><p>将数据包的信息传入，然后更新统计信息。主要流程如下：</p>
@@ -396,10 +396,10 @@
 </li>
 <li>调用 <code>CalculateTargetLevel</code> 更新间隔（根据计算最近一段时间的延迟间隔概率，延迟峰值，进行推算）</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> DelayManager<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>CalculateTargetLevel(<span style="color:#8be9fd">int</span> iat_packets, <span style="color:#8be9fd">bool</span> reordered)
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> DelayManager<span style="color:#ff79c6">::</span>CalculateTargetLevel(<span style="color:#8be9fd">int</span> iat_packets, <span style="color:#8be9fd">bool</span> reordered)
 </code></pre></div><h3 id="抖动延迟统计算法">抖动延迟统计算法</h3>
 <p>这块算法位于 <code>neteq/buffer_level_filter.cc</code>。在取包时，将调用：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">void</span> BufferLevelFilter<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>Update(size_t buffer_size_samples,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">void</span> BufferLevelFilter<span style="color:#ff79c6">::</span>Update(size_t buffer_size_samples,
                                <span style="color:#8be9fd">int</span> time_stretched_samples)
 </code></pre></div><p>将当前抖动缓冲区剩余包的数量和加减速处理过的包量传入，然后更新统计信息。主要流程如下：</p>
 <ol>
@@ -408,7 +408,7 @@
 </ol>
 <h3 id="控制命令决策判定">控制命令决策判定</h3>
 <p>这块算法位于 <code>neteq/decision_logic.cc</code>。在取包时，将调用：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Operations DecisionLogic<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>GetDecision(<span style="color:#ff79c6">const</span> SyncBuffer<span style="color:#ff79c6">&amp;</span> sync_buffer,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Operations DecisionLogic<span style="color:#ff79c6">::</span>GetDecision(<span style="color:#ff79c6">const</span> SyncBuffer<span style="color:#ff79c6">&amp;</span> sync_buffer,
                                       <span style="color:#ff79c6">const</span> Expand<span style="color:#ff79c6">&amp;</span> expand,
                                       size_t decoder_frame_length,
                                       <span style="color:#ff79c6">const</span> Packet<span style="color:#ff79c6">*</span> next_packet,
@@ -426,7 +426,7 @@
 <h2 id="dsp-处理">DSP 处理</h2>
 <h3 id="变速不变调">变速不变调</h3>
 <p>代码位于 <code>neteq/time_stretch.cc</code> 中：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">TimeStretch<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>ReturnCodes TimeStretch<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>Process(<span style="color:#ff79c6">const</span> <span style="color:#8be9fd">int16_t</span><span style="color:#ff79c6">*</span> input,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">TimeStretch<span style="color:#ff79c6">::</span>ReturnCodes TimeStretch<span style="color:#ff79c6">::</span>Process(<span style="color:#ff79c6">const</span> <span style="color:#8be9fd">int16_t</span><span style="color:#ff79c6">*</span> input,
                                               size_t input_len,
                                               <span style="color:#8be9fd">bool</span> fast_mode,
                                               AudioMultiVector<span style="color:#ff79c6">*</span> output,
@@ -434,14 +434,14 @@
 </code></pre></div><p>实现变速不变调，进行语音时长调整，是能进行加减速控制的基础。WebRTC NetEQ 中使用了 WSOLA 算法，但由于此算法过于复杂，以笔者的专业知识无法完全理解，感兴趣见 <a href="http://sxjs.cnjournals.cn/ch/reader/create_pdf.aspx?file_no=20100512&amp;flag=1&amp;journal_id=sxjs&amp;year_id=2010">文章</a>。</p>
 <h3 id="正常">正常</h3>
 <p>代码位于 <code>neteq/normal.cc</code> 中：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> Normal<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>Process(<span style="color:#ff79c6">const</span> <span style="color:#8be9fd">int16_t</span><span style="color:#ff79c6">*</span> input,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> Normal<span style="color:#ff79c6">::</span>Process(<span style="color:#ff79c6">const</span> <span style="color:#8be9fd">int16_t</span><span style="color:#ff79c6">*</span> input,
                     size_t length,
                     Modes last_mode,
                     AudioMultiVector<span style="color:#ff79c6">*</span> output) 
 </code></pre></div><p>数据正好符合播放要求，没有什么额外处理，但要考虑上一次包是否为补偿的包，若是则进行平滑处理。</p>
 <h3 id="加速">加速</h3>
 <p>代码位于 <code>neteq/accelerate.cc</code> 中：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Accelerate<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>ReturnCodes Accelerate<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>Process(<span style="color:#ff79c6">const</span> <span style="color:#8be9fd">int16_t</span><span style="color:#ff79c6">*</span> input,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Accelerate<span style="color:#ff79c6">::</span>ReturnCodes Accelerate<span style="color:#ff79c6">::</span>Process(<span style="color:#ff79c6">const</span> <span style="color:#8be9fd">int16_t</span><span style="color:#ff79c6">*</span> input,
                                             size_t input_length,
                                             <span style="color:#8be9fd">bool</span> fast_accelerate,
                                             AudioMultiVector<span style="color:#ff79c6">*</span> output,
@@ -449,7 +449,7 @@
 </code></pre></div><p>在抖动延迟过大时，在不丢包的情况下尽量减少抖动延迟。因为这时候数据包累计多，为了尽快消耗数据包，将数据包播放时长缩短。</p>
 <h3 id="减速">减速</h3>
 <p>代码位于 <code>neteq/preemptive_expand.cc</code> 中：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">PreemptiveExpand<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>ReturnCodes PreemptiveExpand<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>Process(
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">PreemptiveExpand<span style="color:#ff79c6">::</span>ReturnCodes PreemptiveExpand<span style="color:#ff79c6">::</span>Process(
     <span style="color:#ff79c6">const</span> <span style="color:#8be9fd">int16_t</span><span style="color:#ff79c6">*</span> input,
     size_t input_length,
     size_t old_data_length,
@@ -458,7 +458,7 @@
 </code></pre></div><p>减速则相反，在网络状况不好时，丢包较多，为了连续性，延长等待网络数据的时间。因为这时候数据包累计少或没有，为了争取等待新的网络数据包的时间，将数据包的播放时长拉长。</p>
 <h3 id="融合">融合</h3>
 <p>代码位于 <code>neteq/expand.cc</code> 中：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Expand<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>Expand(BackgroundNoise<span style="color:#ff79c6">*</span> background_noise,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Expand<span style="color:#ff79c6">::</span>Expand(BackgroundNoise<span style="color:#ff79c6">*</span> background_noise,
                SyncBuffer<span style="color:#ff79c6">*</span> sync_buffer,
                RandomVector<span style="color:#ff79c6">*</span> random_vector,
                StatisticsCalculator<span style="color:#ff79c6">*</span> statistics,
@@ -467,7 +467,7 @@
 </code></pre></div><p>当上一次播放的帧与当前解码的帧不是连续的情况下，需要来衔接和平滑一下。会让两个数据包一部分播放时间重叠，让过度更自然。</p>
 <h3 id="丢包补偿-1">丢包补偿</h3>
 <p>代码位于 <code>neteq/expand.cc</code> 中：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Expand<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>Expand(BackgroundNoise<span style="color:#ff79c6">*</span> background_noise,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Expand<span style="color:#ff79c6">::</span>Expand(BackgroundNoise<span style="color:#ff79c6">*</span> background_noise,
                SyncBuffer<span style="color:#ff79c6">*</span> sync_buffer,
                RandomVector<span style="color:#ff79c6">*</span> random_vector,
                StatisticsCalculator<span style="color:#ff79c6">*</span> statistics,
@@ -478,24 +478,24 @@
 <p>整个 NetEQ 模块处理过程中，有以下几个缓冲区：</p>
 <h3 id="抖动缓冲区">抖动缓冲区</h3>
 <p>位于 <code>neteq/neteq_impl.h</code> 的 <code>NetEqImpl</code> 类中的 <code>Dependencies</code> 结构体中。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">std<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>unique_ptr<span style="color:#ff79c6">&lt;</span>PacketBuffer<span style="color:#ff79c6">&gt;</span> packet_buffer
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">std<span style="color:#ff79c6">::</span>unique_ptr<span style="color:#ff79c6">&lt;</span>PacketBuffer<span style="color:#ff79c6">&gt;</span> packet_buffer
 </code></pre></div><p>用于存储网络的音频数据包。</p>
 <h3 id="解码缓冲区">解码缓冲区</h3>
 <p>位于 <code>neteq/neteq_impl.h</code> 的 <code>NetEqImpl</code> 类中。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">std<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>unique_ptr<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">int16_t</span>[]<span style="color:#ff79c6">&gt;</span> decoded_buffer_ RTC_GUARDED_BY(crit_sect_);
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">std<span style="color:#ff79c6">::</span>unique_ptr<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">int16_t</span>[]<span style="color:#ff79c6">&gt;</span> decoded_buffer_ RTC_GUARDED_BY(crit_sect_);
 </code></pre></div><p>用于存储解码后 PCM 数据。</p>
 <h3 id="算法缓冲区">算法缓冲区</h3>
 <p>位于 <code>neteq/neteq_impl.h</code> 的 <code>NetEqImpl</code> 类中。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">std<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>unique_ptr<span style="color:#ff79c6">&lt;</span>AudioMultiVector<span style="color:#ff79c6">&gt;</span> algorithm_buffer_ RTC_GUARDED_BY(crit_sect_);
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">std<span style="color:#ff79c6">::</span>unique_ptr<span style="color:#ff79c6">&lt;</span>AudioMultiVector<span style="color:#ff79c6">&gt;</span> algorithm_buffer_ RTC_GUARDED_BY(crit_sect_);
 </code></pre></div><p>用于存储 DSP 处理后的数据。</p>
 <h3 id="语音缓冲区">语音缓冲区</h3>
 <p>位于 <code>neteq/neteq_impl.h</code> 的 <code>NetEqImpl</code> 类中。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">std<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>unique_ptr<span style="color:#ff79c6">&lt;</span>SyncBuffer<span style="color:#ff79c6">&gt;</span> sync_buffer_ RTC_GUARDED_BY(crit_sect_);
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">std<span style="color:#ff79c6">::</span>unique_ptr<span style="color:#ff79c6">&lt;</span>SyncBuffer<span style="color:#ff79c6">&gt;</span> sync_buffer_ RTC_GUARDED_BY(crit_sect_);
 </code></pre></div><p>其实就是算法缓冲区的数据复制，增加了已播放位置分割标识。</p>
 <h2 id="进包处理">进包处理</h2>
 <p>进包处理流程代码位于 <code>neteq/neteq_impl.cc</code> 中的 <code>InsertPacket</code> 方法中，此方法调用了真正处理的内部方法：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> NetEqImpl<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>InsertPacketInternal(<span style="color:#ff79c6">const</span> RTPHeader<span style="color:#ff79c6">&amp;</span> rtp_header,
-                                    rtc<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>ArrayView<span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">const</span> <span style="color:#8be9fd">uint8_t</span><span style="color:#ff79c6">&gt;</span> payload,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> NetEqImpl<span style="color:#ff79c6">::</span>InsertPacketInternal(<span style="color:#ff79c6">const</span> RTPHeader<span style="color:#ff79c6">&amp;</span> rtp_header,
+                                    rtc<span style="color:#ff79c6">::</span>ArrayView<span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">const</span> <span style="color:#8be9fd">uint8_t</span><span style="color:#ff79c6">&gt;</span> payload,
                                     <span style="color:#8be9fd">uint32_t</span> receive_timestamp)
 </code></pre></div><p>总体流程如下：</p>
 <ol>
@@ -527,9 +527,9 @@
 </ol>
 <h2 id="出包处理">出包处理</h2>
 <p>出包处理流程代码位于 <code>neteq/neteq_impl.cc</code> 中的 <code>GetAudio</code> 方法中，此方法调用了真正处理的内部方法：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> NetEqImpl<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>GetAudioInternal(AudioFrame<span style="color:#ff79c6">*</span> audio_frame,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#8be9fd">int</span> NetEqImpl<span style="color:#ff79c6">::</span>GetAudioInternal(AudioFrame<span style="color:#ff79c6">*</span> audio_frame,
                                 <span style="color:#8be9fd">bool</span><span style="color:#ff79c6">*</span> muted,
-                                absl<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>optional<span style="color:#ff79c6">&lt;</span>Operations<span style="color:#ff79c6">&gt;</span> action_override)
+                                absl<span style="color:#ff79c6">::</span>optional<span style="color:#ff79c6">&lt;</span>Operations<span style="color:#ff79c6">&gt;</span> action_override)
 </code></pre></div><p>总体流程如下：</p>
 <ol>
 <li>检查静音状态，直接返回静音包</li>

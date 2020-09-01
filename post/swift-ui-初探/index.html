@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.74.3">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/swift-ui-%E5%88%9D%E6%8E%A2/">
@@ -214,7 +214,7 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">SwiftUI 初探</h1>
-      <p class="post-meta">@Nemocdz · Dec 30, 2019 · 3 min read</p>
+      <p class="post-meta">@Nemocdz · Dec 30, 2019 · 4 min read</p>
     </header>
 
     
@@ -227,14 +227,14 @@
         <li><a href="#state">@State</a></li>
         <li><a href="#binding">@Binding</a></li>
         <li><a href="#environmentobject">@EnvironmentObject</a></li>
-        <li><a href="#observedobject--observableobject">@ObservedObject & ObservableObject</a></li>
+        <li><a href="#observedobject--observableobject">@ObservedObject &amp; ObservableObject</a></li>
       </ul>
     </li>
     <li><a href="#实现模态展示视图">实现模态展示视图</a></li>
     <li><a href="#uikit-的适配">UIKit 的适配</a>
       <ul>
-        <li><a href="#swiftui---uiview">SwiftUI -> UIView</a></li>
-        <li><a href="#uiview---swiftui">UIView -> SwiftUI</a></li>
+        <li><a href="#swiftui---uiview">SwiftUI -&gt; UIView</a></li>
+        <li><a href="#uiview---swiftui">UIView -&gt; SwiftUI</a></li>
       </ul>
     </li>
     <li><a href="#接入-combine">接入 Combine</a></li>
@@ -254,7 +254,7 @@
 <li>
 <p><code>List</code> 默认是有分隔线，目前好像没法做到单独去掉，只能用下面的代码进行全局去除，并且是一种非官方做法，毕竟 <code>List</code> 的实现后续可能不一定是 <code>UITableView</code>。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">List([]) {
-<span style="color:#6272a4">//</span><span style="color:#6272a4">…</span>
+<span style="color:#6272a4">//…</span>
 }
 .onAppear {
    UITableView.appearance().separatorColor = .clear
@@ -262,14 +262,14 @@
 </code></pre></div></li>
 <li>
 <p>视图的属性顺序会影响表现，比如下面两段代码</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">1</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 1</span>
 HStack {
    Spacer()
 }
 .frame(height: <span style="color:#bd93f9">300</span>)
 .background(Color.blue)
 .padding(<span style="color:#bd93f9">30</span>)
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">2</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 2</span>
 HStack {
    Spacer()
 }
@@ -288,15 +288,15 @@ HStack {
 <p>这个修饰符用于解决多层嵌套时，下层视图想访问上层数据的问题，除了用 <code>@Binding</code> 一层层传递外，通过声明这个修饰符也可以在任意嵌套层级内使用该数据。</p>
 <h3 id="observedobject--observableobject">@ObservedObject &amp; ObservableObject</h3>
 <p>这个修饰符可以用于在多个视图里共享一份数据模型时使用，可以将已有的数据模型集合进 SwiftUI。遵循 <code>Observable</code> 协议，并在接收数据改变的地方用 <code>@ObservedObject</code> 修饰，这样该 <code>Observable</code> 类型里所有的 <code>Publisher</code> 在发生改变时都会通知 <code>@ObservedObject</code>。对于已经存在的属性，可以加上 <code>@Published</code> 修饰符或者使用自定义的 <code>Publisher</code> 发送通知。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">1</span><span style="color:#6272a4">.</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 1.</span>
 <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">GlobalModel</span>: ObservableObject {
-    @Published <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">name</span> = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">myName</span><span style="color:#f1fa8c">&#34;</span>
+    @Published <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">name</span> = <span style="color:#f1fa8c">&#34;myName&#34;</span>
 }
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">2</span><span style="color:#6272a4">.</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 2.</span>
 <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">GlobalModel</span>: ObservableObject {
     <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">didChange</span> = PassthroughSubject&lt;<span style="color:#8be9fd;font-style:italic">Void</span>, Never&gt;()
   
-    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">name</span>: = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">myName</span><span style="color:#f1fa8c">&#34;</span> {
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">name</span>: = <span style="color:#f1fa8c">&#34;myName&#34;</span> {
         <span style="color:#ff79c6">didSet</span> {
             didChange.send()
         }
@@ -310,7 +310,7 @@ HStack {
         Button(action: {
             <span style="color:#ff79c6">self</span>.isShowModal = <span style="color:#ff79c6">true</span>
         }){
-            Text(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">show</span><span style="color:#f1fa8c">&#34;</span>)
+            Text(<span style="color:#f1fa8c">&#34;show&#34;</span>)
         }
         .sheet(isPresented: $isShowModal) {
             ModalView(isShow: <span style="color:#ff79c6">self</span>.$isShowModal)
@@ -325,7 +325,7 @@ HStack {
         Button(action: {
             <span style="color:#ff79c6">self</span>.isShow = <span style="color:#ff79c6">false</span>
         }){
-            Text(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">dismiss</span><span style="color:#f1fa8c">&#34;</span>)
+            Text(<span style="color:#f1fa8c">&#34;dismiss&#34;</span>)
         }
     }
 }
@@ -336,12 +336,12 @@ HStack {
         Button(action: {
             <span style="color:#ff79c6">self</span>.isShowModal = <span style="color:#ff79c6">true</span>
         }){
-            Text(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">show</span><span style="color:#f1fa8c">&#34;</span>)
+            Text(<span style="color:#f1fa8c">&#34;show&#34;</span>)
         }
         .sheet(isPresented: $isShowModal) {
             ModalView { intent <span style="color:#ff79c6">in</span>
                 <span style="color:#ff79c6">self</span>.isShowModal = <span style="color:#ff79c6">false</span>
-                <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">i</span><span style="color:#6272a4">n</span><span style="color:#6272a4">t</span><span style="color:#6272a4">e</span><span style="color:#6272a4">n</span><span style="color:#6272a4">t</span><span style="color:#6272a4"> </span><span style="color:#6272a4">处</span><span style="color:#6272a4">理</span>
+                <span style="color:#6272a4">// intent 处理</span>
             }
         }
     }
@@ -355,7 +355,7 @@ HStack {
         Button(action: {
             <span style="color:#ff79c6">self</span>.onViewResult(<span style="color:#ff79c6">nil</span>)
         }){
-            Text(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">dismiss</span><span style="color:#f1fa8c">&#34;</span>)
+            Text(<span style="color:#f1fa8c">&#34;dismiss&#34;</span>)
         }
     }
 }
@@ -370,7 +370,7 @@ HStack {
 
 <span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">AView</span>: UIViewRepresentable {
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">makeUIView</span>(context: UIViewRepresentableContext&lt;AView&gt;) -&gt; BView {
-       	<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">初</span><span style="color:#6272a4">始</span><span style="color:#6272a4">化</span><span style="color:#6272a4"> </span><span style="color:#6272a4">U</span><span style="color:#6272a4">I</span><span style="color:#6272a4">V</span><span style="color:#6272a4">i</span><span style="color:#6272a4">e</span><span style="color:#6272a4">w</span>
+       	<span style="color:#6272a4">// 初始化 UIView</span>
         BView()
     }
     
@@ -398,7 +398,7 @@ HStack {
     }
     
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">updateUIView</span>(<span style="color:#ff79c6">_</span> uiView: BView, context: UIViewRepresentableContext&lt;AView&gt;) {
-      	<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">更</span><span style="color:#6272a4">新</span><span style="color:#6272a4"> </span><span style="color:#6272a4">U</span><span style="color:#6272a4">I</span><span style="color:#6272a4">V</span><span style="color:#6272a4">i</span><span style="color:#6272a4">e</span><span style="color:#6272a4">w</span>
+      	<span style="color:#6272a4">// 更新 UIView</span>
         uiView.isDark = isDark
     }
 }
@@ -411,15 +411,15 @@ HStack {
         }
     }
     
-  	<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">U</span><span style="color:#6272a4">I</span><span style="color:#6272a4">K</span><span style="color:#6272a4">i</span><span style="color:#6272a4">t</span><span style="color:#6272a4"> </span><span style="color:#6272a4">常</span><span style="color:#6272a4">用</span><span style="color:#6272a4">的</span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span><span style="color:#6272a4">回</span><span style="color:#6272a4">调</span><span style="color:#6272a4">方</span><span style="color:#6272a4">式</span><span style="color:#6272a4">，</span><span style="color:#6272a4">闭</span><span style="color:#6272a4">包</span><span style="color:#6272a4">或</span><span style="color:#6272a4">者</span><span style="color:#6272a4">代</span><span style="color:#6272a4">理</span><span style="color:#6272a4">等</span>
+  	<span style="color:#6272a4">// UIKit 常用的数据回调方式，闭包或者代理等</span>
     <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">didChangeDark</span>:((<span style="color:#8be9fd;font-style:italic">Bool</span>) -&gt; ())?
 }
 
 <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">AView</span> {
-  	<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">需</span><span style="color:#6272a4">要</span><span style="color:#6272a4">接</span><span style="color:#6272a4">收</span><span style="color:#6272a4">变</span><span style="color:#6272a4">化</span><span style="color:#6272a4">的</span><span style="color:#6272a4">属</span><span style="color:#6272a4">性</span>
+  	<span style="color:#6272a4">// 需要接收变化的属性</span>
     @Binding <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">isDark</span>: <span style="color:#8be9fd;font-style:italic">Bool</span>
     
-  	<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">定</span><span style="color:#6272a4">义</span><span style="color:#6272a4"> </span><span style="color:#6272a4">C</span><span style="color:#6272a4">o</span><span style="color:#6272a4">o</span><span style="color:#6272a4">r</span><span style="color:#6272a4">d</span><span style="color:#6272a4">i</span><span style="color:#6272a4">n</span><span style="color:#6272a4">a</span><span style="color:#6272a4">t</span><span style="color:#6272a4">o</span><span style="color:#6272a4">r</span><span style="color:#6272a4">，</span><span style="color:#6272a4">里</span><span style="color:#6272a4">面</span><span style="color:#6272a4">持</span><span style="color:#6272a4">有</span><span style="color:#6272a4"> </span><span style="color:#6272a4">A</span><span style="color:#6272a4">V</span><span style="color:#6272a4">i</span><span style="color:#6272a4">e</span><span style="color:#6272a4">w</span>
+  	<span style="color:#6272a4">// 定义 Coordinator，里面持有 AView</span>
     <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">Coordinator</span> {
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">parent</span>:AView
         
@@ -430,7 +430,7 @@ HStack {
 }
 
 <span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">AView</span>: UIViewRepresentable {
-    <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">实</span><span style="color:#6272a4">现</span><span style="color:#6272a4">方</span><span style="color:#6272a4">法</span>
+    <span style="color:#6272a4">// 实现方法</span>
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">makeCoordinator</span>() -&gt; Coordinator {
         Coordinator(<span style="color:#ff79c6">self</span>)
     }
@@ -438,7 +438,7 @@ HStack {
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">makeUIView</span>(context: UIViewRepresentableContext&lt;AView&gt;) -&gt; BView {
         <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">view</span> = BView()
         view.didChangeDark = {
-          	<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">将</span><span style="color:#6272a4">改</span><span style="color:#6272a4">变</span><span style="color:#6272a4">传</span><span style="color:#6272a4">递</span><span style="color:#6272a4">到</span><span style="color:#6272a4"> </span><span style="color:#6272a4">c</span><span style="color:#6272a4">o</span><span style="color:#6272a4">n</span><span style="color:#6272a4">t</span><span style="color:#6272a4">e</span><span style="color:#6272a4">x</span><span style="color:#6272a4">t</span><span style="color:#6272a4"> </span><span style="color:#6272a4">里</span><span style="color:#6272a4">面</span><span style="color:#6272a4">的</span><span style="color:#6272a4"> </span><span style="color:#6272a4">c</span><span style="color:#6272a4">o</span><span style="color:#6272a4">o</span><span style="color:#6272a4">r</span><span style="color:#6272a4">d</span><span style="color:#6272a4">i</span><span style="color:#6272a4">n</span><span style="color:#6272a4">a</span><span style="color:#6272a4">t</span><span style="color:#6272a4">o</span><span style="color:#6272a4">r</span><span style="color:#6272a4"> </span><span style="color:#6272a4">中</span>
+          	<span style="color:#6272a4">// 将改变传递到 context 里面的 coordinator 中</span>
             context.coordinator.parent.isDark = <span style="color:#8be9fd;font-style:italic">$0</span>
         }
         <span style="color:#ff79c6">return</span> view
@@ -450,19 +450,19 @@ HStack {
 </code></pre></div><h2 id="接入-combine">接入 Combine</h2>
 <p>Combine 和 SwiftUI 直接结合还是有点别扭，特别是对于常见的网络请求，建议通过 <code>@ObservedObject</code> 和  <code>ObservableObject</code> 进行中转一下。下面给出了 Combine 和 SwiftUI 直接结合的例子，SwiftUI 只提供了 <code>onReceive</code> 方法进行接收。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">ContentView</span>: View {
-  	<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">请</span><span style="color:#6272a4">求</span><span style="color:#6272a4">参</span><span style="color:#6272a4">数</span>
-    @State <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">name</span> = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">&#34;</span>
-    <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">返</span><span style="color:#6272a4">回</span><span style="color:#6272a4">结</span><span style="color:#6272a4">果</span>
+  	<span style="color:#6272a4">// 请求参数</span>
+    @State <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">name</span> = <span style="color:#f1fa8c">&#34;&#34;</span>
+    <span style="color:#6272a4">// 返回结果</span>
     @State <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">resultCode</span> = <span style="color:#bd93f9">0</span>
     
-    <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">请</span><span style="color:#6272a4">求</span><span style="color:#6272a4">操</span><span style="color:#6272a4">作</span><span style="color:#6272a4">，</span><span style="color:#6272a4">如</span><span style="color:#6272a4">网</span><span style="color:#6272a4">络</span><span style="color:#6272a4">请</span><span style="color:#6272a4">求</span>
+    <span style="color:#6272a4">// 请求操作，如网络请求</span>
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">fetch</span>(<span style="color:#ff79c6">_</span> name:<span style="color:#8be9fd;font-style:italic">String</span>) -&gt; AnyPublisher&lt;<span style="color:#8be9fd;font-style:italic">Int</span>, Error&gt; {
         Just(name.isEmpty ? <span style="color:#bd93f9">0</span> : <span style="color:#bd93f9">1</span>)
             .setFailureType(to: Error.<span style="color:#ff79c6">self</span>)
             .eraseToAnyPublisher()
     }
     
-    <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">将</span><span style="color:#6272a4">请</span><span style="color:#6272a4">求</span><span style="color:#6272a4">转</span><span style="color:#6272a4">化</span><span style="color:#6272a4">为</span><span style="color:#6272a4">错</span><span style="color:#6272a4">误</span><span style="color:#6272a4"> </span><span style="color:#6272a4">N</span><span style="color:#6272a4">e</span><span style="color:#6272a4">v</span><span style="color:#6272a4">e</span><span style="color:#6272a4">r</span><span style="color:#6272a4"> </span><span style="color:#6272a4">的</span><span style="color:#6272a4">，</span><span style="color:#6272a4">处</span><span style="color:#6272a4">理</span><span style="color:#6272a4">兜</span><span style="color:#6272a4">底</span>
+    <span style="color:#6272a4">// 将请求转化为错误 Never 的，处理兜底</span>
     <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">nameRequest</span>: AnyPublisher&lt;<span style="color:#8be9fd;font-style:italic">Int</span>, Never&gt; {
         fetch(name)
         .<span style="color:#ff79c6">catch</span> { <span style="color:#ff79c6">_</span> <span style="color:#ff79c6">in</span>
@@ -476,14 +476,14 @@ HStack {
     <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">body</span>: some View {
         VStack {
             Button(action: {
-                <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">触</span><span style="color:#6272a4">发</span><span style="color:#6272a4">请</span><span style="color:#6272a4">求</span>
-                <span style="color:#ff79c6">self</span>.name = <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">Request</span><span style="color:#f1fa8c">&#34;</span>
+                <span style="color:#6272a4">// 触发请求</span>
+                <span style="color:#ff79c6">self</span>.name = <span style="color:#f1fa8c">&#34;Request&#34;</span>
             }) {
-                Text(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">send request</span><span style="color:#f1fa8c">&#34;</span>)
+                Text(<span style="color:#f1fa8c">&#34;send request&#34;</span>)
             }
-            Text(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">code is </span><span style="color:#f1fa8c">\(</span>resultCode<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">&#34;</span>)
+            Text(<span style="color:#f1fa8c">&#34;code is </span><span style="color:#f1fa8c">\(</span>resultCode<span style="color:#f1fa8c">)</span><span style="color:#f1fa8c">&#34;</span>)
         }
-        <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">监</span><span style="color:#6272a4">听</span><span style="color:#6272a4">请</span><span style="color:#6272a4">求</span><span style="color:#6272a4">，</span><span style="color:#6272a4">错</span><span style="color:#6272a4">误</span><span style="color:#6272a4">类</span><span style="color:#6272a4">型</span><span style="color:#6272a4">必</span><span style="color:#6272a4">须</span><span style="color:#6272a4">为</span><span style="color:#6272a4"> </span><span style="color:#6272a4">N</span><span style="color:#6272a4">e</span><span style="color:#6272a4">v</span><span style="color:#6272a4">e</span><span style="color:#6272a4">r</span>
+        <span style="color:#6272a4">// 监听请求，错误类型必须为 Never</span>
         .onReceive(nameRequest) { resultCode <span style="color:#ff79c6">in</span>
             <span style="color:#ff79c6">self</span>.resultCode = resultCode
         }

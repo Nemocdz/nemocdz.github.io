@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.74.3">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/afnetworking-%E7%9A%84%E6%BC%82%E4%BA%AE%E7%BB%86%E8%8A%82/">
@@ -228,7 +228,7 @@
     <li><a href="#5增加方法到类中再进行-method-swizzling">5.增加方法到类中再进行 Method Swizzling</a></li>
     <li><a href="#6用-gcd-的同步方法来封装代码块">6.用 GCD 的同步方法来封装代码块</a></li>
     <li><a href="#7重写-respondstoselector-更改-delegate-实现的判断依据">7.重写 respondsToSelector 更改 Delegate 实现的判断依据</a></li>
-    <li><a href="#8dynamic-关键字实现默认调用父类-settergetter">8.@dynamic 关键字实现默认调用父类 setter&getter</a></li>
+    <li><a href="#8dynamic-关键字实现默认调用父类-settergetter">8.@dynamic 关键字实现默认调用父类 setter&amp;getter</a></li>
     <li><a href="#9kvo-用-context-区分父类与子类">9.KVO 用 Context 区分父类与子类</a></li>
     <li><a href="#10用-gcd-实现同步属性">10.用 GCD 实现同步属性</a></li>
     <li><a href="#11对-nsstream-类的操作">11.对 NSStream 类的操作</a></li>
@@ -246,7 +246,7 @@
     <span style="color:#ff79c6">static</span> dispatch_queue_t af_url_session_manager_creation_queue;
     <span style="color:#ff79c6">static</span> dispatch_once_t onceToken;
     dispatch_once(<span style="color:#ff79c6">&amp;</span>onceToken, <span style="color:#ff79c6">^</span>{
-        af_url_session_manager_creation_queue <span style="color:#ff79c6">=</span> dispatch_queue_create(<span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">com.alamofire.networking.session.manager.creation</span><span style="color:#f1fa8c">&#34;</span>, DISPATCH_QUEUE_SERIAL);
+        af_url_session_manager_creation_queue <span style="color:#ff79c6">=</span> dispatch_queue_create(<span style="color:#f1fa8c">&#34;com.alamofire.networking.session.manager.creation&#34;</span>, DISPATCH_QUEUE_SERIAL);
     });
 
     <span style="color:#ff79c6">return</span> af_url_session_manager_creation_queue;
@@ -266,13 +266,13 @@
 </span><span style="color:#6272a4"></span>}
 </code></pre></div><h2 id="4避开-cocoa-类族的坑">4.避开 Cocoa 类族的坑</h2>
 <p>在 Foudation 框架中，某些类其实是类族，比如 <code>NSArray</code>，生成的某一个 <code>NSArray</code> 对象实际上可能是 <code>NSArray</code> 的子类。所以用 Method Swizzling 的去 Hook 一些系统类方法的时候，要注意某些类实际上是子类，甚至不同系统版本继承链和方法实现都不一样（不一定调用了父类的同名方法）。在 <code>AFURLSessionManager</code> 中为了 Hook 系统的 <code>NSURLSessionTask</code> 的 <code>resume</code> 和 <code>suspend</code> 的方法实现中加上通知。由于 <code>NSURLSessionTask</code> 是一个类族，且 iOS 7 和 iOS 8 上 <code>Task</code> 类的继承链不同，于是有了以下严谨的代码。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">if</span> (NSClassFromString(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">NSURLSessionTask</span><span style="color:#f1fa8c">&#34;</span>)) {
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">if</span> (NSClassFromString(<span style="color:#f1fa8c">@&#34;NSURLSessionTask&#34;</span>)) {
         NSURLSessionConfiguration <span style="color:#ff79c6">*</span>configuration <span style="color:#ff79c6">=</span> [NSURLSessionConfiguration ephemeralSessionConfiguration];
         NSURLSession <span style="color:#ff79c6">*</span> session <span style="color:#ff79c6">=</span> [NSURLSession <span style="color:#8be9fd;font-style:italic">sessionWithConfiguration</span>:configuration];<span style="color:#6272a4">//先构建 NSURLSession
-</span><span style="color:#6272a4"></span><span style="color:#ff79c6">#</span><span style="color:#ff79c6">pragma GCC diagnostic push</span><span style="color:#ff79c6">
-</span><span style="color:#ff79c6"></span><span style="color:#ff79c6">#</span><span style="color:#ff79c6">pragma GCC diagnostic ignored &#34;-Wnonnull&#34;</span><span style="color:#ff79c6">
+</span><span style="color:#6272a4"></span><span style="color:#ff79c6">#pragma GCC diagnostic push
+</span><span style="color:#ff79c6">#pragma GCC diagnostic ignored &#34;-Wnonnull&#34;
 </span><span style="color:#ff79c6"></span>        NSURLSessionDataTask <span style="color:#ff79c6">*</span>localDataTask <span style="color:#ff79c6">=</span> [session <span style="color:#8be9fd;font-style:italic">dataTaskWithURL</span>:<span style="color:#8be9fd;font-style:italic">nil</span>];<span style="color:#6272a4">//再通过 session 对象构建一个 task 对象
-</span><span style="color:#6272a4"></span><span style="color:#ff79c6">#</span><span style="color:#ff79c6">pragma clang diagnostic pop</span><span style="color:#ff79c6">
+</span><span style="color:#6272a4"></span><span style="color:#ff79c6">#pragma clang diagnostic pop
 </span><span style="color:#ff79c6"></span>        <span style="color:#8be9fd">IMP</span> originalAFResumeIMP <span style="color:#ff79c6">=</span> method_getImplementation(class_getInstanceMethod([<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#ff79c6">class</span>], <span style="color:#ff79c6">@selector</span>(af_resume)));<span style="color:#6272a4">//获取要交换的方法的实现指针
 </span><span style="color:#6272a4"></span>        <span style="color:#8be9fd">Class</span> currentClass <span style="color:#ff79c6">=</span> [localDataTask <span style="color:#ff79c6">class</span>];<span style="color:#6272a4">//获取真正的子类
 </span><span style="color:#6272a4"></span>        
@@ -281,8 +281,8 @@
             <span style="color:#8be9fd">Class</span> superClass <span style="color:#ff79c6">=</span> [currentClass superclass];
             <span style="color:#8be9fd">IMP</span> classResumeIMP <span style="color:#ff79c6">=</span> method_getImplementation(class_getInstanceMethod(currentClass, <span style="color:#ff79c6">@selector</span>(resume)));<span style="color:#6272a4">//获取实现指针
 </span><span style="color:#6272a4"></span>            <span style="color:#8be9fd">IMP</span> superclassResumeIMP <span style="color:#ff79c6">=</span> method_getImplementation(class_getInstanceMethod(superClass, <span style="color:#ff79c6">@selector</span>(resume)));<span style="color:#6272a4">//获取父类的实现指针
-</span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">if</span> (classResumeIMP <span style="color:#ff79c6">!</span><span style="color:#ff79c6">=</span> superclassResumeIMP <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&amp;</span>
-                originalAFResumeIMP <span style="color:#ff79c6">!</span><span style="color:#ff79c6">=</span> classResumeIMP) {<span style="color:#6272a4">//如果实现和父类不一样且实现不一样
+</span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">if</span> (classResumeIMP <span style="color:#ff79c6">!=</span> superclassResumeIMP <span style="color:#ff79c6">&amp;&amp;</span>
+                originalAFResumeIMP <span style="color:#ff79c6">!=</span> classResumeIMP) {<span style="color:#6272a4">//如果实现和父类不一样且实现不一样
 </span><span style="color:#6272a4"></span>                [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">swizzleResumeAndSuspendMethodForClass</span>:currentClass];
             }
             currentClass <span style="color:#ff79c6">=</span> [currentClass superclass];<span style="color:#6272a4">//获取父类继续调用
@@ -315,7 +315,7 @@
     <span style="color:#ff79c6">static</span> dispatch_once_t onceToken;
  	<span style="color:#6272a4">//创建一个串行队列，只创建一次
 </span><span style="color:#6272a4"></span>    dispatch_once(<span style="color:#ff79c6">&amp;</span>onceToken, <span style="color:#ff79c6">^</span>{
-        af_url_session_manager_creation_queue <span style="color:#ff79c6">=</span> dispatch_queue_create(<span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">com.alamofire.networking.session.manager.creation</span><span style="color:#f1fa8c">&#34;</span>, DISPATCH_QUEUE_SERIAL);
+        af_url_session_manager_creation_queue <span style="color:#ff79c6">=</span> dispatch_queue_create(<span style="color:#f1fa8c">&#34;com.alamofire.networking.session.manager.creation&#34;</span>, DISPATCH_QUEUE_SERIAL);
     });
     <span style="color:#ff79c6">return</span> af_url_session_manager_creation_queue;
 }
@@ -331,14 +331,14 @@
 </code></pre></div><h2 id="7重写-respondstoselector-更改-delegate-实现的判断依据">7.重写 respondsToSelector 更改 Delegate 实现的判断依据</h2>
 <p>AFNetworking 内部的 <code>AFURLSessionManager</code> 将所有 <code>NSURLSessionDelegate</code> 的方法都接管了并转换成外界 Set 进来的 Block 实现，其中有一些转换并没有做任何处理，单纯转换成 Block。所以是否响应这个 Delegate 方法其实是 block 是否存在，于是内部就重写了 <code>respondsToSelector</code>。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">BOOL</span>)<span style="color:#50fa7b">respondsToSelector:</span>(<span style="color:#8be9fd">SEL</span>)<span style="color:#8be9fd;font-style:italic">selector</span> {
-    <span style="color:#ff79c6">if</span> (selector <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> <span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">URLSession</span>:<span style="color:#8be9fd;font-style:italic">task</span>:<span style="color:#8be9fd;font-style:italic">willPerformHTTPRedirection</span>:<span style="color:#8be9fd;font-style:italic">newRequest</span>:<span style="color:#8be9fd;font-style:italic">completionHandler</span>:)) {
-        <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">self</span>.taskWillPerformHTTPRedirection <span style="color:#ff79c6">!</span><span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">nil</span>;
-    } <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> (selector <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> <span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">URLSession</span>:<span style="color:#8be9fd;font-style:italic">dataTask</span>:<span style="color:#8be9fd;font-style:italic">didReceiveResponse</span>:<span style="color:#8be9fd;font-style:italic">completionHandler</span>:)) {
-        <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">self</span>.dataTaskDidReceiveResponse <span style="color:#ff79c6">!</span><span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">nil</span>;
-    } <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> (selector <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> <span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">URLSession</span>:<span style="color:#8be9fd;font-style:italic">dataTask</span>:<span style="color:#8be9fd;font-style:italic">willCacheResponse</span>:<span style="color:#8be9fd;font-style:italic">completionHandler</span>:)) {
-        <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">self</span>.dataTaskWillCacheResponse <span style="color:#ff79c6">!</span><span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">nil</span>;
-    } <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> (selector <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> <span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">URLSessionDidFinishEventsForBackgroundURLSession</span>:)) {
-        <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">self</span>.didFinishEventsForBackgroundURLSession <span style="color:#ff79c6">!</span><span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">nil</span>;
+    <span style="color:#ff79c6">if</span> (selector <span style="color:#ff79c6">==</span> <span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">URLSession</span>:<span style="color:#8be9fd;font-style:italic">task</span>:<span style="color:#8be9fd;font-style:italic">willPerformHTTPRedirection</span>:<span style="color:#8be9fd;font-style:italic">newRequest</span>:<span style="color:#8be9fd;font-style:italic">completionHandler</span>:)) {
+        <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">self</span>.taskWillPerformHTTPRedirection <span style="color:#ff79c6">!=</span> <span style="color:#8be9fd;font-style:italic">nil</span>;
+    } <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> (selector <span style="color:#ff79c6">==</span> <span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">URLSession</span>:<span style="color:#8be9fd;font-style:italic">dataTask</span>:<span style="color:#8be9fd;font-style:italic">didReceiveResponse</span>:<span style="color:#8be9fd;font-style:italic">completionHandler</span>:)) {
+        <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">self</span>.dataTaskDidReceiveResponse <span style="color:#ff79c6">!=</span> <span style="color:#8be9fd;font-style:italic">nil</span>;
+    } <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> (selector <span style="color:#ff79c6">==</span> <span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">URLSession</span>:<span style="color:#8be9fd;font-style:italic">dataTask</span>:<span style="color:#8be9fd;font-style:italic">willCacheResponse</span>:<span style="color:#8be9fd;font-style:italic">completionHandler</span>:)) {
+        <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">self</span>.dataTaskWillCacheResponse <span style="color:#ff79c6">!=</span> <span style="color:#8be9fd;font-style:italic">nil</span>;
+    } <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> (selector <span style="color:#ff79c6">==</span> <span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">URLSessionDidFinishEventsForBackgroundURLSession</span>:)) {
+        <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">self</span>.didFinishEventsForBackgroundURLSession <span style="color:#ff79c6">!=</span> <span style="color:#8be9fd;font-style:italic">nil</span>;
     }
 
     <span style="color:#ff79c6">return</span> [[<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#ff79c6">class</span>] <span style="color:#8be9fd;font-style:italic">instancesRespondToSelector</span>:selector];
@@ -349,15 +349,15 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@dynamic</span> securityPolicy;
 
 - (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">setSecurityPolicy:</span>(AFSecurityPolicy <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">securityPolicy</span> {
-    <span style="color:#ff79c6">if</span> (securityPolicy.SSLPinningMode <span style="color:#ff79c6">!</span><span style="color:#ff79c6">=</span> AFSSLPinningModeNone <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&amp;</span> <span style="color:#ff79c6">!</span>[<span style="color:#8be9fd;font-style:italic">self</span>.baseURL.scheme <span style="color:#8be9fd;font-style:italic">isEqualToString</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">https</span><span style="color:#f1fa8c">&#34;</span>]) {
-        NSString <span style="color:#ff79c6">*</span>pinningMode <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">Unknown Pinning Mode</span><span style="color:#f1fa8c">&#34;</span>;
+    <span style="color:#ff79c6">if</span> (securityPolicy.SSLPinningMode <span style="color:#ff79c6">!=</span> AFSSLPinningModeNone <span style="color:#ff79c6">&amp;&amp;</span> <span style="color:#ff79c6">!</span>[<span style="color:#8be9fd;font-style:italic">self</span>.baseURL.scheme <span style="color:#8be9fd;font-style:italic">isEqualToString</span>:<span style="color:#f1fa8c">@&#34;https&#34;</span>]) {
+        NSString <span style="color:#ff79c6">*</span>pinningMode <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;Unknown Pinning Mode&#34;</span>;
         <span style="color:#ff79c6">switch</span> (securityPolicy.SSLPinningMode) {
-            <span style="color:#ff79c6">case</span> <span style="color:#8be9fd;font-style:italic">AFSSLPinningModeNone</span>:        pinningMode <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">AFSSLPinningModeNone</span><span style="color:#f1fa8c">&#34;</span>; <span style="color:#ff79c6">break</span>;
-            <span style="color:#ff79c6">case</span> <span style="color:#8be9fd;font-style:italic">AFSSLPinningModeCertificate</span>: pinningMode <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">AFSSLPinningModeCertificate</span><span style="color:#f1fa8c">&#34;</span>; <span style="color:#ff79c6">break</span>;
-            <span style="color:#ff79c6">case</span> <span style="color:#8be9fd;font-style:italic">AFSSLPinningModePublicKey</span>:   pinningMode <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">AFSSLPinningModePublicKey</span><span style="color:#f1fa8c">&#34;</span>; <span style="color:#ff79c6">break</span>;
+            <span style="color:#ff79c6">case</span> <span style="color:#8be9fd;font-style:italic">AFSSLPinningModeNone</span>:        pinningMode <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;AFSSLPinningModeNone&#34;</span>; <span style="color:#ff79c6">break</span>;
+            <span style="color:#ff79c6">case</span> <span style="color:#8be9fd;font-style:italic">AFSSLPinningModeCertificate</span>: pinningMode <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;AFSSLPinningModeCertificate&#34;</span>; <span style="color:#ff79c6">break</span>;
+            <span style="color:#ff79c6">case</span> <span style="color:#8be9fd;font-style:italic">AFSSLPinningModePublicKey</span>:   pinningMode <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;AFSSLPinningModePublicKey&#34;</span>; <span style="color:#ff79c6">break</span>;
         }
-        NSString <span style="color:#ff79c6">*</span>reason <span style="color:#ff79c6">=</span> [NSString <span style="color:#8be9fd;font-style:italic">stringWithFormat</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">A security policy configured with `%@` can only be applied on a manager with a secure base URL (i.e. https)</span><span style="color:#f1fa8c">&#34;</span>, pinningMode];
-        <span style="color:#ff79c6">@throw</span> [NSException <span style="color:#8be9fd;font-style:italic">exceptionWithName</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">Invalid Security Policy</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#8be9fd;font-style:italic">reason</span>:reason <span style="color:#8be9fd;font-style:italic">userInfo</span>:<span style="color:#8be9fd;font-style:italic">nil</span>];
+        NSString <span style="color:#ff79c6">*</span>reason <span style="color:#ff79c6">=</span> [NSString <span style="color:#8be9fd;font-style:italic">stringWithFormat</span>:<span style="color:#f1fa8c">@&#34;A security policy configured with `%@` can only be applied on a manager with a secure base URL (i.e. https)&#34;</span>, pinningMode];
+        <span style="color:#ff79c6">@throw</span> [NSException <span style="color:#8be9fd;font-style:italic">exceptionWithName</span>:<span style="color:#f1fa8c">@&#34;Invalid Security Policy&#34;</span> <span style="color:#8be9fd;font-style:italic">reason</span>:reason <span style="color:#8be9fd;font-style:italic">userInfo</span>:<span style="color:#8be9fd;font-style:italic">nil</span>];
     }
     [<span style="color:#8be9fd;font-style:italic">super</span> <span style="color:#8be9fd;font-style:italic">setSecurityPolicy</span>:securityPolicy];
 }
@@ -425,7 +425,7 @@
 <p>使用了 OC 的关联对象，先获取判断是否为空，不然就生成并关联上。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (AFRefreshControlNotificationObserver <span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">af_notificationObserver</span> {
     AFRefreshControlNotificationObserver <span style="color:#ff79c6">*</span>notificationObserver <span style="color:#ff79c6">=</span> objc_getAssociatedObject(<span style="color:#8be9fd;font-style:italic">self</span>, <span style="color:#ff79c6">@selector</span>(af_notificationObserver));
-    <span style="color:#ff79c6">if</span> (notificationObserver <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">nil</span>) {
+    <span style="color:#ff79c6">if</span> (notificationObserver <span style="color:#ff79c6">==</span> <span style="color:#8be9fd;font-style:italic">nil</span>) {
         notificationObserver <span style="color:#ff79c6">=</span> [[AFRefreshControlNotificationObserver alloc] <span style="color:#8be9fd;font-style:italic">initWithActivityRefreshControl</span>:<span style="color:#8be9fd;font-style:italic">self</span>];
         objc_setAssociatedObject(<span style="color:#8be9fd;font-style:italic">self</span>, <span style="color:#ff79c6">@selector</span>(af_notificationObserver), notificationObserver, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
@@ -446,7 +446,7 @@ NS_ASSUME_NONNULL_END
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1111</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1112</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

@@ -10,13 +10,19 @@
   
   <url>
     <loc>https://nemocdz.github.io/</loc>
-    <lastmod>2020-09-01T00:19:13+08:00</lastmod>
+    <lastmod>2020-09-01T11:21:13+08:00</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   
   <url>
     <loc>https://nemocdz.github.io/post/</loc>
-    <lastmod>2020-09-01T00:19:13+08:00</lastmod>
+    <lastmod>2020-09-01T11:21:13+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  
+  <url>
+    <loc>https://nemocdz.github.io/post/%E5%9C%A8-swift-%E9%87%8C%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E6%8C%87%E9%92%88/</loc>
+    <lastmod>2020-09-01T11:21:13+08:00</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   

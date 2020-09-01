@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.74.3">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84%E5%88%97%E8%A1%A8%E9%A2%84%E5%8A%A0%E8%BD%BD/">
@@ -245,11 +245,11 @@
 <p>设定一个阈值，比如 70%，显示内容达到阈值时进行加载。这种比较适用于每一页的数量一致的情况。</p>
 <p>同时要注意的是，这里的阈值应该是每个分页的阈值，总的阈值会随着列表长度增长。比如设置阈值为 70%，每页加载 10 个，第一页在加载到 7 个时进行预加载，第二页在第 17 个时进行预加载，此时阈值为 85%，而如果还是 70%，则会在第 14 个时进行预加载。所以这里的阈值需要动态增长。</p>
 <p>假设我们已知目前列表的数据量和目前页数，根据每一页的阈值就可以动态计算总阈值：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span><span style="color:#6272a4">总</span><span style="color:#6272a4">数</span><span style="color:#6272a4">除</span><span style="color:#6272a4">以</span><span style="color:#6272a4">当</span><span style="color:#6272a4">前</span><span style="color:#6272a4">页</span><span style="color:#6272a4">数</span><span style="color:#6272a4">，</span><span style="color:#6272a4">算</span><span style="color:#6272a4">出</span><span style="color:#6272a4">每</span><span style="color:#6272a4">一</span><span style="color:#6272a4">页</span><span style="color:#6272a4">的</span><span style="color:#6272a4">数</span><span style="color:#6272a4">量</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 数据总数除以当前页数，算出每一页的数量</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">perPageCount</span> = <span style="color:#8be9fd;font-style:italic">Double</span>(totalRowsCount) <span style="color:#ff79c6">/</span> <span style="color:#8be9fd;font-style:italic">Double</span>(currentPageIndex <span style="color:#ff79c6">+</span> <span style="color:#bd93f9">1</span>)
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">每</span><span style="color:#6272a4">页</span><span style="color:#6272a4">数</span><span style="color:#6272a4">量</span><span style="color:#6272a4">乘</span><span style="color:#6272a4">以</span><span style="color:#6272a4">页</span><span style="color:#6272a4">数</span><span style="color:#6272a4">加</span><span style="color:#6272a4">上</span><span style="color:#6272a4">每</span><span style="color:#6272a4">一</span><span style="color:#6272a4">页</span><span style="color:#6272a4">的</span><span style="color:#6272a4">阈</span><span style="color:#6272a4">值</span><span style="color:#6272a4">的</span><span style="color:#6272a4">和</span><span style="color:#6272a4">，</span><span style="color:#6272a4">就</span><span style="color:#6272a4">是</span><span style="color:#6272a4">总</span><span style="color:#6272a4">共</span><span style="color:#6272a4">需</span><span style="color:#6272a4">要</span><span style="color:#6272a4">的</span><span style="color:#6272a4">数</span><span style="color:#6272a4">量</span>
+<span style="color:#6272a4">// 每页数量乘以页数加上每一页的阈值的和，就是总共需要的数量</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">needRowsCount</span> = perPageCount <span style="color:#ff79c6">*</span> (<span style="color:#8be9fd;font-style:italic">Double</span>(currentPageIndex) <span style="color:#ff79c6">+</span> threshold)
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">算</span><span style="color:#6272a4">出</span><span style="color:#6272a4">动</span><span style="color:#6272a4">态</span><span style="color:#6272a4">的</span><span style="color:#6272a4">阈</span><span style="color:#6272a4">值</span>
+<span style="color:#6272a4">// 算出动态的阈值</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">actalThreshold</span> = needRowsCount <span style="color:#ff79c6">/</span> <span style="color:#8be9fd;font-style:italic">Double</span>(totalRowsCount)
 </code></pre></div><p>这里需要记录当前的页数，笔者这里用了一个比较 trick 的做法，当行数增长时，则认为页数 +1，行数减少时，则认为页数归 0，适用于下拉刷新整个列表清空的情况。可以用属性观察 <code>willSet</code> 来改变页数。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">ThresholdStrategy</span>: ListPrefetcherStrategy{

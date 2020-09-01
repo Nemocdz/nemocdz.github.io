@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>在 Swift 里安全管理指针</title>
+
+  
+  
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
+
+  
+
+  
+  
+  <meta name="description" content=" WWDC20 Session 10167 - Safely manage pointers in Swift
+ 在 Swift 中，我们通过 Unsafe 前缀来标识那些输入后可能发生未定义行为的操作，详情可以回顾 WWDC20 - Unsafe Swift。而本文则会更深入地探讨在非安全范围内编写 Swift 的一些细节，日常开发中比较少接触到的部分。
+想要更安全地管理指针，意味着需要了解各种导致不安全的方式。指针的安全性可以分为不同级别来讨论，越往底层，程序员越需要为代码的正确性负责。所以日常开发中建议尽量使用顶层的 API 编写代码。
+">
+
+  
+  
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="在 Swift 里安全管理指针">
+    <meta name="twitter:description" content=" WWDC20 Session 10167 - Safely manage pointers in Swift
+ 在 Swift 中，我们通过 Unsafe 前缀来标识那些输入后可能发生未定义行为的操作，详情可以回顾 WWDC20 - Unsafe Swift。而本文则会更深入地探讨在非安全范围内编写 Swift 的一些细节，日常开发中比较少接触到的部分。
+想要更安全地管理指针，意味着需要了解各种导致不安全的方式。指针的安全性可以分为不同级别来讨论，越往底层，程序员越需要为代码的正确性负责。所以日常开发中建议尽量使用顶层的 API 编写代码。
+">
+    <meta name="twitter:image" content="/images/avatar.png">
+  
+
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="在 Swift 里安全管理指针">
+  <meta property="og:description" content=" WWDC20 Session 10167 - Safely manage pointers in Swift
+ 在 Swift 中，我们通过 Unsafe 前缀来标识那些输入后可能发生未定义行为的操作，详情可以回顾 WWDC20 - Unsafe Swift。而本文则会更深入地探讨在非安全范围内编写 Swift 的一些细节，日常开发中比较少接触到的部分。
+想要更安全地管理指针，意味着需要了解各种导致不安全的方式。指针的安全性可以分为不同级别来讨论，越往底层，程序员越需要为代码的正确性负责。所以日常开发中建议尽量使用顶层的 API 编写代码。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/%E5%9C%A8-swift-%E9%87%8C%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E6%8C%87%E9%92%88/">
+  <meta property="og:image" content="/images/avatar.png">
+
+
+
+
+<meta name="generator" content="Hugo 0.74.3">
+
+
+<link rel="canonical" href="https://nemocdz.github.io/post/%E5%9C%A8-swift-%E9%87%8C%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E6%8C%87%E9%92%88/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
+
+
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="t6ukG5250x">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
+
+<meta name="keywords" content="WWDC, WWDC2020, WWDC20, pointer, C, unsafe, iOS14, Swift" >
+
+<meta name='description' itemprop="description" content="&lt;blockquote&gt;
+&lt;p&gt;WWDC20 Session 10167 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2020/101">
+
+
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
+
+
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
+
+
+  
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
+
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
+
+
+</head>
+  <body>
+    <div class="suspension">
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
+      
+        
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
+  
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
+  
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
+  </button>
+
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/post">首页</a>
+        </li>
+      
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">在 Swift 里安全管理指针</h1>
+      <p class="post-meta">@Nemocdz · Sep 1, 2020 · 5 min read</p>
+    </header>
+
+    
+	
+	<nav id="TableOfContents">
+  <ul>
+    <li><a href="#安全级别">安全级别</a></li>
+    <li><a href="#指针安全">指针安全</a>
+      <ul>
+        <li><a href="#生命周期">生命周期</a></li>
+        <li><a href="#对象边界">对象边界</a></li>
+        <li><a href="#指针类型">指针类型</a></li>
+      </ul>
+    </li>
+    <li><a href="#unsafepointert类型指针"><code>UnsafePointer&lt;T&gt;</code>：类型指针</a>
+      <ul>
+        <li><a href="#1-通过已有变量获取">1. 通过已有变量获取</a></li>
+        <li><a href="#2-直接分配内存">2. 直接分配内存</a></li>
+      </ul>
+    </li>
+    <li><a href="#unsaferawpointer-原始指针"><code>UnsafeRawPointer</code> ：原始指针</a>
+      <ul>
+        <li><a href="#1-通过已有-unsafepointert-获取">1. 通过已有 <code>UnsafePointer&lt;T&gt;</code> 获取</a></li>
+        <li><a href="#2-通过已有变量获取">2. 通过已有变量获取</a></li>
+        <li><a href="#3-从-data-中获取">3. 从 <code>Data</code> 中获取</a></li>
+        <li><a href="#4-直接分配内存">4. 直接分配内存</a></li>
+      </ul>
+    </li>
+    <li><a href="#内存绑定-api">内存绑定 API</a>
+      <ul>
+        <li><a href="#assumingmemoryboundto"><code>assumingMemoryBound(to:)</code></a></li>
+        <li><a href="#bindmemorytocapacity"><code>bindMemory(to:capacity:)</code></a></li>
+        <li><a href="#withmemoryreboundtocapacitybody"><code>withMemoryRebound(to:capacity:body:)</code></a></li>
+        <li><a href="#总结">总结</a></li>
+      </ul>
+    </li>
+    <li><a href="#从原始内存中区分类型">从原始内存中区分类型</a></li>
+    <li><a href="#最后">最后</a></li>
+  </ul>
+</nav>
+
+    <article class="post-content"><blockquote>
+<p>WWDC20 Session 10167 - <a href="https://developer.apple.com/videos/play/wwdc2020/10167/">Safely manage pointers in Swift</a></p>
+</blockquote>
+<p>在 Swift 中，我们通过 Unsafe 前缀来标识那些输入后可能发生未定义行为的操作，详情可以回顾 <a href="https://developer.apple.com/videos/play/wwdc2020/10648">WWDC20 - Unsafe Swift</a>。而本文则会更深入地探讨在非安全范围内编写 Swift 的一些细节，日常开发中比较少接触到的部分。</p>
+<p>想要更安全地管理指针，意味着需要了解各种导致不安全的方式。指针的安全性可以分为不同级别来讨论，越往底层，程序员越需要为代码的正确性负责。所以日常开发中建议尽量使用顶层的 API 编写代码。</p>
+<h2 id="安全级别">安全级别</h2>
+<p>安全性可以被分为四个级别。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901110723.png" alt=""></p>
+<ol>
+<li>
+<p>最顶层的是安全级别，Swift 的主要目标之一就是无需任何不安全的数据结构就能编写代码。Swift 拥有健壮的类型系统，提供了强大的灵活性和性能。完全不使用指针对于代码安全来说是一个很好的选择。</p>
+</li>
+<li>
+<p>但是 Swift 另一个重要目标是和不安全语言的高性能互操性。所以在第二层 Swift 提供了前缀为 Unsafe 的类型或函数。<code>UnsafePointer&lt;T&gt;</code> 可以在不用担心类型安全的情况下使用指针。</p>
+</li>
+<li>
+<p>如果需要使用原始内存作为字节序处理，那么就要使用第三层的 <code>UnsafeRawPointer</code>，使用它来加载和存储值到原始内存中，需要熟悉类型的内存布局。</p>
+</li>
+<li>
+<p>在最底层中，Swift 提供了绑定内存类型的内存绑定 API，只有在这一层才需要完全保证指针的类型安全。</p>
+</li>
+</ol>
+<p><strong>注意，安全代码并不一定意味着正确代码，但它的行为是可预测的</strong>。大多数情况下，编译器会捕获代码导致的不可预测行为。对于编译时无法捕获的错误，运行时会检查并让程序立刻崩溃并给出诊断。安全代码实际上增强了错误的表现。在线程安全且不使用 Unsafe 前缀 API 的情况下，代码会强制产生可预测行为。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901110851.png" alt=""></p>
+<p>反之，在不安全的 Swift 代码中，可预测行为并不是完全强制的，所以需要程序员承担额外的风险。Xcode 的测试提供了一些有用的诊断，但诊断的级别取决于选择的安全级别。标准库中的不安全 API 可以通过断言和调试编译来捕获一些无效输入。添加先决条件来验证不安全的假设也是一个不错的实践。还可以通过 Xcode 的 <a href="https://developer.apple.com/videos/play/wwdc2015/413/">Address Sanitizer</a> 在运行时检查，但它也无法捕获所有的未定义行为。如果测试期间没有发现错误，则可能在运行时发生难以调试的崩溃，或者更可怕的是执行错误行为导致用户数据被破坏。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901110911.png" alt=""></p>
+<h2 id="指针安全">指针安全</h2>
+<p>Swift 设计上是无须指针的编程语言，了解指针的安全性能更清楚为何应该避免使用它们。同时，如果确实需要使用底层 API 来访问内存，这块知识也是值得掌握的。</p>
+<h3 id="生命周期">生命周期</h3>
+<p>在需要指向变量的存储空间、数组元素或者直接分配的内存时，需要稳定的内存位置。但这块稳定的存储空间生命周期是有限的。可能因为它超出了作用域，也可能你需要直接分配内存，就会导致超出了生命周期。然而，你使用的指针有着自己的生命周期，当你的指针的生命周期超过对应存储空间的生命周期时，指针访问就会变成未定义行为。这是指针不安全的主要原因，但不是唯一原因。</p>
+<h3 id="对象边界">对象边界</h3>
+<p>对象可以由一组元素组成。指针可以通过偏移来访问不同的内存地址，这是一种处理不同元素的地址的有效方式。但是偏移的过大或过小都会导致访问的不是对应的对象。指针访问超过对象边界的行为也是未定义的。</p>
+<h3 id="指针类型">指针类型</h3>
+<p>还有一个方面的安全问题容易被忽视，指针本身的类型和内存里的值类型不一致。比如本来有一个指向 <code>Int16</code> 的指针，当内存区域被覆盖为 <code>Int32</code> 时，访问 <code>Int16</code> 旧指针就会产生未定义行为。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901110932.png" alt=""></p>
+<p>下面有一个非常不安全的例子，你可能会被从 C 移植而来的 Swift 代码调用部分旧 C 代码的样子吓到。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">Image</span> {
+    <span style="color:#6272a4">// ...</span>
+}
+
+<span style="color:#6272a4">// 未定义行为可能导致数据丢失</span>
+<span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">Collage</span> {
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">imageData</span>: <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;Image&gt;?
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">imageCount</span>: <span style="color:#8be9fd;font-style:italic">Int</span> = <span style="color:#bd93f9">0</span>
+}
+
+<span style="color:#6272a4">// C 风格的 API 需要 Int 的指针传入 </span>
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">addImages</span>(<span style="color:#ff79c6">_</span> countPtr: <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">UInt32</span>&gt;) -&gt; <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;Image&gt; {
+    <span style="color:#6272a4">// ...</span>
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageData</span> = <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;Image&gt;.allocate(capacity: <span style="color:#bd93f9">1</span>)
+    imageData[<span style="color:#bd93f9">0</span>] = Image()
+    countPtr.pointee <span style="color:#ff79c6">+=</span> <span style="color:#bd93f9">1</span>
+    <span style="color:#ff79c6">return</span> imageData
+}
+
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">saveImages</span>(<span style="color:#ff79c6">_</span> imageData: <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;Image&gt;, <span style="color:#ff79c6">_</span> count: <span style="color:#8be9fd;font-style:italic">Int</span>) {
+    <span style="color:#6272a4">// 随便执行些什么</span>
+    print(count)
+}
+
+<span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">collage</span> = Collage()
+collage.imageData = withUnsafeMutablePointer(to: &amp;collage.imageCount) {
+  	<span style="color:#6272a4">// 注意这行，创建了指针，但类型不匹配</span>
+    addImages(UnsafeMutableRawPointer(<span style="color:#8be9fd;font-style:italic">$0</span>).assumingMemoryBound(to: <span style="color:#8be9fd;font-style:italic">UInt32</span>.<span style="color:#ff79c6">self</span>))
+}
+saveImages(collage.imageData!, collage.imageCount) <span style="color:#6272a4">// 可能发生 imageCount == 0</span>
+</code></pre></div><p><code>addImages(:)</code> 调用时将图像数据写入并更新图像数量，<code>Collage</code> 结构中的 imageCount 是 <code>Int</code>，但 <code>addImages(:)</code> 实参需要的是 <code>UInt32</code>。安全的做法是创建匹配的新变量并使用 Swift 的整数转换。然而这里直接创建了指向结构体的指针，那么在之后运行时读取这个数量时，就可能为 0。这里的不同类型告诉了编译器这两个值会属于不同的内存对象中，所以编译器不会更新 <code>Int</code> 的值。也就是说编译器会根据类型信息进行假设，一旦假设有误，会蔓延到编译管道中，最后可能产生意料之外的结果。不同版本的编译器也可能导致不同的结果。</p>
+<p>指针类型导致的 Bug：</p>
+<ul>
+<li>可能导致意料之外的行为</li>
+<li>可能长时间难以被发现</li>
+<li>可能在意外的时间爆发
+<ul>
+<li>在看起来无害的源码改动后</li>
+<li>编译器升级后</li>
+</ul>
+</li>
+</ul>
+<p>C 指针有着 <a href="https://zh.wikipedia.org/wiki/%E5%88%AB%E5%90%8D_(%E8%AE%A1%E7%AE%97)">严格别名</a> 和 <a href="https://zh.wikipedia.org/wiki/%E7%B1%BB%E5%9E%8B%E5%8F%8C%E5%85%B3">类型双关</a> 规则。幸运的是，不需要了解这些规则也能在 Swift 中安全地使用指针。Swift 指针因为需要传递到 C，所以至少和 C 一样严格以便安全地互操作。</p>
+<h2 id="unsafepointert类型指针"><code>UnsafePointer&lt;T&gt;</code>：类型指针</h2>
+<p><code>UnsafePointer&lt;T&gt;</code> 是类型指针，提供了 C 指针大部分底层功能，且不需要担心指针类型安全问题，只需要管理对象的生命周期和对象边界就好。</p>
+<p>范型参数 T 表示存储在内存里的期望类型，Swift 对于类型指针是严格但简单的。内存状态包括该内存地址对应的类型，该内存位置只能保存该类型的值。类型指针只读写该类型的值。在 C 中转换指针类型的情况并不少见，且两个指针都继续引用同一内存。在 Swift 中，访问指针类型和内存类型不匹配的指针会产生未定义行为，所以不允许转换指针。这样，编译时强制使用该指针类型，而不需要在内存中储存额外的运行时信息或类型信息，也无须执行额外的运行时检查。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901110947.png" alt=""></p>
+<p>复合类型也是类似的，里面的结构以正确的类型绑定。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901111013.png" alt=""></p>
+<p>获取 <code>UnsafePointer&lt;T&gt;</code> 的方式有两种。</p>
+<h3 id="1-通过已有变量获取">1. 通过已有变量获取</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">i</span>: <span style="color:#8be9fd;font-style:italic">Int</span>
+withUnsafePointer(to: i) { (intPtr: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">Int</span>&gt;) <span style="color:#ff79c6">in</span>
+		<span style="color:#6272a4">// ...</span>
+}
+
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">array</span>: [T]
+array.withUnsafeBufferPointer { (elmentPtr: <span style="color:#8be9fd;font-style:italic">UnsafeBufferPointer</span>&lt;T&gt;) <span style="color:#ff79c6">in</span>
+     <span style="color:#6272a4">//...</span>
+}
+</code></pre></div><p>这样获取的指针类型就和原来变量的类型一致。数组则返回数组元素类型的指针。</p>
+<h3 id="2-直接分配内存">2. 直接分配内存</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">tPtr</span> = <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;T&gt;.allocate(capacity: count)
+tPtr.initialize(repeating: t, count: count)
+tPtr.assign(repeating: t, count: count)
+
+tPtr.deinitialize(count: count)
+tPtr.deallocate()
+</code></pre></div><p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901110959.png" alt=""></p>
+<p>直接分配内存将绑定类型，返回一个类型指针，但这时还未构造，可以通过 <code>initalzize</code> 进行构造，<code>assgin</code> 进行重新分配，<code>deinitialize</code> 进行析构。Swift 会保证这一过程的指针类型安全，而内存构造状态由程序员来管理。</p>
+<h2 id="unsaferawpointer-原始指针"><code>UnsafeRawPointer</code> ：原始指针</h2>
+<p>如果需要将内存里的字节转换成其他类型，则需要使用无类型的 <code>UnsafeRawPointer</code>。原始指针会忽略内存绑定类型。</p>
+<p>获取 <code>UnsafeRawPointer</code> 的方式有两种。</p>
+<h3 id="1-通过已有-unsafepointert-获取">1. 通过已有 <code>UnsafePointer&lt;T&gt;</code> 获取</h3>
+<p>可以传入 <code>UnsafePointer&lt;T&gt;</code> 来构造 <code>UnsafeRawPointer</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">p</span>: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;T&gt;
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">r</span> = UnsafeRawPointer(p)
+</code></pre></div><p>然后通过 <code>load(as:)</code> 来指定读取类型所对应的字节数。例如，指定 <code>UInt32</code> 时，就会加载当前地址前 4 个字节，生成 <code>UInt32</code> 值。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901111213.png" alt=""></p>
+<p>写入通过 <code>storeBytes(of:as:)</code> 并指定类型。和类型指针不一样，原始指针不会析构先前在内存里的值。所以之前的引用依旧有效。比如给 <code>Int64</code> 内存区域的写入 <code>UInt32</code> 字节，写入后依旧是 <code>Int64</code> 绑定类型。因此原来的类型指针依旧可以访问，而不会被自动转换。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901111035.png" alt=""></p>
+<h3 id="2-通过已有变量获取">2. 通过已有变量获取</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">i</span>: <span style="color:#8be9fd;font-style:italic">Int</span>
+withUnsafeBytes(of: i) { (iBytes: UnsafeRawBufferPointer) <span style="color:#ff79c6">in</span>
+    <span style="color:#6272a4">//...</span>
+}
+
+
+withUnsafeMutableBytes(of: &amp;i) { (xBytes: UnsafeMutableRawBufferPointer)  <span style="color:#ff79c6">in</span>
+    <span style="color:#6272a4">//...</span>
+}
+
+
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">array</span>: [T]
+array.withUnsafeBytes { (elementBytes: UnsafeRawBufferPointer) <span style="color:#ff79c6">in</span>
+    <span style="color:#6272a4">//...</span>
+}
+</code></pre></div><p>获取到的 <code>UnsafeRawBufferPointer</code> 和 <code>UnsafeBufferPointer&lt;T&gt;</code> 类似，都是字节的集合。<code>count</code> 是变量类型的内存大小，索引是字节的偏移量，索引的值是对应字节的 <code>UInt</code> 值。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901111115.png" alt=""></p>
+<p>修改可以通过 <code>withUnsafeMutableBytes</code> 的方式获取 <code>UnsafeMutableRawBufferPointer</code> 进行修改。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901111133.png" alt=""></p>
+<p>数组也有类似的方法，<code>count</code> 对应的是数组数量x元素 <strong><a href="https://en.wikipedia.org/wiki/Stride_of_an_array">跨步</a></strong>。其中一些字节会被填充用于元素对齐。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901111157.png" alt=""></p>
+<h3 id="3-从-data-中获取">3. 从 <code>Data</code> 中获取</h3>
+<p>Foundation 中的 <code>Data</code> 有 <code>withUnsafeBytes</code> 方法，通过闭包返回原始指针。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">import</span> <span style="color:#50fa7b">Foundation</span>
+
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">readUInt32</span>(data: Data) -&gt; <span style="color:#8be9fd;font-style:italic">UInt32</span> {
+    data.withUnsafeBytes { (buffer: UnsafeRawBufferPointer) <span style="color:#ff79c6">in</span>
+        buffer.load(fromByteOffset: <span style="color:#bd93f9">4</span>, <span style="color:#ff79c6">as</span>: <span style="color:#8be9fd;font-style:italic">UInt32</span>.<span style="color:#ff79c6">self</span>)
+    }
+}
+
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">data</span> = Data(<span style="color:#8be9fd;font-style:italic">Array</span>&lt;<span style="color:#8be9fd;font-style:italic">UInt8</span>&gt;([<span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">1</span>, <span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">0</span>]))
+print(readUInt32(data: data))
+</code></pre></div><h3 id="4-直接分配内存">4. 直接分配内存</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">rawPtr</span> = UnsafeMutableRawPointer.allocate(
+            byteCount: MemoryLayout&lt;T&gt;.stride <span style="color:#ff79c6">*</span> numValues,
+            alignment: MemoryLayout&lt;T&gt;.alignment)
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">tPtr</span> = rawPtr.initializeMemory(<span style="color:#ff79c6">as</span>: T.<span style="color:#ff79c6">self</span>, repeating: t, count: numValues)
+<span style="color:#6272a4">// 必须使用类型指针 ‘tPtr’ 进行析构</span>
+</code></pre></div><p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901111232.png" alt=""></p>
+<p>直接分配内存需要负责计算内存大小和字节对齐方式。分配后和类型指针不一样，不会绑定类型，也没有进行构造。通过指定内存绑定的值和类型进行构造，就会返回类型指针。这个过程是单向的，所以没法使用原始指针进行析构，而要通过类型指针。而使用原始指针释放时需要保证它处于未构造的状态。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901111259.png" alt=""></p>
+<p>一般来说，类型指针更安全和方便，所以应该优先选用。某些情况下需要原始指针，比如将不相关的类型存储在同一连续的可变长度内存区域里。可以通过构造一部分内存为头部，偏移头部后的指针就指向里面的元素，这种内存分配方式非常适合实现标准库类型例如 <code>Set</code> 和 <code>Dictionary</code>，但日常较少用到。原始指针是一种实现高性能数据结构的利器，但要注意的是，字节偏移和数据对齐并不是一件简单的事情。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901111315.png" alt=""></p>
+<p>原始指针通常还会用于将外部生成的字节缓冲区（比如网络的流）解码为 Swift 类型。通过读取前面字节里的值来确定后续需要读取的类型信息和大小。</p>
+<p>原始指针依旧是类型安全的，虽然使用时需要保证内存布局，但其他方面并不会比类型指针更危险。</p>
+<h2 id="内存绑定-api">内存绑定 API</h2>
+<p>在最底层，Swift 给 <code>UnsafeRawPointer</code> 提供了内存绑定类型的 API。在使用它之前，再三考虑是否能尽量使用上层 API，因为需要对指针的类型安全完全负责。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">assumingMemoryBound</span>&lt;T&gt;(to: T.<span style="color:#ff79c6">Type</span>) -&gt; <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;T&gt;
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">bindMemory</span>&lt;T&gt;(to type: T.<span style="color:#ff79c6">Type</span>, capacity count: <span style="color:#8be9fd;font-style:italic">Int</span>) -&gt; <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;T&gt;
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">withMemoryRebound</span>&lt;T, Result&gt;(to type: T.<span style="color:#ff79c6">Type</span>, capacity count: <span style="color:#8be9fd;font-style:italic">Int</span>, <span style="color:#ff79c6">_</span> body: (<span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;T&gt;) <span style="color:#ff79c6">throws</span> -&gt; Result) <span style="color:#ff79c6">rethrows</span> -&gt; Result
+</code></pre></div><p>显式调用内存绑定相关的 API 时，你将会清晰地知道绕过指针类型安全的时机。这样做的危险之处在于，代码很容易在执行已有的类型指针时导致未定义行为。唯一需要遵循的规则是：<strong>使用类型指针访问时需要和内存绑定的类型匹配</strong>。虽然这个规则很简单，但是遵循起来并不容易，因为不同的代码在内存类型上只是口头约定，而编译器并不会给出指引。</p>
+<p>下面介绍了使用一些必须使用如此危险的 API 的例子，注意这些用法是如何保证安全的。</p>
+<h3 id="assumingmemoryboundto"><code>assumingMemoryBound(to:)</code></h3>
+<p>极少数情况下，代码没有保留类型指针，只有原始指针，但明确知道内存绑定的类型，这时候就需要<code>assmuingMemoryBound(to:)</code> 来告诉编译器预期类型，转换成对应的类型指针（<strong>注意：这里的转换只是让编译器绕过类型检查，并没有实际发生转换</strong>）。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">takesIntPointer</span>(<span style="color:#ff79c6">_</span>: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">Int</span>&gt;) { <span style="color:#6272a4">/* elided */</span> }
+
+<span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">RawContainer</span> {
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">rawPtr</span>: UnsafeRawPointer
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">pointsToInt</span>: <span style="color:#8be9fd;font-style:italic">Bool</span>
+}
+
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">testContainer</span>(numValues: <span style="color:#8be9fd;font-style:italic">Int</span>) {
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">intPtr</span> = <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">Int</span>&gt;.allocate(capacity: numValues)
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">rc</span> = RawContainer(rawPtr: intPtr, pointsToInt: <span style="color:#ff79c6">true</span>)
+    <span style="color:#6272a4">// ...</span>
+    <span style="color:#ff79c6">if</span> rc.pointsToInt {
+        takesIntPointer(rc.rawPtr.assumingMemoryBound(to: <span style="color:#8be9fd;font-style:italic">Int</span>.<span style="color:#ff79c6">self</span>))
+    }
+}
+</code></pre></div><p>比如这个例子中已知放在 <code>RawContainer</code> 容器里类型指针一定是绑定 <code>Int</code> 类型，那么就可以通过 <code>assumingMemoryBound(to:)</code> 来转换成类型指针。使用它的前提是它的确已经被绑定为该类型了，运行时并不会进行检查，所以正确性由使用者来保证。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">import</span> <span style="color:#50fa7b">Darwin</span>
+
+<span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">ThreadContext</span> { 
+  <span style="color:#6272a4">// ... </span>
+}
+
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">contextPtr</span> = <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;ThreadContext&gt;.allocate(capacity: <span style="color:#bd93f9">1</span>)
+contextPtr.initialize(to: ThreadContext())
+<span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">pthread</span>: pthread_t?
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">result</span> = pthread_create(
+  &amp;pthread, <span style="color:#ff79c6">nil</span>,
+  { (ptr: UnsafeMutableRawPointer) <span style="color:#ff79c6">in</span>
+     <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">contextPtr</span> = ptr.assumingMemoryBound(to: ThreadContext.<span style="color:#ff79c6">self</span>)
+      <span style="color:#6272a4">// ... </span>
+      <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+   },
+   contextPtr)
+}
+</code></pre></div><p>比如在调用 C API <code>phread_create</code> 时，构造了自定义线程上下文类型的 <code> contextPtr</code>。但是闭包里返回的是抹去类型信息的原始指针（该指针就是传入的指针），这时也需要进行转换。这是因为 C 函数声明里它是一个 <code>void*</code> 类型的实参，在 Swift 中被转换为 <code>UnsafeMutableRawPointer</code>。这种情况在使用 C 的 API 时偶尔会出现，因为没有办法确保类型安全。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">takesIntPointer</span>(<span style="color:#ff79c6">_</span>: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">Int</span>&gt;) { 
+		<span style="color:#6272a4">// ...</span>
+}
+
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">tuple</span> = (<span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">1</span>, <span style="color:#bd93f9">2</span>)
+withUnsafePointer(to: tuple) { (tuplePtr: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span><span style="color:#ff79c6">&lt;</span>(<span style="color:#8be9fd;font-style:italic">Int</span>, <span style="color:#8be9fd;font-style:italic">Int</span>, <span style="color:#8be9fd;font-style:italic">Int</span>)<span style="color:#ff79c6">&gt;</span>) <span style="color:#ff79c6">in</span>
+		takesIntPointer(UnsafeRawPointer(tuplePtr).assumingMemoryBound(to: <span style="color:#8be9fd;font-style:italic">Int</span>.<span style="color:#ff79c6">self</span>))
+}
+</code></pre></div><p>比如在使用元组获取类型指针时，类型是元组的类型。Swift 实现上确保了元组内存绑定的类型实际上是其元素的类型（元组元素相同的情况下），并在元素跨度的基础上按照元素顺序排列。所以如果需要使用元组中元素的类型指针，就可以通过手动类型擦除再转换得到匹配的类型指针。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">takesIntPointer</span>(<span style="color:#ff79c6">_</span>: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">Int</span>&gt;) { 
+ 		<span style="color:#6272a4">// ...</span>
+}
+
+<span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">MyStruct</span> {
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">status</span>: <span style="color:#8be9fd;font-style:italic">Bool</span>
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">value</span>: <span style="color:#8be9fd;font-style:italic">Int</span>
+}
+
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">myStruct</span> = MyStruct(status: <span style="color:#ff79c6">true</span>, value: <span style="color:#bd93f9">0</span>)
+withUnsafePointer(to: myStruct) { (ptr: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;MyStruct&gt;) <span style="color:#ff79c6">in</span>
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">rawValuePtr</span> = (UnsafeRawPointer(ptr) <span style="color:#ff79c6">+</span> MemoryLayout&lt;MyStruct&gt;.offset(of: \MyStruct.value)<span style="color:#ff79c6">!</span>)
+    takesIntPointer(rawValuePtr.assumingMemoryBound(to: <span style="color:#8be9fd;font-style:italic">Int</span>.<span style="color:#ff79c6">self</span>))
+}
+</code></pre></div><p>结构体也是类似的，获取的类型指针时，类型是结构体的类型。这个时候就可以通过转换为原始指针并加上该属性在结构体中的偏移量（通过 <code>MemoryLayout</code> 的 <code>offset(of:)</code> ）来获得属性的原始指针，然后再转换得到匹配的类型指针。通常，结构体属性的内存布局是不确定的，所以获取的指针只能使用于该属性。由于指向结构体属性比较常用，所以 Swift 提供了一种更简单的做法来避免使用不安全的 API。只需要将结构体的属性作为 inout 实参传入，编译器会隐式转换为该函数实参所声明的不安全指针类型。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">myStruct</span> = MyStruct(status: <span style="color:#ff79c6">true</span>, value: <span style="color:#bd93f9">0</span>)
+<span style="color:#6272a4">// 下面两种用法是等效的</span>
+<span style="color:#6272a4">// 1</span>
+withUnsafePointer(to: myStruct) { (ptr: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;MyStruct&gt;) <span style="color:#ff79c6">in</span>
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">rawValuePtr</span> = (UnsafeRawPointer(ptr) <span style="color:#ff79c6">+</span> MemoryLayout&lt;MyStruct&gt;.offset(of: \MyStruct.value)<span style="color:#ff79c6">!</span>)
+    takesIntPointer(rawValuePtr.assumingMemoryBound(to: <span style="color:#8be9fd;font-style:italic">Int</span>.<span style="color:#ff79c6">self</span>))
+}
+
+<span style="color:#6272a4">// 2</span>
+takesIntPointer(&amp;myStruct.value)
+</code></pre></div><h3 id="bindmemorytocapacity"><code>bindMemory(to:capacity:)</code></h3>
+<p><code>bindMemory(to:capacity:)</code> 可以用于更改内存绑定的类型。如果内存还没有类型绑定，则将首次绑定为该类型。如果内存已经进行类型绑定，则将重新绑定为该类型，并且内存里所有值都会变成该类型。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">uint16Ptr</span> = <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">UInt16</span>&gt;.allocate(capacity: <span style="color:#bd93f9">2</span>)
+uint16Ptr.initialize(repeating: <span style="color:#bd93f9">0</span>, count: <span style="color:#bd93f9">2</span>)
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">int32Ptr</span> = UnsafeMutableRawPointer(uint16Ptr).bindMemory(to: <span style="color:#8be9fd;font-style:italic">Int32</span>.<span style="color:#ff79c6">self</span>, capacity: <span style="color:#bd93f9">1</span>)
+
+<span style="color:#6272a4">// uint16Ptr 的访问现在是未定义行为</span>
+int32Ptr.deallocate()
+</code></pre></div><p>假设分配了一块容纳两个 <code>UInt16</code> 的内存，通过原始指针调用 <code>bindMemory（to:capacity:)</code>  来改变为单个 <code>UInt32</code>。这时只发生了按位转换，并没有任何普通的类型转换的安全检查，在运行时也没有做任何事情。这实际上只是向编译器声明该内存位置更改了类型。返回的新指针用于访问内存，旧指针访问时将会产生未定义行为，因为每个内存位置只能绑定到一种类型上。</p>
+<p>更改内存绑定的类型并不会在物理上修改内存，但需要把它当作改变内存的全局状态来考虑。</p>
+<p>这并不是类型安全的。首先，它转换了已有的原始字节，所以像原始指针一样，Swift 已经不能确保内存布局里的类型了。其次它比使用原始指针还要危险，因为它会让已有的原类型指针失效。虽然那些指针的地址还有效，但是内存绑定的类型却是不匹配的，所以访问就会无法确定。而且那些指针可能被其他对象（如变量，集合）存储，那么它们也会间接受到影响。它属于 Swift 底层的 <a href="https://en.wikipedia.org/wiki/Language_primitive">原语</a> 之一，而非通常的应用层代码。</p>
+<p>其中一种 <code>bindMemory(to:capacity:)</code> 的常见错误用法是将它从内存中读取不同类型的值，这样可能会影响其他已有指针。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 错误用法</span>
+<span style="color:#ff79c6">return</span> rawPtr.bindMemory(to: <span style="color:#8be9fd;font-style:italic">UInt32</span>.<span style="color:#ff79c6">self</span>).pointee
+
+<span style="color:#6272a4">// 正确用法</span>
+<span style="color:#ff79c6">return</span> rawPtr.load(<span style="color:#ff79c6">as</span>: <span style="color:#8be9fd;font-style:italic">UInt32</span>.<span style="color:#ff79c6">self</span>)
+</code></pre></div><h3 id="withmemoryreboundtocapacitybody"><code>withMemoryRebound(to:capacity:body:)</code></h3>
+<p>当有几个外部的 API 的实参类型有数据类型上的差异，但又想避免来回复制数据时，就可以使用 <code>withMemoryRebound(to:capacity:body)</code> 来临时更改内存绑定类型。这种情况在使用 C 的 API 时经常出现。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">takesUInt8Pointer</span>(<span style="color:#ff79c6">_</span>: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">UInt8</span>&gt;) { 
+		<span style="color:#6272a4">// ...</span>
+}
+
+int8Ptr.withMemoryRebound(to: <span style="color:#8be9fd;font-style:italic">UInt8</span>.<span style="color:#ff79c6">self</span>, capacity: count) { (uint8Ptr: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">UInt8</span>&gt;) <span style="color:#ff79c6">in</span>
+		<span style="color:#6272a4">// int8Ptr 不能在闭包里使用</span>
+    takesUInt8Pointer(uint8Ptr)
+}
+<span style="color:#6272a4">// uint8Ptr 不能在闭包外使用</span>
+</code></pre></div><p>比如 <code>Int8</code> 的类型指针无法直接调用实参为 <code>UInt8</code> 的函数，这里虽然可以重新分配一块匹配类型的内存并复制数据，但是这样速度比较慢。只需要在调用时临时转换一下就好了，这时候就可以使用 <code>withMemoryRebound(to:capacity:body)</code> 临时绑定为对应类型的指针，它的作用域只在闭包内。闭包返回时，将会重新绑定为原始类型。这可以将临时类型指针的访问和其他代码的作用域分开。</p>
+<p>但是它有一些严格的限制：</p>
+<ul>
+<li>需要有原始的指针</li>
+<li>转换的类型和原始的类型需要有相同的跨度</li>
+</ul>
+<p>因此，无法使用 <code>withMemoryRebound(to:capacity:body)</code> 的情况下，不得不使用 <code>bindMemory(to:capacity:)</code> 时，请遵循类似的规范：</p>
+<ul>
+<li>限制更改绑定后指针的作用域</li>
+<li>在作用域结束时重新绑定回原始类型</li>
+</ul>
+<h3 id="总结">总结</h3>
+<p><code>assmuingMemoryBound(to:)</code>：从原始指针恢复<strong>预期</strong>类型的方法，需要已知内存绑定的类型才可以使用。</p>
+<p><code>bindMemory(to:capacity:)</code>：更改内存绑定类型的状态，是底层原语，会影响其他已有的类型指针。</p>
+<p><code>withMemory(to:capacity:body)</code>：临时更改内存绑定类型的状态，在不得不更改内存绑定类型时优先考虑。在需要调用不匹配类型的 C 的 API 时可以避免额外复制。</p>
+<h2 id="从原始内存中区分类型">从原始内存中区分类型</h2>
+<p>如果内存区域的底层存储只暴露了原始指针，但又想用作不同特定类型元素的序列，可以使用下面介绍的技术。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">UnsafeBufferView</span>&lt;Element&gt;: RandomAccessCollection {
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">rawBytes</span>: UnsafeRawBufferPointer
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">count</span>: <span style="color:#8be9fd;font-style:italic">Int</span>
+
+    <span style="color:#8be9fd;font-style:italic">init</span>(reinterpret rawBytes: UnsafeRawBufferPointer, <span style="color:#ff79c6">as</span>: Element.<span style="color:#ff79c6">Type</span>) {
+        <span style="color:#ff79c6">self</span>.rawBytes = rawBytes
+        <span style="color:#ff79c6">self</span>.count = rawBytes.count <span style="color:#ff79c6">/</span> MemoryLayout&lt;Element&gt;.stride
+        precondition(<span style="color:#ff79c6">self</span>.count <span style="color:#ff79c6">*</span> MemoryLayout&lt;Element&gt;.stride == rawBytes.count)
+        precondition(<span style="color:#8be9fd;font-style:italic">Int</span>(bitPattern: rawBytes.baseAddress).isMultiple(of: MemoryLayout&lt;Element&gt;.alignment))
+    }
+
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">startIndex</span>: <span style="color:#8be9fd;font-style:italic">Int</span> { <span style="color:#bd93f9">0</span> }
+
+    <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">endIndex</span>: <span style="color:#8be9fd;font-style:italic">Int</span> { count }
+
+    <span style="color:#8be9fd;font-style:italic">subscript</span>(index: <span style="color:#8be9fd;font-style:italic">Int</span>) -&gt; Element {
+        rawBytes.load(fromByteOffset: index <span style="color:#ff79c6">*</span> MemoryLayout&lt;Element&gt;.stride, <span style="color:#ff79c6">as</span>: Element.<span style="color:#ff79c6">self</span>)
+    }
+}
+</code></pre></div><p>可以为该类型元素创建一个包装器，并引入内存边界来方便调试，构造时根据元素跨度来计算缓冲区中的元素数量，还添加了 <code>precondition</code> 来验证字节对齐的正确性。这样在使用索引读取时，就可以通过计算偏移量来从原始缓冲区加载对应类型的元素了。由于原始内存中加载对应指针类型的行为是安全的，所以不需要担心其他代码访问该内存。这是一种不需要使用类型指针的又能安全地转换字节序列的方式。</p>
+<h2 id="最后">最后</h2>
+<p>总结一下在 Swift 中使用指针的最佳实践：</p>
+<ul>
+<li>
+<p><strong>避免使用指针</strong></p>
+</li>
+<li>
+<p>不得不转换内存绑定的类型时，不要使用类型指针（而 C 经常使用转换指针类型的做法）</p>
+</li>
+<li>
+<p>使用原始指针可以：</p>
+<ul>
+<li>转换原始字节到不同的类型</li>
+<li>把字节流解码成 Swift 类型</li>
+<li>实现在连续内存里持有不同类型的容器</li>
+</ul>
+</li>
+</ul></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © Nemocdz. 
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-nemocdz-github-io-my-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  
+<footer class="site-footer">
+  <p>© 2017-2020 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
+  
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
+
+
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+  </body>
+</html>

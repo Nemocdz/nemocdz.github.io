@@ -7,10 +7,23 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>© Nemocdz. </copyright>
-    <lastBuildDate>Tue, 01 Sep 2020 00:19:13 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 01 Sep 2020 11:21:13 +0800</lastBuildDate>
     
 	<atom:link href="https://nemocdz.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>在 Swift 里安全管理指针</title>
+      <link>https://nemocdz.github.io/post/%E5%9C%A8-swift-%E9%87%8C%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E6%8C%87%E9%92%88/</link>
+      <pubDate>Tue, 01 Sep 2020 11:21:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/post/%E5%9C%A8-swift-%E9%87%8C%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E6%8C%87%E9%92%88/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;WWDC20 Session 10167 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2020/10167/&#34;&gt;Safely manage pointers in Swift&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;在 Swift 中，我们通过 Unsafe 前缀来标识那些输入后可能发生未定义行为的操作，详情可以回顾 &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2020/10648&#34;&gt;WWDC20 - Unsafe Swift&lt;/a&gt;。而本文则会更深入地探讨在非安全范围内编写 Swift 的一些细节，日常开发中比较少接触到的部分。&lt;/p&gt;
+&lt;p&gt;想要更安全地管理指针，意味着需要了解各种导致不安全的方式。指针的安全性可以分为不同级别来讨论，越往底层，程序员越需要为代码的正确性负责。所以日常开发中建议尽量使用顶层的 API 编写代码。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>了解 Swift 中的数值计算</title>
