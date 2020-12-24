@@ -47,7 +47,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.74.3">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/c-%E9%99%B7%E9%98%B1%E4%B8%8E%E7%BC%BA%E9%99%B7%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
@@ -242,9 +242,9 @@
 <li>单引号是当中字符对照整数序列的值</li>
 <li>双引号是初始化一个无名数组指针包括挡住字符和一个附近二进制为 0 的字符</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">printf(<span style="color:#f1fa8c">&#34;Hello world</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>);
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">printf(<span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">Hello world</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>);
 <span style="color:#6272a4">//等价于
-</span><span style="color:#6272a4"></span><span style="color:#8be9fd">char</span> hello[] <span style="color:#ff79c6">=</span> { <span style="color:#f1fa8c">&#39;H&#39;</span>, <span style="color:#f1fa8c">&#39;e&#39;</span>, <span style="color:#f1fa8c">&#39;l&#39;</span>, <span style="color:#f1fa8c">&#39;l&#39;</span>, <span style="color:#f1fa8c">&#39;o&#39;</span>, <span style="color:#f1fa8c">&#39; &#39;</span>, <span style="color:#f1fa8c">&#39;w&#39;</span>, <span style="color:#f1fa8c">&#39;o&#39;</span>, <span style="color:#f1fa8c">&#39;r&#39;</span>, <span style="color:#f1fa8c">&#39;l&#39;</span>, <span style="color:#f1fa8c">&#39;d&#39;</span>, <span style="color:#f1fa8c">&#39;\n&#39;</span>, <span style="color:#bd93f9">0</span> };
+</span><span style="color:#6272a4"></span><span style="color:#8be9fd">char</span> hello[] <span style="color:#ff79c6">=</span> { <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">H</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">e</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">l</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">l</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">o</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c"> </span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">w</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">o</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">r</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">l</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">d</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#39;</span>, <span style="color:#bd93f9">0</span> };
 printf(hello);
 </code></pre></div><h2 id="声明">声明</h2>
 <p>变量声明=类型+对该类型求值的表达式</p>
@@ -254,7 +254,7 @@ printf(hello);
 </span><span style="color:#6272a4"></span>(<span style="color:#8be9fd">float</span> <span style="color:#ff79c6">*</span>())
 
 <span style="color:#6272a4">//调用地址0的函数
-</span><span style="color:#6272a4">//调用变量
+</span><span style="color:#6272a4"></span><span style="color:#6272a4">//调用变量
 </span><span style="color:#6272a4"></span>(<span style="color:#ff79c6">*</span>a)();
 <span style="color:#6272a4">//a为返回void的函数的指针
 </span><span style="color:#6272a4"></span><span style="color:#8be9fd">void</span> (<span style="color:#ff79c6">*</span>b)();
@@ -299,7 +299,7 @@ r <span style="color:#ff79c6">=</span> a <span style="color:#ff79c6">%</span> b;
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1146</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1260</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

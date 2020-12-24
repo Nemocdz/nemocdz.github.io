@@ -53,7 +53,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.74.3">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E5%86%8D%E8%B0%88-objective-c-%E5%BC%B1%E5%BC%95%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0weak/">
@@ -243,9 +243,9 @@
 </span><span style="color:#6272a4"></span>storeWeak(id <span style="color:#ff79c6">*</span>location, objc_object <span style="color:#ff79c6">*</span>newObj)
 {   
     
-    assert(haveOld  <span style="color:#ff79c6">||</span>  haveNew);
+    assert(haveOld  <span style="color:#ff79c6">|</span><span style="color:#ff79c6">|</span>  haveNew);
     <span style="color:#6272a4">//新值没有的情况应该被上层的方法拦截，所以这里有个断言
-</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>haveNew) assert(newObj <span style="color:#ff79c6">==</span> nil);
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>haveNew) assert(newObj <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> nil);
     
     
     Class previouslyInitializedClass <span style="color:#ff79c6">=</span> nil;
@@ -268,20 +268,20 @@
     }
     
     <span style="color:#6272a4">//加锁
-</span><span style="color:#6272a4"></span>    SideTable<span style="color:#ff79c6">::</span>lockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
+</span><span style="color:#6272a4"></span>    SideTable<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>lockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
     <span style="color:#6272a4">//再次确认保证线程安全
-</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (haveOld  <span style="color:#ff79c6">&amp;&amp;</span>  <span style="color:#ff79c6">*</span>location <span style="color:#ff79c6">!=</span> oldObj) {
-        SideTable<span style="color:#ff79c6">::</span>unlockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (haveOld  <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&amp;</span>  <span style="color:#ff79c6">*</span>location <span style="color:#ff79c6">!</span><span style="color:#ff79c6">=</span> oldObj) {
+        SideTable<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>unlockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
         <span style="color:#ff79c6">goto</span> retry;
     }
 
     <span style="color:#6272a4">// 防止弱引用机制的死锁并用 init 构造保证弱引用的 isa 指针非空
-</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (haveNew  <span style="color:#ff79c6">&amp;&amp;</span>  newObj) {
-        Class cls <span style="color:#ff79c6">=</span> newObj<span style="color:#ff79c6">-&gt;</span>getIsa();
-        <span style="color:#ff79c6">if</span> (cls <span style="color:#ff79c6">!=</span> previouslyInitializedClass  <span style="color:#ff79c6">&amp;&amp;</span>  
-            <span style="color:#ff79c6">!</span>((objc_class <span style="color:#ff79c6">*</span>)cls)<span style="color:#ff79c6">-&gt;</span>isInitialized()) 
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (haveNew  <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&amp;</span>  newObj) {
+        Class cls <span style="color:#ff79c6">=</span> newObj<span style="color:#ff79c6">-</span><span style="color:#ff79c6">&gt;</span>getIsa();
+        <span style="color:#ff79c6">if</span> (cls <span style="color:#ff79c6">!</span><span style="color:#ff79c6">=</span> previouslyInitializedClass  <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&amp;</span>  
+            <span style="color:#ff79c6">!</span>((objc_class <span style="color:#ff79c6">*</span>)cls)<span style="color:#ff79c6">-</span><span style="color:#ff79c6">&gt;</span>isInitialized()) 
         {
-            SideTable<span style="color:#ff79c6">::</span>unlockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
+            SideTable<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>unlockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
             _class_initialize(_class_getNonMetaClass(cls, (id)newObj));
             previouslyInitializedClass <span style="color:#ff79c6">=</span> cls;
             <span style="color:#ff79c6">goto</span> retry;
@@ -291,27 +291,27 @@
     <span style="color:#6272a4">//清除旧址
 </span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (haveOld) {
         <span style="color:#6272a4">//在 weakTable 中反注册
-</span><span style="color:#6272a4"></span>        weak_unregister_no_lock(<span style="color:#ff79c6">&amp;</span>oldTable<span style="color:#ff79c6">-&gt;</span>weak_table, oldObj, location);
+</span><span style="color:#6272a4"></span>        weak_unregister_no_lock(<span style="color:#ff79c6">&amp;</span>oldTable<span style="color:#ff79c6">-</span><span style="color:#ff79c6">&gt;</span>weak_table, oldObj, location);
     }
 
     <span style="color:#6272a4">//分配新值
 </span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (haveNew) {
         <span style="color:#6272a4">//在 weakTable 中注册新值并返回对象
 </span><span style="color:#6272a4"></span>        newObj <span style="color:#ff79c6">=</span> (objc_object <span style="color:#ff79c6">*</span>)
-            weak_register_no_lock(<span style="color:#ff79c6">&amp;</span>newTable<span style="color:#ff79c6">-&gt;</span>weak_table, (id)newObj, location, 
+            weak_register_no_lock(<span style="color:#ff79c6">&amp;</span>newTable<span style="color:#ff79c6">-</span><span style="color:#ff79c6">&gt;</span>weak_table, (id)newObj, location, 
                                   crashIfDeallocating);
 
 
         <span style="color:#6272a4">// 对 TaggedPointer 的优化
-</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">if</span> (newObj  <span style="color:#ff79c6">&amp;&amp;</span>  <span style="color:#ff79c6">!</span>newObj<span style="color:#ff79c6">-&gt;</span>isTaggedPointer()) {
-            newObj<span style="color:#ff79c6">-&gt;</span>setWeaklyReferenced_nolock();
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">if</span> (newObj  <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&amp;</span>  <span style="color:#ff79c6">!</span>newObj<span style="color:#ff79c6">-</span><span style="color:#ff79c6">&gt;</span>isTaggedPointer()) {
+            newObj<span style="color:#ff79c6">-</span><span style="color:#ff79c6">&gt;</span>setWeaklyReferenced_nolock();
         }
 
         <span style="color:#ff79c6">*</span>location <span style="color:#ff79c6">=</span> (id)newObj;
     }
     <span style="color:#ff79c6">else</span> {
     }
-    SideTable<span style="color:#ff79c6">::</span>unlockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
+    SideTable<span style="color:#ff79c6">:</span><span style="color:#ff79c6">:</span>unlockTwo<span style="color:#ff79c6">&lt;</span>haveOld, haveNew<span style="color:#ff79c6">&gt;</span>(oldTable, newTable);
 
     <span style="color:#ff79c6">return</span> (id)newObj;
 }
@@ -391,7 +391,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1095</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1209</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

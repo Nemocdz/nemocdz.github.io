@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.74.3">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E7%94%A8-cocoapods-%E7%AE%A1%E7%90%86%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%A1%AB%E5%9D%91%E4%B9%8B%E6%97%85/">
@@ -237,12 +237,12 @@
 </code></pre></div><p>经过简单的四个问题后，一个 Pod 生成了。</p>
 <p>并在 Demo 里的 Podfile 熟练的写下</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">target <span style="color:#f1fa8c">&#39;UnitTestPodDemo&#39;</span> <span style="color:#ff79c6">do</span>
-	pod <span style="color:#f1fa8c">&#39;UnitTestPod&#39;</span> , <span style="color:#f1fa8c">:path</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#f1fa8c">&#39;UnitTestPod/UnitTestPod.podspec&#39;</span>
+	pod <span style="color:#f1fa8c">&#39;UnitTestPod&#39;</span> , <span style="color:#f1fa8c">:path</span> <span style="color:#ff79c6">=</span><span style="color:#ff79c6">&gt;</span> <span style="color:#f1fa8c">&#39;UnitTestPod/UnitTestPod.podspec&#39;</span>
 <span style="color:#ff79c6">end</span>
 </code></pre></div><p>经过一番 pod install 后，打开了 xcworkspace。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgrb3ocj308g08cwes.jpg" alt="屏幕快照 2017-04-12 23.38.20"></p>
 <p>？？？这个 Target 的 icon，有点不对劲啊…原来 Cocoapods 默认生成的 Pod 是作为一个 Target 集成进 Pods 这个 XcodeProject 里的，而且 Target 的默认类型是 Static Libaray，也就是一个静态库。咋办呢？我要的是 XCTest 的 Target 类型。好吧，那看看 Cocoapods 的 <a href="https://github.com/CocoaPods/CocoaPods">源码</a> 吧。怎么找呢，有点 Ruby 基础的人知道，Podfile 里面写东西实际上都是用 Ruby 语法实现的 DSL（Domain Specific Language 领域特定语言）。也就是相当于实现了一套语法规则，比如 target do，比如 pod，比如 :path=&gt; 这些，在 Cocoapods 都有对应的语法实现。在执行 pod install 的过程中，podfile 中的信息被解析，然后把 pod 的信息进行处理，并生成 target 并生成集成后的 project 文件。那对 target 的类型的写入，也肯定也在生成 Pods.xcodeproj 的过程中。查看 Cocoapods 的 installer.rb，发现里面有个 <code>install</code> 方法如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6">def</span> <span style="color:#50fa7b">install!</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6">def</span> <span style="color:#50fa7b"></span><span style="color:#ff79c6"></span><span style="color:#50fa7b">install!</span>
     prepare
     resolve_dependencies
     download_dependencies
@@ -258,7 +258,7 @@
     perform_post_install_actions
 <span style="color:#ff79c6">end</span>
 </code></pre></div><p>看起来这个过程可能是 <code>install</code> 的过程，里面的 <code>generate_pods_project</code> 方法，应该就是生成 pod_project 的方法了。这个方法实现如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6">def</span> <span style="color:#50fa7b">generate_pods_project</span>(generator <span style="color:#ff79c6">=</span> create_generator)
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6">def</span> <span style="color:#50fa7b"></span><span style="color:#ff79c6"></span><span style="color:#50fa7b">generate_pods_project</span>(generator <span style="color:#ff79c6">=</span> create_generator)
     UI<span style="color:#ff79c6">.</span>section <span style="color:#f1fa8c">&#39;Generating Pods project&#39;</span> <span style="color:#ff79c6">do</span>
     	generator<span style="color:#ff79c6">.</span>generate!
         <span style="color:#8be9fd;font-style:italic">@pods_project</span> <span style="color:#ff79c6">=</span> generator<span style="color:#ff79c6">.</span>project
@@ -269,14 +269,14 @@
      <span style="color:#ff79c6">end</span>
 <span style="color:#ff79c6">end</span>
 </code></pre></div><p>再查看其类 pods_project_generator.rb 的 <code>generate</code> 方法(相当于初始化方法)：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6">def</span> <span style="color:#50fa7b">generate!</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6">def</span> <span style="color:#50fa7b"></span><span style="color:#ff79c6"></span><span style="color:#50fa7b">generate!</span>
   prepare
   install_file_references
   install_libraries
   set_target_dependencies
 <span style="color:#ff79c6">end</span>
 </code></pre></div><p>这里面大概就是将依赖的文件和 library 加入工程，设置目标依赖。再看看 <code>install_libraries</code> 方法</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6">def</span> <span style="color:#50fa7b">install_libraries</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6">def</span> <span style="color:#50fa7b"></span><span style="color:#ff79c6"></span><span style="color:#50fa7b">install_libraries</span>
 	UI<span style="color:#ff79c6">.</span>message <span style="color:#f1fa8c">&#39;- Installing targets&#39;</span> <span style="color:#ff79c6">do</span>
 		pod_targets<span style="color:#ff79c6">.</span>sort_by(<span style="color:#ff79c6">&amp;</span><span style="color:#f1fa8c">:name</span>)<span style="color:#ff79c6">.</span>each <span style="color:#ff79c6">do</span> <span style="color:#ff79c6">|</span>pod_target<span style="color:#ff79c6">|</span>
 		 target_installer <span style="color:#ff79c6">=</span> PodTargetInstaller<span style="color:#ff79c6">.</span>new(sandbox, pod_target)
@@ -292,7 +292,7 @@
 </code></pre></div><p>在看看之类这个 target_Installer 实例，就是 <code>PodTargetInstaller</code> 类生成的。看来这个类，应该是生成 target 的类。再看看这个 pod_target_installer.rb，里面搜索一下 type，居然没有？？？难道找错了？我又仔细看了一下，发现开始处有怎么一行代码：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6">class</span> <span style="color:#50fa7b">PodTargetInstaller</span> <span style="color:#ff79c6">&lt;</span> TargetInstaller
 </code></pre></div><p>看到这行代码，我感觉和 OC 里的 <code>AClass : BClass</code>，这大概是继承吧。又找到了 target_installer.rb 里面的 <code>TargetInstaller</code> 类，终于发现了一行蛛丝马迹。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6">def</span> <span style="color:#50fa7b">add_target</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6">def</span> <span style="color:#50fa7b"></span><span style="color:#ff79c6"></span><span style="color:#50fa7b">add_target</span>
 	product_type <span style="color:#ff79c6">=</span> target<span style="color:#ff79c6">.</span>product_type
 </code></pre></div><p>也就是说，target 的类型，在 Cocoapods 里，是 target 的 product_type 属性。剩下的就是要把 target 的 product_type，设置成 Cocoapods 里的 XCTest 类型了。那么接下来，就有两个问题要解决</p>
 <ul>
@@ -306,7 +306,7 @@
 <p>看 Cocoapods 源码里发现，实际上对于 Xcodeprojcet 相关文件的写入和修改，是通过 Cocoapods 另一个单独的库 Xcodeproj 实现的，再看看它的源码。搜索 Unit Test，在 constants.rb 里发现这里定义了所有 ProductType 的别名。<img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgv0x7uj311o0o8gsp.jpg" alt="屏幕快照 2017-04-13 00.53.09"></p>
 <p>也就是说，product_type 属性其实是个 <code>String</code> 类型，而 XCTest 的类型，就是 <code>'com.apple.product-type.bundle.unit-test'</code> 那么第一个问题就解决了。</p>
 <p>剩下就是在哪里改变它了。还记得刚才的 <code>generate_pods_project</code> 方法么：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6">def</span> <span style="color:#50fa7b">generate_pods_project</span>(generator <span style="color:#ff79c6">=</span> create_generator)
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6">def</span> <span style="color:#50fa7b"></span><span style="color:#ff79c6"></span><span style="color:#50fa7b">generate_pods_project</span>(generator <span style="color:#ff79c6">=</span> create_generator)
     UI<span style="color:#ff79c6">.</span>section <span style="color:#f1fa8c">&#39;Generating Pods project&#39;</span> <span style="color:#ff79c6">do</span>
     	generator<span style="color:#ff79c6">.</span>generate!
         <span style="color:#8be9fd;font-style:italic">@pods_project</span> <span style="color:#ff79c6">=</span> generator<span style="color:#ff79c6">.</span>project
@@ -321,10 +321,10 @@
 <p>根据官网的例子和前面的探索，可以在 podfile 里加上 hook 方法如下</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">post_install <span style="color:#ff79c6">do</span> <span style="color:#ff79c6">|</span>installer<span style="color:#ff79c6">|</span>
 	installer<span style="color:#ff79c6">.</span>pods_project<span style="color:#ff79c6">.</span>targets<span style="color:#ff79c6">.</span>each <span style="color:#ff79c6">do</span> <span style="color:#ff79c6">|</span>target<span style="color:#ff79c6">|</span>
-		 <span style="color:#ff79c6">if</span> target<span style="color:#ff79c6">.</span>name <span style="color:#ff79c6">==</span> <span style="color:#f1fa8c">&#34;UnitTestPod&#34;</span>
+		 <span style="color:#ff79c6">if</span> target<span style="color:#ff79c6">.</span>name <span style="color:#ff79c6">==</span> <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">UnitTestPod</span><span style="color:#f1fa8c">&#34;</span>
              target<span style="color:#ff79c6">.</span>product_type <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#39;com.apple.product-type.bundle.unit-test&#39;</span>
              <span style="color:#ff79c6">end</span>
-             <span style="color:#8be9fd;font-style:italic">puts</span> <span style="color:#f1fa8c">&#34;`</span><span style="color:#f1fa8c">#{</span>target<span style="color:#ff79c6">.</span>name<span style="color:#f1fa8c">}</span><span style="color:#f1fa8c">` change type to `</span><span style="color:#f1fa8c">#{</span>target<span style="color:#ff79c6">.</span>product_type<span style="color:#f1fa8c">}</span><span style="color:#f1fa8c">`&#34;</span>
+             <span style="color:#8be9fd;font-style:italic">puts</span> <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">`</span><span style="color:#f1fa8c">#{</span>target<span style="color:#ff79c6">.</span>name<span style="color:#f1fa8c">}</span><span style="color:#f1fa8c">` change type to `</span><span style="color:#f1fa8c">#{</span>target<span style="color:#ff79c6">.</span>product_type<span style="color:#f1fa8c">}</span><span style="color:#f1fa8c">`</span><span style="color:#f1fa8c">&#34;</span>
          <span style="color:#ff79c6">end</span>
 	<span style="color:#ff79c6">end</span>
 <span style="color:#ff79c6">end</span>
@@ -349,16 +349,16 @@
 <p>而加上 &lsquo;$(inherited)&rsquo; 的作用，就是让值从下往上透上来，也就是，会把右边的一栏的设置也加进来，右边的如果也有 &lsquo;$(inherited)'，那么依次类推。上面五栏里分别 Resolve，Target，ConfigFile，Project，Default。第一层 Resolve 我不太清楚，可能是编译最终修复之类的，第二层就是 target 里修改的，第三层就是读取对应的 xcconfig 后缀文件里的配置，第四层是 Project 里修改的，最后是系统默认的。而这也是为什么一个 Project 可以对应多个 Target 的原因，Target 只是覆盖了设置而已。而 Cocoapods 是把 xcconfig 写好，并让上层设置为 &lsquo;$(inherited)'，从而达到把配置写进 Xcode。而在 hook 方法里，把 target 的 config 更改，相当于把上层设置好，取下层 XCConfig 里的值。而我们看到 Cocoapods 默认帮我们生成的 Pod 的 XCConfig 里，里面已经写好了正确的 Library Search Path。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgom01ij31kw073tg2.jpg" alt="屏幕快照 2017-04-13 01.59.08"></p>
 <p>剩下就是 Other Link Flag 了，这个也很好解决，在 podspec 里写上</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">s<span style="color:#ff79c6">.</span>pod_target_xcconfig <span style="color:#ff79c6">=</span> {<span style="color:#f1fa8c">&#39;OTHER_LDFLAGS&#39;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#f1fa8c">&#39;$(inherited) -l&#34;CDZPicker&#34;&#39;</span>}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">s<span style="color:#ff79c6">.</span>pod_target_xcconfig <span style="color:#ff79c6">=</span> {<span style="color:#f1fa8c">&#39;OTHER_LDFLAGS&#39;</span> <span style="color:#ff79c6">=</span><span style="color:#ff79c6">&gt;</span> <span style="color:#f1fa8c">&#39;$(inherited) -l&#34;CDZPicker&#34;&#39;</span>}
 </code></pre></div><p>就好了。重新 pod install 一下，写上单元测试代码，点击 test，OK，一切顺利。</p>
 <p>等等，点击主工程的 Run，好像跑不起来了……</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgu5x1nj30xq03eab6.jpg" alt="屏幕快照 2017-04-13 02.05.31"></p>
 <h2 id="曲线救国解决-test-库编译问题">曲线救国解决 Test 库编译问题</h2>
-<p>看看报错，找不到库的编译产物。思考了一下，应该是因为 Test 的 target 比较特殊，并不会编译自己并产生编译产物。而记得刚才主工程的 Other Linker Flag 吗，里面因为 Cocoapods 认为这个库是个静态库，是有编译产物的且要链接的，所以有&rdquo;-l&rsquo;UnitTestPod&rsquo;&quot;。去掉之后，果然就可以编译成功了。</p>
+<p>看看报错，找不到库的编译产物。思考了一下，应该是因为 Test 的 target 比较特殊，并不会编译自己并产生编译产物。而记得刚才主工程的 Other Linker Flag 吗，里面因为 Cocoapods 认为这个库是个静态库，是有编译产物的且要链接的，所以有&rdquo;-l'UnitTestPod&rsquo;&quot;。去掉之后，果然就可以编译成功了。</p>
 <p>但是这样不够优雅，每次 Pod install 之后，难道都要这样删掉吗？</p>
 <p>这时我想起 Podfile 里一个参数 configurations，一般我们会指定例如 <code>:configurations =&gt; ['Debug']</code> 这样来说明这个库在 Debug 下才被编译并链接进主工程。既然这样 Release 模式下就不会被链接，我们就可以利用这个特性，新建一个没用的 Configuration，让 Podfile 指定就可以了。在 Project 的 Info 里新建一个 Test 的 Configuration，并在 Podfile 里的 Pod 指定 <code>:configurations =&gt; ['Test']</code>。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1fekhgvz3jgj31ac0dcdhs.jpg" alt="屏幕快照 2017-04-13 02.23.54"></p>
-<p>重新 Pod install，可以看到 Debug 的 Other Linker Flag 里已经没有 &ldquo;-l&rsquo;UnitTestPod&rsquo;&rdquo; 来指定链接 Pod 了。编译自然也就成功了。</p>
+<p>重新 Pod install，可以看到 Debug 的 Other Linker Flag 里已经没有 &ldquo;-l'UnitTestPod&rsquo;&rdquo; 来指定链接 Pod 了。编译自然也就成功了。</p>
 <h2 id="最后">最后</h2>
 <p>最后的结果是，因为我们工程里有很多预编译的库，而预编译的库通过我们公司的一套方案来设置，可以根据每个人的设置，可以选择源码或预编译，而生成的编译产物预编译的有一个前缀。因为没办法确定每个人某个库的依赖的库是否是预编译的，所以静态库的名字是不确定的，可能是有前缀可能没有，和每个人开发环境有关。在 podspec 里也没办法通过“-l‘静态库编译产物名’”来链接到正确的编译产物，也就没办法用这种方式进行下去管理单元测试。没想到最后填坑的结果，却和公司另一套别的方案冲突了。虽然有些难过，但是在研究这个问题的几天里，我一个完全没看过 Ruby 也不了解链接，Cocoapods 也是按着例子写的小白，开始到了解一些 Ruby，Cocoapods 做了什么，Bulding Setting，XCConfig，静态库怎么被链接的知识，还是感觉很开心的。</p>
 <p>所有源码和 <a href="https://github.com/Nemocdz/UnitTestPodDemo">Demo</a>
@@ -373,7 +373,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1237</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1351</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

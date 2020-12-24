@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.74.3">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81-cell-%E9%80%9A%E7%94%A8%E7%9A%84-tableviewmanager/">
@@ -244,7 +244,7 @@
     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>cellClass) {
         <span style="color:#ff79c6">return</span>;
     }
-    NSString <span style="color:#ff79c6">*</span>itemHash <span style="color:#ff79c6">=</span> [NSString <span style="color:#8be9fd;font-style:italic">stringWithFormat</span>:<span style="color:#f1fa8c">@&#34;%tu&#34;</span>,item.hash];
+    NSString <span style="color:#ff79c6">*</span>itemHash <span style="color:#ff79c6">=</span> [NSString <span style="color:#8be9fd;font-style:italic">stringWithFormat</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">%tu</span><span style="color:#f1fa8c">&#34;</span>,item.hash];
     [<span style="color:#8be9fd;font-style:italic">self</span>.sectionCellDic <span style="color:#8be9fd;font-style:italic">setObject</span>:cellClass <span style="color:#8be9fd;font-style:italic">forKey</span>:itemHash];
 }
 </code></pre></div><p>然后再增加外部通过 indexPath 读取对应 Cell Class 的方法</p>
@@ -253,7 +253,7 @@
 }
 
 - (<span style="color:#8be9fd">Class</span>)<span style="color:#50fa7b">cellClassForItem:</span>(<span style="color:#8be9fd">id</span><span style="color:#ff79c6">&lt;</span>NSObject<span style="color:#ff79c6">&gt;</span>)<span style="color:#8be9fd;font-style:italic">item</span>{
-    NSString <span style="color:#ff79c6">*</span>itemHash <span style="color:#ff79c6">=</span> [NSString <span style="color:#8be9fd;font-style:italic">stringWithFormat</span>:<span style="color:#f1fa8c">@&#34;%tu&#34;</span>,item.hash];
+    NSString <span style="color:#ff79c6">*</span>itemHash <span style="color:#ff79c6">=</span> [NSString <span style="color:#8be9fd;font-style:italic">stringWithFormat</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">%tu</span><span style="color:#f1fa8c">&#34;</span>,item.hash];
     <span style="color:#8be9fd">Class</span> cellClass <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span>.sectionCellDic <span style="color:#8be9fd;font-style:italic">objectForKey</span>:itemHash];
     <span style="color:#ff79c6">return</span> cellClass;
 }
@@ -281,7 +281,7 @@
     }
     <span style="color:#8be9fd">Class</span> cellClass <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">tableView</span>:tableView <span style="color:#8be9fd;font-style:italic">cellClassForRowAtIndexPath</span>:indexPath];
     <span style="color:#8be9fd">id</span> item <span style="color:#ff79c6">=</span> [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">tableView</span>:tableView <span style="color:#8be9fd;font-style:italic">itemForRowAtIndexPath</span>:indexPath];
-    <span style="color:#ff79c6">return</span> (cellClass <span style="color:#ff79c6">==</span> [UITableViewCell <span style="color:#ff79c6">class</span>])<span style="color:#ff79c6">?</span><span style="color:#bd93f9">44.f</span><span style="color:#ff79c6">:</span>[cellClass <span style="color:#8be9fd;font-style:italic">tableView</span>:tableView <span style="color:#8be9fd;font-style:italic">rowHeightForItem</span>:item];
+    <span style="color:#ff79c6">return</span> (cellClass <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> [UITableViewCell <span style="color:#ff79c6">class</span>])<span style="color:#ff79c6">?</span><span style="color:#bd93f9">44.f</span><span style="color:#ff79c6">:</span>[cellClass <span style="color:#8be9fd;font-style:italic">tableView</span>:tableView <span style="color:#8be9fd;font-style:italic">rowHeightForItem</span>:item];
 }
 </code></pre></div><p>同理，这些协议的默认实现可以根据实际情况作调整，比如对于 <code>didSelectRowAtIndexPath</code>，我们也可以带上其 item 再返回给外部，带上 item 的好处，等会会讲到。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">tableView:</span>(UITableView <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">tableView</span> <span style="color:#50fa7b">didSelectRowAtIndexPath:</span>(NSIndexPath <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">indexPath</span> {
@@ -333,9 +333,9 @@
 <h2 id="item-的一些小技巧">item 的一些小技巧</h2>
 <p>对应一些初展示类或者开关操作的 item，我们可以用简单的 <code>Bool</code>，<code>NSString</code>，<code>NSDictionry</code> 作为 Model，而有点击事件的 Model，我们可以在 Model 类里增加一个 tapBlock，这样我们可以在配置 item 时顺便配置其点击事件。因为静态 Cell 中的点击事件往往各不相同，所以配置在 tapBlock 可以让代码更加统一。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">TestItem <span style="color:#ff79c6">*</span>itemD <span style="color:#ff79c6">=</span> [[TestItem alloc]init];
-itemD.title <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;itemD&#34;</span>;
+itemD.title <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">itemD</span><span style="color:#f1fa8c">&#34;</span>;
 itemD.tapBlock <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">^</span>(TestItem <span style="color:#ff79c6">*</span>item) {
-   NSLog(<span style="color:#f1fa8c">@&#34;%@ tap&#34;</span>,item.title);
+   NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">%@ tap</span><span style="color:#f1fa8c">&#34;</span>,item.title);
 };
 [firstSection <span style="color:#8be9fd;font-style:italic">addItem</span>:itemD <span style="color:#8be9fd;font-style:italic">cellClass</span>:[TestBCell <span style="color:#ff79c6">class</span>]];
 </code></pre></div><p>这样不仅好找，一次性把相关的操作配置完成，而且在执行点击事件时，不用再关心具体的点击事件，进行 item 的识别分类判断。</p>
@@ -349,27 +349,27 @@ itemD.tapBlock <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">
 }
 </code></pre></div><h2 id="最后">最后</h2>
 <p>通过这些的 Manager，就可以随心所欲搭配 Model 和 Cell，并把配置写在一起，方便修改，查找，同时也不用重复写 Delegate 和 Datasource，而对老的 Cell 和 Model 也有很好的兼容。底下是一个混搭的例子。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (NSMutableArray <span style="color:#ff79c6">&lt;</span>CDZTableViewSection <span style="color:#ff79c6">*&gt;*</span>)<span style="color:#50fa7b">sections</span>{
-    NSMutableArray <span style="color:#ff79c6">&lt;</span>CDZTableViewSection <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>sections <span style="color:#ff79c6">=</span> [NSMutableArray array];
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (NSMutableArray <span style="color:#ff79c6">&lt;</span>CDZTableViewSection <span style="color:#ff79c6">*</span><span style="color:#ff79c6">&gt;</span><span style="color:#ff79c6">*</span>)<span style="color:#50fa7b">sections</span>{
+    NSMutableArray <span style="color:#ff79c6">&lt;</span>CDZTableViewSection <span style="color:#ff79c6">*</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">*</span>sections <span style="color:#ff79c6">=</span> [NSMutableArray array];
     CDZTableViewSection <span style="color:#ff79c6">*</span>firstSection <span style="color:#ff79c6">=</span> [[CDZTableViewSection alloc]init];
   
-    NSString <span style="color:#ff79c6">*</span>itemA <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;itemA&#34;</span>;
+    NSString <span style="color:#ff79c6">*</span>itemA <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">itemA</span><span style="color:#f1fa8c">&#34;</span>;
     [firstSection <span style="color:#8be9fd;font-style:italic">addItem</span>:itemA <span style="color:#8be9fd;font-style:italic">cellClass</span>:[TestACell <span style="color:#ff79c6">class</span>]];
     
-  	NSDictionary <span style="color:#ff79c6">*</span>itemB <span style="color:#ff79c6">=</span> @{<span style="color:#f1fa8c">@&#34;title&#34;</span> <span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">@&#34;itemB&#34;</span>};
+  	NSDictionary <span style="color:#ff79c6">*</span>itemB <span style="color:#ff79c6">=</span> @{<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">title</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#ff79c6">:</span> <span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">itemB</span><span style="color:#f1fa8c">&#34;</span>};
     [firstSection <span style="color:#8be9fd;font-style:italic">addItem</span>:itemB <span style="color:#8be9fd;font-style:italic">cellClass</span>:[TestACell <span style="color:#ff79c6">class</span>]];
    
     TestItem <span style="color:#ff79c6">*</span>itemC <span style="color:#ff79c6">=</span> [[TestItem alloc]init];
-    itemC.title <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;itemC&#34;</span>;
+    itemC.title <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">itemC</span><span style="color:#f1fa8c">&#34;</span>;
     itemC.tapBlock <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">^</span>(TestItem <span style="color:#ff79c6">*</span>item) {
-        NSLog(<span style="color:#f1fa8c">@&#34;%@ tap&#34;</span>,item.title);
+        NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">%@ tap</span><span style="color:#f1fa8c">&#34;</span>,item.title);
     };
     [firstSection <span style="color:#8be9fd;font-style:italic">addItem</span>:itemC <span style="color:#8be9fd;font-style:italic">cellClass</span>:[TestBCell <span style="color:#ff79c6">class</span>]];
   
     TestItem <span style="color:#ff79c6">*</span>itemD <span style="color:#ff79c6">=</span> [[TestItem alloc]init];
-    itemD.title <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;itemD&#34;</span>;
+    itemD.title <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">itemD</span><span style="color:#f1fa8c">&#34;</span>;
     itemD.tapBlock <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">^</span>(TestItem <span style="color:#ff79c6">*</span>item) {
-        NSLog(<span style="color:#f1fa8c">@&#34;%@ tap&#34;</span>,item.title);
+        NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">%@ tap</span><span style="color:#f1fa8c">&#34;</span>,item.title);
     };
     [firstSection <span style="color:#8be9fd;font-style:italic">addItem</span>:itemD <span style="color:#8be9fd;font-style:italic">cellClass</span>:[TestBCell <span style="color:#ff79c6">class</span>]];
   
@@ -382,7 +382,7 @@ itemD.tapBlock <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1205</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1320</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

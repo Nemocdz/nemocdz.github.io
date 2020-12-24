@@ -59,7 +59,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.74.3">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E8%AF%91-hacking-hit-tests/">
@@ -242,7 +242,7 @@
 <p><code>-pointInside:</code> 会告诉调用者给定点是否包含在指定的视图区域中。而 <code>-hitTest:</code> 用 <code>pointInside:</code> 这个方法来告诉调用者哪个子视图（如果有的话）是当前触摸在给定点的接收者。现在我比较感兴趣的是后面这个方法。</p>
 <p>苹果的文档勉强能够让你理解怎么重新实现这个方法。在你学会怎么重新实现方法之前，你都不能改变它的功能。接下来让我们看一遍 <a href="https://developer.apple.com/documentation/uikit/uiview/1622469-hittest?language=objc">文档</a>，并尝试重写这个函数。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#ff79c6">override</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">hitTest</span>(<span style="color:#ff79c6">_</span> point: CGPoint, with event: UIEvent?) -&gt; UIView? {
-	<span style="color:#6272a4">// ...</span>
+	<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
 }
 </code></pre></div><p>首先，让我们从文档的第二段开始吧：</p>
 <blockquote>
@@ -272,25 +272,25 @@
 </blockquote>
 <p>所以，从这里知道我们需要遍历视图树。这意味着循环遍历所有的视图，并调用 <code>-hitTest:</code> 在它们每一个上去找到合适的子视图。在这种情况下，这个方法是递归的。</p>
 <p>为了遍历视图层级，我们需要一个循环。然而，这个方法其中一个更反人类的是需要反向遍历视图。子视图数组中尾部的视图反而会处在 Z 轴中<em>更高</em>的位置，所以它们应该被最先检验。（如果没有这篇 <a href="http://smnh.me/hit-testing-in-ios/">文章</a>，我可记不起这个点。）</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// ...</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
 <span style="color:#ff79c6">for</span> subview <span style="color:#ff79c6">in</span> subviews.reversed() {
 
 }
-<span style="color:#6272a4">// ...</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
 </code></pre></div><p>传入的坐标点会转换到<em>当前</em>视图的坐标系中，而非我们关心子视图中。幸运的是，UIKit 给了一个处理函数，去转换坐标点的参考系到其他任何的视图的 frame 的参考系中。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// ...</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
 <span style="color:#ff79c6">for</span> subview <span style="color:#ff79c6">in</span> subviews.reversed() {
 	<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">convertedPoint</span> = subview.convert(point, from: <span style="color:#ff79c6">self</span>)
-	<span style="color:#6272a4">// ...</span>
+	<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
 }
-<span style="color:#6272a4">// ...</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
 </code></pre></div><p>一旦有了转换后的坐标点，我们就可以很简单地询问每一个子视图该点的目标视图。需要注意的是，如果点处于该视图外部（也就是说，<code>-pointInside:</code> 返回 <em>false</em>），<code>-hitTest</code> 会返回 nil。这时就应该检查层级里的下一个子视图。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// ...</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">convertedPoint</span> = subview.convert(point, from: <span style="color:#ff79c6">self</span>)
 <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">candidate</span> = subview.hitTest(convertedPoint, with: event) {
 	<span style="color:#ff79c6">return</span> candidate
 }
-<span style="color:#6272a4">//...</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
 </code></pre></div><p>一旦我们有了合适的循环语句，最后一件需要做的事是 <code>return self</code>。如果视图是可被点击（被我们的 <code>guard</code> 语句断言过的情况），但却没有子视图想要处理这个触摸的话，意味着当前视图，也就是 <code>self</code>，是这个触摸正确的目标。</p>
 <p>这是完整的算法：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#ff79c6">override</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">hitTest</span>(<span style="color:#ff79c6">_</span> point: CGPoint, with event: UIEvent?) -&gt; UIView? {
@@ -346,7 +346,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>614</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>728</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

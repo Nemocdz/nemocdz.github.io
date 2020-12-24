@@ -53,7 +53,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.74.3">
+<meta name="generator" content="Hugo 0.62.2">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E4%BA%86%E8%A7%A3-swift-%E4%B8%AD%E7%9A%84%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/">
@@ -227,14 +227,14 @@
   <ul>
     <li><a href="#swift-numerics">Swift Numerics</a>
       <ul>
-        <li><a href="#real-协议"><code>Real</code> 协议</a></li>
-        <li><a href="#algebraicfield-协议"><code>AlgebraicField</code> 协议</a></li>
-        <li><a href="#elementaryfunctions-协议"><code>ElementaryFunctions</code> 协议</a></li>
-        <li><a href="#realfunctions-协议"><code>RealFunctions</code> 协议</a></li>
-        <li><a href="#complex-类型"><code>Complex</code> 类型</a></li>
+        <li><a href="#real-协议">Real 协议</a></li>
+        <li><a href="#algebraicfield-协议">AlgebraicField 协议</a></li>
+        <li><a href="#elementaryfunctions-协议">ElementaryFunctions 协议</a></li>
+        <li><a href="#realfunctions-协议">RealFunctions 协议</a></li>
+        <li><a href="#complex-类型">Complex 类型</a></li>
       </ul>
     </li>
-    <li><a href="#float16-类型"><code>Float16</code> 类型</a></li>
+    <li><a href="#float16-类型">Float16 类型</a></li>
     <li><a href="#最后">最后</a></li>
   </ul>
 </nav>
@@ -246,15 +246,15 @@
 <p><a href="https://github.com/apple/swift-numerics">Numerics</a> 是一个 Apple 开源的 Swift 包，通过范型约束，提供更简单的方式，来使用所有标准库里的浮点型进行数值计算。</p>
 <p>下面通过一个例子来看下这个包的作用。比如我们要在 Swift 中实现一个 <a href="https://zhuanlan.zhihu.com/p/27188729">Logit 模型</a> 的函数，在没有 Numerics 的情况下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">import</span> <span style="color:#50fa7b">Darwin</span>
-<span style="color:#6272a4">/// Logit 模型</span>
-<span style="color:#6272a4">///</span>
-<span style="color:#6272a4">/// https://en.wikipedia.org/wiki/Logit</span>
-<span style="color:#6272a4">///</span>
-<span style="color:#6272a4">/// - 参数 p:</span>
-<span style="color:#6272a4">///   取值范围 0...1。</span>
-<span style="color:#6272a4">///</span>
-<span style="color:#6272a4">/// - 返回值:</span>
-<span style="color:#6272a4">///   log(p/(1-p))。</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">L</span><span style="color:#6272a4">o</span><span style="color:#6272a4">g</span><span style="color:#6272a4">i</span><span style="color:#6272a4">t</span><span style="color:#6272a4"> </span><span style="color:#6272a4">模</span><span style="color:#6272a4">型</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">h</span><span style="color:#6272a4">t</span><span style="color:#6272a4">t</span><span style="color:#6272a4">p</span><span style="color:#6272a4">s</span><span style="color:#6272a4">:</span><span style="color:#6272a4">/</span><span style="color:#6272a4">/</span><span style="color:#6272a4">e</span><span style="color:#6272a4">n</span><span style="color:#6272a4">.</span><span style="color:#6272a4">w</span><span style="color:#6272a4">i</span><span style="color:#6272a4">k</span><span style="color:#6272a4">i</span><span style="color:#6272a4">p</span><span style="color:#6272a4">e</span><span style="color:#6272a4">d</span><span style="color:#6272a4">i</span><span style="color:#6272a4">a</span><span style="color:#6272a4">.</span><span style="color:#6272a4">o</span><span style="color:#6272a4">r</span><span style="color:#6272a4">g</span><span style="color:#6272a4">/</span><span style="color:#6272a4">w</span><span style="color:#6272a4">i</span><span style="color:#6272a4">k</span><span style="color:#6272a4">i</span><span style="color:#6272a4">/</span><span style="color:#6272a4">L</span><span style="color:#6272a4">o</span><span style="color:#6272a4">g</span><span style="color:#6272a4">i</span><span style="color:#6272a4">t</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">参</span><span style="color:#6272a4">数</span><span style="color:#6272a4"> </span><span style="color:#6272a4">p</span><span style="color:#6272a4">:</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4">取</span><span style="color:#6272a4">值</span><span style="color:#6272a4">范</span><span style="color:#6272a4">围</span><span style="color:#6272a4"> </span><span style="color:#6272a4">0</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">1</span><span style="color:#6272a4">。</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">返</span><span style="color:#6272a4">回</span><span style="color:#6272a4">值</span><span style="color:#6272a4">:</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4"> </span><span style="color:#6272a4">l</span><span style="color:#6272a4">o</span><span style="color:#6272a4">g</span><span style="color:#6272a4">(</span><span style="color:#6272a4">p</span><span style="color:#6272a4">/</span><span style="color:#6272a4">(</span><span style="color:#6272a4">1</span><span style="color:#6272a4">-</span><span style="color:#6272a4">p</span><span style="color:#6272a4">)</span><span style="color:#6272a4">)</span><span style="color:#6272a4">。</span>
 <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">logit</span>(<span style="color:#ff79c6">_</span> p: <span style="color:#8be9fd;font-style:italic">Double</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Double</span> {
     log(p) <span style="color:#ff79c6">-</span> log1p(<span style="color:#ff79c6">-</span>p)
 }
@@ -286,59 +286,59 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">AlgebraicField</span>: SignedNumeric {
   <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#ff79c6">/</span>(a: <span style="color:#ff79c6">Self</span>, b: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
   
-  <span style="color:#6272a4">/// 倒数</span>
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">倒</span><span style="color:#6272a4">数</span>
   <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">reciprocal</span>: <span style="color:#ff79c6">Self</span>? { <span style="color:#ff79c6">get</span> }
   
-  <span style="color:#6272a4">/// ...</span>
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
 }
 </code></pre></div><p>在 <code>SignedNumeric</code> 的基础上拓展了除法概念。这样就支持了全部四则运算，数学领域称为”代数数域“，这也是这个协议名字的由来。</p>
 <h3 id="elementaryfunctions-协议"><code>ElementaryFunctions</code> 协议</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">ElementaryFunctions</span>: AdditiveArithmetic {
-  <span style="color:#6272a4">/// 指数</span>
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">指</span><span style="color:#6272a4">数</span>
   <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">exp</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
   
-  <span style="color:#6272a4">/// exp(x) - 1</span>
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">e</span><span style="color:#6272a4">x</span><span style="color:#6272a4">p</span><span style="color:#6272a4">(</span><span style="color:#6272a4">x</span><span style="color:#6272a4">)</span><span style="color:#6272a4"> </span><span style="color:#6272a4">-</span><span style="color:#6272a4"> </span><span style="color:#6272a4">1</span>
   <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">expMinusOne</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
   
-  <span style="color:#6272a4">/// 三角函数</span>
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">三</span><span style="color:#6272a4">角</span><span style="color:#6272a4">函</span><span style="color:#6272a4">数</span>
   <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">cos</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
   <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">sin</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
   <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">tan</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
   
-  <span style="color:#6272a4">/// 对数</span>
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">对</span><span style="color:#6272a4">数</span>
   <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">log</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
   
-	<span style="color:#6272a4">/// log(1 + x)</span>
+	<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">l</span><span style="color:#6272a4">o</span><span style="color:#6272a4">g</span><span style="color:#6272a4">(</span><span style="color:#6272a4">1</span><span style="color:#6272a4"> </span><span style="color:#6272a4">+</span><span style="color:#6272a4"> </span><span style="color:#6272a4">x</span><span style="color:#6272a4">)</span>
   <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">log</span>(onePlus x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
   
-  <span style="color:#6272a4">/// exp(y * log(x)) </span>
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">e</span><span style="color:#6272a4">x</span><span style="color:#6272a4">p</span><span style="color:#6272a4">(</span><span style="color:#6272a4">y</span><span style="color:#6272a4"> </span><span style="color:#6272a4">*</span><span style="color:#6272a4"> </span><span style="color:#6272a4">l</span><span style="color:#6272a4">o</span><span style="color:#6272a4">g</span><span style="color:#6272a4">(</span><span style="color:#6272a4">x</span><span style="color:#6272a4">)</span><span style="color:#6272a4">)</span><span style="color:#6272a4"> </span>
   <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">pow</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>, <span style="color:#ff79c6">_</span> y: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
   
-  <span style="color:#6272a4">/// 幂</span>
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">幂</span>
   <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">pow</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>, <span style="color:#ff79c6">_</span> n: <span style="color:#8be9fd;font-style:italic">Int</span>) -&gt; <span style="color:#ff79c6">Self</span>
   
-  <span style="color:#6272a4">/// 次方根</span>
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">次</span><span style="color:#6272a4">方</span><span style="color:#6272a4">根</span>
   <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">root</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>, <span style="color:#ff79c6">_</span> n: <span style="color:#8be9fd;font-style:italic">Int</span>) -&gt; <span style="color:#ff79c6">Self</span>
   
-  <span style="color:#6272a4">/// ...</span>
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
 }
 
 </code></pre></div><p>在 <code>AdditiveArithmetic</code> 的基础上拓展了大量通用的浮点型函数，包括核心的三角函数、指数、对数、幂和次方根等。</p>
 <h3 id="realfunctions-协议"><code>RealFunctions</code> 协议</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">RealFunctions</span>: ElementaryFunctions {
-  <span style="color:#6272a4">/// 误差函数</span>
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">误</span><span style="color:#6272a4">差</span><span style="color:#6272a4">函</span><span style="color:#6272a4">数</span>
   <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">erf</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
 
-  <span style="color:#6272a4">/// sqrt(x*x + y*y)</span>
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">s</span><span style="color:#6272a4">q</span><span style="color:#6272a4">r</span><span style="color:#6272a4">t</span><span style="color:#6272a4">(</span><span style="color:#6272a4">x</span><span style="color:#6272a4">*</span><span style="color:#6272a4">x</span><span style="color:#6272a4"> </span><span style="color:#6272a4">+</span><span style="color:#6272a4"> </span><span style="color:#6272a4">y</span><span style="color:#6272a4">*</span><span style="color:#6272a4">y</span><span style="color:#6272a4">)</span>
   <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">hypot</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>, <span style="color:#ff79c6">_</span> y: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
   
-  <span style="color:#6272a4">/// Γ(x)</span>
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">Γ</span><span style="color:#6272a4">(</span><span style="color:#6272a4">x</span><span style="color:#6272a4">)</span>
   <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">gamma</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
   
-  <span style="color:#6272a4">/// log(|Γ(x)|)</span>
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">l</span><span style="color:#6272a4">o</span><span style="color:#6272a4">g</span><span style="color:#6272a4">(</span><span style="color:#6272a4">|</span><span style="color:#6272a4">Γ</span><span style="color:#6272a4">(</span><span style="color:#6272a4">x</span><span style="color:#6272a4">)</span><span style="color:#6272a4">|</span><span style="color:#6272a4">)</span>
   <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">logGamma</span>(<span style="color:#ff79c6">_</span> x: <span style="color:#ff79c6">Self</span>) -&gt; <span style="color:#ff79c6">Self</span>
   
-  <span style="color:#6272a4">/// ...</span>
+  <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
 }
 </code></pre></div><p>在 <code>ElementaryFuctions</code> 的基础上拓展了更多类似但少用的函数，比如伽马函数、误差函数和更多底数的指数和对数等。</p>
 <p>组合而成的 <code>Real</code> 协议因此巧妙地定义了标准浮点型所应该有的通用功能。这就是 Numerics 是如何将标准浮点型变得更加有用和优雅的。</p>
@@ -361,17 +361,17 @@
 <p><code>Complex</code> 类型是 Numerics 中的一部分，为 Swift 提供了复数支持，且是使用 <code>Real</code> 协议作为范型约束的。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">import</span> <span style="color:#50fa7b">Numerics</span>
 
-<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">z</span> = Complex(<span style="color:#bd93f9">1.0</span>, <span style="color:#bd93f9">2.0</span>) <span style="color:#6272a4">// z = 1 + 2 i，这里默认是 Double</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">z</span> = Complex(<span style="color:#bd93f9">1.0</span>, <span style="color:#bd93f9">2.0</span>) <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">z</span><span style="color:#6272a4"> </span><span style="color:#6272a4">=</span><span style="color:#6272a4"> </span><span style="color:#6272a4">1</span><span style="color:#6272a4"> </span><span style="color:#6272a4">+</span><span style="color:#6272a4"> </span><span style="color:#6272a4">2</span><span style="color:#6272a4"> </span><span style="color:#6272a4">i</span><span style="color:#6272a4">，</span><span style="color:#6272a4">这</span><span style="color:#6272a4">里</span><span style="color:#6272a4">默</span><span style="color:#6272a4">认</span><span style="color:#6272a4">是</span><span style="color:#6272a4"> </span><span style="color:#6272a4">D</span><span style="color:#6272a4">o</span><span style="color:#6272a4">u</span><span style="color:#6272a4">b</span><span style="color:#6272a4">l</span><span style="color:#6272a4">e</span>
 </code></pre></div><p><code>Complex</code> 类型不仅本身很好用，同时也是一个使用 <code>Real</code> 协议进行范型数值编程的好范例。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">/// 定义 NumberType 遵循 Real 协议</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">定</span><span style="color:#6272a4">义</span><span style="color:#6272a4"> </span><span style="color:#6272a4">N</span><span style="color:#6272a4">u</span><span style="color:#6272a4">m</span><span style="color:#6272a4">b</span><span style="color:#6272a4">e</span><span style="color:#6272a4">r</span><span style="color:#6272a4">T</span><span style="color:#6272a4">y</span><span style="color:#6272a4">p</span><span style="color:#6272a4">e</span><span style="color:#6272a4"> </span><span style="color:#6272a4">遵</span><span style="color:#6272a4">循</span><span style="color:#6272a4"> </span><span style="color:#6272a4">R</span><span style="color:#6272a4">e</span><span style="color:#6272a4">a</span><span style="color:#6272a4">l</span><span style="color:#6272a4"> </span><span style="color:#6272a4">协</span><span style="color:#6272a4">议</span>
 <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">Complex</span>&lt;NumberType&gt; <span style="color:#ff79c6">where</span> NumberType: Real {
-    <span style="color:#6272a4">/// 实数部分</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">实</span><span style="color:#6272a4">数</span><span style="color:#6272a4">部</span><span style="color:#6272a4">分</span>
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">real</span>: NumberType
   
-    <span style="color:#6272a4">/// 虚数部分</span>
+    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">虚</span><span style="color:#6272a4">数</span><span style="color:#6272a4">部</span><span style="color:#6272a4">分</span>
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">imaginary</span>: NumberType
   
-		<span style="color:#6272a4">/// ...</span>
+		<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
 }
 </code></pre></div><p>然后需要通过 <code>SignedNumeric</code> 协议支持基本运算函数。
 <!-- raw HTML omitted -->
@@ -393,12 +393,12 @@
 </code></pre></div><p>复数通常使用极坐标表示，所以需要定义长度和相位角。由于 <code>Real</code> 协议的帮助，我们很容易地计算这两个概念的值。同时还能得到一个便捷的构造函数。
 <!-- raw HTML omitted --></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Complex</span> {
-  	<span style="color:#6272a4">/// 长度</span>
+  	<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">长</span><span style="color:#6272a4">度</span>
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">length</span>: NumberType {
         <span style="color:#ff79c6">return</span> .hypot(real, imaginary)
     }
   	
-  	<span style="color:#6272a4">/// 相位角</span>
+  	<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">相</span><span style="color:#6272a4">位</span><span style="color:#6272a4">角</span>
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">phase</span>: NumberType {
         <span style="color:#ff79c6">return</span> .atan2(y: imaginary, x: real)
     }
@@ -412,12 +412,12 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">import</span> <span style="color:#50fa7b">Numerics</span>
 <span style="color:#8be9fd;font-style:italic">import</span> <span style="color:#50fa7b">Accelerate</span>
 
-<span style="color:#6272a4">/// 100 个随机的复数</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">1</span><span style="color:#6272a4">0</span><span style="color:#6272a4">0</span><span style="color:#6272a4"> </span><span style="color:#6272a4">个</span><span style="color:#6272a4">随</span><span style="color:#6272a4">机</span><span style="color:#6272a4">的</span><span style="color:#6272a4">复</span><span style="color:#6272a4">数</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">z</span> = (<span style="color:#bd93f9">0</span> ..<span style="color:#ff79c6">&lt;</span> <span style="color:#bd93f9">100</span>).map {
     Complex(length: <span style="color:#bd93f9">1.0</span>, phase: <span style="color:#8be9fd;font-style:italic">Double</span>.random(<span style="color:#ff79c6">in</span>: <span style="color:#ff79c6">-</span>.pi ... .pi))
 }
 
-<span style="color:#6272a4">/// 计算 L2 范数（欧几里得范数）</span>
+<span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">计</span><span style="color:#6272a4">算</span><span style="color:#6272a4"> </span><span style="color:#6272a4">L</span><span style="color:#6272a4">2</span><span style="color:#6272a4"> </span><span style="color:#6272a4">范</span><span style="color:#6272a4">数</span><span style="color:#6272a4">（</span><span style="color:#6272a4">欧</span><span style="color:#6272a4">几</span><span style="color:#6272a4">里</span><span style="color:#6272a4">得</span><span style="color:#6272a4">范</span><span style="color:#6272a4">数</span><span style="color:#6272a4">）</span>
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">norm</span> = cblas_dznrm2(z.count, &amp;z, <span style="color:#bd93f9">1</span>)
 </code></pre></div><p>要注意的是，Swift 的 <code>Comple</code> <strong>对待 ∞ 和 NaN 值和 C/C++ 不同</strong>，在桥接代码的时候需要小心。但 Swift 的处理更加简单和高效。这里有一个只包含复数乘除法的性能测试：
 <img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/swift_number_07.png" alt=""></p>
@@ -494,7 +494,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. 
+        © Nemocdz. This post was published <strong>115</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
