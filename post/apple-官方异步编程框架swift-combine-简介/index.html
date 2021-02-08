@@ -56,7 +56,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.74.3">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E7%AE%80%E4%BB%8B/">
@@ -304,18 +304,18 @@
 <p>发布者在 Combine 框架中是一个协议：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">Publisher</span> {
 
-    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">产</span><span style="color:#6272a4">生</span><span style="color:#6272a4">的</span><span style="color:#6272a4">值</span><span style="color:#6272a4">的</span><span style="color:#6272a4">类</span><span style="color:#6272a4">型</span>
+    <span style="color:#6272a4">/// 产生的值的类型</span>
     associatedtype Output
 
-    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">失</span><span style="color:#6272a4">败</span><span style="color:#6272a4">的</span><span style="color:#6272a4">错</span><span style="color:#6272a4">误</span><span style="color:#6272a4">类</span><span style="color:#6272a4">型</span>
+    <span style="color:#6272a4">/// 失败的错误类型</span>
     associatedtype Failure : Error
 
-    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">实</span><span style="color:#6272a4">现</span><span style="color:#6272a4">这</span><span style="color:#6272a4">个</span><span style="color:#6272a4">方</span><span style="color:#6272a4">法</span><span style="color:#6272a4">，</span><span style="color:#6272a4">将</span><span style="color:#6272a4">调</span><span style="color:#6272a4">用</span><span style="color:#6272a4"> </span><span style="color:#6272a4">`</span><span style="color:#6272a4">s</span><span style="color:#6272a4">u</span><span style="color:#6272a4">b</span><span style="color:#6272a4">s</span><span style="color:#6272a4">c</span><span style="color:#6272a4">r</span><span style="color:#6272a4">i</span><span style="color:#6272a4">b</span><span style="color:#6272a4">e</span><span style="color:#6272a4">(</span><span style="color:#6272a4">_</span><span style="color:#6272a4">:</span><span style="color:#6272a4">)</span><span style="color:#6272a4">`</span><span style="color:#6272a4"> </span><span style="color:#6272a4">订</span><span style="color:#6272a4">阅</span><span style="color:#6272a4">的</span><span style="color:#6272a4">订</span><span style="color:#6272a4">阅</span><span style="color:#6272a4">者</span><span style="color:#6272a4">附</span><span style="color:#6272a4">加</span><span style="color:#6272a4">到</span><span style="color:#6272a4">发</span><span style="color:#6272a4">布</span><span style="color:#6272a4">者</span><span style="color:#6272a4">上</span>
+    <span style="color:#6272a4">/// 实现这个方法，将调用 `subscribe(_:)` 订阅的订阅者附加到发布者上</span>
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>&lt;S&gt;(subscriber: S) <span style="color:#ff79c6">where</span> S : Subscriber, <span style="color:#ff79c6">Self</span>.Failure == S.Failure, <span style="color:#ff79c6">Self</span>.Output == S.Input
 }
 
 <span style="color:#8be9fd;font-style:italic">extension</span> <span style="color:#50fa7b">Publisher</span> {
-    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">将</span><span style="color:#6272a4">订</span><span style="color:#6272a4">阅</span><span style="color:#6272a4">者</span><span style="color:#6272a4">附</span><span style="color:#6272a4">加</span><span style="color:#6272a4">到</span><span style="color:#6272a4">发</span><span style="color:#6272a4">布</span><span style="color:#6272a4">者</span><span style="color:#6272a4">上</span><span style="color:#6272a4">，</span><span style="color:#6272a4">供</span><span style="color:#6272a4">外</span><span style="color:#6272a4">部</span><span style="color:#6272a4">调</span><span style="color:#6272a4">用</span><span style="color:#6272a4">，</span><span style="color:#6272a4">不</span><span style="color:#6272a4">直</span><span style="color:#6272a4">接</span><span style="color:#6272a4">使</span><span style="color:#6272a4">用</span><span style="color:#6272a4"> </span><span style="color:#6272a4">`</span><span style="color:#6272a4">r</span><span style="color:#6272a4">e</span><span style="color:#6272a4">c</span><span style="color:#6272a4">e</span><span style="color:#6272a4">i</span><span style="color:#6272a4">v</span><span style="color:#6272a4">e</span><span style="color:#6272a4">(</span><span style="color:#6272a4">_</span><span style="color:#6272a4">:</span><span style="color:#6272a4">)</span><span style="color:#6272a4">`</span><span style="color:#6272a4"> </span><span style="color:#6272a4">方</span><span style="color:#6272a4">法</span>
+    <span style="color:#6272a4">/// 将订阅者附加到发布者上，供外部调用，不直接使用 `receive(_:)` 方法</span>
     <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">subscribe</span>&lt;S&gt;(<span style="color:#ff79c6">_</span> subscriber: S) <span style="color:#ff79c6">where</span> S : Subscriber, <span style="color:#ff79c6">Self</span>.Failure == S.Failure, <span style="color:#ff79c6">Self</span>.Output == S.Input
 }
 
@@ -333,19 +333,19 @@
 <p>和发布者配对的，就是订阅者。同样的，在 Combine 框架中是一个协议：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">protocol</span> <span style="color:#50fa7b">Subscriber</span> : CustomCombineIdentifierConvertible {
 
-    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">接</span><span style="color:#6272a4">受</span><span style="color:#6272a4">到</span><span style="color:#6272a4">的</span><span style="color:#6272a4">值</span><span style="color:#6272a4">的</span><span style="color:#6272a4">类</span><span style="color:#6272a4">型</span>
+    <span style="color:#6272a4">/// 接受到的值的类型</span>
     associatedtype Input
 
-    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">可</span><span style="color:#6272a4">能</span><span style="color:#6272a4">接</span><span style="color:#6272a4">受</span><span style="color:#6272a4">到</span><span style="color:#6272a4">的</span><span style="color:#6272a4">错</span><span style="color:#6272a4">误</span><span style="color:#6272a4">的</span><span style="color:#6272a4">类</span><span style="color:#6272a4">型</span>
+    <span style="color:#6272a4">/// 可能接受到的错误的类型</span>
     associatedtype Failure : Error
 
-    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">告</span><span style="color:#6272a4">诉</span><span style="color:#6272a4">订</span><span style="color:#6272a4">阅</span><span style="color:#6272a4">者</span><span style="color:#6272a4">，</span><span style="color:#6272a4">它</span><span style="color:#6272a4">在</span><span style="color:#6272a4">发</span><span style="color:#6272a4">布</span><span style="color:#6272a4">者</span><span style="color:#6272a4">上</span><span style="color:#6272a4">被</span><span style="color:#6272a4">成</span><span style="color:#6272a4">功</span><span style="color:#6272a4">订</span><span style="color:#6272a4">阅</span><span style="color:#6272a4">，</span><span style="color:#6272a4">可</span><span style="color:#6272a4">以</span><span style="color:#6272a4">请</span><span style="color:#6272a4">求</span><span style="color:#6272a4">值</span><span style="color:#6272a4">了</span>
+    <span style="color:#6272a4">/// 告诉订阅者，它在发布者上被成功订阅，可以请求值了</span>
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>(subscription: Subscription)
 
-    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">告</span><span style="color:#6272a4">诉</span><span style="color:#6272a4">订</span><span style="color:#6272a4">阅</span><span style="color:#6272a4">者</span><span style="color:#6272a4">，</span><span style="color:#6272a4">发</span><span style="color:#6272a4">布</span><span style="color:#6272a4">者</span><span style="color:#6272a4">产</span><span style="color:#6272a4">生</span><span style="color:#6272a4">值</span><span style="color:#6272a4">了</span>
+    <span style="color:#6272a4">/// 告诉订阅者，发布者产生值了</span>
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>(<span style="color:#ff79c6">_</span> input: <span style="color:#ff79c6">Self</span>.Input) -&gt; Subscribers.Demand
 
-    <span style="color:#6272a4">//</span><span style="color:#6272a4">/</span><span style="color:#6272a4"> </span><span style="color:#6272a4">告</span><span style="color:#6272a4">诉</span><span style="color:#6272a4">订</span><span style="color:#6272a4">阅</span><span style="color:#6272a4">者</span><span style="color:#6272a4">，</span><span style="color:#6272a4">发</span><span style="color:#6272a4">布</span><span style="color:#6272a4">者</span><span style="color:#6272a4">已</span><span style="color:#6272a4">经</span><span style="color:#6272a4">终</span><span style="color:#6272a4">止</span><span style="color:#6272a4">产</span><span style="color:#6272a4">生</span><span style="color:#6272a4">值</span><span style="color:#6272a4">了</span><span style="color:#6272a4">，</span><span style="color:#6272a4">不</span><span style="color:#6272a4">管</span><span style="color:#6272a4">是</span><span style="color:#6272a4">正</span><span style="color:#6272a4">常</span><span style="color:#6272a4">情</span><span style="color:#6272a4">况</span><span style="color:#6272a4">还</span><span style="color:#6272a4">是</span><span style="color:#6272a4">由</span><span style="color:#6272a4">于</span><span style="color:#6272a4">情</span><span style="color:#6272a4">况</span>
+    <span style="color:#6272a4">/// 告诉订阅者，发布者已经终止产生值了，不管是正常情况还是由于情况</span>
     <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">receive</span>(completion: Subscribers.Completion&lt;<span style="color:#ff79c6">Self</span>.Failure&gt;)
 }
 
@@ -366,7 +366,7 @@
         <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">typealias</span> Failure = Never
 
         <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">init</span>(object: Root, keyPath: ReferenceWritableKeyPath&lt;Root, Input&gt;)
-			<span style="color:#6272a4">//</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+			<span style="color:#6272a4">//...</span>
     }
 }
 </code></pre></div><h3 id="运算符operator">运算符（Operator）</h3>
@@ -387,8 +387,8 @@
     }
 }
 
-<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">object</span> = Foo(name:<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">Test</span><span style="color:#f1fa8c">&#34;</span>)
-<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">publisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">Send</span><span style="color:#f1fa8c">&#34;</span>, object: object)
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">object</span> = Foo(name:<span style="color:#f1fa8c">&#34;Test&#34;</span>)
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">publisher</span> = NotificationCenter.Publisher(center: .<span style="color:#ff79c6">default</span>, name: <span style="color:#f1fa8c">&#34;Send&#34;</span>, object: object)
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">subsciber</span> = Subscribers.Assign(object: object, keyPath: \.name)
 
 publisher.subscribe(subsciber)
@@ -465,7 +465,7 @@ publisher.subscribe(subsciber)
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>458</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>504</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -494,7 +494,7 @@ publisher.subscribe(subsciber)
   </section>
   
 <footer class="site-footer">
-  <p>© 2017-2020 Nemocdz&#39;s Blog</p>
+  <p>© 2017-2021 Nemocdz&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>

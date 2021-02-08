@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.74.3">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%94%9F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E6%8F%8F%E7%95%8C%E9%9D%A2/">
@@ -255,7 +255,7 @@
         AVCaptureDevice <span style="color:#ff79c6">*</span>device <span style="color:#ff79c6">=</span> [AVCaptureDevice <span style="color:#8be9fd;font-style:italic">defaultDeviceWithMediaType</span>:AVMediaTypeVideo];
         _deviceInput <span style="color:#ff79c6">=</span> [AVCaptureDeviceInput <span style="color:#8be9fd;font-style:italic">deviceInputWithDevice</span>:device <span style="color:#8be9fd;font-style:italic">error</span>:<span style="color:#ff79c6">&amp;</span>error];
         <span style="color:#ff79c6">if</span> (error) {
-            NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">%@</span><span style="color:#f1fa8c">&#34;</span>,error);
+            NSLog(<span style="color:#f1fa8c">@&#34;%@&#34;</span>,error);
         }
     }
     <span style="color:#ff79c6">return</span> _deviceInput;
@@ -327,8 +327,8 @@
     [<span style="color:#8be9fd;font-style:italic">self</span>.view.layer <span style="color:#8be9fd;font-style:italic">insertSublayer</span>:<span style="color:#8be9fd;font-style:italic">self</span>.previewLayer <span style="color:#8be9fd;font-style:italic">atIndex</span>:<span style="color:#bd93f9">0</span>];
     [<span style="color:#8be9fd;font-style:italic">self</span>.session startRunning];
 }
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">captureOutput:</span>(AVCaptureOutput <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">captureOutput</span> <span style="color:#50fa7b">didOutputMetadataObjects:</span>(NSArray<span style="color:#ff79c6">&lt;</span>AVMetadataMachineReadableCodeObject <span style="color:#ff79c6">*</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">metadataObjects</span> <span style="color:#50fa7b">fromConnection:</span>(AVCaptureConnection <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">connection</span>{
-    <span style="color:#ff79c6">if</span> (metadataObjects.count <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>) {
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">captureOutput:</span>(AVCaptureOutput <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">captureOutput</span> <span style="color:#50fa7b">didOutputMetadataObjects:</span>(NSArray<span style="color:#ff79c6">&lt;</span>AVMetadataMachineReadableCodeObject <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">metadataObjects</span> <span style="color:#50fa7b">fromConnection:</span>(AVCaptureConnection <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">connection</span>{
+    <span style="color:#ff79c6">if</span> (metadataObjects.count <span style="color:#ff79c6">==</span> <span style="color:#bd93f9">0</span>) {
         <span style="color:#ff79c6">return</span>;
     }
     [<span style="color:#8be9fd;font-style:italic">self</span>.session stopRunning];
@@ -350,7 +350,7 @@
   	<span style="color:#6272a4">//获取识别结果
 </span><span style="color:#6272a4"></span>    NSArray <span style="color:#ff79c6">*</span>features <span style="color:#ff79c6">=</span> [detector <span style="color:#8be9fd;font-style:italic">featuresInImage</span>:ciImage];
     
-    <span style="color:#ff79c6">if</span> (features.count <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>) {
+    <span style="color:#ff79c6">if</span> (features.count <span style="color:#ff79c6">==</span> <span style="color:#bd93f9">0</span>) {
         <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">nil</span>;
     }
     
@@ -373,7 +373,7 @@
     <span style="color:#6272a4">//信息处理
 </span><span style="color:#6272a4"></span>}
 </code></pre></div><p>当然我们可以加一个导航栏上的按钮来调起相册。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">UIBarButtonItem <span style="color:#ff79c6">*</span>libaryItem <span style="color:#ff79c6">=</span> [[UIBarButtonItem alloc]<span style="color:#8be9fd;font-style:italic">initWithTitle</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">相册</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#8be9fd;font-style:italic">style</span>:UIBarButtonItemStylePlain <span style="color:#8be9fd;font-style:italic">target</span>:<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">action</span>:<span style="color:#ff79c6">@selector</span>(openLibary)];
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">UIBarButtonItem <span style="color:#ff79c6">*</span>libaryItem <span style="color:#ff79c6">=</span> [[UIBarButtonItem alloc]<span style="color:#8be9fd;font-style:italic">initWithTitle</span>:<span style="color:#f1fa8c">@&#34;相册&#34;</span> <span style="color:#8be9fd;font-style:italic">style</span>:UIBarButtonItemStylePlain <span style="color:#8be9fd;font-style:italic">target</span>:<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">action</span>:<span style="color:#ff79c6">@selector</span>(openLibary)];
 <span style="color:#8be9fd;font-style:italic">self</span>.navigationItem.rightBarButtonItem <span style="color:#ff79c6">=</span> libaryItem;
 <span style="color:#8be9fd;font-style:italic">self</span>.navigationItem.title <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>.navigationTitle;
 </code></pre></div><h2 id="增加非相机识别区域的压暗层">增加非相机识别区域的压暗层</h2>
@@ -415,7 +415,7 @@
 <span style="color:#6272a4">//相机权限是否正常
 </span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">BOOL</span>)<span style="color:#50fa7b">isCameraAuthStatusCorrect</span>{
     AVAuthorizationStatus authStatus <span style="color:#ff79c6">=</span> [AVCaptureDevice <span style="color:#8be9fd;font-style:italic">authorizationStatusForMediaType</span>:AVMediaTypeVideo];
-    <span style="color:#ff79c6">if</span> (authStatus <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> AVAuthorizationStatusAuthorized <span style="color:#ff79c6">|</span><span style="color:#ff79c6">|</span> authStatus <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> AVAuthorizationStatusNotDetermined) {
+    <span style="color:#ff79c6">if</span> (authStatus <span style="color:#ff79c6">==</span> AVAuthorizationStatusAuthorized <span style="color:#ff79c6">||</span> authStatus <span style="color:#ff79c6">==</span> AVAuthorizationStatusNotDetermined) {
         <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
     }
     <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
@@ -423,7 +423,7 @@
 <span style="color:#6272a4">//相册权限是否正常，需要导入 Photos 框架
 </span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">BOOL</span>)<span style="color:#50fa7b">isLibaryAuthStatusCorrect</span>{
     PHAuthorizationStatus authStatus <span style="color:#ff79c6">=</span> [PHPhotoLibrary authorizationStatus];
-    <span style="color:#ff79c6">if</span> (authStatus <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> PHAuthorizationStatusNotDetermined <span style="color:#ff79c6">|</span><span style="color:#ff79c6">|</span> authStatus <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> PHAuthorizationStatusAuthorized) {
+    <span style="color:#ff79c6">if</span> (authStatus <span style="color:#ff79c6">==</span> PHAuthorizationStatusNotDetermined <span style="color:#ff79c6">||</span> authStatus <span style="color:#ff79c6">==</span> PHAuthorizationStatusAuthorized) {
         <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">YES</span>;
     }
     <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
@@ -432,11 +432,11 @@
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/006tNc79ly1feuhsf3m30j30ri028t9e.jpg" alt="屏幕快照 2017-04-21 下午6.00.42"></p>
 <p>然后加上 AlertViewController 的弹窗。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">showPermissionAlert</span>{
-    UIAlertController <span style="color:#ff79c6">*</span>alert <span style="color:#ff79c6">=</span> [UIAlertController <span style="color:#8be9fd;font-style:italic">alertControllerWithTitle</span>:<span style="color:#8be9fd;font-style:italic">nil</span> <span style="color:#8be9fd;font-style:italic">message</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">需要相机/相册的权限</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#8be9fd;font-style:italic">preferredStyle</span>:UIAlertControllerStyleAlert];
-    UIAlertAction <span style="color:#ff79c6">*</span>cancelAction <span style="color:#ff79c6">=</span> [UIAlertAction <span style="color:#8be9fd;font-style:italic">actionWithTitle</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">取消</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#8be9fd;font-style:italic">style</span>:UIAlertActionStyleCancel <span style="color:#8be9fd;font-style:italic">handler</span>:<span style="color:#ff79c6">^</span>(UIAlertAction <span style="color:#ff79c6">*</span>action){
+    UIAlertController <span style="color:#ff79c6">*</span>alert <span style="color:#ff79c6">=</span> [UIAlertController <span style="color:#8be9fd;font-style:italic">alertControllerWithTitle</span>:<span style="color:#8be9fd;font-style:italic">nil</span> <span style="color:#8be9fd;font-style:italic">message</span>:<span style="color:#f1fa8c">@&#34;需要相机/相册的权限&#34;</span> <span style="color:#8be9fd;font-style:italic">preferredStyle</span>:UIAlertControllerStyleAlert];
+    UIAlertAction <span style="color:#ff79c6">*</span>cancelAction <span style="color:#ff79c6">=</span> [UIAlertAction <span style="color:#8be9fd;font-style:italic">actionWithTitle</span>:<span style="color:#f1fa8c">@&#34;取消&#34;</span> <span style="color:#8be9fd;font-style:italic">style</span>:UIAlertActionStyleCancel <span style="color:#8be9fd;font-style:italic">handler</span>:<span style="color:#ff79c6">^</span>(UIAlertAction <span style="color:#ff79c6">*</span>action){
         [<span style="color:#8be9fd;font-style:italic">self</span>.navigationController <span style="color:#8be9fd;font-style:italic">popViewControllerAnimated</span>:<span style="color:#8be9fd;font-style:italic">YES</span>];
     }];
-    UIAlertAction <span style="color:#ff79c6">*</span>requestAction <span style="color:#ff79c6">=</span> [UIAlertAction <span style="color:#8be9fd;font-style:italic">actionWithTitle</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">同意</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#8be9fd;font-style:italic">style</span>:UIAlertActionStyleDefault <span style="color:#8be9fd;font-style:italic">handler</span>:<span style="color:#ff79c6">^</span>(UIAlertAction <span style="color:#ff79c6">*</span>action) {
+    UIAlertAction <span style="color:#ff79c6">*</span>requestAction <span style="color:#ff79c6">=</span> [UIAlertAction <span style="color:#8be9fd;font-style:italic">actionWithTitle</span>:<span style="color:#f1fa8c">@&#34;同意&#34;</span> <span style="color:#8be9fd;font-style:italic">style</span>:UIAlertActionStyleDefault <span style="color:#8be9fd;font-style:italic">handler</span>:<span style="color:#ff79c6">^</span>(UIAlertAction <span style="color:#ff79c6">*</span>action) {
         NSURL <span style="color:#ff79c6">*</span>url <span style="color:#ff79c6">=</span> [NSURL <span style="color:#8be9fd;font-style:italic">URLWithString</span>:UIApplicationOpenSettingsURLString];
         <span style="color:#ff79c6">if</span> ([[UIApplication sharedApplication]<span style="color:#8be9fd;font-style:italic">canOpenURL</span>:url]) {
             [[UIApplication sharedApplication]<span style="color:#8be9fd;font-style:italic">openURL</span>:url];
@@ -449,7 +449,7 @@
 
 - (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">showWarn:</span>(NSString <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">message</span> <span style="color:#50fa7b">shouldPop:</span>(<span style="color:#8be9fd">BOOL</span>)<span style="color:#8be9fd;font-style:italic">pop</span>{
     UIAlertController <span style="color:#ff79c6">*</span>alert <span style="color:#ff79c6">=</span> [UIAlertController <span style="color:#8be9fd;font-style:italic">alertControllerWithTitle</span>:<span style="color:#8be9fd;font-style:italic">nil</span> <span style="color:#8be9fd;font-style:italic">message</span>:message <span style="color:#8be9fd;font-style:italic">preferredStyle</span>:UIAlertControllerStyleAlert];
-    UIAlertAction <span style="color:#ff79c6">*</span>cancelAction <span style="color:#ff79c6">=</span> [UIAlertAction <span style="color:#8be9fd;font-style:italic">actionWithTitle</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">好的</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#8be9fd;font-style:italic">style</span>:UIAlertActionStyleCancel <span style="color:#8be9fd;font-style:italic">handler</span>:<span style="color:#ff79c6">^</span>(UIAlertAction <span style="color:#ff79c6">*</span>action){
+    UIAlertAction <span style="color:#ff79c6">*</span>cancelAction <span style="color:#ff79c6">=</span> [UIAlertAction <span style="color:#8be9fd;font-style:italic">actionWithTitle</span>:<span style="color:#f1fa8c">@&#34;好的&#34;</span> <span style="color:#8be9fd;font-style:italic">style</span>:UIAlertActionStyleCancel <span style="color:#8be9fd;font-style:italic">handler</span>:<span style="color:#ff79c6">^</span>(UIAlertAction <span style="color:#ff79c6">*</span>action){
         <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>pop) {
             <span style="color:#ff79c6">return</span>;
         }
@@ -461,12 +461,12 @@
 </code></pre></div><p>并加上权限检查。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">BOOL</span>)<span style="color:#50fa7b">statusCheck</span>{
     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>[<span style="color:#8be9fd;font-style:italic">self</span> isCameraAvailable]){
-        [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">showWarn</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">设备无相机</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#8be9fd;font-style:italic">shouldPop</span>:<span style="color:#8be9fd;font-style:italic">YES</span>];
+        [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">showWarn</span>:<span style="color:#f1fa8c">@&#34;设备无相机&#34;</span> <span style="color:#8be9fd;font-style:italic">shouldPop</span>:<span style="color:#8be9fd;font-style:italic">YES</span>];
         <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
     }
     
-    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>[<span style="color:#8be9fd;font-style:italic">self</span> isRearCameraAvailable] <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&amp;</span> <span style="color:#ff79c6">!</span>[<span style="color:#8be9fd;font-style:italic">self</span> isFrontCameraAvailable]) {
-        [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">showWarn</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">设备相机错误</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#8be9fd;font-style:italic">shouldPop</span>:<span style="color:#8be9fd;font-style:italic">YES</span>];
+    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>[<span style="color:#8be9fd;font-style:italic">self</span> isRearCameraAvailable] <span style="color:#ff79c6">&amp;&amp;</span> <span style="color:#ff79c6">!</span>[<span style="color:#8be9fd;font-style:italic">self</span> isFrontCameraAvailable]) {
+        [<span style="color:#8be9fd;font-style:italic">self</span> <span style="color:#8be9fd;font-style:italic">showWarn</span>:<span style="color:#f1fa8c">@&#34;设备相机错误&#34;</span> <span style="color:#8be9fd;font-style:italic">shouldPop</span>:<span style="color:#8be9fd;font-style:italic">YES</span>];
         <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
     }
     
@@ -519,7 +519,7 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">IBAction</span>)<span style="color:#50fa7b">selectScan:</span>(UIButton <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">sender</span> {
     CDZQRCodeViewController <span style="color:#ff79c6">*</span>vc <span style="color:#ff79c6">=</span> [[CDZQRCodeViewController alloc]init];
     vc.delegate <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">self</span>;
-    vc.navigationTitle <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">自定义</span><span style="color:#f1fa8c">&#34;</span>;
+    vc.navigationTitle <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">@&#34;自定义&#34;</span>;
     [<span style="color:#8be9fd;font-style:italic">self</span>.navigationController <span style="color:#8be9fd;font-style:italic">pushViewController</span>:vc <span style="color:#8be9fd;font-style:italic">animated</span>:<span style="color:#8be9fd;font-style:italic">YES</span>];
 }
 
@@ -533,7 +533,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1343</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1389</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -562,7 +562,7 @@
   </section>
   
 <footer class="site-footer">
-  <p>© 2017-2020 Nemocdz&#39;s Blog</p>
+  <p>© 2017-2021 Nemocdz&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>

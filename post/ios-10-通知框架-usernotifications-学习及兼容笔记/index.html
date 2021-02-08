@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.74.3">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-10-%E9%80%9A%E7%9F%A5%E6%A1%86%E6%9E%B6-usernotifications-%E5%AD%A6%E4%B9%A0%E5%8F%8A%E5%85%BC%E5%AE%B9%E7%AC%94%E8%AE%B0/">
@@ -312,7 +312,7 @@ UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span st
 <li>新框架中，对于可输入操作的按钮，拆分成一个子类，可以使输入操作自定义性和拓展性更强</li>
 </ul>
 <p>新建一个按钮也很简单</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">UNNotificationAction <span style="color:#ff79c6">*</span>callDriverAction <span style="color:#ff79c6">=</span> [UNNotificationAction <span style="color:#8be9fd;font-style:italic">actionWithIdentifier</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">xxx</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#8be9fd;font-style:italic">title</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">呼叫司机</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#8be9fd;font-style:italic">options</span>:UNNotificationActionOptionForeground];
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">UNNotificationAction <span style="color:#ff79c6">*</span>callDriverAction <span style="color:#ff79c6">=</span> [UNNotificationAction <span style="color:#8be9fd;font-style:italic">actionWithIdentifier</span>:<span style="color:#f1fa8c">@&#34;xxx&#34;</span> <span style="color:#8be9fd;font-style:italic">title</span>:<span style="color:#f1fa8c">@&#34;呼叫司机&#34;</span> <span style="color:#8be9fd;font-style:italic">options</span>:UNNotificationActionOptionForeground];
 </code></pre></div><p>options 中可以选择是否需要解锁后才能操作、按钮颜色是否为红色（代表操作有破坏性）、是否打开 App。</p>
 <p>然后将整组按钮加入 <code>UNNotificationCategory</code>（新）或 <code>UIUserNotificationCategory</code>（旧）中。</p>
 <p>这两个对象差异性在于</p>
@@ -336,7 +336,7 @@ UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span st
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">[[UNUserNotificationCenter currentNotificationCenter]<span style="color:#8be9fd;font-style:italic">setNotificationCategories</span>:[NSSet <span style="color:#8be9fd;font-style:italic">setWithObject</span>:<span style="color:#8be9fd;font-style:italic">self</span>.category]];
 </code></pre></div><p>**在运行 App 时，原来的 set 里的 categories 并不会清空，所以需要将整个 set 传进去作为参数，这样会把原来的 set 完整替换成新的 set。**每次调用时，整个 set 替换原来的 set。</p>
 <p>同时，对于通知设置和 Category 设置，拆分了两个 API 去获取当前的设置。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">getNotificationCategoriesWithCompletionHandler:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)(NSSet<span style="color:#ff79c6">&lt;</span>UNNotificationCategory <span style="color:#ff79c6">*</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">*</span>categories))<span style="color:#8be9fd;font-style:italic">completionHandler</span>;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">getNotificationCategoriesWithCompletionHandler:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)(NSSet<span style="color:#ff79c6">&lt;</span>UNNotificationCategory <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>categories))<span style="color:#8be9fd;font-style:italic">completionHandler</span>;
 
 - (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">getNotificationSettingsWithCompletionHandler:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)(UNNotificationSettings <span style="color:#ff79c6">*</span>settings))<span style="color:#8be9fd;font-style:italic">completionHandler</span>;
 </code></pre></div><p>而对于按钮的操作响应，将在第三部分响应通知中介绍。</p>
@@ -374,12 +374,12 @@ UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span st
 		...
 }];
 </code></pre></div><p>而取消或移除未展示和已展示的通知，分开了两组 API 方便根据情况选择，同时也有 get 方法获取当前已展示/未展示的队列里的所有通知，而且和添加/更新不同，移除只需要一个 identifer，且可以同时传入一组 identifer，一次性移除多个。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">getPendingNotificationRequestsWithCompletionHandler:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)(NSArray<span style="color:#ff79c6">&lt;</span>UNNotificationRequest <span style="color:#ff79c6">*</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">*</span>requests))<span style="color:#8be9fd;font-style:italic">completionHandler</span>;<span style="color:#6272a4">//获取未展示通知
-</span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">removePendingNotificationRequestsWithIdentifiers:</span>(NSArray<span style="color:#ff79c6">&lt;</span>NSString <span style="color:#ff79c6">*</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">identifiers</span>;<span style="color:#6272a4">//取消未展示通知
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">getPendingNotificationRequestsWithCompletionHandler:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)(NSArray<span style="color:#ff79c6">&lt;</span>UNNotificationRequest <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>requests))<span style="color:#8be9fd;font-style:italic">completionHandler</span>;<span style="color:#6272a4">//获取未展示通知
+</span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">removePendingNotificationRequestsWithIdentifiers:</span>(NSArray<span style="color:#ff79c6">&lt;</span>NSString <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">identifiers</span>;<span style="color:#6272a4">//取消未展示通知
 </span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">removeAllPendingNotificationRequests</span>;<span style="color:#6272a4">//取消所有未展示通知队列里的通知
 </span><span style="color:#6272a4"></span>
-- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">getDeliveredNotificationsWithCompletionHandler:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)(NSArray<span style="color:#ff79c6">&lt;</span>UNNotification <span style="color:#ff79c6">*</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">*</span>notifications))<span style="color:#8be9fd;font-style:italic">completionHandler</span>;<span style="color:#6272a4">//获取已展示通知
-</span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">removeDeliveredNotificationsWithIdentifiers:</span>(NSArray<span style="color:#ff79c6">&lt;</span>NSString <span style="color:#ff79c6">*</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">identifiers</span>;<span style="color:#6272a4">//从通知中心中移除已展示通知
+- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">getDeliveredNotificationsWithCompletionHandler:</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">^</span>)(NSArray<span style="color:#ff79c6">&lt;</span>UNNotification <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>notifications))<span style="color:#8be9fd;font-style:italic">completionHandler</span>;<span style="color:#6272a4">//获取已展示通知
+</span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">removeDeliveredNotificationsWithIdentifiers:</span>(NSArray<span style="color:#ff79c6">&lt;</span>NSString <span style="color:#ff79c6">*&gt;</span> <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">identifiers</span>;<span style="color:#6272a4">//从通知中心中移除已展示通知
 </span><span style="color:#6272a4"></span>- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">removeAllDeliveredNotifications</span>;<span style="color:#6272a4">//移除所有通知中心里的通知
 </span></code></pre></div><h2 id="3展示和响应">3.展示和响应</h2>
 <p>在旧框架里面，这部分 API 是最为混乱的部分。一共有 1..2&hellip;..7 个 delegate&hellip;&hellip;而且之中有的还有取代关系，也就是有其中一个另一个不执行&hellip;&hellip;</p>
@@ -440,7 +440,7 @@ UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span st
     }
     UILocalNotification <span style="color:#ff79c6">*</span>localNotification;<span style="color:#6272a4">//从新的转换为旧的本地通知
 </span><span style="color:#6272a4"></span>    
-     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>isRemote <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&amp;</span> [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">application</span>:<span style="color:#8be9fd;font-style:italic">didReceiveLocalNotification</span>:)]) {
+     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>isRemote <span style="color:#ff79c6">&amp;&amp;</span> [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">application</span>:<span style="color:#8be9fd;font-style:italic">didReceiveLocalNotification</span>:)]) {
         [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">application</span>:[UIApplication sharedApplication] <span style="color:#8be9fd;font-style:italic">didReceiveLocalNotification</span>:localNotification];
     }
     <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> (isRemote) {
@@ -468,8 +468,8 @@ UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span st
     UILocalNotification <span style="color:#ff79c6">*</span>localNotification;<span style="color:#6272a4">//从新的转换为旧的本地通知
 </span><span style="color:#6272a4"></span>
     
-    <span style="color:#ff79c6">if</span> ([response.actionIdentifier <span style="color:#8be9fd;font-style:italic">isEqualToString</span>:UNNotificationDefaultActionIdentifier] <span style="color:#ff79c6">|</span><span style="color:#ff79c6">|</span> [response.actionIdentifier <span style="color:#8be9fd;font-style:italic">isEqualToString</span>:UNNotificationDismissActionIdentifier]) {
-        <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>isRemote <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&amp;</span> [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">application</span>:<span style="color:#8be9fd;font-style:italic">didReceiveLocalNotification</span>:)]) {
+    <span style="color:#ff79c6">if</span> ([response.actionIdentifier <span style="color:#8be9fd;font-style:italic">isEqualToString</span>:UNNotificationDefaultActionIdentifier] <span style="color:#ff79c6">||</span> [response.actionIdentifier <span style="color:#8be9fd;font-style:italic">isEqualToString</span>:UNNotificationDismissActionIdentifier]) {
+        <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>isRemote <span style="color:#ff79c6">&amp;&amp;</span> [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">respondsToSelector</span>:<span style="color:#ff79c6">@selector</span>(<span style="color:#8be9fd;font-style:italic">application</span>:<span style="color:#8be9fd;font-style:italic">didReceiveLocalNotification</span>:)]) {
             [[UIApplication sharedApplication].delegate <span style="color:#8be9fd;font-style:italic">application</span>:[UIApplication sharedApplication] <span style="color:#8be9fd;font-style:italic">didReceiveLocalNotification</span>:localNotification];
         }
         <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> (isRemote) {
@@ -752,7 +752,7 @@ UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span st
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1245</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1291</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -781,7 +781,7 @@ UIUserNotificationSettings <span style="color:#ff79c6">*</span>settting <span st
   </section>
   
 <footer class="site-footer">
-  <p>© 2017-2020 Nemocdz&#39;s Blog</p>
+  <p>© 2017-2021 Nemocdz&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>

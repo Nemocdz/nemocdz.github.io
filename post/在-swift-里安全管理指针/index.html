@@ -56,7 +56,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.74.3">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E5%9C%A8-swift-%E9%87%8C%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E6%8C%87%E9%92%88/">
@@ -221,7 +221,7 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">在 Swift 里安全管理指针</h1>
-      <p class="post-meta">@Nemocdz · Sep 1, 2020 · 4 min read</p>
+      <p class="post-meta">@Nemocdz · Sep 1, 2020 · 5 min read</p>
     </header>
 
     
@@ -236,25 +236,25 @@
         <li><a href="#指针类型">指针类型</a></li>
       </ul>
     </li>
-    <li><a href="#unsafepointert类型指针">UnsafePointer<T>：类型指针</a>
+    <li><a href="#unsafepointert类型指针"><code>UnsafePointer&lt;T&gt;</code>：类型指针</a>
       <ul>
         <li><a href="#1-通过已有变量获取">1. 通过已有变量获取</a></li>
         <li><a href="#2-直接分配内存">2. 直接分配内存</a></li>
       </ul>
     </li>
-    <li><a href="#unsaferawpointer-原始指针">UnsafeRawPointer ：原始指针</a>
+    <li><a href="#unsaferawpointer-原始指针"><code>UnsafeRawPointer</code> ：原始指针</a>
       <ul>
-        <li><a href="#1-通过已有-unsafepointert-获取">1. 通过已有 UnsafePointer<T> 获取</a></li>
+        <li><a href="#1-通过已有-unsafepointert-获取">1. 通过已有 <code>UnsafePointer&lt;T&gt;</code> 获取</a></li>
         <li><a href="#2-通过已有变量获取">2. 通过已有变量获取</a></li>
-        <li><a href="#3-从-data-中获取">3. 从 Data 中获取</a></li>
+        <li><a href="#3-从-data-中获取">3. 从 <code>Data</code> 中获取</a></li>
         <li><a href="#4-直接分配内存">4. 直接分配内存</a></li>
       </ul>
     </li>
     <li><a href="#内存绑定-api">内存绑定 API</a>
       <ul>
-        <li><a href="#assumingmemoryboundto">assumingMemoryBound(to:)</a></li>
-        <li><a href="#bindmemorytocapacity">bindMemory(to:capacity:)</a></li>
-        <li><a href="#withmemoryreboundtocapacitybody">withMemoryRebound(to:capacity:body:)</a></li>
+        <li><a href="#assumingmemoryboundto"><code>assumingMemoryBound(to:)</code></a></li>
+        <li><a href="#bindmemorytocapacity"><code>bindMemory(to:capacity:)</code></a></li>
+        <li><a href="#withmemoryreboundtocapacitybody"><code>withMemoryRebound(to:capacity:body:)</code></a></li>
         <li><a href="#总结">总结</a></li>
       </ul>
     </li>
@@ -300,18 +300,18 @@
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901110932.png" alt=""></p>
 <p>下面有一个非常不安全的例子，你可能会被从 C 移植而来的 Swift 代码调用部分旧 C 代码的样子吓到。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">Image</span> {
-    <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+    <span style="color:#6272a4">// ...</span>
 }
 
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">未</span><span style="color:#6272a4">定</span><span style="color:#6272a4">义</span><span style="color:#6272a4">行</span><span style="color:#6272a4">为</span><span style="color:#6272a4">可</span><span style="color:#6272a4">能</span><span style="color:#6272a4">导</span><span style="color:#6272a4">致</span><span style="color:#6272a4">数</span><span style="color:#6272a4">据</span><span style="color:#6272a4">丢</span><span style="color:#6272a4">失</span>
+<span style="color:#6272a4">// 未定义行为可能导致数据丢失</span>
 <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">Collage</span> {
     <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">imageData</span>: <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;Image&gt;?
     <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">imageCount</span>: <span style="color:#8be9fd;font-style:italic">Int</span> = <span style="color:#bd93f9">0</span>
 }
 
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">C</span><span style="color:#6272a4"> </span><span style="color:#6272a4">风</span><span style="color:#6272a4">格</span><span style="color:#6272a4">的</span><span style="color:#6272a4"> </span><span style="color:#6272a4">A</span><span style="color:#6272a4">P</span><span style="color:#6272a4">I</span><span style="color:#6272a4"> </span><span style="color:#6272a4">需</span><span style="color:#6272a4">要</span><span style="color:#6272a4"> </span><span style="color:#6272a4">I</span><span style="color:#6272a4">n</span><span style="color:#6272a4">t</span><span style="color:#6272a4"> </span><span style="color:#6272a4">的</span><span style="color:#6272a4">指</span><span style="color:#6272a4">针</span><span style="color:#6272a4">传</span><span style="color:#6272a4">入</span><span style="color:#6272a4"> </span>
+<span style="color:#6272a4">// C 风格的 API 需要 Int 的指针传入 </span>
 <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">addImages</span>(<span style="color:#ff79c6">_</span> countPtr: <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">UInt32</span>&gt;) -&gt; <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;Image&gt; {
-    <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+    <span style="color:#6272a4">// ...</span>
     <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">imageData</span> = <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;Image&gt;.allocate(capacity: <span style="color:#bd93f9">1</span>)
     imageData[<span style="color:#bd93f9">0</span>] = Image()
     countPtr.pointee <span style="color:#ff79c6">+=</span> <span style="color:#bd93f9">1</span>
@@ -319,16 +319,16 @@
 }
 
 <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">saveImages</span>(<span style="color:#ff79c6">_</span> imageData: <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;Image&gt;, <span style="color:#ff79c6">_</span> count: <span style="color:#8be9fd;font-style:italic">Int</span>) {
-    <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">随</span><span style="color:#6272a4">便</span><span style="color:#6272a4">执</span><span style="color:#6272a4">行</span><span style="color:#6272a4">些</span><span style="color:#6272a4">什</span><span style="color:#6272a4">么</span>
+    <span style="color:#6272a4">// 随便执行些什么</span>
     print(count)
 }
 
 <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">collage</span> = Collage()
 collage.imageData = withUnsafeMutablePointer(to: &amp;collage.imageCount) {
-  	<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">注</span><span style="color:#6272a4">意</span><span style="color:#6272a4">这</span><span style="color:#6272a4">行</span><span style="color:#6272a4">，</span><span style="color:#6272a4">创</span><span style="color:#6272a4">建</span><span style="color:#6272a4">了</span><span style="color:#6272a4">指</span><span style="color:#6272a4">针</span><span style="color:#6272a4">，</span><span style="color:#6272a4">但</span><span style="color:#6272a4">类</span><span style="color:#6272a4">型</span><span style="color:#6272a4">不</span><span style="color:#6272a4">匹</span><span style="color:#6272a4">配</span>
+  	<span style="color:#6272a4">// 注意这行，创建了指针，但类型不匹配</span>
     addImages(UnsafeMutableRawPointer(<span style="color:#8be9fd;font-style:italic">$0</span>).assumingMemoryBound(to: <span style="color:#8be9fd;font-style:italic">UInt32</span>.<span style="color:#ff79c6">self</span>))
 }
-saveImages(collage.imageData!, collage.imageCount) <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">可</span><span style="color:#6272a4">能</span><span style="color:#6272a4">发</span><span style="color:#6272a4">生</span><span style="color:#6272a4"> </span><span style="color:#6272a4">i</span><span style="color:#6272a4">m</span><span style="color:#6272a4">a</span><span style="color:#6272a4">g</span><span style="color:#6272a4">e</span><span style="color:#6272a4">C</span><span style="color:#6272a4">o</span><span style="color:#6272a4">u</span><span style="color:#6272a4">n</span><span style="color:#6272a4">t</span><span style="color:#6272a4"> </span><span style="color:#6272a4">=</span><span style="color:#6272a4">=</span><span style="color:#6272a4"> </span><span style="color:#6272a4">0</span>
+saveImages(collage.imageData!, collage.imageCount) <span style="color:#6272a4">// 可能发生 imageCount == 0</span>
 </code></pre></div><p><code>addImages(:)</code> 调用时将图像数据写入并更新图像数量，<code>Collage</code> 结构中的 imageCount 是 <code>Int</code>，但 <code>addImages(:)</code> 实参需要的是 <code>UInt32</code>。安全的做法是创建匹配的新变量并使用 Swift 的整数转换。然而这里直接创建了指向结构体的指针，那么在之后运行时读取这个数量时，就可能为 0。这里的不同类型告诉了编译器这两个值会属于不同的内存对象中，所以编译器不会更新 <code>Int</code> 的值。也就是说编译器会根据类型信息进行假设，一旦假设有误，会蔓延到编译管道中，最后可能产生意料之外的结果。不同版本的编译器也可能导致不同的结果。</p>
 <p>指针类型导致的 Bug：</p>
 <ul>
@@ -352,12 +352,12 @@ saveImages(collage.imageData!, collage.imageCount) <span style="color:#6272a4">/
 <h3 id="1-通过已有变量获取">1. 通过已有变量获取</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">i</span>: <span style="color:#8be9fd;font-style:italic">Int</span>
 withUnsafePointer(to: i) { (intPtr: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">Int</span>&gt;) <span style="color:#ff79c6">in</span>
-		<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+		<span style="color:#6272a4">// ...</span>
 }
 
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">array</span>: [T]
 array.withUnsafeBufferPointer { (elmentPtr: <span style="color:#8be9fd;font-style:italic">UnsafeBufferPointer</span>&lt;T&gt;) <span style="color:#ff79c6">in</span>
-     <span style="color:#6272a4">//</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+     <span style="color:#6272a4">//...</span>
 }
 </code></pre></div><p>这样获取的指针类型就和原来变量的类型一致。数组则返回数组元素类型的指针。</p>
 <h3 id="2-直接分配内存">2. 直接分配内存</h3>
@@ -383,18 +383,18 @@ tPtr.deallocate()
 <h3 id="2-通过已有变量获取">2. 通过已有变量获取</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">i</span>: <span style="color:#8be9fd;font-style:italic">Int</span>
 withUnsafeBytes(of: i) { (iBytes: UnsafeRawBufferPointer) <span style="color:#ff79c6">in</span>
-    <span style="color:#6272a4">//</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+    <span style="color:#6272a4">//...</span>
 }
 
 
 withUnsafeMutableBytes(of: &amp;i) { (xBytes: UnsafeMutableRawBufferPointer)  <span style="color:#ff79c6">in</span>
-    <span style="color:#6272a4">//</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+    <span style="color:#6272a4">//...</span>
 }
 
 
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">array</span>: [T]
 array.withUnsafeBytes { (elementBytes: UnsafeRawBufferPointer) <span style="color:#ff79c6">in</span>
-    <span style="color:#6272a4">//</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+    <span style="color:#6272a4">//...</span>
 }
 </code></pre></div><p>获取到的 <code>UnsafeRawBufferPointer</code> 和 <code>UnsafeBufferPointer&lt;T&gt;</code> 类似，都是字节的集合。<code>count</code> 是变量类型的内存大小，索引是字节的偏移量，索引的值是对应字节的 <code>UInt</code> 值。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901111115.png" alt=""></p>
@@ -419,7 +419,7 @@ print(readUInt32(data: data))
             byteCount: MemoryLayout&lt;T&gt;.stride <span style="color:#ff79c6">*</span> numValues,
             alignment: MemoryLayout&lt;T&gt;.alignment)
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">tPtr</span> = rawPtr.initializeMemory(<span style="color:#ff79c6">as</span>: T.<span style="color:#ff79c6">self</span>, repeating: t, count: numValues)
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">必</span><span style="color:#6272a4">须</span><span style="color:#6272a4">使</span><span style="color:#6272a4">用</span><span style="color:#6272a4">类</span><span style="color:#6272a4">型</span><span style="color:#6272a4">指</span><span style="color:#6272a4">针</span><span style="color:#6272a4"> </span><span style="color:#6272a4">‘</span><span style="color:#6272a4">t</span><span style="color:#6272a4">P</span><span style="color:#6272a4">t</span><span style="color:#6272a4">r</span><span style="color:#6272a4">’</span><span style="color:#6272a4"> </span><span style="color:#6272a4">进</span><span style="color:#6272a4">行</span><span style="color:#6272a4">析</span><span style="color:#6272a4">构</span>
+<span style="color:#6272a4">// 必须使用类型指针 ‘tPtr’ 进行析构</span>
 </code></pre></div><p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901111232.png" alt=""></p>
 <p>直接分配内存需要负责计算内存大小和字节对齐方式。分配后和类型指针不一样，不会绑定类型，也没有进行构造。通过指定内存绑定的值和类型进行构造，就会返回类型指针。这个过程是单向的，所以没法使用原始指针进行析构，而要通过类型指针。而使用原始指针释放时需要保证它处于未构造的状态。</p>
 <p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/20200901111259.png" alt=""></p>
@@ -436,7 +436,7 @@ print(readUInt32(data: data))
 <p>下面介绍了使用一些必须使用如此危险的 API 的例子，注意这些用法是如何保证安全的。</p>
 <h3 id="assumingmemoryboundto"><code>assumingMemoryBound(to:)</code></h3>
 <p>极少数情况下，代码没有保留类型指针，只有原始指针，但明确知道内存绑定的类型，这时候就需要<code>assmuingMemoryBound(to:)</code> 来告诉编译器预期类型，转换成对应的类型指针（<strong>注意：这里的转换只是让编译器绕过类型检查，并没有实际发生转换</strong>）。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">takesIntPointer</span>(<span style="color:#ff79c6">_</span>: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">Int</span>&gt;) { <span style="color:#6272a4">/*</span><span style="color:#6272a4"> </span><span style="color:#6272a4">e</span><span style="color:#6272a4">l</span><span style="color:#6272a4">i</span><span style="color:#6272a4">d</span><span style="color:#6272a4">e</span><span style="color:#6272a4">d</span><span style="color:#6272a4"> </span><span style="color:#6272a4">*/</span> }
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">takesIntPointer</span>(<span style="color:#ff79c6">_</span>: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">Int</span>&gt;) { <span style="color:#6272a4">/* elided */</span> }
 
 <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">RawContainer</span> {
     <span style="color:#8be9fd;font-style:italic">var</span> <span style="color:#8be9fd;font-style:italic">rawPtr</span>: UnsafeRawPointer
@@ -446,7 +446,7 @@ print(readUInt32(data: data))
 <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">testContainer</span>(numValues: <span style="color:#8be9fd;font-style:italic">Int</span>) {
     <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">intPtr</span> = <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">Int</span>&gt;.allocate(capacity: numValues)
     <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">rc</span> = RawContainer(rawPtr: intPtr, pointsToInt: <span style="color:#ff79c6">true</span>)
-    <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+    <span style="color:#6272a4">// ...</span>
     <span style="color:#ff79c6">if</span> rc.pointsToInt {
         takesIntPointer(rc.rawPtr.assumingMemoryBound(to: <span style="color:#8be9fd;font-style:italic">Int</span>.<span style="color:#ff79c6">self</span>))
     }
@@ -455,7 +455,7 @@ print(readUInt32(data: data))
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">import</span> <span style="color:#50fa7b">Darwin</span>
 
 <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">ThreadContext</span> { 
-  <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4"> </span>
+  <span style="color:#6272a4">// ... </span>
 }
 
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">contextPtr</span> = <span style="color:#8be9fd;font-style:italic">UnsafeMutablePointer</span>&lt;ThreadContext&gt;.allocate(capacity: <span style="color:#bd93f9">1</span>)
@@ -465,14 +465,14 @@ contextPtr.initialize(to: ThreadContext())
   &amp;pthread, <span style="color:#ff79c6">nil</span>,
   { (ptr: UnsafeMutableRawPointer) <span style="color:#ff79c6">in</span>
      <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">contextPtr</span> = ptr.assumingMemoryBound(to: ThreadContext.<span style="color:#ff79c6">self</span>)
-      <span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4"> </span>
+      <span style="color:#6272a4">// ... </span>
       <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
    },
    contextPtr)
 }
 </code></pre></div><p>比如在调用 C API <code>phread_create</code> 时，构造了自定义线程上下文类型的 <code> contextPtr</code>。但是闭包里返回的是抹去类型信息的原始指针（该指针就是传入的指针），这时也需要进行转换。这是因为 C 函数声明里它是一个 <code>void*</code> 类型的实参，在 Swift 中被转换为 <code>UnsafeMutableRawPointer</code>。这种情况在使用 C 的 API 时偶尔会出现，因为没有办法确保类型安全。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">takesIntPointer</span>(<span style="color:#ff79c6">_</span>: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">Int</span>&gt;) { 
-		<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+		<span style="color:#6272a4">// ...</span>
 }
 
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">tuple</span> = (<span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">1</span>, <span style="color:#bd93f9">2</span>)
@@ -481,7 +481,7 @@ withUnsafePointer(to: tuple) { (tuplePtr: <span style="color:#8be9fd;font-style:
 }
 </code></pre></div><p>比如在使用元组获取类型指针时，类型是元组的类型。Swift 实现上确保了元组内存绑定的类型实际上是其元素的类型（元组元素相同的情况下），并在元素跨度的基础上按照元素顺序排列。所以如果需要使用元组中元素的类型指针，就可以通过手动类型擦除再转换得到匹配的类型指针。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">takesIntPointer</span>(<span style="color:#ff79c6">_</span>: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">Int</span>&gt;) { 
- 		<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+ 		<span style="color:#6272a4">// ...</span>
 }
 
 <span style="color:#8be9fd;font-style:italic">struct</span> <span style="color:#50fa7b">MyStruct</span> {
@@ -496,14 +496,14 @@ withUnsafePointer(to: myStruct) { (ptr: <span style="color:#8be9fd;font-style:it
 }
 </code></pre></div><p>结构体也是类似的，获取的类型指针时，类型是结构体的类型。这个时候就可以通过转换为原始指针并加上该属性在结构体中的偏移量（通过 <code>MemoryLayout</code> 的 <code>offset(of:)</code> ）来获得属性的原始指针，然后再转换得到匹配的类型指针。通常，结构体属性的内存布局是不确定的，所以获取的指针只能使用于该属性。由于指向结构体属性比较常用，所以 Swift 提供了一种更简单的做法来避免使用不安全的 API。只需要将结构体的属性作为 inout 实参传入，编译器会隐式转换为该函数实参所声明的不安全指针类型。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">myStruct</span> = MyStruct(status: <span style="color:#ff79c6">true</span>, value: <span style="color:#bd93f9">0</span>)
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">下</span><span style="color:#6272a4">面</span><span style="color:#6272a4">两</span><span style="color:#6272a4">种</span><span style="color:#6272a4">用</span><span style="color:#6272a4">法</span><span style="color:#6272a4">是</span><span style="color:#6272a4">等</span><span style="color:#6272a4">效</span><span style="color:#6272a4">的</span>
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">1</span>
+<span style="color:#6272a4">// 下面两种用法是等效的</span>
+<span style="color:#6272a4">// 1</span>
 withUnsafePointer(to: myStruct) { (ptr: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;MyStruct&gt;) <span style="color:#ff79c6">in</span>
     <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">rawValuePtr</span> = (UnsafeRawPointer(ptr) <span style="color:#ff79c6">+</span> MemoryLayout&lt;MyStruct&gt;.offset(of: \MyStruct.value)<span style="color:#ff79c6">!</span>)
     takesIntPointer(rawValuePtr.assumingMemoryBound(to: <span style="color:#8be9fd;font-style:italic">Int</span>.<span style="color:#ff79c6">self</span>))
 }
 
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">2</span>
+<span style="color:#6272a4">// 2</span>
 takesIntPointer(&amp;myStruct.value)
 </code></pre></div><h3 id="bindmemorytocapacity"><code>bindMemory(to:capacity:)</code></h3>
 <p><code>bindMemory(to:capacity:)</code> 可以用于更改内存绑定的类型。如果内存还没有类型绑定，则将首次绑定为该类型。如果内存已经进行类型绑定，则将重新绑定为该类型，并且内存里所有值都会变成该类型。</p>
@@ -511,28 +511,28 @@ takesIntPointer(&amp;myStruct.value)
 uint16Ptr.initialize(repeating: <span style="color:#bd93f9">0</span>, count: <span style="color:#bd93f9">2</span>)
 <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">int32Ptr</span> = UnsafeMutableRawPointer(uint16Ptr).bindMemory(to: <span style="color:#8be9fd;font-style:italic">Int32</span>.<span style="color:#ff79c6">self</span>, capacity: <span style="color:#bd93f9">1</span>)
 
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">u</span><span style="color:#6272a4">i</span><span style="color:#6272a4">n</span><span style="color:#6272a4">t</span><span style="color:#6272a4">1</span><span style="color:#6272a4">6</span><span style="color:#6272a4">P</span><span style="color:#6272a4">t</span><span style="color:#6272a4">r</span><span style="color:#6272a4"> </span><span style="color:#6272a4">的</span><span style="color:#6272a4">访</span><span style="color:#6272a4">问</span><span style="color:#6272a4">现</span><span style="color:#6272a4">在</span><span style="color:#6272a4">是</span><span style="color:#6272a4">未</span><span style="color:#6272a4">定</span><span style="color:#6272a4">义</span><span style="color:#6272a4">行</span><span style="color:#6272a4">为</span>
+<span style="color:#6272a4">// uint16Ptr 的访问现在是未定义行为</span>
 int32Ptr.deallocate()
 </code></pre></div><p>假设分配了一块容纳两个 <code>UInt16</code> 的内存，通过原始指针调用 <code>bindMemory（to:capacity:)</code>  来改变为单个 <code>UInt32</code>。这时只发生了按位转换，并没有任何普通的类型转换的安全检查，在运行时也没有做任何事情。这实际上只是向编译器声明该内存位置更改了类型。返回的新指针用于访问内存，旧指针访问时将会产生未定义行为，因为每个内存位置只能绑定到一种类型上。</p>
 <p>更改内存绑定的类型并不会在物理上修改内存，但需要把它当作改变内存的全局状态来考虑。</p>
 <p>这并不是类型安全的。首先，它转换了已有的原始字节，所以像原始指针一样，Swift 已经不能确保内存布局里的类型了。其次它比使用原始指针还要危险，因为它会让已有的原类型指针失效。虽然那些指针的地址还有效，但是内存绑定的类型却是不匹配的，所以访问就会无法确定。而且那些指针可能被其他对象（如变量，集合）存储，那么它们也会间接受到影响。它属于 Swift 底层的 <a href="https://en.wikipedia.org/wiki/Language_primitive">原语</a> 之一，而非通常的应用层代码。</p>
 <p>其中一种 <code>bindMemory(to:capacity:)</code> 的常见错误用法是将它从内存中读取不同类型的值，这样可能会影响其他已有指针。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">错</span><span style="color:#6272a4">误</span><span style="color:#6272a4">用</span><span style="color:#6272a4">法</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 错误用法</span>
 <span style="color:#ff79c6">return</span> rawPtr.bindMemory(to: <span style="color:#8be9fd;font-style:italic">UInt32</span>.<span style="color:#ff79c6">self</span>).pointee
 
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">正</span><span style="color:#6272a4">确</span><span style="color:#6272a4">用</span><span style="color:#6272a4">法</span>
+<span style="color:#6272a4">// 正确用法</span>
 <span style="color:#ff79c6">return</span> rawPtr.load(<span style="color:#ff79c6">as</span>: <span style="color:#8be9fd;font-style:italic">UInt32</span>.<span style="color:#ff79c6">self</span>)
 </code></pre></div><h3 id="withmemoryreboundtocapacitybody"><code>withMemoryRebound(to:capacity:body:)</code></h3>
 <p>当有几个外部的 API 的实参类型有数据类型上的差异，但又想避免来回复制数据时，就可以使用 <code>withMemoryRebound(to:capacity:body)</code> 来临时更改内存绑定类型。这种情况在使用 C 的 API 时经常出现。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">takesUInt8Pointer</span>(<span style="color:#ff79c6">_</span>: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">UInt8</span>&gt;) { 
-		<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span><span style="color:#6272a4">.</span>
+		<span style="color:#6272a4">// ...</span>
 }
 
 int8Ptr.withMemoryRebound(to: <span style="color:#8be9fd;font-style:italic">UInt8</span>.<span style="color:#ff79c6">self</span>, capacity: count) { (uint8Ptr: <span style="color:#8be9fd;font-style:italic">UnsafePointer</span>&lt;<span style="color:#8be9fd;font-style:italic">UInt8</span>&gt;) <span style="color:#ff79c6">in</span>
-		<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">i</span><span style="color:#6272a4">n</span><span style="color:#6272a4">t</span><span style="color:#6272a4">8</span><span style="color:#6272a4">P</span><span style="color:#6272a4">t</span><span style="color:#6272a4">r</span><span style="color:#6272a4"> </span><span style="color:#6272a4">不</span><span style="color:#6272a4">能</span><span style="color:#6272a4">在</span><span style="color:#6272a4">闭</span><span style="color:#6272a4">包</span><span style="color:#6272a4">里</span><span style="color:#6272a4">使</span><span style="color:#6272a4">用</span>
+		<span style="color:#6272a4">// int8Ptr 不能在闭包里使用</span>
     takesUInt8Pointer(uint8Ptr)
 }
-<span style="color:#6272a4">//</span><span style="color:#6272a4"> </span><span style="color:#6272a4">u</span><span style="color:#6272a4">i</span><span style="color:#6272a4">n</span><span style="color:#6272a4">t</span><span style="color:#6272a4">8</span><span style="color:#6272a4">P</span><span style="color:#6272a4">t</span><span style="color:#6272a4">r</span><span style="color:#6272a4"> </span><span style="color:#6272a4">不</span><span style="color:#6272a4">能</span><span style="color:#6272a4">在</span><span style="color:#6272a4">闭</span><span style="color:#6272a4">包</span><span style="color:#6272a4">外</span><span style="color:#6272a4">使</span><span style="color:#6272a4">用</span>
+<span style="color:#6272a4">// uint8Ptr 不能在闭包外使用</span>
 </code></pre></div><p>比如 <code>Int8</code> 的类型指针无法直接调用实参为 <code>UInt8</code> 的函数，这里虽然可以重新分配一块匹配类型的内存并复制数据，但是这样速度比较慢。只需要在调用时临时转换一下就好了，这时候就可以使用 <code>withMemoryRebound(to:capacity:body)</code> 临时绑定为对应类型的指针，它的作用域只在闭包内。闭包返回时，将会重新绑定为原始类型。这可以将临时类型指针的访问和其他代码的作用域分开。</p>
 <p>但是它有一些严格的限制：</p>
 <ul>
@@ -591,7 +591,7 @@ int8Ptr.withMemoryRebound(to: <span style="color:#8be9fd;font-style:italic">UInt
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>114</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>160</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -620,7 +620,7 @@ int8Ptr.withMemoryRebound(to: <span style="color:#8be9fd;font-style:italic">UInt
   </section>
   
 <footer class="site-footer">
-  <p>© 2017-2020 Nemocdz&#39;s Blog</p>
+  <p>© 2017-2021 Nemocdz&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>

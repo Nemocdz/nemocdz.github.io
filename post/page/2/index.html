@@ -48,7 +48,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.74.3">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/">
@@ -211,6 +211,34 @@
       
         <article class="post-entry">
   <header class="post-header">
+    <h3 class="post-title"><a href="https://nemocdz.github.io/post/webrtc-native-%E6%A8%A1%E5%9D%97%E5%8D%95%E7%8B%AC%E7%BC%96%E8%AF%91%E9%9D%99%E6%80%81%E5%BA%93ios/" class="post-link">WebRTC Native 模块单独编译静态库（iOS）</a></h3>
+    <p class="post-meta">@Nemocdz · Dec 31, 2019 · 1 min read</p>
+  </header>
+  
+  <p class="post-summary">项目里面用到了 WebRTC 某些模块，以前是源码拷贝集成的。这样不仅需要处理平台的宏（WebRTC Native 跨平台），而且升级版本也会涉及依赖等问题，所以探索了一下怎么用编码编译出可用的静态库。
+</p>
+  <footer class="post-footer">
+    <a class="read-more" href="https://nemocdz.github.io/post/webrtc-native-%E6%A8%A1%E5%9D%97%E5%8D%95%E7%8B%AC%E7%BC%96%E8%AF%91%E9%9D%99%E6%80%81%E5%BA%93ios/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
+    <h3 class="post-title"><a href="https://nemocdz.github.io/post/swift-ui-%E5%88%9D%E6%8E%A2/" class="post-link">SwiftUI 初探</a></h3>
+    <p class="post-meta">@Nemocdz · Dec 30, 2019 · 4 min read</p>
+  </header>
+  
+  <p class="post-summary">十月份参加极光黑客马拉松一天时间写了个简单的 火车票 OCR 应用“票夹”，当时由于时间和熟练程度原因，并没有试下今年 WWDC 刚推出的 SwiftUI 框架。最近抽空用了 SwiftUI &#43; Combine 进行重写，顺便感受了一下这两个新框架的魅力。先说个人感受，SwiftUI 看起来挺美好的，但是目前有 Bug 和完善度不高，比较适合用在不关心设计的 Demo 或者个人功能性项目上。Combine 完成度尚可，但 Xcode 对复杂闭包的自动推断经常失效，比较影响编码体验。
+</p>
+  <footer class="post-footer">
+    <a class="read-more" href="https://nemocdz.github.io/post/swift-ui-%E5%88%9D%E6%8E%A2/">Read More →</a>
+  </footer>
+</article>
+
+      
+        <article class="post-entry">
+  <header class="post-header">
     <h3 class="post-title"><a href="https://nemocdz.github.io/post/apple-%E5%AE%98%E6%96%B9%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%A1%86%E6%9E%B6swift-combine-%E5%BA%94%E7%94%A8/" class="post-link">Apple 官方异步编程框架：Swift Combine 应用</a></h3>
     <p class="post-meta">@Nemocdz · Sep 23, 2019 · 6 min read</p>
   </header>
@@ -275,37 +303,6 @@
 </article>
 
       
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://nemocdz.github.io/post/%E4%BD%BF%E7%94%A8-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC%E7%AE%80%E5%8D%95%E6%9E%84%E5%BB%BA-attributestring/" class="post-link">使用 Swift 5 字符串插值快速构建 AttributeString</a></h3>
-    <p class="post-meta">@Nemocdz · Sep 5, 2019 · 1 min read</p>
-  </header>
-  
-  <p class="post-summary">一直以来，在 Cocoa 体系里构建富文本是一件很繁琐的事情，使用 Foundation 框架里的 NSAttributeString 来进行构建，有着要区分可变与不可变，传入需要查阅文档的参数字典，没有类型检查等种种别扭之处。Swift 5 出现的新字符串插值特性，让处理自定义字符串字面量成为可能。
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://nemocdz.github.io/post/%E4%BD%BF%E7%94%A8-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC%E7%AE%80%E5%8D%95%E6%9E%84%E5%BB%BA-attributestring/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://nemocdz.github.io/post/%E8%AF%91-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC-attributedstrings/" class="post-link">[译] Swift 5 字符串插值-AttributedStrings</a></h3>
-    <p class="post-meta">@Nemocdz · Apr 23, 2019 · 4 min read</p>
-  </header>
-  
-  <p class="post-summary"> 作者：Olivier Halligon
-原文链接：StringInterpolation in Swift 5 — AttributedStrings
-原文日期：2018-12-16
- 我们已经在 前文 里介绍了 Swift 5 全新的 StringInterpolation 设计。在这第二部分中，我会着眼于 ExpressibleByStringInterpolation 其中一种应用，让 NSAttributedString 变得更优雅。
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://nemocdz.github.io/post/%E8%AF%91-swift-5-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%80%BC-attributedstrings/">Read More →</a>
-  </footer>
-</article>
-
-      
     
     
       <footer class="list-footer">
@@ -323,7 +320,7 @@
   </section>
   
 <footer class="site-footer">
-  <p>© 2017-2020 Nemocdz&#39;s Blog</p>
+  <p>© 2017-2021 Nemocdz&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>

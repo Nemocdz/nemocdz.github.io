@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.74.3">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/ios-%E5%8E%9F%E7%94%9F%E4%BA%8C%E7%BB%B4%E7%A0%81%E7%95%8C%E9%9D%A2%E7%9A%84%E4%B8%80%E4%BA%9B%E6%B3%A8%E6%84%8F%E7%82%B9/">
@@ -236,7 +236,7 @@
 <p>像微信等很多二维码扫描界面，总有一个上下移动的扫描线动画。一开始用我用 <code>NSTimer</code> 配合 View 的 frame 改变实现，后来发现不仅容易导致 <code>NSTimer</code> 的循环引用，外界调用也容易开启多个定时器，已经在某些时候动画会卡顿。便换成了用 <code>CABasicAnimation</code> 实现，通过改变 View 的 y 值，并把设置 repeatCount 为最大，达到扫描线上下动的效果。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">addScanLineAnimation</span>{
     <span style="color:#8be9fd;font-style:italic">self</span>.scanLine.hidden <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">NO</span>;
-    CABasicAnimation <span style="color:#ff79c6">*</span>animation <span style="color:#ff79c6">=</span> [CABasicAnimation <span style="color:#8be9fd;font-style:italic">animationWithKeyPath</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">transform.translation.y</span><span style="color:#f1fa8c">&#34;</span>];
+    CABasicAnimation <span style="color:#ff79c6">*</span>animation <span style="color:#ff79c6">=</span> [CABasicAnimation <span style="color:#8be9fd;font-style:italic">animationWithKeyPath</span>:<span style="color:#f1fa8c">@&#34;transform.translation.y&#34;</span>];
     animation.fromValue <span style="color:#ff79c6">=</span> @(<span style="color:#bd93f9">0</span>);
     animation.toValue <span style="color:#ff79c6">=</span> @(<span style="color:#8be9fd;font-style:italic">self</span>.scanRect.size.height <span style="color:#ff79c6">-</span> scanLineWidth);
     animation.duration <span style="color:#ff79c6">=</span> scanTime;
@@ -272,7 +272,7 @@
 </code></pre></div><h2 id="3设置-avfoundation-原生二维码类的一些容易崩溃的地方">3.设置 AVFoundation 原生二维码类的一些容易崩溃的地方</h2>
 <p>具体相关类别在上篇 <a href="http://www.jianshu.com/p/ad7827a8a0e6">文章</a> 已经有所介绍，讲讲一些容易崩溃的点，崩溃主要集中在设置 <code>AVCaptureMetadataOutput</code> 的 metadaObjectTypes 属性时，所以在设置这个数组时，最好先检查数组里的值是否在其 availableMetaDataObjectTypes 属性里。像这样</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>[<span style="color:#8be9fd;font-style:italic">self</span>.dataOutput.availableMetadataObjectTypes <span style="color:#8be9fd;font-style:italic">containsObject</span>:AVMetadataObjectTypeQRCode]) {
-     NSLog(<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">The camera unsupport for QRCode.</span><span style="color:#f1fa8c">&#34;</span>);
+     NSLog(<span style="color:#f1fa8c">@&#34;The camera unsupport for QRCode.&#34;</span>);
 }
 <span style="color:#8be9fd;font-style:italic">self</span>.dataOutput.metadataObjectTypes <span style="color:#ff79c6">=</span> @[AVMetadataObjectTypeQRCode];
 </code></pre></div><p>而一般的崩溃是因为 availableMetaDataObjectTypes 为空，而造成空的原因是 <code>AVCaptureSession</code> 没有 addInput 和 addOutput 造成。其中 input 有一个需要注意的地方，在 <code>setSessionPreset</code>，也就是取样的视频分辨率的时候，如果设置了一个摄像头不支持的分辨率，那么 input 的 <code>canAddInput</code> 会返回 NO。并不是所有设备都支持 1080p  视频分辨率的，所以我们在 <code>setSessionPreset</code> 时，可以这样</p>
@@ -297,7 +297,7 @@
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1320</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1366</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -326,7 +326,7 @@
   </section>
   
 <footer class="site-footer">
-  <p>© 2017-2020 Nemocdz&#39;s Blog</p>
+  <p>© 2017-2021 Nemocdz&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>

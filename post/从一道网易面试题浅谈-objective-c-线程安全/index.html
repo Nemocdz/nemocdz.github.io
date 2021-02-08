@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.74.3">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E4%BB%8E%E4%B8%80%E9%81%93%E7%BD%91%E6%98%93%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B5%85%E8%B0%88-objective-c-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/">
@@ -237,10 +237,10 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c"><span style="color:#ff79c6">@property</span> (<span style="color:#ff79c6">nonatomic</span>, <span style="color:#ff79c6">strong</span>) NSString <span style="color:#ff79c6">*</span>target;
 <span style="color:#6272a4">//....
 </span><span style="color:#6272a4"></span>
-dispatch_queue_t queue <span style="color:#ff79c6">=</span> dispatch_queue_create(<span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">parallel</span><span style="color:#f1fa8c">&#34;</span>, DISPATCH_QUEUE_CONCURRENT);
-<span style="color:#ff79c6">for</span> (<span style="color:#8be9fd">int</span> i <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; i <span style="color:#ff79c6">&lt;</span> <span style="color:#bd93f9">1000000</span> ; i<span style="color:#ff79c6">+</span><span style="color:#ff79c6">+</span>) {
+dispatch_queue_t queue <span style="color:#ff79c6">=</span> dispatch_queue_create(<span style="color:#f1fa8c">&#34;parallel&#34;</span>, DISPATCH_QUEUE_CONCURRENT);
+<span style="color:#ff79c6">for</span> (<span style="color:#8be9fd">int</span> i <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>; i <span style="color:#ff79c6">&lt;</span> <span style="color:#bd93f9">1000000</span> ; i<span style="color:#ff79c6">++</span>) {
 	dispatch_async(queue, <span style="color:#ff79c6">^</span>{
-     	<span style="color:#8be9fd;font-style:italic">self</span>.target <span style="color:#ff79c6">=</span> [NSString <span style="color:#8be9fd;font-style:italic">stringWithFormat</span>:<span style="color:#f1fa8c">@&#34;</span><span style="color:#f1fa8c">ksddkjalkjd%d</span><span style="color:#f1fa8c">&#34;</span>,i];
+     	<span style="color:#8be9fd;font-style:italic">self</span>.target <span style="color:#ff79c6">=</span> [NSString <span style="color:#8be9fd;font-style:italic">stringWithFormat</span>:<span style="color:#f1fa8c">@&#34;ksddkjalkjd%d&#34;</span>,i];
 	});
 }
 </code></pre></div><p>当时我把自定义的队列看成了串行队列，然后回答：“没错呀”。后来一运行崩溃了……</p>
@@ -264,15 +264,15 @@ dispatch_queue_t queue <span style="color:#ff79c6">=</span> dispatch_queue_creat
 <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">_object_setIvar</span>(id obj, Ivar ivar, id value, <span style="color:#8be9fd">bool</span> assumeStrong)
 {
     <span style="color:#6272a4">//判断是否是 TaggedPointer
-</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>obj  <span style="color:#ff79c6">|</span><span style="color:#ff79c6">|</span>  <span style="color:#ff79c6">!</span>ivar  <span style="color:#ff79c6">|</span><span style="color:#ff79c6">|</span>  obj<span style="color:#ff79c6">-</span><span style="color:#ff79c6">&gt;</span>isTaggedPointer()) <span style="color:#ff79c6">return</span>;
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>obj  <span style="color:#ff79c6">||</span>  <span style="color:#ff79c6">!</span>ivar  <span style="color:#ff79c6">||</span>  obj<span style="color:#ff79c6">-&gt;</span>isTaggedPointer()) <span style="color:#ff79c6">return</span>;
 
     ptrdiff_t offset;
     objc_ivar_memory_management_t memoryManagement;
     <span style="color:#6272a4">//找对应的内存管理语义和属性偏移值
-</span><span style="color:#6272a4"></span>    _class_lookUpIvar(obj<span style="color:#ff79c6">-</span><span style="color:#ff79c6">&gt;</span>ISA(), ivar, offset, memoryManagement);
+</span><span style="color:#6272a4"></span>    _class_lookUpIvar(obj<span style="color:#ff79c6">-&gt;</span>ISA(), ivar, offset, memoryManagement);
 
     <span style="color:#6272a4">//如果找不到默认是否为 Strong，不然为 unsafe_unretained
-</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (memoryManagement <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> objc_ivar_memoryUnknown) {
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> (memoryManagement <span style="color:#ff79c6">==</span> objc_ivar_memoryUnknown) {
         <span style="color:#ff79c6">if</span> (assumeStrong) memoryManagement <span style="color:#ff79c6">=</span> objc_ivar_memoryStrong;
         <span style="color:#ff79c6">else</span> memoryManagement <span style="color:#ff79c6">=</span> objc_ivar_memoryUnretained;
     }
@@ -285,7 +285,7 @@ dispatch_queue_t queue <span style="color:#ff79c6">=</span> dispatch_queue_creat
     <span style="color:#ff79c6">case</span> <span style="color:#8be9fd;font-style:italic">objc_ivar_memoryWeak</span>:       objc_storeWeak(location, value); <span style="color:#ff79c6">break</span>;
     <span style="color:#ff79c6">case</span> <span style="color:#8be9fd;font-style:italic">objc_ivar_memoryStrong</span>:     objc_storeStrong(location, value); <span style="color:#ff79c6">break</span>;
     <span style="color:#ff79c6">case</span> <span style="color:#8be9fd;font-style:italic">objc_ivar_memoryUnretained</span>: <span style="color:#ff79c6">*</span>location <span style="color:#ff79c6">=</span> value; <span style="color:#ff79c6">break</span>;
-    <span style="color:#ff79c6">case</span> <span style="color:#8be9fd;font-style:italic">objc_ivar_memoryUnknown</span>:    _objc_fatal(<span style="color:#f1fa8c"></span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">impossible</span><span style="color:#f1fa8c">&#34;</span>);
+    <span style="color:#ff79c6">case</span> <span style="color:#8be9fd;font-style:italic">objc_ivar_memoryUnknown</span>:    _objc_fatal(<span style="color:#f1fa8c">&#34;impossible&#34;</span>);
     }
 }
 </code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#6272a4">//NSObject.mm
@@ -294,7 +294,7 @@ dispatch_queue_t queue <span style="color:#ff79c6">=</span> dispatch_queue_creat
 {   
     <span style="color:#6272a4">//如果新值指针和旧值一样，则不更新，直接 return
 </span><span style="color:#6272a4"></span>    id prev <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">*</span>location;
-    <span style="color:#ff79c6">if</span> (obj <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> prev) {
+    <span style="color:#ff79c6">if</span> (obj <span style="color:#ff79c6">==</span> prev) {
         <span style="color:#ff79c6">return</span>;
     }
     <span style="color:#6272a4">//先对新值 retain
@@ -306,7 +306,7 @@ dispatch_queue_t queue <span style="color:#ff79c6">=</span> dispatch_queue_creat
 }
 </code></pre></div><p>那么他的 Setter 方法在 MRC 上就相当于</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objective-c" data-lang="objective-c">- (<span style="color:#8be9fd">void</span>)<span style="color:#50fa7b">setTarget:</span>(NSString <span style="color:#ff79c6">*</span>)<span style="color:#8be9fd;font-style:italic">target</span> {
-    <span style="color:#ff79c6">if</span> (target <span style="color:#ff79c6">=</span><span style="color:#ff79c6">=</span> _target) <span style="color:#ff79c6">return</span>;
+    <span style="color:#ff79c6">if</span> (target <span style="color:#ff79c6">==</span> _target) <span style="color:#ff79c6">return</span>;
     <span style="color:#8be9fd">id</span> pre <span style="color:#ff79c6">=</span> _target;
     <span style="color:#6272a4">//1.先保留新值
 </span><span style="color:#6272a4"></span>    [target <span style="color:#ff79c6">retain</span>];
@@ -345,7 +345,7 @@ dispatch_queue_t queue <span style="color:#ff79c6">=</span> dispatch_queue_creat
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1217</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>1263</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -374,7 +374,7 @@ dispatch_queue_t queue <span style="color:#ff79c6">=</span> dispatch_queue_creat
   </section>
   
 <footer class="site-footer">
-  <p>© 2017-2020 Nemocdz&#39;s Blog</p>
+  <p>© 2017-2021 Nemocdz&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>

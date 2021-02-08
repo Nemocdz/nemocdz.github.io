@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.62.2">
+<meta name="generator" content="Hugo 0.74.3">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F-typescript-%E5%B0%9D%E8%AF%95/">
@@ -230,7 +230,7 @@
     <li><a href="#小程序对-typescript-的支持">小程序对 TypeScript 的支持</a>
       <ul>
         <li><a href="#事件">事件</a></li>
-        <li><a href="#pagedata">Page&Data</a></li>
+        <li><a href="#pagedata">Page&amp;Data</a></li>
         <li><a href="#调用-javascript">调用 JavaScript</a></li>
       </ul>
     </li>
@@ -261,16 +261,16 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#ff79c6">declare</span> <span style="color:#ff79c6">const</span> Page: <span style="color:#8be9fd">Page.PageConstructor</span>
 
 <span style="color:#ff79c6">interface</span> PageConstructor {
-    <span style="color:#ff79c6">&lt;</span>D <span style="color:#ff79c6">extends</span> IAnyObject, T <span style="color:#ff79c6">extends</span> IAnyObject <span style="color:#ff79c6">&amp;</span> PageInstance<span style="color:#ff79c6">&gt;</span>(
-      options: <span style="color:#8be9fd">PageInstance</span><span style="color:#ff79c6">&lt;</span>D, T<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">&amp;</span> T
+    &lt;<span style="color:#ff79c6">D</span> <span style="color:#50fa7b">extends</span> <span style="color:#50fa7b">IAnyObject</span>, <span style="color:#50fa7b">T</span> <span style="color:#50fa7b">extends</span> <span style="color:#50fa7b">IAnyObject</span> &amp; <span style="color:#50fa7b">PageInstance</span>&gt;(
+      options: <span style="color:#8be9fd">PageInstance</span>&lt;<span style="color:#ff79c6">D</span>, <span style="color:#50fa7b">T</span>&gt; <span style="color:#ff79c6">&amp;</span> T
     )<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">void</span>
   }
 </code></pre></div><p>也就是说，它支持 D 和 T 两个范型。这两个范型是什么呢？小程序里，<code>Page</code> 是这么写的。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript">Page({});
 </code></pre></div><p>也就是说，options 参数就是一个 <code>PageInstance</code>，范型也被传入了。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#ff79c6">interface</span> PageInstance<span style="color:#ff79c6">&lt;</span>D <span style="color:#ff79c6">extends</span> IAnyObject <span style="color:#ff79c6">=</span> any, T <span style="color:#ff79c6">extends</span> IAnyObject <span style="color:#ff79c6">=</span> any<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">extends</span> PageInstanceBaseProps<span style="color:#ff79c6">&lt;</span>D<span style="color:#ff79c6">&gt;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#ff79c6">interface</span> PageInstance&lt;<span style="color:#ff79c6">D</span> <span style="color:#50fa7b">extends</span> <span style="color:#50fa7b">IAnyObject </span><span style="color:#ff79c6">=</span> <span style="color:#50fa7b">any</span>, <span style="color:#50fa7b">T</span> <span style="color:#50fa7b">extends</span> <span style="color:#50fa7b">IAnyObject </span><span style="color:#ff79c6">=</span> <span style="color:#50fa7b">any</span>&gt; <span style="color:#ff79c6">extends</span> PageInstanceBaseProps&lt;<span style="color:#ff79c6">D</span>&gt;
 </code></pre></div><p><code>PageInstance</code> 里面定义了 <code>Page</code> 声明周期的方法，而且继承自 <code>PageInstanceBaseProps</code>，并将范型 D 传入。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#ff79c6">interface</span> PageInstanceBaseProps<span style="color:#ff79c6">&lt;</span>D <span style="color:#ff79c6">extends</span> IAnyObject <span style="color:#ff79c6">=</span> any<span style="color:#ff79c6">&gt;</span> {
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#ff79c6">interface</span> PageInstanceBaseProps&lt;<span style="color:#ff79c6">D</span> <span style="color:#50fa7b">extends</span> <span style="color:#50fa7b">IAnyObject </span><span style="color:#ff79c6">=</span> <span style="color:#50fa7b">any</span>&gt; {
     data?: <span style="color:#8be9fd">D</span>
     <span style="color:#6272a4">//...
 </span><span style="color:#6272a4"></span>}
@@ -288,18 +288,18 @@
     test: <span style="color:#8be9fd">string</span>;
 }
 
-Page<span style="color:#ff79c6">&lt;</span>IIntroData, IIntroPage<span style="color:#ff79c6">&gt;</span>({
+Page&lt;<span style="color:#ff79c6">IIntroData</span>, <span style="color:#50fa7b">IIntroPage</span>&gt;({
     isLoading: <span style="color:#8be9fd">false</span>,
 	nextButtonTap(event: <span style="color:#8be9fd">any</span>) {
         <span style="color:#ff79c6">this</span>.isLoading <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">true</span>;
 	}
 });
 </code></pre></div><p>如果这个页面不需要 data 或者不需要扩展 page，用 <code>IAnyObject</code> 代替 D 或者 T 即可。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#ff79c6">interface</span> PageInstanceBaseProps<span style="color:#ff79c6">&lt;</span>D <span style="color:#ff79c6">extends</span> IAnyObject <span style="color:#ff79c6">=</span> any<span style="color:#ff79c6">&gt;</span> {
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#ff79c6">interface</span> PageInstanceBaseProps&lt;<span style="color:#ff79c6">D</span> <span style="color:#50fa7b">extends</span> <span style="color:#50fa7b">IAnyObject </span><span style="color:#ff79c6">=</span> <span style="color:#50fa7b">any</span>&gt; {
     data?: <span style="color:#8be9fd">D</span>
-    setData<span style="color:#ff79c6">?</span><span style="color:#ff79c6">&lt;</span>K <span style="color:#ff79c6">extends</span> keyof D<span style="color:#ff79c6">&gt;</span>(
-      data: <span style="color:#8be9fd">D</span> <span style="color:#ff79c6">|</span> Pick<span style="color:#ff79c6">&lt;</span>D, K<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">|</span> IAnyObject,
-      callback<span style="color:#ff79c6">?</span><span style="color:#ff79c6">:</span> () <span style="color:#ff79c6">=</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">void</span>
+    setData<span style="color:#ff79c6">?</span>&lt;<span style="color:#ff79c6">K</span> <span style="color:#50fa7b">extends</span> <span style="color:#50fa7b">keyof</span> <span style="color:#50fa7b">D</span>&gt;(
+      data: <span style="color:#8be9fd">D</span> <span style="color:#ff79c6">|</span> Pick&lt;<span style="color:#ff79c6">D</span>, <span style="color:#50fa7b">K</span>&gt; <span style="color:#ff79c6">|</span> IAnyObject,
+      callback<span style="color:#ff79c6">?:</span> () <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">void</span>
     )<span style="color:#ff79c6">:</span> <span style="color:#ff79c6">void</span>
 }
 </code></pre></div><p>同时，由于 <code>setData</code> 和 data 都被声明为可选项，使用时需要加上 <code>!</code>，<code>this.setData!({})</code> 和 <code>this.data!</code>。</p>
@@ -311,7 +311,7 @@ Page<span style="color:#ff79c6">&lt;</span>IIntroData, IIntroPage<span style="co
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>694</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>739</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -340,7 +340,7 @@ Page<span style="color:#ff79c6">&lt;</span>IIntroData, IIntroPage<span style="co
   </section>
   
 <footer class="site-footer">
-  <p>© 2017-2020 Nemocdz&#39;s Blog</p>
+  <p>© 2017-2021 Nemocdz&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>
