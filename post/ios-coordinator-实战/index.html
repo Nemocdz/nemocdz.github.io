@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
 
   
-  <title>《C 陷阱与缺陷》读书笔记</title>
+  <title>iOS Coordinator 实战</title>
 
   
   
@@ -26,22 +26,25 @@
 
   
   
-  <meta name="description" content="多字符记号  输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号 组合赋值运算符是两个记号，如 &#43;= ">
+  <meta name="description" content="现状 大部分 iOS 开发者会在 UIViewController 里编写 present/push 的代码展示另一个 UIViewController，也习惯响应关闭按钮的点击事件后调用 dismiss / pop 来关闭自身。
+">
 
   
   
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@Nemocdz">
-    <meta name="twitter:title" content="《C 陷阱与缺陷》读书笔记">
-    <meta name="twitter:description" content="多字符记号  输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号 组合赋值运算符是两个记号，如 &#43;= ">
+    <meta name="twitter:title" content="iOS Coordinator 实战">
+    <meta name="twitter:description" content="现状 大部分 iOS 开发者会在 UIViewController 里编写 present/push 的代码展示另一个 UIViewController，也习惯响应关闭按钮的点击事件后调用 dismiss / pop 来关闭自身。
+">
     <meta name="twitter:image" content="/images/avatar.png">
   
 
   
   <meta property="og:type" content="article">
-  <meta property="og:title" content="《C 陷阱与缺陷》读书笔记">
-  <meta property="og:description" content="多字符记号  输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号 组合赋值运算符是两个记号，如 &#43;= ">
-  <meta property="og:url" content="https://nemocdz.github.io/post/c-%E9%99%B7%E9%98%B1%E4%B8%8E%E7%BC%BA%E9%99%B7%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
+  <meta property="og:title" content="iOS Coordinator 实战">
+  <meta property="og:description" content="现状 大部分 iOS 开发者会在 UIViewController 里编写 present/push 的代码展示另一个 UIViewController，也习惯响应关闭按钮的点击事件后调用 dismiss / pop 来关闭自身。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/ios-coordinator-%E5%AE%9E%E6%88%98/">
   <meta property="og:image" content="/images/avatar.png">
 
 
@@ -50,7 +53,7 @@
 <meta name="generator" content="Hugo 0.79.1">
 
 
-<link rel="canonical" href="https://nemocdz.github.io/post/c-%E9%99%B7%E9%98%B1%E4%B8%8E%E7%BC%BA%E9%99%B7%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
+<link rel="canonical" href="https://nemocdz.github.io/post/ios-coordinator-%E5%AE%9E%E6%88%98/">
 
 <meta name="renderer" content="webkit">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -66,12 +69,10 @@
 <meta name="sogou_site_verification" content="YPqjjJgiSh">
 <meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
 
-<meta name="keywords" content="Swift, iOS, OC, Objective-C" >
+<meta name="keywords" content="Coordinator, Swift, iOS, UIViewController, FlowController" >
 
-<meta name='description' itemprop="description" content="&lt;h2 id=&#34;多字符记号&#34;&gt;多字符记号&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号&lt;/li&gt;
-&lt;li&gt;组合赋值运算符是两个记号，如 &lt;c">
+<meta name='description' itemprop="description" content="&lt;h2 id=&#34;现状&#34;&gt;现状&lt;/h2&gt;
+&lt;p&gt;大部分 iOS 开发者会在 &lt;code&gt;UIViewController&lt;/code&gt; 里编写 &lt;code&gt;present&lt;/code&gt;/&lt;code&gt;pu">
 
 
 <meta name="theme-color" content="#02b875">
@@ -213,93 +214,84 @@
 
   <section class="main post-detail">
     <header class="post-header">
-      <h1 class="post-title">《C 陷阱与缺陷》读书笔记</h1>
-      <p class="post-meta">@Nemocdz · Jul 13, 2017 · 1 min read</p>
+      <h1 class="post-title">iOS Coordinator 实战</h1>
+      <p class="post-meta">@Nemocdz · Jun 13, 2021 · 1 min read</p>
     </header>
 
     
 	
 	<nav id="TableOfContents">
   <ul>
-    <li><a href="#多字符记号">多字符记号</a></li>
-    <li><a href="#单引号与双引号">单引号与双引号</a></li>
-    <li><a href="#声明">声明</a></li>
-    <li><a href="#函数调用">函数调用</a></li>
-    <li><a href="#表达式求值顺序">表达式求值顺序</a></li>
-    <li><a href="#函数参数转换">函数参数转换</a></li>
-    <li><a href="#指针非数组">指针非数组</a></li>
-    <li><a href="#除法">除法</a></li>
+    <li><a href="#现状">现状</a></li>
+    <li><a href="#如何改进">如何改进</a></li>
+    <li><a href="#第一次重构">第一次重构</a></li>
+    <li><a href="#第二次重构">第二次重构</a></li>
+    <li><a href="#第三次重构">第三次重构</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
   </ul>
 </nav>
 
-    <article class="post-content"><h2 id="多字符记号">多字符记号</h2>
-<ul>
-<li>输入流到给定字符串，识别成记号后，会尽可能包含之后字符构成最长字符串作为记号</li>
-<li>组合赋值运算符是两个记号，如 <code>+=</code></li>
-</ul>
-<h2 id="单引号与双引号">单引号与双引号</h2>
-<ul>
-<li>单引号是当中字符对照整数序列的值</li>
-<li>双引号是初始化一个无名数组指针包括挡住字符和一个附近二进制为 0 的字符</li>
-</ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">printf(<span style="color:#f1fa8c">&#34;Hello world</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>);
-<span style="color:#6272a4">//等价于
-</span><span style="color:#6272a4"></span><span style="color:#8be9fd">char</span> hello[] <span style="color:#ff79c6">=</span> { <span style="color:#f1fa8c">&#39;H&#39;</span>, <span style="color:#f1fa8c">&#39;e&#39;</span>, <span style="color:#f1fa8c">&#39;l&#39;</span>, <span style="color:#f1fa8c">&#39;l&#39;</span>, <span style="color:#f1fa8c">&#39;o&#39;</span>, <span style="color:#f1fa8c">&#39; &#39;</span>, <span style="color:#f1fa8c">&#39;w&#39;</span>, <span style="color:#f1fa8c">&#39;o&#39;</span>, <span style="color:#f1fa8c">&#39;r&#39;</span>, <span style="color:#f1fa8c">&#39;l&#39;</span>, <span style="color:#f1fa8c">&#39;d&#39;</span>, <span style="color:#f1fa8c">&#39;\n&#39;</span>, <span style="color:#bd93f9">0</span> };
-printf(hello);
-</code></pre></div><h2 id="声明">声明</h2>
-<p>变量声明=类型+对该类型求值的表达式</p>
-<p>类型的模型=变量声明去除变量名和分号后用括号括起来</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#8be9fd">float</span> <span style="color:#ff79c6">*</span><span style="color:#50fa7b">a</span>();
-<span style="color:#6272a4">//a是一个返回float指针的函数，模型为
-</span><span style="color:#6272a4"></span>(<span style="color:#8be9fd">float</span> <span style="color:#ff79c6">*</span>())
-
-<span style="color:#6272a4">//调用地址0的函数
-</span><span style="color:#6272a4">//调用变量
-</span><span style="color:#6272a4"></span>(<span style="color:#ff79c6">*</span>a)();
-<span style="color:#6272a4">//a为返回void的函数的指针
-</span><span style="color:#6272a4"></span><span style="color:#8be9fd">void</span> (<span style="color:#ff79c6">*</span>b)();
-<span style="color:#6272a4">//模型为
-</span><span style="color:#6272a4"></span>(<span style="color:#8be9fd">void</span> (<span style="color:#ff79c6">*</span>)())
-<span style="color:#6272a4">//将0转为此类型
-</span><span style="color:#6272a4"></span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">*</span>)())<span style="color:#bd93f9">0</span>;
-<span style="color:#6272a4">//调用转换后的变量
-</span><span style="color:#6272a4"></span>(<span style="color:#ff79c6">*</span>(<span style="color:#8be9fd">void</span>(<span style="color:#ff79c6">*</span>)())<span style="color:#bd93f9">0</span>)();
-</code></pre></div><h2 id="函数调用">函数调用</h2>
-<p>需要参数列表，可无参数</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">f();<span style="color:#6272a4">//函数调用
-</span><span style="color:#6272a4"></span>f;<span style="color:#6272a4">//函数地址求值，不调用
-</span></code></pre></div><h2 id="表达式求值顺序">表达式求值顺序</h2>
-<ul>
-<li><code>&amp;&amp;</code> 和 <code>||</code> 先求左边，左边为真才求右边</li>
-<li>a?b:c  b 和 c 只求其中一个</li>
-</ul>
-<h2 id="函数参数转换">函数参数转换</h2>
-<p>规则</p>
+    <article class="post-content"><h2 id="现状">现状</h2>
+<p>大部分 iOS 开发者会在 <code>UIViewController</code> 里编写 <code>present</code>/<code>push</code> 的代码展示另一个 <code>UIViewController</code>，也习惯响应关闭按钮的点击事件后调用 <code>dismiss</code> / <code>pop</code> 来关闭自身。</p>
+<p>这样有什么问题？</p>
 <ol>
-<li>比 <code>int</code> 短的整型转换为 <code>int</code></li>
-<li>比 <code>double</code> 短的浮点转换为 <code>double</code></li>
-<li>其余不转换</li>
+<li>难以复用：展示方式写死了，不同场景要写 <code>if</code>/<code>else</code></li>
+<li>灵活性低：页面展示的流程是固定的，难以插入或去掉</li>
+<li>耦合性高：依赖了其他 <code>UIViewController</code> 的类信息（甚至更多）</li>
+<li>职责不合理：<code>UIViewController</code> 知道被放在 navigation 或者 tab 中，也知道自己的展现形式</li>
+<li>维护成本高：负责了这部分职责后，<code>UIViewController</code> 的代码会膨胀</li>
 </ol>
-<h2 id="指针非数组">指针非数组</h2>
-<p><code>char</code> 指针变量是指向其数组第 0 个元素的指针</p>
-<h2 id="除法">除法</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">q <span style="color:#ff79c6">=</span> a <span style="color:#ff79c6">/</span> b;
-r <span style="color:#ff79c6">=</span> a <span style="color:#ff79c6">%</span> b;
-</code></pre></div><p>保证</p>
+<p>举个简单例子：</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/%E6%88%AA%E5%B1%8F2021-06-13%20%E4%B8%8B%E5%8D%889.43.08.png" alt="截屏2021-06-13 下午9.43.08"></p>
+<p><a href="https://github.com/Nemocdz/CoordinatorDemo/tree/2188c90a527e98eb0d713937e98cfd04c8b375e7">CoordinatorDemo-add demo</a></p>
+<h2 id="如何改进">如何改进</h2>
+<p>引入一个通用的角色，负责页面转场/流程的组合和调度，这就是 <a href="https://khanlou.com/2015/10/coordinators-redux/">Coordinator（协调者）</a>。</p>
+<p>Coordiantor 的职责：</p>
 <ul>
-<li>q * b + r == a</li>
-<li>绝对值 r&lt; 绝对值 b</li>
-<li>当a &gt;=0 且 b &gt; 0 时，r &gt;= 0</li>
+<li>新建和切换画面</li>
+<li>组合多个子页面为复杂界面</li>
+<li>实现页面间的回调接收/代理，转换为其他页面需要的数据</li>
 </ul>
-<p>不一定保证</p>
-<ul>
-<li>a 为负数，q 也为负</li>
-<li>r &gt;= 0</li>
-</ul></article>
+<p>上面的例子通过引入 Coordinator 层，整体架构如下：</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/%E6%88%AA%E5%B1%8F2021-06-13%20%E4%B8%8B%E5%8D%889.43.34.png" alt="截屏2021-06-13 下午9.43.34"></p>
+<h2 id="第一次重构">第一次重构</h2>
+<p>根据上述思想，可以给每一个 <code>UIViewController</code> 搭配一个对应的 <code>Coordinator</code>，这样重构之后，<code>UIViewController</code> 之间没有显式耦合，需要改动流程和展示方式时不需要修改 <code>UIViewController</code> 中的代码，代码变得干净和职责分明。</p>
+<p><a href="https://github.com/Nemocdz/CoordinatorDemo/tree/639945b10417d7015a04465618c811d32ad5d4fe">CoordinatorDemo-first refactor</a></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/%E6%88%AA%E5%B1%8F2021-06-13%20%E4%B8%8B%E5%8D%889.44.05.png" alt="截屏2021-06-13 下午9.44.05"></p>
+<h2 id="第二次重构">第二次重构</h2>
+<p>第一次重构后，代码职责已经清楚了，基本达到架构演进的目的。接下来可以考虑怎么让代码更优雅。这里面虽然 <code>UIViewController</code> 之间没有显式依赖了，但是由于显式依赖了 <code>Coordinator</code>，其中有其他 <code>UIViewController</code> 的依赖，所以还存在间接依赖。解决这个问题也很简单，引入 Protocol，将 <code>Coordinator</code> 的结构抽象成协议，而非具体的类，这样耦合就被彻底拆开了。在不同宿主底下，可以使用不同的实现。</p>
+<p><a href="https://github.com/Nemocdz/CoordinatorDemo/tree/54eeea3f19992baaddaaa19094fb2a38822464aa">CoordinatorDemo-second refactor</a></p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/%E6%88%AA%E5%B1%8F2021-06-13%20%E4%B8%8B%E5%8D%889.44.30.png" alt="截屏2021-06-13 下午9.44.30"></p>
+<h2 id="第三次重构">第三次重构</h2>
+<p>第二次重构后，回头看看开头的几个问题</p>
+<ol>
+<li>展示方式通过不同的实现解决</li>
+<li>流程通过不同 <code>Coordinator</code> 连接</li>
+<li><code>UIViewController</code> 之间没有耦合</li>
+<li><code>UIViewController</code> 不感知自己被如何展示</li>
+<li><code>UIViewController</code> 中的代码减少了</li>
+</ol>
+<p>问题基本得到解决。更进一步思考在 iOS 上，还可以通过什么手段来更使 <code>Coordinator</code> 更强大呢？如果将 <code>Coordinator</code> 继承自 <code>UIViewController</code>，而将原来的 <code>UIViewController</code> 作为 <code>Coordinator</code> 的 <code>childController</code>。</p>
+<p>可以获得以下特性：</p>
+<ol>
+<li><code>Coordinator</code> 不需要由 <code>UIViewController</code> 持有，而是由系统管理</li>
+<li><code>UIViewController</code> 对 <code>Coordinator</code> 的依赖变成了 Delegate，可以不依赖 <code>Coordinator</code> 协议</li>
+<li>可以使用 <code>childController</code> 的 <code>add</code>/<code>remove</code> 进行管理</li>
+<li>能承担响应链和<code>UITraitCollection</code> 等 <code>UIViewController</code> 才有的特性</li>
+</ol>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/%E6%88%AA%E5%B1%8F2021-06-13%20%E4%B8%8B%E5%8D%889.44.53.png" alt="截屏2021-06-13 下午9.44.53"></p>
+<p>经过重构后所谓的 Coordinator 就是其实就是原来的 <code>UIViewController</code>，而将其展示的部分拆成了新的 <code>childController</code> 专门用于视图展示和处理（在有些文章中也被称为 <code>FlowController</code>）。</p>
+<p><a href="https://github.com/Nemocdz/CoordinatorDemo/tree/f2bf842fde68c1d1cd455e3325c332337d0379f0">CoordinatorDemo-third refactor</a></p>
+<h2 id="总结">总结</h2>
+<p>项目中可以根据需要进行演进，第一次重构已经能实现拆分的思想，第二次重构增加了灵活性，第三次重构依赖了 iOS 目前已有的 API，在架构上反而不是一件太好的事情，因为不同的系统能力不一定对齐，甚至在同系统上（比如引入 <code>Flutter</code>、<code>SwiftUI</code> 后）也不一定能够长久使用。</p>
+<h2 id="参考">参考</h2>
+<p><a href="https://chiahsien.github.io/post/common-ios-architecture-from-mvc-to-viper-with-redux/">漫谈 iOS 架构:从 MVC 到 VIPER，以及 Redux | Nelson</a></p>
+<p><a href="https://github.com/onmyway133/blog/issues/106">Coordinator and FlowController</a></p></article>
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>1431</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. 
       </p>
     </footer>
     

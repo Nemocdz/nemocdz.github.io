@@ -50,7 +50,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.74.3">
+<meta name="generator" content="Hugo 0.79.1">
 
 
 <link rel="canonical" href="https://nemocdz.github.io/post/%E6%B5%85%E8%B0%88%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/">
@@ -285,24 +285,24 @@
 <table>
 <thead>
 <tr>
-<th align="center">系统</th>
-<th align="center">原生</th>
-<th align="center">WebView</th>
-<th align="center">浏览器</th>
+<th style="text-align:center">系统</th>
+<th style="text-align:center">原生</th>
+<th style="text-align:center">WebView</th>
+<th style="text-align:center">浏览器</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td align="center">iOS</td>
-<td align="center">第三方库支持</td>
-<td align="center">不支持</td>
-<td align="center">不支持</td>
+<td style="text-align:center">iOS</td>
+<td style="text-align:center">第三方库支持</td>
+<td style="text-align:center">不支持</td>
+<td style="text-align:center">不支持</td>
 </tr>
 <tr>
-<td align="center">Android</td>
-<td align="center">4.3 后支持完整功能</td>
-<td align="center">支持</td>
-<td align="center">支持</td>
+<td style="text-align:center">Android</td>
+<td style="text-align:center">4.3 后支持完整功能</td>
+<td style="text-align:center">支持</td>
+<td style="text-align:center">支持</td>
 </tr>
 </tbody>
 </table>
@@ -318,24 +318,24 @@
 <table>
 <thead>
 <tr>
-<th align="center">系统</th>
-<th align="center">原生</th>
-<th align="center">WebView</th>
-<th align="center">浏览器</th>
+<th style="text-align:center">系统</th>
+<th style="text-align:center">原生</th>
+<th style="text-align:center">WebView</th>
+<th style="text-align:center">浏览器</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td align="center">iOS</td>
-<td align="center">支持</td>
-<td align="center">支持</td>
-<td align="center">支持</td>
+<td style="text-align:center">iOS</td>
+<td style="text-align:center">支持</td>
+<td style="text-align:center">支持</td>
+<td style="text-align:center">支持</td>
 </tr>
 <tr>
-<td align="center">Android</td>
-<td align="center">第三方库支持</td>
-<td align="center">不支持</td>
-<td align="center">不支持</td>
+<td style="text-align:center">Android</td>
+<td style="text-align:center">第三方库支持</td>
+<td style="text-align:center">不支持</td>
+<td style="text-align:center">不支持</td>
 </tr>
 </tbody>
 </table>
@@ -345,24 +345,24 @@
 <table>
 <thead>
 <tr>
-<th align="center">系统</th>
-<th align="center">原生</th>
-<th align="center">WebView</th>
-<th align="center">系统浏览器</th>
+<th style="text-align:center">系统</th>
+<th style="text-align:center">原生</th>
+<th style="text-align:center">WebView</th>
+<th style="text-align:center">系统浏览器</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td align="center">iOS</td>
-<td align="center">第三方库支持</td>
-<td align="center">不支持</td>
-<td align="center">不支持</td>
+<td style="text-align:center">iOS</td>
+<td style="text-align:center">第三方库支持</td>
+<td style="text-align:center">不支持</td>
+<td style="text-align:center">不支持</td>
 </tr>
 <tr>
-<td align="center">Android</td>
-<td align="center">第三方库支持</td>
-<td align="center">不支持</td>
-<td align="center">不支持</td>
+<td style="text-align:center">Android</td>
+<td style="text-align:center">第三方库支持</td>
+<td style="text-align:center">不支持</td>
+<td style="text-align:center">不支持</td>
 </tr>
 </tbody>
 </table>
@@ -463,16 +463,16 @@
 
 <span style="color:#ff79c6">fun</span> <span style="color:#50fa7b">ByteArray</span>.imageFormat(): ImageFormat {
     <span style="color:#ff79c6">val</span> headerData = <span style="color:#ff79c6">this</span>.slice(<span style="color:#bd93f9">0.</span>.<span style="color:#bd93f9">2</span>)
-    <span style="color:#ff79c6">val</span> hexString = headerData.fold(StringBuilder(<span style="color:#f1fa8c">&#34;&#34;</span>)) { result, byte -&gt; result.append( (byte.toInt() and <span style="color:#bd93f9">0xFF</span>).toString(<span style="color:#bd93f9">16</span>) ) }.toString().toUpperCase()
+    <span style="color:#ff79c6">val</span> hexString = headerData.fold(StringBuilder(<span style="color:#f1fa8c">&#34;&#34;</span>)) { result, byte <span style="color:#ff79c6">-&gt;</span> result.append( (byte.toInt() and <span style="color:#bd93f9">0xFF</span>).toString(<span style="color:#bd93f9">16</span>) ) }.toString().toUpperCase()
     <span style="color:#ff79c6">var</span> imageFormat = ImageFormat.UNKNOWN
     <span style="color:#ff79c6">when</span> (hexString) {
-        <span style="color:#f1fa8c">&#34;FFD8FF&#34;</span> -&gt; {
+        <span style="color:#f1fa8c">&#34;FFD8FF&#34;</span> <span style="color:#ff79c6">-&gt;</span> {
             imageFormat = ImageFormat.JPG
         }
-        <span style="color:#f1fa8c">&#34;89504E&#34;</span> -&gt; {
+        <span style="color:#f1fa8c">&#34;89504E&#34;</span> <span style="color:#ff79c6">-&gt;</span> {
             imageFormat = ImageFormat.PNG
         }
-        <span style="color:#f1fa8c">&#34;474946&#34;</span> -&gt; {
+        <span style="color:#f1fa8c">&#34;474946&#34;</span> <span style="color:#ff79c6">-&gt;</span> {
             imageFormat = ImageFormat.GIF
         }
     }
@@ -834,7 +834,7 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
 </span><span style="color:#6272a4">     * 返回同步压缩 gif 图片 Byte 数据 [rawData] 的按 [sampleCount] 采样后的 Byte 数据
 </span><span style="color:#6272a4">     */</span>
     <span style="color:#ff79c6">private</span> <span style="color:#ff79c6">fun</span> <span style="color:#50fa7b">compressGifDataWithSampleCount</span>(context: Context, rawData: ByteArray, sampleCount: Int): ByteArray? {
-        <span style="color:#ff79c6">if</span> (sampleCount &lt;= <span style="color:#bd93f9">1</span>) {
+        <span style="color:#ff79c6">if</span> (sampleCount <span style="color:#ff79c6">&lt;=</span> <span style="color:#bd93f9">1</span>) {
             <span style="color:#ff79c6">return</span> rawData
         }
         <span style="color:#ff79c6">val</span> gifDecoder = StandardGifDecoder(GifBitmapProvider(Glide.<span style="color:#ff79c6">get</span>(context).bitmapPool))
@@ -846,15 +846,15 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
         <span style="color:#ff79c6">val</span> frameCount = gifDecoder.frameCount
 
         <span style="color:#6272a4">// 计算帧的间隔
-</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">val</span> frameDurations = (<span style="color:#bd93f9">0</span> until frameCount).map { gifDecoder.getDelay(it) }
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">val</span> frameDurations = (<span style="color:#bd93f9">0</span> until frameCount).map { gifDecoder.getDelay(<span style="color:#ff79c6">it</span>) }
 
         <span style="color:#6272a4">// 合并帧的时间,最长不可高于 200ms
-</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">val</span> mergeFrameDurations = (<span style="color:#bd93f9">0</span> until frameCount).filter { it % sampleCount == <span style="color:#bd93f9">0</span> }.map {
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">val</span> mergeFrameDurations = (<span style="color:#bd93f9">0</span> until frameCount).filter { <span style="color:#ff79c6">it</span> % sampleCount <span style="color:#ff79c6">==</span> <span style="color:#bd93f9">0</span> }.map {
             min(
                 frameDurations.subList(
-                    it,
-                    min(it + sampleCount, frameCount)
-                ).fold(<span style="color:#bd93f9">0</span>) { acc, duration -&gt; acc + duration }, <span style="color:#bd93f9">200</span>
+                    <span style="color:#ff79c6">it</span>,
+                    min(<span style="color:#ff79c6">it</span> + sampleCount, frameCount)
+                ).fold(<span style="color:#bd93f9">0</span>) { acc, duration <span style="color:#ff79c6">-&gt;</span> acc + duration }, <span style="color:#bd93f9">200</span>
             )
         }
 
@@ -862,7 +862,7 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
 </span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">val</span> sampleImageFrames = (<span style="color:#bd93f9">0</span> until frameCount).mapNotNull {
             gifDecoder.advance()
             <span style="color:#ff79c6">var</span> imageFrame: Bitmap? = <span style="color:#ff79c6">null</span>
-            <span style="color:#ff79c6">if</span> (it % sampleCount == <span style="color:#bd93f9">0</span>) {
+            <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">it</span> % sampleCount <span style="color:#ff79c6">==</span> <span style="color:#bd93f9">0</span>) {
                 imageFrame = gifDecoder.nextFrame
             }
             imageFrame
@@ -880,9 +880,9 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
             <span style="color:#6272a4">// 每一帧图片都进行重新编码
 </span><span style="color:#6272a4"></span>            sampleImageFrames.zip(mergeFrameDurations).forEach {
                 <span style="color:#6272a4">// 设置帧间隔
-</span><span style="color:#6272a4"></span>                gifEncoder.setDelay(it.second)
-                gifEncoder.addFrame(it.first)
-                it.first.recycle()
+</span><span style="color:#6272a4"></span>                gifEncoder.setDelay(<span style="color:#ff79c6">it</span>.second)
+                gifEncoder.addFrame(<span style="color:#ff79c6">it</span>.first)
+                <span style="color:#ff79c6">it</span>.first.recycle()
             }
             gifEncoder.finish()
 
@@ -907,7 +907,7 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
         <span style="color:#ff79c6">val</span> frameCount = gifDecoder.frameCount
 
         <span style="color:#6272a4">// 计算帧的间隔
-</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">val</span> frameDurations = (<span style="color:#bd93f9">0.</span>.(frameCount - <span style="color:#bd93f9">1</span>)).map { gifDecoder.getDelay(it) }
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">val</span> frameDurations = (<span style="color:#bd93f9">0.</span>.(frameCount - <span style="color:#bd93f9">1</span>)).map { gifDecoder.getDelay(<span style="color:#ff79c6">it</span>) }
 
         <span style="color:#6272a4">// 计算调整后大小
 </span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">val</span> longSideWidth = max(header.width, header.height)
@@ -919,7 +919,7 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
 </span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">val</span> resizeImageFrames = (<span style="color:#bd93f9">0</span> until frameCount).mapNotNull {
             gifDecoder.advance()
             <span style="color:#ff79c6">var</span> imageFrame = gifDecoder.nextFrame
-            <span style="color:#ff79c6">if</span> (imageFrame != <span style="color:#ff79c6">null</span>) {
+            <span style="color:#ff79c6">if</span> (imageFrame <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">null</span>) {
                 imageFrame = Bitmap.createScaledBitmap(imageFrame, resizeWidth, resizeHeight, <span style="color:#ff79c6">true</span>)
             }
             imageFrame
@@ -936,9 +936,9 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
             <span style="color:#6272a4">// 每一帧都进行重新编码
 </span><span style="color:#6272a4"></span>            resizeImageFrames.zip(frameDurations).forEach {
                 <span style="color:#6272a4">// 设置帧间隔
-</span><span style="color:#6272a4"></span>                gifEncoder.setDelay(it.second)
-                gifEncoder.addFrame(it.first)
-                it.first.recycle()
+</span><span style="color:#6272a4"></span>                gifEncoder.setDelay(<span style="color:#ff79c6">it</span>.second)
+                gifEncoder.addFrame(<span style="color:#ff79c6">it</span>.first)
+                <span style="color:#ff79c6">it</span>.first.recycle()
             }
 
             gifEncoder.finish()
@@ -1015,18 +1015,18 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
 </span><span style="color:#6272a4">     */</span>
     <span style="color:#ff79c6">fun</span> <span style="color:#50fa7b">compressImageDataWithLongWidth</span>(context: Context, rawData: ByteArray, limitLongWidth: Int): ByteArray? {
         <span style="color:#ff79c6">val</span> format = rawData.imageFormat()
-        <span style="color:#ff79c6">if</span> (format == ImageFormat.UNKNOWN) {
+        <span style="color:#ff79c6">if</span> (format <span style="color:#ff79c6">==</span> ImageFormat.UNKNOWN) {
             <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">null</span>
         }
 
         <span style="color:#ff79c6">val</span> (imageWidth, imageHeight) = rawData.imageSize()
         <span style="color:#ff79c6">val</span> longSideWidth = max(imageWidth, imageHeight)
 
-        <span style="color:#ff79c6">if</span> (longSideWidth &lt;= limitLongWidth) {
+        <span style="color:#ff79c6">if</span> (longSideWidth <span style="color:#ff79c6">&lt;=</span> limitLongWidth) {
             <span style="color:#ff79c6">return</span> rawData
         }
 
-        <span style="color:#ff79c6">if</span> (format == ImageFormat.GIF) {
+        <span style="color:#ff79c6">if</span> (format <span style="color:#ff79c6">==</span> ImageFormat.GIF) {
             <span style="color:#6272a4">// 压缩 Gif 分辨率太大编码时容易崩溃
 </span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">return</span> compressGifDataWithLongWidth(context, rawData, max(<span style="color:#bd93f9">512</span>, longSideWidth))
         } <span style="color:#ff79c6">else</span> {
@@ -1041,13 +1041,13 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
             image.recycle()
             <span style="color:#ff79c6">var</span> resultData: ByteArray? = <span style="color:#ff79c6">null</span>
             <span style="color:#ff79c6">when</span> (format) {
-                ImageFormat.PNG -&gt; {
+                ImageFormat.PNG <span style="color:#ff79c6">-&gt;</span> {
                     resultData = resizeImageFrame.toByteArray(Bitmap.CompressFormat.PNG)
                 }
-                ImageFormat.JPG -&gt; {
+                ImageFormat.JPG <span style="color:#ff79c6">-&gt;</span> {
                     resultData = resizeImageFrame.toByteArray(Bitmap.CompressFormat.JPEG)
                 }
-                <span style="color:#ff79c6">else</span> -&gt; {
+                <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">-&gt;</span> {
                 }
             }
             resizeImageFrame.recycle()
@@ -1126,19 +1126,19 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
 </span><span style="color:#6272a4">     * 返回同步压缩图片 Byte 数据 [rawData] 的数据大小到 [limitDataSize] 后的 Byte 数据
 </span><span style="color:#6272a4">     */</span>
     <span style="color:#ff79c6">fun</span> <span style="color:#50fa7b">compressImageDataWithSize</span>(context: Context, rawData: ByteArray, limitDataSize: Int): ByteArray? {
-        <span style="color:#ff79c6">if</span> (rawData.size &lt;= limitDataSize) {
+        <span style="color:#ff79c6">if</span> (rawData.size <span style="color:#ff79c6">&lt;=</span> limitDataSize) {
             <span style="color:#ff79c6">return</span> rawData
         }
 
         <span style="color:#ff79c6">val</span> format = rawData.imageFormat()
-        <span style="color:#ff79c6">if</span> (format == ImageFormat.UNKNOWN) {
+        <span style="color:#ff79c6">if</span> (format <span style="color:#ff79c6">==</span> ImageFormat.UNKNOWN) {
             <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">null</span>
         }
 
         <span style="color:#ff79c6">var</span> resultData = rawData
 
         <span style="color:#6272a4">// 若是 JPG，先用压缩系数压缩 6 次，二分法
-</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">if</span> (format == ImageFormat.JPG) {
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">if</span> (format <span style="color:#ff79c6">==</span> ImageFormat.JPG) {
             <span style="color:#ff79c6">var</span> compression = <span style="color:#bd93f9">100</span>
             <span style="color:#ff79c6">var</span> maxCompression = <span style="color:#bd93f9">100</span>
             <span style="color:#ff79c6">var</span> minCompression = <span style="color:#bd93f9">0</span>
@@ -1165,22 +1165,22 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
                 e.printStackTrace()
             }
 
-            <span style="color:#ff79c6">if</span> (resultData.size &lt;= limitDataSize) {
+            <span style="color:#ff79c6">if</span> (resultData.size <span style="color:#ff79c6">&lt;=</span> limitDataSize) {
                 <span style="color:#ff79c6">return</span> resultData
             }
         }
 
         <span style="color:#6272a4">// 若是 GIF，先用抽帧减少大小
-</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">if</span> (format == ImageFormat.GIF) {
+</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">if</span> (format <span style="color:#ff79c6">==</span> ImageFormat.GIF) {
             <span style="color:#ff79c6">val</span> sampleCount = resultData.fitSampleCount()
             <span style="color:#ff79c6">val</span> data = compressGifDataWithSampleCount(context, resultData, sampleCount)
-            <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">data</span> != <span style="color:#ff79c6">null</span>) {
+            <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">data</span> <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">null</span>) {
                 resultData = <span style="color:#ff79c6">data</span>
             } <span style="color:#ff79c6">else</span> {
                 <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">null</span>
             }
 
-            <span style="color:#ff79c6">if</span> (resultData.size &lt;= limitDataSize) {
+            <span style="color:#ff79c6">if</span> (resultData.size <span style="color:#ff79c6">&lt;=</span> limitDataSize) {
                 <span style="color:#ff79c6">return</span> resultData
             }
         }
@@ -1194,7 +1194,7 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
             <span style="color:#ff79c6">val</span> ratio = Math.sqrt(limitDataSize.toDouble() / resultData.size.toDouble())
             longSideWidth = (longSideWidth.toDouble() * ratio).toInt()
             <span style="color:#ff79c6">val</span> data = compressImageDataWithLongWidth(context, resultData, longSideWidth)
-            <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">data</span> != <span style="color:#ff79c6">null</span>) {
+            <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">data</span> <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">null</span>) {
                 resultData = <span style="color:#ff79c6">data</span>
             } <span style="color:#ff79c6">else</span> {
                 <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">null</span>
@@ -1236,7 +1236,7 @@ api <span style="color:#f1fa8c">&#39;com.github.bumptech.glide:gifencoder-integr
     <footer class="post-footer">
       
       <p class="post-copyright">
-        © Nemocdz. This post was published <strong>749</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © Nemocdz. This post was published <strong>875</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

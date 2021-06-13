@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>© Nemocdz. </copyright>
-    <lastBuildDate>Mon, 08 Feb 2021 19:13:13 +0800</lastBuildDate>
-    
-	<atom:link href="https://nemocdz.github.io/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Sun, 13 Jun 2021 22:28:13 +0800</lastBuildDate><atom:link href="https://nemocdz.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>关于</title>
       <link>https://nemocdz.github.io/about/</link>
@@ -24,6 +20,16 @@
 参与 The Swift Programming Language 中文版 ，Google Swift Style Guide 中文版 翻译及维护。
 目前就职于鹅厂，算个业余摄影师。
 联系方式  QQ：757765420 Email：nemocdz@gmail.com Lofter 图虫 简书  </description>
+    </item>
+    
+    <item>
+      <title>iOS Coordinator 实战</title>
+      <link>https://nemocdz.github.io/post/ios-coordinator-%E5%AE%9E%E6%88%98/</link>
+      <pubDate>Sun, 13 Jun 2021 22:28:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/post/ios-coordinator-%E5%AE%9E%E6%88%98/</guid>
+      <description>&lt;h2 id=&#34;现状&#34;&gt;现状&lt;/h2&gt;
+&lt;p&gt;大部分 iOS 开发者会在 &lt;code&gt;UIViewController&lt;/code&gt; 里编写 &lt;code&gt;present&lt;/code&gt;/&lt;code&gt;push&lt;/code&gt; 的代码展示另一个 &lt;code&gt;UIViewController&lt;/code&gt;，也习惯响应关闭按钮的点击事件后调用 &lt;code&gt;dismiss&lt;/code&gt; / &lt;code&gt;pop&lt;/code&gt; 来关闭自身。&lt;/p&gt;</description>
     </item>
     
     <item>
