@@ -206,6 +206,33 @@
   
    <article class="post-entry">
   <header class="post-header">
+    <h3 class="post-title"><a href="https://nemocdz.github.io/post/proraw-%E7%9A%84%E6%8B%8D%E6%91%84%E4%B8%8E%E5%A4%84%E7%90%86/" class="post-link">ProRAW 的拍摄与处理</a></h3>
+    <p class="post-meta">@Nemocdz · Feb 19, 2022 · 4 min read</p>
+  </header>
+  
+  <p class="post-summary"> WWDC21 Session 10160 - Capture and process ProRAW images
+ Apple 设备在图片拍摄和处理上已经有了一段不短的发展历程了。从早期支持处理 JPEG 和 HEIC，到 iOS 10 开始支持拍摄和编辑 Bayer Raw（但是 iOS 系统相机并没有支持 Raw 拍摄，而是第三方相机 App 支持）。而去年的 iPhone12 Pro 系列在 iOS 14.3 起支持了 Apple ProRAW。这篇文章将会介绍开发者应该如何适配 ProRaw 的拍摄、保存、处理、显示等一系列流程。
+</p>
+  <footer class="post-footer">
+    <a class="read-more" href="https://nemocdz.github.io/post/proraw-%E7%9A%84%E6%8B%8D%E6%91%84%E4%B8%8E%E5%A4%84%E7%90%86/">Read More →</a>
+  </footer>
+</article>
+  <article class="post-entry">
+  <header class="post-header">
+    <h3 class="post-title"><a href="https://nemocdz.github.io/post/ios15-%E7%9B%B8%E6%9C%BA%E6%8B%8D%E6%91%84%E6%96%B0%E5%8F%98%E5%8C%96/" class="post-link">iOS15 相机拍摄新变化</a></h3>
+    <p class="post-meta">@Nemocdz · Feb 19, 2022 · 5 min read</p>
+  </header>
+  
+  <p class="post-summary"> WWDC21 Session 10047 - What’s new in camera capture
+ 去年 Apple 对 iPhone 的相机升级是非常明显的，比如增加了 10-bit HDR 视频的拍摄，Apple ProRaw 的支持等。同时得益于 M 系列/A 系列芯片强大的算力，Apple 目前对于拍摄上的思考和提升更多走的是 计算摄影 路线，而非在光学硬件上做大幅度提升。所以今年的 WWDC，Apple 将相机的更多能力开放给开发者使用。
+本文将会介绍几个 Apple 拍摄的新能力：
+ 最近对焦距离 10-bit HDR 视频 控制中心的视频特效 相机性能相关的最佳实践 IOSurface 压缩 </p>
+  <footer class="post-footer">
+    <a class="read-more" href="https://nemocdz.github.io/post/ios15-%E7%9B%B8%E6%9C%BA%E6%8B%8D%E6%91%84%E6%96%B0%E5%8F%98%E5%8C%96/">Read More →</a>
+  </footer>
+</article>
+  <article class="post-entry">
+  <header class="post-header">
     <h3 class="post-title"><a href="https://nemocdz.github.io/post/ios-coordinator-%E5%AE%9E%E6%88%98/" class="post-link">iOS Coordinator 实战</a></h3>
     <p class="post-meta">@Nemocdz · Jun 13, 2021 · 1 min read</p>
   </header>
@@ -253,35 +280,6 @@
     <a class="read-more" href="https://nemocdz.github.io/post/%E5%9C%A8-swift-%E9%87%8C%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E6%8C%87%E9%92%88/">Read More →</a>
   </footer>
 </article>
-  <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://nemocdz.github.io/post/%E4%BA%86%E8%A7%A3-swift-%E4%B8%AD%E7%9A%84%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/" class="post-link">了解 Swift 中的数值计算</a></h3>
-    <p class="post-meta">@Nemocdz · Sep 1, 2020 · 4 min read</p>
-  </header>
-  
-  <p class="post-summary"> WWDC20 Session 10217 - Explore numerical computing in Swift
- Swift Numerics Numerics 是一个 Apple 开源的 Swift 包，通过范型约束，提供更简单的方式，来使用所有标准库里的浮点型进行数值计算。
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://nemocdz.github.io/post/%E4%BA%86%E8%A7%A3-swift-%E4%B8%AD%E7%9A%84%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/">Read More →</a>
-  </footer>
-</article>
-  <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://nemocdz.github.io/post/%E6%B5%85%E8%B0%88-webrtc-neteq/" class="post-link">浅谈 WebRTC NetEQ</a></h3>
-    <p class="post-meta">@Nemocdz · Jan 4, 2020 · 3 min read</p>
-  </header>
-  
-  <p class="post-summary">WebRTC Native 代码里面有很多值得学习的宝藏，其中一个就是 WebRTC 的 NetEQ 模块。根据 WebRTC 术语表 对 NetEQ 的解释：
- A dynamic jitter buffer and error concealment algorithm used for concealing the negative effects of network jitter and packet loss. Keeps latency as low as possible while maintaining the highest voice quality.
-一种动态抖动缓冲区和错误隐藏（丢包补偿）算法，用于去除网络抖动和数据包丢失的负面影响。在保持最高语音质量的同时，保持尽可能低的延迟。
- NetEQ 其实就是音视频处理中的 Jitter Buffer 模块，在 WebRTC 的语音引擎中使用。这个模块很重要，会影响播放时的体验，同时也相当复杂。
-本文源码参考 WebRTC Native M78 版本。
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://nemocdz.github.io/post/%E6%B5%85%E8%B0%88-webrtc-neteq/">Read More →</a>
-  </footer>
-</article>
  
    
   <footer class="list-footer">
@@ -298,7 +296,7 @@
 </section>
 
 <footer class="site-footer">
-  <p>© 2017-2021 Nemocdz&#39;s Blog</p>
+  <p>© 2017-2022 Nemocdz&#39;s Blog</p>
   <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
   
 </footer>

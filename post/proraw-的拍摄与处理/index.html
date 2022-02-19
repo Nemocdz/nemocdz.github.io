@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>ProRAW 的拍摄与处理</title>
+
+  
+  
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
+
+  
+
+  
+  
+  <meta name="description" content=" WWDC21 Session 10160 - Capture and process ProRAW images
+ Apple 设备在图片拍摄和处理上已经有了一段不短的发展历程了。从早期支持处理 JPEG 和 HEIC，到 iOS 10 开始支持拍摄和编辑 Bayer Raw（但是 iOS 系统相机并没有支持 Raw 拍摄，而是第三方相机 App 支持）。而去年的 iPhone12 Pro 系列在 iOS 14.3 起支持了 Apple ProRAW。这篇文章将会介绍开发者应该如何适配 ProRaw 的拍摄、保存、处理、显示等一系列流程。
+">
+
+  
+  
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="ProRAW 的拍摄与处理">
+    <meta name="twitter:description" content=" WWDC21 Session 10160 - Capture and process ProRAW images
+ Apple 设备在图片拍摄和处理上已经有了一段不短的发展历程了。从早期支持处理 JPEG 和 HEIC，到 iOS 10 开始支持拍摄和编辑 Bayer Raw（但是 iOS 系统相机并没有支持 Raw 拍摄，而是第三方相机 App 支持）。而去年的 iPhone12 Pro 系列在 iOS 14.3 起支持了 Apple ProRAW。这篇文章将会介绍开发者应该如何适配 ProRaw 的拍摄、保存、处理、显示等一系列流程。
+">
+    <meta name="twitter:image" content="/images/avatar.png">
+  
+
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="ProRAW 的拍摄与处理">
+  <meta property="og:description" content=" WWDC21 Session 10160 - Capture and process ProRAW images
+ Apple 设备在图片拍摄和处理上已经有了一段不短的发展历程了。从早期支持处理 JPEG 和 HEIC，到 iOS 10 开始支持拍摄和编辑 Bayer Raw（但是 iOS 系统相机并没有支持 Raw 拍摄，而是第三方相机 App 支持）。而去年的 iPhone12 Pro 系列在 iOS 14.3 起支持了 Apple ProRAW。这篇文章将会介绍开发者应该如何适配 ProRaw 的拍摄、保存、处理、显示等一系列流程。
+">
+  <meta property="og:url" content="https://nemocdz.github.io/post/proraw-%E7%9A%84%E6%8B%8D%E6%91%84%E4%B8%8E%E5%A4%84%E7%90%86/">
+  <meta property="og:image" content="/images/avatar.png">
+
+
+
+
+<meta name="generator" content="Hugo 0.79.1">
+
+
+<link rel="canonical" href="https://nemocdz.github.io/post/proraw-%E7%9A%84%E6%8B%8D%E6%91%84%E4%B8%8E%E5%A4%84%E7%90%86/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
+
+
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="t6ukG5250x">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
+
+<meta name="keywords" content="WWDC, WWDC2021, WWDC21, camera, AVCapture, AVFoundation, iOS15, Swift, proRAW" >
+
+<meta name='description' itemprop="description" content="&lt;blockquote&gt;
+&lt;p&gt;WWDC21 Session 10160 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2021/101">
+
+
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
+
+
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
+
+
+  
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
+
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
+
+
+</head>
+  <body>
+    <div class="suspension">
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
+      
+        
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
+  
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
+  
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
+  </button>
+
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/post">首页</a>
+        </li>
+      
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">ProRAW 的拍摄与处理</h1>
+      <p class="post-meta">@Nemocdz · Feb 19, 2022 · 4 min read</p>
+    </header>
+
+    
+	
+	<nav id="TableOfContents">
+  <ul>
+    <li><a href="#apple-proraw-简介">Apple ProRaw 简介</a>
+      <ul>
+        <li><a href="#兼容性">兼容性</a></li>
+        <li><a href="#图像质量">图像质量</a></li>
+        <li><a href="#观感">观感</a></li>
+      </ul>
+    </li>
+    <li><a href="#avcapture-拍摄">AVCapture 拍摄</a>
+      <ul>
+        <li><a href="#1-设置-avcapturesesion-和-avcapturedevice">1. 设置 AVCaptureSesion 和 AVCaptureDevice</a></li>
+        <li><a href="#2-设置-avcaptureoutput">2. 设置 AVCaptureOutput</a></li>
+        <li><a href="#3-proraw-拍摄的特殊配置">3. ProRaw 拍摄的特殊配置</a></li>
+        <li><a href="#4-接受拍摄的-proraw">4. 接受拍摄的 ProRaw</a></li>
+      </ul>
+    </li>
+    <li><a href="#photokit-保存和获取">Photokit 保存和获取</a>
+      <ul>
+        <li><a href="#处理-raw-格式的-phassetresource">处理 Raw 格式的 PHAssetResource</a></li>
+      </ul>
+    </li>
+    <li><a href="#coreimage-处理和展示">CoreImage 处理和展示</a>
+      <ul>
+        <li><a href="#生成-ciimage">生成 CIImage</a></li>
+        <li><a href="#应用常用调整">应用常用调整</a></li>
+        <li><a href="#获得线性-scene-referred-图">获得线性 Scene-Referred 图</a></li>
+        <li><a href="#保存成其他文件格式">保存成其他文件格式</a></li>
+        <li><a href="#以-edrhttpsdeveloperapplecomvideosplaywwdc202110161-显示在-mac-上">以 <a href="https://developer.apple.com/videos/play/wwdc2021/10161/">EDR</a> 显示在 Mac 上</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav>
+
+    <article class="post-content"><blockquote>
+<p>WWDC21 Session 10160 - <a href="https://developer.apple.com/videos/play/wwdc2021/10160/">Capture and process ProRAW images</a></p>
+</blockquote>
+<p>Apple 设备在图片拍摄和处理上已经有了一段不短的发展历程了。从早期支持处理 JPEG 和 HEIC，到 iOS 10 开始支持拍摄和编辑 Bayer Raw（但是 iOS 系统相机并没有支持 Raw 拍摄，而是第三方相机 App 支持）。而去年的 iPhone12 Pro 系列在 iOS 14.3 起支持了 <a href="https://support.apple.com/zh-cn/HT211965">Apple ProRAW</a>。这篇文章将会介绍开发者应该如何适配 ProRaw 的拍摄、保存、处理、显示等一系列流程。</p>
+<h2 id="apple-proraw-简介">Apple ProRaw 简介</h2>
+<p>JPEG 和 HEIC，都属于有损压缩过的图片，而 Raw 相当于照片的原始数据。</p>
+<p>压缩格式（JPEG、HEIC）：</p>
+<ul>
+<li>被处理过</li>
+<li>显示更快</li>
+<li>可以使用各种摄像头特性（多摄像、夜景、景深等）合成</li>
+<li>文件较小</li>
+</ul>
+<p>RAW：</p>
+<ul>
+<li>可以更灵活地被处理</li>
+<li>未经过压缩</li>
+<li>更多的色彩信息</li>
+</ul>
+<p>而 Apple 的 ProRaw，结合了两者的优点</p>
+<ul>
+<li>表现和 HEIC 类似</li>
+<li>无损压缩</li>
+<li>可以使用各种摄像头特性合成</li>
+<li>显示速度较快</li>
+</ul>
+<h3 id="兼容性">兼容性</h3>
+<p>ProRaw 采用标准的 <a href="https://helpx.adobe.com/cn/photoshop/digital-negative.html">Adobe DNG</a> 文件格式进行存储。DNG 是一种兼容多家相机厂商 Raw 格式转换的公开通用标准格式，兼容性很好：</p>
+<ol>
+<li>软件支持：大部分修图软件，例如 Adobe Lightroom 等都支持</li>
+<li>开发支持：Apple 的 ImageIO 和 Core Image 框架都支持处理</li>
+<li>系统支持：旧版本的 iOS 和 macOS 都支持</li>
+<li>包含了全像素的 JPEG 预览图</li>
+</ol>
+<h3 id="图像质量">图像质量</h3>
+<ol>
+<li>包含线性的 <a href="https://mymusing.co/display-referred-vs-scene-referred-color/">Scene referred</a> 图</li>
+<li>包含多重曝光和图像融合信息</li>
+<li>低压缩的 12-bit RGB</li>
+<li>14 档的动态范围</li>
+<li>文件大小在 10-40 mb 之间</li>
+</ol>
+<blockquote>
+<p>关于 ProRaw 背后一些技术细节，可以参考 <a href="https://lux.camera/understanding-proraw/">Understanding ProRAW</a></p>
+</blockquote>
+<h3 id="观感">观感</h3>
+<ol>
+<li>ProRAW 图像的观感 HEIC 差不多</li>
+<li>通过在 DNG 中嵌入一些特殊标签来保存这些信息</li>
+</ol>
+<blockquote>
+<p>详情可以参考 <a href="https://www.adobe.com/content/dam/acom/en/products/photoshop/pdfs/dng_spec_1.4.0.0.pdf">Adobe DNG 1.4.0 白皮书</a></p>
+<p>其中 ProRaw 还用到 2021.4 才发布的 <a href="https://helpx.adobe.com/photoshop/kb/dng-specification-tags.html">DNG 1.6.0</a> 的一部分新标签</p>
+</blockquote>
+<h2 id="avcapture-拍摄">AVCapture 拍摄</h2>
+<p>在 AVFoundation 的拍摄 API 中，新增了拍摄 ProRaw 图像的支持。</p>
+<blockquote>
+<p>可以在 Apple 官方的 <a href="https://developer.apple.com/documentation/avfoundation/cameras_and_media_capture/avcam_building_a_camera_app">相机 Demo</a> 的基础上尝试新的 API。</p>
+</blockquote>
+<p>整体上，ProRaw 比普通的 Raw 在拍摄的支持上会完善不少，包括支持更多的镜头，还能带上场景信息等。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/01.png" alt=""></p>
+<h3 id="1-设置-avcapturesesion-和-avcapturedevice">1. 设置 AVCaptureSesion 和 AVCaptureDevice</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">session</span> = AVCaptureSession()
+session.beginConfiguration()
+<span style="color:#6272a4">// 1. 设置为 Photo</span>
+session.sessionPreset = .photo 
+
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">device</span>: AVCaptureDevice = ... <span style="color:#6272a4">// 根据设备找到对应可用的镜头</span>
+<span style="color:#6272a4">// 2. 找到格式是否支持</span>
+<span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">format</span> = device.formats.first(<span style="color:#ff79c6">where</span>: { <span style="color:#8be9fd;font-style:italic">$0</span>.isHighestPhotoQualitySupported }) <span style="color:#ff79c6">else</span> {
+	<span style="color:#6272a4">//...</span>
+}
+
+<span style="color:#ff79c6">do</span> {
+	<span style="color:#ff79c6">try</span> device.lockForConfiguration()
+  <span style="color:#6272a4">// 3. 设置格式</span>
+	device.activeFormat = format
+	device.unlockForConfiguration()
+} <span style="color:#ff79c6">catch</span> {   
+  <span style="color:#6272a4">//...</span>
+}
+</code></pre></div><h3 id="2-设置-avcaptureoutput">2. 设置 AVCaptureOutput</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">/// AVCapturePhotoOutput</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">photoOutput</span> = AVCapturePhotoOutput()
+<span style="color:#6272a4">// 如果支持 RroRaw 输出，则打开</span>
+photoOutput.isAppleProRAWEnabled = photoOutput.isAppleProRAWSupported
+</code></pre></div><blockquote>
+<p>AVCapturePhotoOutput 的 maxPhotoQualityPrioritization 质量等级，可在速度和质量之间取舍，详情见 WWDC2021 - <a href="https://developer.apple.com/videos/play/wwdc2021/10247/">Capture high-quality photos using video formats</a>。</p>
+</blockquote>
+<h3 id="3-proraw-拍摄的特殊配置">3. ProRaw 拍摄的特殊配置</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 1. 找到支持的像素格式</span>
+<span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">pixelFormat</span> = photoOutput.availablePhotoPixelFormatTypes.first(<span style="color:#ff79c6">where</span>: { AVCapturePhotoOutput.isAppleProRAWPixelFormat(<span style="color:#8be9fd;font-style:italic">$0</span>) }) 
+<span style="color:#ff79c6">else</span> { 
+  <span style="color:#6272a4">//... </span>
+}
+
+<span style="color:#6272a4">// 2. （可选）找到支持的压缩类型</span>
+<span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">processedPhotoCodecType</span> = photoOutput.availablePhotoCodecTypes.first 
+<span style="color:#ff79c6">else</span> {
+  <span style="color:#6272a4">//...</span>
+}
+
+<span style="color:#6272a4">// 3. 创建拍摄设置，如果需要压缩类型就传入</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">photoSettings</span> = AVCapturePhotoSettings(rawPixelFormatType: proRawPixelFormat,	processedFormat: [AVVideoCodecKey: processedPhotoCodecType])
+
+<span style="color:#6272a4">// 4. 设置缩略图的编解码参数，大部分情况下建议使用如下配置</span>
+<span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">thumbnailPhotoCodecType</span> = photoSettings.availableRawEmbeddedThumbnailPhotoCodecTypes.first 
+<span style="color:#ff79c6">else</span> {
+	<span style="color:#6272a4">//...</span>
+}
+            
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">dimensions</span> = device.activeFormat.highResolutionStillImageDimensions
+photoSettings.rawEmbeddedThumbnailPhotoFormat = [
+  AVVideoCodecKey: thumbnailPhotoCodecType,
+  AVVideoWidthKey: dimensions.width,
+  AVVideoHeightKey: dimensions.height,
+]
+
+<span style="color:#6272a4">// 5. 设置 photoQualityPrioritization，但这里不能大于 AVCapturePhotoOutput 的 maxPhotoQualityPrioritization（比如 output 设置了 .balanced，这里就只能设置 .balanced 或 .speed）</span>
+
+photoSettings.photoQualityPrioritization = .quality
+
+<span style="color:#6272a4">// 6. （可选）设置用于预览的像素格式</span>
+<span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">previewPhotoPixelFormatType</span> = photoSettings.availablePreviewPhotoPixelFormatTypes.first {
+	photoSettings.previewPhotoFormat = [kCVPixelBufferPixelFormatTypeKey <span style="color:#ff79c6">as</span> <span style="color:#8be9fd;font-style:italic">String</span>: previewPhotoPixelFormatType]
+}
+</code></pre></div><p>在这三步后，就可以和普通照片一样调用 <code>AVCapturePhotoOutput</code> 的方法进行拍摄了。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">photoOutput.capturePhoto(with: photoSettings, delegate: delegate)
+</code></pre></div><h3 id="4-接受拍摄的-proraw">4. 接受拍摄的 ProRaw</h3>
+<p>遵循 <code>AVCapturePhotoCaptureDelegate</code>，可以在拍摄后收到对应的回调。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">photoOutput</span>(<span style="color:#ff79c6">_</span> output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+	<span style="color:#ff79c6">guard</span> error == <span style="color:#ff79c6">nil</span> <span style="color:#ff79c6">else</span> { <span style="color:#ff79c6">return</span> }
+  <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">preview</span> = photo.previewPixelBuffer {
+    <span style="color:#6272a4">// 比如用 photo.previewCGImageRepresentation() 进行预览</span>
+	}
+  
+  <span style="color:#6272a4">// 如果设置了压缩格式，这个方法会调用两次，通过 isRawPhoto 来区分是压缩格式还是 Raw 格式</span>
+	<span style="color:#ff79c6">if</span> photo.isRawPhoto {
+		<span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">data</span> = photo.fileDataRepresentation() {
+			<span style="color:#6272a4">// 处理 DNG 数据，比如保存到相册</span>
+		}
+            
+		<span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">pixelBuffer</span> = photo.pixelBuffer {
+			<span style="color:#6272a4">// 处理 pixel 数据</span>
+		}
+	}
+}
+</code></pre></div><p>ProRaw 上还带有基于场景信息的语义分割蒙版(Semantic Segmentation Mattes)，但是需要通过 Core Image/Image IO 进行处理。</p>
+<blockquote>
+<p>语义分割蒙版的介绍可参考 WWDC2019 - <a href="https://developer.apple.com/videos/play/wwdc2019/260/">Introducing Photo Segmentation Mattes</a></p>
+</blockquote>
+<p>如果需要对 DNG 文件做一些自定义，可以自定义处理器并遵循 <code>AVCapturePhotoFileDataRepresentationCustomizer</code>，再调用 <code>fileDataRepresentation(with:)</code> 使用自定义的处理器。</p>
+<p>比如下面这个处理器就将压缩设置改为 8bit，90% 质量。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">AppleProRawCustomizer</span>: NSObject, AVCapturePhotoFileDataRepresentationCustomizer {
+    <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">replacementAppleProRAWCompressionSettings</span>(<span style="color:#ff79c6">for</span> photo: AVCapturePhoto,
+                                                   defaultSettings: [<span style="color:#8be9fd;font-style:italic">String</span> : <span style="color:#8be9fd;font-style:italic">Any</span>],
+                                                   maximumBitDepth: <span style="color:#8be9fd;font-style:italic">Int</span>
+    ) -&gt; [<span style="color:#8be9fd;font-style:italic">String</span> : <span style="color:#8be9fd;font-style:italic">Any</span>] {
+        [
+            AVVideoAppleProRAWBitDepthKey: min(<span style="color:#bd93f9">8</span>, maximumBitDepth),
+            AVVideoQualityKey: <span style="color:#bd93f9">0.9</span>,
+        ]
+    }
+}
+
+<span style="color:#6272a4">// 将回调方法中获取 DNG 数据的方法改写</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">data</span> = photo.fileDataRepresentation(with: AppleProRawCustomizer()) 
+</code></pre></div><h2 id="photokit-保存和获取">Photokit 保存和获取</h2>
+<p>保存 ProRaw 到相册和普通的照片没有任何区别，都是使用 PhotoKit 的 <code>PHAssetCreationRequest</code>。</p>
+<p>iOS 15 的 <code>PHAssetCollectionSubtype</code> 新增了枚举类型 <code>smartAlbumRAW</code>，以便开发者 <code>fetchAssetCollections</code> 时可以指定直接查询 RAW 的 <code>PHAssetCollection</code>。</p>
+<h3 id="处理-raw-格式的-phassetresource">处理 Raw 格式的 PHAssetResource</h3>
+<p>Raw 的 <code>PHAsset</code> 可能有 <code>alternatePhoto</code> 类型的 <code>PHAssetResource</code>。</p>
+<p>这是由于某些资源可能是从单反相机拷贝来的，有些单反相机拍摄的 Raw 资源包含了 JPEG 和加上 Raw。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/02.png" alt=""></p>
+<p>这会导致文件占用空间增加，可移植性降低，并且可能会导致用户体验混乱。</p>
+<p>ProRaw 不建议以这种方式存储，而是建议通过上文拍摄时设置，将全尺寸的 JPEG 预览图嵌入进 DNG 文件中。</p>
+<p>因此完整的 <code>PHAssetResource</code> 处理如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">resources</span> = PHAssetResource.assetResources(<span style="color:#ff79c6">for</span>: asset)
+<span style="color:#ff79c6">for</span> resource <span style="color:#ff79c6">in</span> resources {
+  	<span style="color:#6272a4">// 过滤类型</span>
+    <span style="color:#ff79c6">if</span> resource.type == .photo <span style="color:#ff79c6">||</span> resource.type == .alternatePhoto {
+      	<span style="color:#6272a4">// 过滤通用类型标识符</span>
+        <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">resourceUTType</span> = UTType(resource.uniformTypeIdentifier),
+           resourceUTType.conforms(to: .rawImage) {
+            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">resourceManager</span> = PHAssetResourceManager.<span style="color:#ff79c6">default</span>().requestData(<span style="color:#ff79c6">for</span>: resource, options: <span style="color:#ff79c6">nil</span>) { data <span style="color:#ff79c6">in</span>
+                    
+            } completionHandler: { error <span style="color:#ff79c6">in</span>
+                    
+            }
+        }
+    }
+}
+</code></pre></div><h2 id="coreimage-处理和展示">CoreImage 处理和展示</h2>
+<h3 id="生成-ciimage">生成 CIImage</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// iOS 15 以前</span>
+<span style="color:#6272a4">// 获取预览图片</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">isrc</span> = CGImageSourceCreateWithURL(url <span style="color:#ff79c6">as</span> CFURL, <span style="color:#ff79c6">nil</span>)<span style="color:#ff79c6">!</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">cgImage</span> = CGImageSourceCreateThumbnailAtIndex(isrc, <span style="color:#bd93f9">0</span>, <span style="color:#ff79c6">nil</span>)<span style="color:#ff79c6">!</span>
+<span style="color:#ff79c6">return</span> CIImage(cgImage: cgImage)
+
+<span style="color:#6272a4">// 获取某个语义分割蒙板图片</span>
+<span style="color:#ff79c6">return</span> CIImage(contentsOf: url, options: [.auxiliarySemanticSegmentationSkinMatte : <span style="color:#ff79c6">true</span>])
+
+<span style="color:#6272a4">// 如果只需要用来展示，不修改</span>
+<span style="color:#ff79c6">return</span> CIImage(contentsOf: url, options: <span style="color:#ff79c6">nil</span>)
+
+<span style="color:#6272a4">// 需要编辑</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">rawFilter</span> = CIFilter(imageURL: url, options: <span style="color:#ff79c6">nil</span>)
+<span style="color:#ff79c6">return</span> rawFilter?.outputImage
+
+<span style="color:#6272a4">// iOS 15 新增</span>
+<span style="color:#6272a4">// 获取预览图片</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">filter</span> = CIRAWFilter(imageURL: url)
+<span style="color:#ff79c6">return</span> filter?.previewImage
+
+<span style="color:#6272a4">// 获取某个予以分割蒙版图片</span>
+<span style="color:#ff79c6">return</span> filter?.semanticSegmentationSkinMatte
+</code></pre></div><h3 id="应用常用调整">应用常用调整</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// iOS 15 以前</span>
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">getAdjustedRawImage</span>(url: URL) -&gt; CIImage? {
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">rawFilter</span> = CIFilter(imageURL: url, options: <span style="color:#ff79c6">nil</span>)
+    
+  	<span style="color:#6272a4">// 设置对应的 key/value 值</span>
+    rawFilter?.setValue(value, forKey: CIRAWFilterOption.key.rawValue)
+    
+    <span style="color:#ff79c6">return</span> rawFilter?.outputImage
+}
+
+<span style="color:#6272a4">// iOS 15 新增</span>
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">getAdjustedRawImage</span>(url: URL) -&gt; CIImage? {
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">rawFilter</span> = CIRAWFilter(imageURL: url)
+    
+ 		<span style="color:#6272a4">// 设置对应 key 名字的属性为 value 值，强类型，更 Swift</span>
+    rawFilter?.key = value
+    
+    <span style="color:#ff79c6">return</span> rawFilter?.outputImage
+}
+</code></pre></div><p>比如设置不同的 <code>localToneMapAmount</code>。</p>
+<p><!-- raw HTML omitted --></p>
+<p><!-- raw HTML omitted --></p>
+<p><!-- raw HTML omitted --></p>
+<h3 id="获得线性-scene-referred-图">获得线性 Scene-Referred 图</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 将调整全部设置为默认值</span>
+rawFilter.baselineExposure = <span style="color:#bd93f9">0</span>
+rawFilter.shadowBias = <span style="color:#bd93f9">0</span>
+rawFilter.boostAmount = <span style="color:#bd93f9">0</span>
+rawFilter.localToneMapAmount = <span style="color:#bd93f9">0</span>
+rawFilter.isGamutMappingEnabled = <span style="color:#ff79c6">false</span>
+<span style="color:#6272a4">// 此时获取的 outputImage 就是未经处理的线性图</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">linearRawImage</span> = rawFilter.outputImage
+</code></pre></div><p>这个线性图可以设置为其他 <code>CIFilter</code> 上的输入，来对 Scene-Referred 图进行计算，也可以使用它进行渲染。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/06.png" alt=""></p>
+<p>可以看到，左边是默认输出，左边太阳部分和右边天空亮度差异比较小，而线性图的差异就大了不少，更符合真实的明暗关系（真实的差异还要比记录的信息大得多），而这也给后期调整保留了更多的信息，有更大的调整空间。</p>
+<h3 id="保存成其他文件格式">保存成其他文件格式</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// iOS 15 以前</span>
+<span style="color:#ff79c6">try</span> ciContext.writeHEIFRepresentation(of: rawFilter.outputImage!,
+                                      to: url,
+                                      format: .RGBA8,
+                                      colorSpace: .<span style="color:#8be9fd;font-style:italic">init</span>(name: CGColorSpace.displayP3)<span style="color:#ff79c6">!</span>,
+                                      options: [:])
+
+<span style="color:#6272a4">// iOS 15 新增，可以支持保存成 10bit 的 HEIC</span>
+<span style="color:#ff79c6">try</span> ciContext.writeHEIF10Representation(of: rawFilter.outputImage!,
+                                        to: url,
+                                        colorSpace: .<span style="color:#8be9fd;font-style:italic">init</span>(name: CGColorSpace.displayP3)<span style="color:#ff79c6">!</span>,
+                                        options: [:])
+</code></pre></div><h3 id="以-edrhttpsdeveloperapplecomvideosplaywwdc202110161-显示在-mac-上">以 <a href="https://developer.apple.com/videos/play/wwdc2021/10161/">EDR</a> 显示在 Mac 上</h3>
+<p>默认情况下 <code>CIRawFilter</code> 的输出是 SDR 的，需要通过一些选项设置，就能以 EDR 的方式输出。</p>
+<p>推荐使用 MetalKit 的 <code>MTKView</code> 来显示 ProRaw 的 <code>CIImage</code>。</p>
+<blockquote>
+<p>使用 CoreImage 渲染最佳实践可以参考 WWDC2020 - <a href="https://developer.apple.com/videos/play/wwdc2020/10008/">Optimize the Core Image pipeline for your video app</a></p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 在 MTKView 初始化的时候设置以下参数</span>
+colorPixelFormat = MTLPixelFormat.rgba16Float
+<span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">caml</span> = layer <span style="color:#ff79c6">as</span>? CAMetalLayer {
+	caml.wantsExtendedDynamicRangeContent = <span style="color:#ff79c6">true</span>
+}
+
+<span style="color:#6272a4">// 在 CIRawFilter 渲染的时候设置以下参数</span>
+rawFilter?.extendedDynamicRangeAmount = <span style="color:#bd93f9">1.0</span>
+</code></pre></div><p><!-- raw HTML omitted --></p>
+<p><!-- raw HTML omitted --></p>
+<h2 id="总结">总结</h2>
+<p>ProRAW 从实现上看，走得并不是完全类似专业单反的原始信息 Raw 的道路，而是通过 Apple 非常擅长的计算摄影流程，给用户带来媲美 Raw 的高动态范围和丰富的原始色彩信息，同时又能配合软硬件的 Apple 生态产物。iOS 15 上 ProRaw 的全流程开发支持，也意味着对于音视频/图像编辑领域等 SDK 开发者，需要提前对行业头部推出的标准进行熟悉和适配，才能带给用户完整的用户体验。</p></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © Nemocdz. 
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-nemocdz-github-io-my-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  
+<footer class="site-footer">
+  <p>© 2017-2022 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
+  
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
+
+
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>iOS15 相机拍摄新变化</title>
+
+  
+  
+  <link href="//cdn.jsdelivr.net" rel="dns-prefetch">
+  <link href="//cdnjs.cloudflare.com" rel="dns-prefetch">
+  
+  <link href="//at.alicdn.com" rel="dns-prefetch">
+  
+  <link href="//fonts.googleapis.com" rel="dns-prefetch">
+  <link href="//fonts.gstatic.com" rel="dns-prefetch">
+  <link href="///disqus.com" rel="dns-prefetch">
+  <link href="//c.disquscdn.com" rel="dns-prefetch">
+  
+  
+  
+
+  
+
+  
+  
+  <meta name="description" content=" WWDC21 Session 10047 - What&amp;rsquo;s new in camera capture
+ 去年 Apple 对 iPhone 的相机升级是非常明显的，比如增加了 10-bit HDR 视频的拍摄，Apple ProRaw 的支持等。同时得益于 M 系列/A 系列芯片强大的算力，Apple 目前对于拍摄上的思考和提升更多走的是 计算摄影 路线，而非在光学硬件上做大幅度提升。所以今年的 WWDC，Apple 将相机的更多能力开放给开发者使用。
+本文将会介绍几个 Apple 拍摄的新能力：
+ 最近对焦距离 10-bit HDR 视频 控制中心的视频特效 相机性能相关的最佳实践 IOSurface 压缩 ">
+
+  
+  
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Nemocdz">
+    <meta name="twitter:title" content="iOS15 相机拍摄新变化">
+    <meta name="twitter:description" content=" WWDC21 Session 10047 - What&amp;rsquo;s new in camera capture
+ 去年 Apple 对 iPhone 的相机升级是非常明显的，比如增加了 10-bit HDR 视频的拍摄，Apple ProRaw 的支持等。同时得益于 M 系列/A 系列芯片强大的算力，Apple 目前对于拍摄上的思考和提升更多走的是 计算摄影 路线，而非在光学硬件上做大幅度提升。所以今年的 WWDC，Apple 将相机的更多能力开放给开发者使用。
+本文将会介绍几个 Apple 拍摄的新能力：
+ 最近对焦距离 10-bit HDR 视频 控制中心的视频特效 相机性能相关的最佳实践 IOSurface 压缩 ">
+    <meta name="twitter:image" content="/images/avatar.png">
+  
+
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="iOS15 相机拍摄新变化">
+  <meta property="og:description" content=" WWDC21 Session 10047 - What&amp;rsquo;s new in camera capture
+ 去年 Apple 对 iPhone 的相机升级是非常明显的，比如增加了 10-bit HDR 视频的拍摄，Apple ProRaw 的支持等。同时得益于 M 系列/A 系列芯片强大的算力，Apple 目前对于拍摄上的思考和提升更多走的是 计算摄影 路线，而非在光学硬件上做大幅度提升。所以今年的 WWDC，Apple 将相机的更多能力开放给开发者使用。
+本文将会介绍几个 Apple 拍摄的新能力：
+ 最近对焦距离 10-bit HDR 视频 控制中心的视频特效 相机性能相关的最佳实践 IOSurface 压缩 ">
+  <meta property="og:url" content="https://nemocdz.github.io/post/ios15-%E7%9B%B8%E6%9C%BA%E6%8B%8D%E6%91%84%E6%96%B0%E5%8F%98%E5%8C%96/">
+  <meta property="og:image" content="/images/avatar.png">
+
+
+
+
+<meta name="generator" content="Hugo 0.79.1">
+
+
+<link rel="canonical" href="https://nemocdz.github.io/post/ios15-%E7%9B%B8%E6%9C%BA%E6%8B%8D%E6%91%84%E6%96%B0%E5%8F%98%E5%8C%96/">
+
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no,email=no,adress=no">
+<meta http-equiv="Cache-Control" content="no-transform">
+
+
+<meta name="robots" content="index,follow">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="google-site-verification" content="ew6In8Dh7Hjg0Eozgh-VpZHVNe83XRZVOGwQSSAbrfw">
+<meta name="msvalidate.01" content="42FB873348345E1A196D7F595FFB7126">
+<meta name="baidu-site-verification" content="t6ukG5250x">
+<meta name="sogou_site_verification" content="YPqjjJgiSh">
+<meta name="360-site-verification" content="699b5919746ff9568f6484fcec29f386">
+
+<meta name="keywords" content="WWDC, WWDC2021, WWDC21, camera, AVCapture, AVFoundation, iOS15, Swift" >
+
+<meta name='description' itemprop="description" content="&lt;blockquote&gt;
+&lt;p&gt;WWDC21 Session 10047 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2021/100">
+
+
+<meta name="theme-color" content="#02b875">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Nemocdz&#39;s Blog">
+<meta name="msapplication-tooltip" content="Nemocdz&#39;s Blog">
+<meta name='msapplication-navbutton-color' content="#02b875">
+<meta name="msapplication-TileColor" content="#02b875">
+<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
+<link rel="icon" href="https://nemocdz.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://nemocdz.github.io/icons/icon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://nemocdz.github.io/icons/icon-32x32.png">
+<link rel="icon" sizes="192x192" href="https://nemocdz.github.io/icons/icon-192x192.png">
+<link rel="apple-touch-icon" href="https://nemocdz.github.io/icons/icon-152x152.png">
+<link rel="manifest" href="https://nemocdz.github.io/manifest.json">
+
+
+<link rel="preload" href="https://nemocdz.github.io/styles/main-rendered.min.css" as="style">
+
+
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Lobster" as="style">
+<link rel="preload" href="https://nemocdz.github.io/images/avatar.png" as="image">
+<link rel="preload" href="https://nemocdz.github.io/images/grey-prism.svg" as="image">
+
+
+<style>
+  body {
+    background: rgb(244, 243, 241) url('/images/grey-prism.svg') repeat fixed;
+  }
+</style>
+<link rel="stylesheet" href="https://nemocdz.github.io/styles/main-rendered.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.2/dist/medium-zoom.min.js"></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video-js.min.css">
+
+
+
+  
+  
+<!--[if lte IE 8]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ie8@1.1.2/dist/videojs-ie8.min.js"></script>
+<![endif]-->
+
+<!--[if lte IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20180112/classList.min.js"></script>
+<![endif]-->
+
+
+</head>
+  <body>
+    <div class="suspension">
+      <a role="button" aria-label="Go to top" title="Go to top" class="to-top is-hide"><span class="icon icon-up" aria-hidden="true"></span></a>
+      
+        
+	<a role="button" aria-label="Go to comments" title="Go to comments" class="to-comment" href="#disqus_thread"><span class="icon icon-comment" aria-hidden="true"></span></a>
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <a href="https://nemocdz.github.io"><img class="avatar" src="https://nemocdz.github.io/images/avatar.png" alt="Avatar"></a>
+  
+  <h2 class="title"><a href="https://nemocdz.github.io">Nemocdz&#39;s Blog</a></h2>
+  
+  <p class="subtitle">iOS Dev</p>
+  <button class="menu-toggle" type="button" aria-label="Main Menu" aria-expanded="false" tab-index="0">
+    <span class="icon icon-menu" aria-hidden="true"></span>
+  </button>
+
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item
+          
+          
+           is-active">
+          <a href="https://nemocdz.github.io/post">首页</a>
+        </li>
+      
+        <li class="menu-item
+          
+          
+          ">
+          <a href="https://nemocdz.github.io/about/">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list"><li class="social-item">
+          <a href="mailto:nemocdz@gmail.com" title="Email" aria-label="Email">
+            <span class="icon icon-email" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//github.com/Nemocdz" rel="me" title="GitHub" aria-label="GitHub">
+	    <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//twitter.com/Nemocdz" rel="me" title="Twitter" aria-label="Twitter">
+            <span class="icon icon-twitter" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.instagram.com/Nemocdz" rel="me" title="Instagram" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//weibo.com/Nemocdz" rel="me" title="Weibo" aria-label="Weibo">
+            <span class="icon icon-weibo" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="https://nemocdz.github.io/images/qrcode.jpg" rel="me" title="Wechat" aria-label="Wechat">
+            <span class="icon icon-wechat" aria-hidden="true"></span>
+          </a>
+        </li><li class="social-item">
+          <a href="//www.zhihu.com/people/nemocdz" rel="me" title="Zhihu" aria-label="Zhihu">
+            <span class="icon icon-zhihu" aria-hidden="true"></span>
+          </a>
+        </li></ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">iOS15 相机拍摄新变化</h1>
+      <p class="post-meta">@Nemocdz · Feb 19, 2022 · 5 min read</p>
+    </header>
+
+    
+	
+	<nav id="TableOfContents">
+  <ul>
+    <li><a href="#avcapture-简介">AVCapture 简介</a></li>
+    <li><a href="#最近对焦距离">最近对焦距离</a></li>
+    <li><a href="#10-bit-hdr-视频">10-bit HDR 视频</a>
+      <ul>
+        <li><a href="#edr">EDR</a></li>
+        <li><a href="#10-bit-hdr">10-bit HDR</a></li>
+      </ul>
+    </li>
+    <li><a href="#控制中心的视频特效">控制中心的视频特效</a>
+      <ul>
+        <li><a href="#center-stage中央舞台">Center Stage（中央舞台）</a></li>
+        <li><a href="#portrait人像模式">Portrait（人像模式）</a></li>
+        <li><a href="#mic-modes麦克风模式">Mic Modes（麦克风模式）</a></li>
+      </ul>
+    </li>
+    <li><a href="#性能的最佳实践">性能的最佳实践</a>
+      <ul>
+        <li><a href="#丢帧">丢帧</a></li>
+        <li><a href="#系统压力">系统压力</a></li>
+      </ul>
+    </li>
+    <li><a href="#iosurface-压缩"><code>IOSurface</code> 压缩</a></li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav>
+
+    <article class="post-content"><blockquote>
+<p>WWDC21 Session 10047 - <a href="https://developer.apple.com/videos/play/wwdc2021/10047/">What&rsquo;s new in camera capture</a></p>
+</blockquote>
+<p>去年 Apple 对 iPhone 的相机升级是非常明显的，比如增加了 10-bit HDR 视频的拍摄，Apple ProRaw 的支持等。同时得益于 M 系列/A 系列芯片强大的算力，Apple 目前对于拍摄上的思考和提升更多走的是 <a href="https://zh.wikipedia.org/zh-hans/%E8%AE%A1%E7%AE%97%E6%91%84%E5%BD%B1">计算摄影</a> 路线，而非在光学硬件上做大幅度提升。所以今年的 WWDC，Apple 将相机的更多能力开放给开发者使用。</p>
+<p>本文将会介绍几个 Apple 拍摄的新能力：</p>
+<ul>
+<li>最近对焦距离</li>
+<li>10-bit HDR 视频</li>
+<li>控制中心的视频特效</li>
+<li>相机性能相关的最佳实践</li>
+<li><code>IOSurface</code> 压缩</li>
+</ul>
+<blockquote>
+<p>本文不会花大量篇幅介绍拍摄开发的基础知识，建议还没接触的朋友先参考 Apple 文档 <a href="https://developer.apple.com/documentation/avfoundation/cameras_and_media_capture">Cameras and Media Capture</a>，对 AVFoundation 中拍摄相关的 API 使用有个初步了解。</p>
+</blockquote>
+<h2 id="avcapture-简介">AVCapture 简介</h2>
+<p>Apple 拍摄相关的 API 都位于 AVFoundation 中，以 AVCapture 为前缀。</p>
+<p><code>AVCaptureDevice</code>：用于标识相机/麦克风等硬件设备</p>
+<p><code>AVCaptureDeviceInput</code>：用于包装 <code>AVCaptureDevice</code> 并添加到 <code>AVCaptureSession</code> 中</p>
+<p><code>AVCaptureSession</code>：对于 AVCapture 图形的集中控制</p>
+<p><code>AVCaptureOutputs</code>：将输入以各种方式（例如视频，图片等）渲染数据</p>
+<p><code>AVCaptureVideoPreviewLayer</code>：<code>CALayer</code> 的子类，作为实时相机预览的输出</p>
+<p>如下图箭头所示，这些类通过 AVCapture 的 API 组成完整的数据流。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/01.png" alt=""></p>
+<p>简单了解 AVCapture 处理流程后，下面开始介绍 Apple 今年在拍摄上开放给开发者的新能力。</p>
+<h2 id="最近对焦距离">最近对焦距离</h2>
+<p>最近对焦距离是指靠近被摄物体的情况下，镜头能够合焦的最近拍摄距离。是所有镜头（包括单反镜头）的一项参数。iPhone 的相机镜头也一样有这个参数，但以前官方没有公布过这个数据。iOS 15 后，Apple 开放了这个参数。一般来说，焦段越短的镜头最近对焦距离越短，比如 iPhone 上的广角镜头的最近对焦距离就比长焦镜头更短。</p>
+<blockquote>
+<p>小知识：人眼的最近对焦距离约 5-10cm。</p>
+</blockquote>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/02.png" alt=""></p>
+<p>最近对焦距离有什么作用呢？比如有 App 中有一个功能用于扫描二维码，而现实中的二维码可能很小，用户会移动镜头到离二维码很近的距离，而这时候可能已经小于镜头的最近对焦距离，导致镜头对不上焦，画面就会变模糊难以识别。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/03.png" alt=""></p>
+<p>这时候可以通过自动调节相机的放大倍数来提示用户将镜头离远一点。iOS 15 上，<code>AVCaptureDevice</code> 上有一个新的 <code>minimumFocusDistance</code> 属性来获取镜头的最近对焦距离。</p>
+<p>下面的例子是如何通过最近对焦距离来优化最小大小是 20mm x 20mm 二维码的扫描体验：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 可以通过 1.镜头的视角 2.需要支持的最小物体尺寸宽度 3.期望物体显示相机预览区域的百分比</span>
+<span style="color:#6272a4">// 来计算出需要距离物体的最小拍摄距离</span>
+<span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">minSubjectDistance</span>(
+  fieldOfView: <span style="color:#8be9fd;font-style:italic">Float</span>,
+  minimumCodeSize: <span style="color:#8be9fd;font-style:italic">Float</span>,
+  previewFillPercentage: <span style="color:#8be9fd;font-style:italic">Float</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Float</span> {
+  	<span style="color:#6272a4">// 角度转换为弧度</span>
+  	<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">radians</span> = degressToRadians(fieldOfView <span style="color:#ff79c6">/</span> <span style="color:#bd93f9">2</span>)
+  	<span style="color:#6272a4">// 计算最小尺寸占该百分比时的实际宽度</span>
+  	<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">filledCodeSize</span> = minimumCodeSize <span style="color:#ff79c6">/</span> previewFillPercentage
+  	<span style="color:#6272a4">// tan 值即为实际宽度 / 拍摄距离</span>
+  	<span style="color:#ff79c6">return</span> filledCodeSize <span style="color:#ff79c6">/</span> tan(radians)
+}
+
+<span style="color:#6272a4">// 输入设备的水平视角（单位度）</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">deviceFieldOfView</span> = <span style="color:#ff79c6">self</span>.videoDeviceInput.device.activeFormat.videoFieldOfView
+
+<span style="color:#6272a4">// 计算最小拍摄距离</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">minSubjectDistanceForCode</span> = miniSubjectDistance(
+	fieldOfView: deviceFieldOfView,
+  minimumCodeSize: <span style="color:#bd93f9">20</span>
+  previewFillPercentage: <span style="color:#8be9fd;font-style:italic">Float</span>(rectOfInterestWidth))
+)
+
+<span style="color:#6272a4">// 获取输入设备的最近对焦距离</span>
+<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">deviceMinimumFocusDistance</span> = <span style="color:#8be9fd;font-style:italic">Float</span>(<span style="color:#ff79c6">self</span>.videoDeviceInput.device.minimumFocusDistance)
+
+<span style="color:#6272a4">// 如果最近的对接距离不够，那么做适当的放大</span>
+<span style="color:#ff79c6">if</span> minimumSubjectDistanceForCode <span style="color:#ff79c6">&lt;</span> deviceMinimumFocusDistance {
+  <span style="color:#6272a4">// 计算放大系数</span>
+  <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">zoomFactor</span> = deviceMinimumFocusDistance <span style="color:#ff79c6">/</span> minimumSubjectDistanceForCode
+  <span style="color:#ff79c6">do</span> {
+    <span style="color:#ff79c6">try</span> videoDeviceInput.device.lockForConfiguration()
+    videoDeviceInput.device.videoZoomFactor = CGFloat(zoomFactor)
+    videoDeviceInput.device.unlockForConfiguration()
+  } <span style="color:#ff79c6">catch</span> {
+    <span style="color:#6272a4">// ...</span>
+  }
+}
+
+</code></pre></div><blockquote>
+<p>更详细的示例和最佳实践可以参考 Apple 官方示例代码 <a href="https://developer.apple.com/documentation/avfoundation/cameras_and_media_capture/avcambarcode_detecting_barcodes_and_faces">AVCamBarcode</a>。</p>
+</blockquote>
+<h2 id="10-bit-hdr-视频">10-bit HDR 视频</h2>
+<p>HDR（高动态范围）技术对于照片来说可以追溯到 iOS 4.1 的时代，通常使用多次曝光将场景中的高光部分和阴影部分融合到一起。但是对于视频来说，由于每秒需要处理 30 或 60 帧，这个技术的实现难度更大。</p>
+<h3 id="edr">EDR</h3>
+<p>Apple 在 2018 的 iPhoneXS 相机首次引入了类似 HDR 的 EDR（拓展动态范围）视频处理技术。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/04.png" alt=""></p>
+<p>EDR 的核心思想是将拍摄的帧率翻倍，交替采集标准曝光的帧和短曝光的帧。由于是采集时长固定的，所以几乎没有 <a href="https://zh.wikipedia.org/wiki/%E5%9E%82%E7%9B%B4%E7%A9%BA%E7%99%BD%E9%96%93%E9%9A%99">垂直空白间隙</a>。当使用标准 30 fps 模式拍摄时，EDR 实际上以 60 fps 的帧率进行拍摄。如果场景需要，会动态使用 EV- 的信息通过 <a href="https://zh.wikipedia.org/wiki/%E8%89%B2%E8%B0%83%E6%98%A0%E5%B0%84">色调映射</a> 应用到 EV0 图像中，恢复被裁剪的高光细节，同时又不会牺牲阴影细节。虽然这不是一个完整的 HDR 解决方案，因为在暗光下效果就不明显了（没有曝光更长的帧来恢复阴影细节），但高光下效果很明显的。</p>
+<p>EDR 在 AVCapture 相关 API 中被称为 videoHDR，当看到相关字眼时说明指的就是 EDR 技术。</p>
+<p><code>AVCaptureDevice</code> 中有 <code>videoHDRSupported</code>、<code>videoHDREnabled</code>、<code>automaticallyAdjustsVideoHDREnabled</code> 等属性来控制 EDR 的开关。</p>
+<h3 id="10-bit-hdr">10-bit HDR</h3>
+<p>10-bit HDR 是真正的 HDR，因为它可以记录 10 bit 的色彩深度信息。</p>
+<ul>
+<li>
+<p>10 bit 的色彩深度（一共可以表示 1024 的 3 次方，10 亿颜色）</p>
+</li>
+<li>
+<p>总是使用 EDR 来恢复高光细节</p>
+</li>
+<li>
+<p>使用 <a href="https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.2020-2-201510-I!!PDF-C.pdf">BT.2020</a> 的色彩空间（比 <a href="https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.709-6-201506-I!!PDF-C.pdf">BT.709</a> 使用的 sRGB 更多，能表示更亮的颜色）</p>
+</li>
+<li>
+<p>包含杜比视界的元数据（HDR 10 的元数据是静态的，包含创建时的显示器信息，如色域、白点、亮度范围，内容信息，用于目标显示器做色调映射的峰值亮度和平均亮度等。杜比视界元数据是动态的，可以更细粒度控制，以场景或者帧为单位应用）</p>
+</li>
+<li>
+<p>iPhone12 及更新的设备才支持</p>
+</li>
+</ul>
+<blockquote>
+<p>ITU-R Recommendation BT.xxx</p>
+<ul>
+<li>ITU：国际电信联盟 （International Telecommunication Union）</li>
+<li>R：无线电通信部门（Radiocommunication）</li>
+<li>BT：广播电视类别业务（Broadcasting/Television）</li>
+</ul>
+<p>是电联发布的 <a href="https://www.itu.int/pub/R-REC/zh">国际通用电视节目的参数建议书</a>，简称 Rec.xxx or BT.xxx。里面定义了视频作品的参数的参考值，比如像素，比例，帧率，色域等等。</p>
+</blockquote>
+<p>10-bit HDR 的视频格式可以通过唯一的像素帧格式类型标识。</p>
+<p>老设备的像素帧格式在不同像素和帧率下，都是成对出现的，都有 420v 和 420f。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/05.png" alt=""></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange = &#39;<span style="color:#bd93f9">420</span>v&#39; 
+<span style="color:#6272a4">/* Bi-Planar Component Y&#39;CbCr 8-bit 4:2:0, video-range (luma=[16,235] chroma=[16,240]).  baseAddr points to a big-endian CVPlanarPixelBufferInfo_YCbCrBiPlanar struct */</span>
+kCVPixelFormatType_420YpCbCr8BiPlanarFullRange  = &#39;<span style="color:#bd93f9">420</span>f&#39;
+<span style="color:#6272a4">/* Bi-Planar Component Y&#39;CbCr 8-bit 4:2:0, full-range (luma=[0,255] chroma=[1,255]).  baseAddr points to a big-endian CVPlanarPixelBufferInfo_YCbCrBiPlanar struct */</span>
+</code></pre></div><blockquote>
+<p><code>420f</code> 和 <code>420v</code> 都是 8-bit 的 <a href="https://zh.wikipedia.org/wiki/YUV">YUV</a> 4:2:0 的格式。</p>
+<p>唯一区别是 f 代表 full-range， Y(亮度) 范围是 0-255，v 代表 video-range，Y 范围是 16-235。</p>
+</blockquote>
+<p>在 iPhone 12 后，增加了 x420 的格式 <code>kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange</code>，是 10-bit 的 YUV 420 格式。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/06.png" alt=""></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 可以通过下列方法来查询支持的 10-bit 格式</span>
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">firstTenBitFormatOfDevice</span>(device: AVCaptureDevice) -&gt; AVCaptureDevice.Format? {
+  <span style="color:#ff79c6">for</span> format <span style="color:#ff79c6">in</span> device.formats {
+    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">pixelFormat</span> = CMFormatDescriptionGetMediaSubType(format.foramtDescription)
+    <span style="color:#ff79c6">if</span> pixelForamt == kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange {
+      <span style="color:#ff79c6">return</span> format
+    }
+  }
+  <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">nil</span>
+}
+</code></pre></div><blockquote>
+<p>更多细节可以参考 Apple 示例代码 <a href="https://developer.apple.com/documentation/avfoundation/cameras_and_media_capture/avcam_building_a_camera_app">AVCam</a> 中 <code>tenBitVariantOfFormat</code> 部分</p>
+<p>关于编辑 10-bit HDR 视频的部分，可以参考 WWDC2020 - <a href="https://developer.apple.com/videos/play/wwdc2020/10009/">Edit and play back HDR video with AVFoundation</a>（<a href="https://xiaozhuanlan.com/topic/0391485276">《WWDC20 10009 Edit and play back HDR video with AVFoundation &amp; 10010 Export HDR media in your app with AVFoundation》</a>）</p>
+<p>关于 HDR 的介绍，可以参考 Apple 技术演讲 <a href="https://developer.apple.com/videos/play/tech-talks/502/">An Introduction to HDR Video</a></p>
+</blockquote>
+<h2 id="控制中心的视频特效">控制中心的视频特效</h2>
+<p>这是个系统级别的相机功能，开发者不需要专门做适配。</p>
+<p>以往 Apple 在 iOS 或 macOS 上引入相机新功能时：</p>
+<ol>
+<li>系统相机上就直接适配好了</li>
+<li>Apple 在 AVCapture 中添加新的 API</li>
+<li>开发者通过 WWDC 学习</li>
+<li>开发者排期适配</li>
+</ol>
+<p>这种做法很保险，但由于开发者的适配节奏，用户可能会很长一段时间（在开发者的 App 中）错过喜爱的一些功能。</p>
+<p>而 iOS 15 在控制中心里新增的几种视频特效：</p>
+<ul>
+<li>系统级别相机功能</li>
+<li>在 App 中开箱即用，无需开发者适配</li>
+<li>由用户控制</li>
+<li>同时也提供新的 API 让开发者做一些调整，优化用户体验</li>
+</ul>
+<h3 id="center-stage中央舞台">Center Stage（中央舞台）</h3>
+<p>这个功能在 M1 芯片的 iPad Pro 设备上才可用，而且所有前置镜头都可以开启，其背后利用了 1200w 像素的超广角前置摄像头。这个功能大大提高 FaceTime 视频通话的生产力。在其他视频通话类软件中，这个功能也一样时开箱即用的。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/07.png" alt=""></p>
+<p>如 Skype 的视频通话界面展示，Center Stage 功能会自动打开。它就像你的摄影师一样，会在你移动时候自动调整构图，确保你的身体处在场景的正中央。而作为用户，可以通过下滑控制中心来，点击来控制这个效果是否打开。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/08.png" alt=""></p>
+<p>Center Stage 功能是对 App 级别生效（且记忆的）的，而不是对于某个镜头。</p>
+<p>所以它的 API 是 <code>AVCaptureDevice</code> 上一组类属性，可以被写入和读取。并不是相机所有的格式都支持 Center Stage。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">AVCaptureDevice.isCenterStageEnabled <span style="color:#6272a4">// 当前是否打开</span>
+AVCaptureDevice.centerStageControlMode <span style="color:#6272a4">// 当前处于什么模式</span>
+
+captureDevice.activeForamt.isCenterStageSupported <span style="color:#6272a4">// 判断格式是否支持</span>
+captureDevice.isCenterStageActive <span style="color:#6272a4">// 判断设备当前是否处在工作中</span>
+</code></pre></div><p>而这个功能有着一些局限性：</p>
+<ul>
+<li>最高 30 fps 的帧率（因为受到使用的超广角镜头的限制）</li>
+<li>最高 1920x1440 的分辨率（保证图像质量）</li>
+<li>放大系数只能被锁定在 1（缩放和平移的控制权在 Center Stage 中）</li>
+<li>GDC（Geometric distortion correction，几何失真校正） 需要打开</li>
+<li>深度信息传递需要关闭</li>
+</ul>
+<p>Center Stage 有几种模式（<code>AVCaptureDevice.CenterStageControlMode</code>）：</p>
+<ul>
+<li><code>.user</code>：默认模式，由用户来控制功能是否打开（这种情况下调用代码控制将会抛出异常）</li>
+<li><code>.app</code>：由 App 来控制功能是否打开（这种情况下控制中心中的按钮将会置灰，不鼓励使用此模式，除非 App 无法兼容这个功能）</li>
+<li><code>.cooperative</code>：用户和 App 都能控制功能是否打开（这种情况下需要监听 <code>AVCaptureDevice.isCenterStageEnabled</code> 的变化来更新 App 中的 UI 状态）</li>
+</ul>
+<blockquote>
+<p>Apple 的 FaceTime 使用的就是 <code>.cooperative</code> 的很好的范例。FaceTime 既有 UI 按钮开关又能支持控制中心开关。而且在使用需要深度信息的 Animoji 时，会自动将 Center Stage 关闭，而这时再手动打开 Center Stage 打开的话，则会自动关闭 Animoji。</p>
+</blockquote>
+<h3 id="portrait人像模式">Portrait（人像模式）</h3>
+<p>所有会议类 App 都能用上的一个新功能 - Portrait。Portrait 提供浅景深效果，但不是简单的背景模糊，而是利用 Apple 神经网络来模拟真实的相机。所有配备 Apple Neural Engine（神经网络引擎）的设备（2018 年及更新的 iPhone 的 iPad 和所有 M1 的 Mac）都支持 Portrait（前置镜头）。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/09.png" alt=""></p>
+<p>而这个功能也有着一些局限性：</p>
+<ul>
+<li>最高 30 fps 的帧率</li>
+<li>最高分辨率 1920x1440 分辨率</li>
+</ul>
+<p>Portrait 功能也是对 App 级别生效（且记忆的）的，但不同的是，只能由用户控制。对于 VOIP 的 iOS App，这个功能是自动打开的，如果是其他则需要通过增加 Info.plist 的值来提供。macOS 则是所有 App 都是自动打开的。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/10.png" alt=""></p>
+<p>所以 Portrait 的 API 都是只读的。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">captureDevice.activeForamt.isPortraitEffectSupported <span style="color:#6272a4">// 判断格式是否支持</span>
+captureDevice.isPortraitEffectActive <span style="color:#6272a4">// 判断设备当前是否处在工作中</span>
+</code></pre></div><h3 id="mic-modes麦克风模式">Mic Modes（麦克风模式）</h3>
+<p>麦克风模式可增强视频聊天中的音频质量。所有使用 AUVoiceIO（使用 Audio Unit 的 VoiceProcessingIO 接口）的 App（在 2018 及更新的 iOS 和 macOS 设备上）都支持麦克风模式。</p>
+<p>Mic Modes 功能也是对 App 级别生效（且记忆的）的，且只能由用户控制的。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/11.png" alt=""></p>
+<p>所以 Mic Modes 的 API 也都是只读的。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">AVCaptureDevice.perferredMicrophoneMode <span style="color:#6272a4">// 用户选择的模式</span>
+AVCaptureDevice.activeMicrophoneMode <span style="color:#6272a4">// 实际使用的模式</span>
+</code></pre></div><p>有如下几种麦克风模式（<code>AVCaptureDevice.MicrophoneMode</code>）：</p>
+<ul>
+<li><code>.standrad</code>：标准模式</li>
+<li><code>.wideSpectrum</code>：宽频谱，尽量保留原始声音，最大限度地减少了对周围声音的处理，除了回声消除</li>
+<li><code>.voiceIsolation</code>：语音隔离，将语言部分加强，并减少周围不必要的噪音</li>
+</ul>
+<hr>
+<p>对于以上这些视频特效，可以通过调用系统 API 来给用户提示进行操作（调用后会打开控制面板跳到对应的操作区域）。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">AVCaptureDevice.showSystemUserInterface(.videoEffects)
+AVCaptureDevice.showSystemUserInterface(.microphoneModes)
+</code></pre></div><p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/12.png" alt=""></p>
+<h2 id="性能的最佳实践">性能的最佳实践</h2>
+<p>上面的视频特效虽然带来了更好的用户体验，但在性能上也会有更大的损耗。</p>
+<h3 id="丢帧">丢帧</h3>
+<p>大部分 App 使用 <code>AVCaptureVideoDataOutput</code> 将视频帧直接传到处理流程中，以进行操作、显示、编码、录制等。</p>
+<p>使用时，要注意确保 App 处理的及时性来避免丢帧。</p>
+<p><code>AVCaptureVideoDataOutput </code> 的属性 <code>alwaysDiscardsLateVideoFrames</code> 默认值为 <code>true</code>。表示在视频数据输出处理流程后强制将帧数据的缓冲区队列设置为 1，这样队列里永远都是最新的数据，丢弃来不及处理的数据来避免延迟。</p>
+<p>但如果你准备使用类似 <code>AVAssetWriter</code> 来记录你的帧数据，不追求及时性，可以关掉该属性并关注延迟是否能接受。</p>
+<p><code>AVCaptureVideoDataOutput</code> 通过 <code>AVCaptureVideoDataOutputSampleBufferDelegate</code> 里的如下方法来告诉开发者丢帧的发生。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">captureOutput</span>(
+  <span style="color:#ff79c6">_</span> output: AVCaptureOutput,
+  didDrop sampleBuffer: CMSampleBuffer,
+  from connection: AVCaptureConnection) {
+  	<span style="color:#6272a4">// 通过附加信息取出丢帧原因</span>
+		<span style="color:#ff79c6">guard</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">attachment</span> = sampleBuffer.attachments[.droppedFrameReason],
+  				<span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">reason</span> = attachment.value <span style="color:#ff79c6">as</span>? <span style="color:#8be9fd;font-style:italic">String</span> <span style="color:#ff79c6">else</span> { <span style="color:#ff79c6">return</span> }
+  	<span style="color:#ff79c6">switch</span> reason <span style="color:#ff79c6">as</span> CFString {
+    <span style="color:#ff79c6">case</span> kCMSampleBufferDroppedFrameReason_FrameWasLate:
+      <span style="color:#6272a4">// 帧迟到的情况，处理时间过长</span>
+    <span style="color:#ff79c6">case</span> kCMSampleBufferDroppedFrameReason_OutOfBuffer:
+      <span style="color:#6272a4">// 帧缓冲区过多</span>
+    <span style="color:#ff79c6">case</span> kCMSampleBufferDroppedFrameReason_Discontinuity:
+      <span style="color:#6272a4">// 帧不连续，系统或硬件问题导致</span>
+    <span style="color:#ff79c6">default</span>:<span style="color:#ff79c6">break</span>
+    }
+}
+</code></pre></div><p>处理丢帧常见有下面两种方式</p>
+<ol>
+<li>动态调整设备的帧率，通过实时设置以下属性来调整。</li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">captureDevice.activeMinVideoFrameDuration = CMTime(value: <span style="color:#bd93f9">1</span>, timeScale: frameRate)
+</code></pre></div><ol start="2">
+<li>简化处理的工作量</li>
+</ol>
+<h3 id="系统压力">系统压力</h3>
+<p>系统压力是另一种性能指标。<code>AVCaptureDevice</code> 上有一个 <code>systemPressureState</code> 属性，来获取当前设备的系统压力。里面有两个属性 <code>factors</code>（因子） 和 <code>level</code>（整体等级）。</p>
+<p>Factors：</p>
+<ul>
+<li><code>systemTemperature</code>：系统温度</li>
+<li><code>peakPower</code>：电池老化</li>
+<li><code>depthModuleTemperature</code>：深度测算的红外模块的温度</li>
+</ul>
+<p>Level：</p>
+<ul>
+<li><code>.nominal</code>：毫无压力，一切运行良好</li>
+<li><code>.fair</code>：略有压力（在环境温度高的时候，即使处理很轻量也可能出现）</li>
+<li><code>.serious</code>：压力较大，性能可能受到影响，建议调节帧率</li>
+<li><code>.critical</code>：压力接近临界值，性能受到较大影响，强烈建议调节帧率</li>
+<li><code>.shutdown</code>：压力超过临界值，<code>AVCaptureSession</code> 会自动停止避免设备过热受到影响</li>
+</ul>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/13.png" alt=""></p>
+<p>处理系统压力有以下几种方法：</p>
+<ol>
+<li>降低帧率</li>
+<li>降低 CPU/GPU 的处理任务（关闭某些功能）</li>
+<li>降低质量（使用更低的分辨率或减少处理频率）</li>
+</ol>
+<h2 id="iosurface-压缩"><code>IOSurface</code> 压缩</h2>
+<p>很少提到内存带宽，因为对于从 ISP 到最终传输到照片、电影、预览或缓冲区的视频整个过程，开发者都无法控制内存带宽。但是，内存带宽又很重要，是决定哪些相机功能可以同时运行的关键限制因素。</p>
+<p>在 iOS 和 macOS 中处理未压缩的视频数据会经过多层封装，有点像是俄罗斯套娃。</p>
+<p>最上层是 <code>CMSampleBuffer</code>，它可以包装各种媒体数据、时序和元数据。</p>
+<p>中间层是 <code>CVPixelBuffer</code>，它专门将像素缓冲区数据与元数据附件包装在一起。</p>
+<p>最底层是 <code>IOSurface</code>，它允许将内存连接到内核，并提供接口用于进程间共享同一个视频大型缓冲区。</p>
+<p><code>IOSurface</code> 的数据是巨大的，所以这就是为啥内存带宽对未压缩视频很重要。</p>
+<p>在 iOS 15 上，提供了 <code>IOSurface</code> 内存压缩能力，支持了无损内存视频压缩格式，这给内存带宽提供了一种解决方案。</p>
+<ul>
+<li>降低实时视频的内存带宽</li>
+<li>大部分 Apple 设备能支持的格式
+<ul>
+<li>iPhone 12 系列</li>
+<li>2020 iPad Airs</li>
+<li>2021 M1 iPad Pro</li>
+</ul>
+</li>
+<li>大部分系统库都支持读取和写入（Meta、Vision、AVAssetReader/AVAssetWrite、VideoToolbox、Core Image、<code>CALayer</code> 等）</li>
+</ul>
+<p>如果使用的是 <code>AVCaptureSession</code> 的默认处理流程且没有加入额外的缓冲区，那么整个流程就会自动尽可能采用 <code>IOSurface</code> 压缩来节省内存带宽（在支持的设备上）。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/14.png" alt=""></p>
+<p>如果希望手动将压缩后的 <code>IOSurface</code> 传递到 <code>AVCaptureVideoDataOutput</code> 中。由于 <code>IOSurface</code> 的物理内存布局是不透明而且可能会变的，所以：</p>
+<ul>
+<li>不要写入磁盘中</li>
+<li>不要假设不同的平台的内存布局是一致的</li>
+<li>不要使用 CPU 进行读写</li>
+</ul>
+<p><code>AVCaptureVideoDataOutput</code> 支持多种 <code>IOSurface</code> 压缩格式，分别对应未压缩的像素帧格式。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/15.png" alt=""></p>
+<p>在 Apple 的官方示例 <a href="https://developer.apple.com/documentation/avfoundation/cameras_and_media_capture/avmulticampip_capturing_from_multiple_cameras">AVMultiCamPiP</a> 中，就有可以用这个技术优化的例子。</p>
+<p><img src="https://image-1252104468.cos.ap-guangzhou.myqcloud.com/blog/16.png" alt=""></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#6272a4">// 优化前</span>
+cameraVideoDataOuput.videoSettings = [kCVPixelBufferPixelFormatTypeKey <span style="color:#ff79c6">as</span> <span style="color:#8be9fd;font-style:italic">String</span>: <span style="color:#8be9fd;font-style:italic">Int</span>(kCVPixelFormatType_32BGRA)]
+
+<span style="color:#6272a4">// 优化后</span>
+<span style="color:#ff79c6">if</span> cameraVideoDataOuput.availableVideoPixelFormatTypes.contains(kCVPixelFormatType_Lossless_32BGRA) {
+    cameraVideoDataOuput.videoSettings = [kCVPixelBufferPixelFormatTypeKey <span style="color:#ff79c6">as</span> <span style="color:#8be9fd;font-style:italic">String</span>: <span style="color:#8be9fd;font-style:italic">Int</span>(kCVPixelFormatType_Lossless_32BGRA)]
+} <span style="color:#ff79c6">else</span> {
+    cameraVideoDataOuput.videoSettings = [kCVPixelBufferPixelFormatTypeKey <span style="color:#ff79c6">as</span> <span style="color:#8be9fd;font-style:italic">String</span>: <span style="color:#8be9fd;font-style:italic">Int</span>(kCVPixelFormatType_32BGRA)]
+}
+
+</code></pre></div><h2 id="总结">总结</h2>
+<p>今年 WWDC 上公布的拍摄新能力，既有着对现有能力的完善（最近对焦距离，10-bit HDR 支持），也有着无需开发者适配的全局的能力（视频特效），还有着随着越来越多吃性能新功能后，Apple 对于拍摄性能上的一些思考和最佳实践。相信随着算力的进一步提升，实时拍摄的能力会越来越变得不可思议而令人期待！</p></article>
+    <footer class="post-footer">
+      
+      <p class="post-copyright">
+        © Nemocdz. 
+      </p>
+    </footer>
+    
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-nemocdz-github-io-my-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      
+    
+  </section>
+  
+<footer class="site-footer">
+  <p>© 2017-2022 Nemocdz&#39;s Blog</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> with theme <a href="https://github.com/Nemocdz/hugo-nuo" target="_blank" rel="noopener">Nuo</a>.</p>
+  
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/smooth-scroll@15.0.0/dist/smooth-scroll.min.js"></script>
+
+
+
+<script async src="https://cdn.jsdelivr.net/npm/video.js@7.3.0/dist/video.min.js"></script>
+
+
+
+
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+      extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    },
+  });
+</script>
+<script type="text/x-mathjax-config">
+  // Fix <code> tags after MathJax finishes running. This is a
+  // hack to overcome a shortcoming of Markdown. Discussion at
+  // https://github.com/mojombo/jekyll/issues/199
+  MathJax.Hub.Queue(() => {
+    MathJax.Hub.getAllJax().map(v => v.SourceElement().parentNode.className += ' has-jax');
+  });
+</script>
+
+
+
+<script src="https://nemocdz.github.io/scripts/index.min.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('\/service-worker.js').then(function() {
+      console.log('[ServiceWorker] Registered');
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+  </body>
+</html>

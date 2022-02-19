@@ -7,7 +7,39 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>© Nemocdz. </copyright>
-    <lastBuildDate>Sun, 13 Jun 2021 22:28:13 +0800</lastBuildDate><atom:link href="https://nemocdz.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 19 Feb 2022 12:21:13 +0800</lastBuildDate><atom:link href="https://nemocdz.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ProRAW 的拍摄与处理</title>
+      <link>https://nemocdz.github.io/post/proraw-%E7%9A%84%E6%8B%8D%E6%91%84%E4%B8%8E%E5%A4%84%E7%90%86/</link>
+      <pubDate>Sat, 19 Feb 2022 12:21:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/post/proraw-%E7%9A%84%E6%8B%8D%E6%91%84%E4%B8%8E%E5%A4%84%E7%90%86/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;WWDC21 Session 10160 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2021/10160/&#34;&gt;Capture and process ProRAW images&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Apple 设备在图片拍摄和处理上已经有了一段不短的发展历程了。从早期支持处理 JPEG 和 HEIC，到 iOS 10 开始支持拍摄和编辑 Bayer Raw（但是 iOS 系统相机并没有支持 Raw 拍摄，而是第三方相机 App 支持）。而去年的 iPhone12 Pro 系列在 iOS 14.3 起支持了 &lt;a href=&#34;https://support.apple.com/zh-cn/HT211965&#34;&gt;Apple ProRAW&lt;/a&gt;。这篇文章将会介绍开发者应该如何适配 ProRaw 的拍摄、保存、处理、显示等一系列流程。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>iOS15 相机拍摄新变化</title>
+      <link>https://nemocdz.github.io/post/ios15-%E7%9B%B8%E6%9C%BA%E6%8B%8D%E6%91%84%E6%96%B0%E5%8F%98%E5%8C%96/</link>
+      <pubDate>Sat, 19 Feb 2022 11:21:13 +0800</pubDate>
+      
+      <guid>https://nemocdz.github.io/post/ios15-%E7%9B%B8%E6%9C%BA%E6%8B%8D%E6%91%84%E6%96%B0%E5%8F%98%E5%8C%96/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;WWDC21 Session 10047 - &lt;a href=&#34;https://developer.apple.com/videos/play/wwdc2021/10047/&#34;&gt;What&amp;rsquo;s new in camera capture&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;去年 Apple 对 iPhone 的相机升级是非常明显的，比如增加了 10-bit HDR 视频的拍摄，Apple ProRaw 的支持等。同时得益于 M 系列/A 系列芯片强大的算力，Apple 目前对于拍摄上的思考和提升更多走的是 &lt;a href=&#34;https://zh.wikipedia.org/zh-hans/%E8%AE%A1%E7%AE%97%E6%91%84%E5%BD%B1&#34;&gt;计算摄影&lt;/a&gt; 路线，而非在光学硬件上做大幅度提升。所以今年的 WWDC，Apple 将相机的更多能力开放给开发者使用。&lt;/p&gt;
+&lt;p&gt;本文将会介绍几个 Apple 拍摄的新能力：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;最近对焦距离&lt;/li&gt;
+&lt;li&gt;10-bit HDR 视频&lt;/li&gt;
+&lt;li&gt;控制中心的视频特效&lt;/li&gt;
+&lt;li&gt;相机性能相关的最佳实践&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;IOSurface&lt;/code&gt; 压缩&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
     <item>
       <title>iOS Coordinator 实战</title>
       <link>https://nemocdz.github.io/post/ios-coordinator-%E5%AE%9E%E6%88%98/</link>
